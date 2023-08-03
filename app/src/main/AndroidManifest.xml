@@ -14,7 +14,7 @@
         android:theme="@style/Theme.CashSense"
         tools:targetApi="34">
         <activity
-            android:name=".MainActivity"
+            android:name=".core.presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.CashSense">
             <intent-filter>
