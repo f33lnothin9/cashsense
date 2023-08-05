@@ -14,6 +14,7 @@ lottie-compose = "6.1.0"
 material3 = "1.2.0-alpha04"
 mobileads = "5.10.0"
 navigation = "2.6.0"
+room = "2.5.2"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
@@ -33,6 +34,8 @@ mobileads = { module = "com.yandex.android:mobileads", version.ref = "mobileads"
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
