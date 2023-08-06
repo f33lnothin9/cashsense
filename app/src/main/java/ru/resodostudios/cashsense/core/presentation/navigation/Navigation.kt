@@ -15,7 +15,7 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     ) {
 
         composable(route = Screen.Home.route) {
-            WalletScreen()
+            WalletScreen(innerPadding = innerPadding)
         }
     }
 }

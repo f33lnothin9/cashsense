@@ -8,10 +8,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -91,15 +88,6 @@ fun CashSenseTheme(
 
         darkTheme -> DarkColors
         else -> LightColors
-    }
-
-    val systemUiController = rememberSystemUiController()
-    val useDarkIcons = !isSystemInDarkTheme()
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = useDarkIcons
-        )
     }
 
     MaterialTheme(

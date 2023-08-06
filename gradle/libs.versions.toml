@@ -1,8 +1,7 @@
 [versions]
 agp = "8.2.0-alpha15"
 kotlin = "1.9.0"
-accompanist = "0.30.1"
-activity-compose = "1.7.2"
+activity-compose = "1.8.0-alpha06"
 composeBom = "2023.06.01"
 coreSplashscreen = "1.0.1"
 coroutines = "1.7.3"
@@ -17,7 +16,6 @@ navigation = "2.6.0"
 room = "2.5.2"
 
 [libraries]
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
