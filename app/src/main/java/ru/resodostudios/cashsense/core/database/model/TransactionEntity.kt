@@ -10,13 +10,13 @@ import java.time.LocalDateTime
     tableName = "transactions",
 )
 data class TransactionEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val name: String,
     val category: String,
     val value: Int,
     @Embedded
-    val timestamp: LocalDateTime
+    val timestamp: LocalDateTime = LocalDateTime.now()
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(

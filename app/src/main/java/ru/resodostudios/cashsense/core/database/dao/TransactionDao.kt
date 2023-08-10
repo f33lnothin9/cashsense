@@ -18,7 +18,7 @@ interface TransactionDao {
     )
     fun getTransactionEntity(transactionId: String): Flow<TransactionEntity>
 
-    @Query(value = "SELECT * FROM transactions")
+    @Query(value = "SELECT * FROM transactions ORDER BY id DESC")
     fun getTransactionEntities(): Flow<List<TransactionEntity>>
 
     @Upsert
