@@ -11,8 +11,8 @@ enum class TopLevelDestination(
     val titleTextId: Int,
 ) {
     HOME(
-        selectedIcon = CsIcons.CreditCardFilled,
-        unselectedIcon = CsIcons.CreditCard,
+        selectedIcon = CsIcons.HomeFilled,
+        unselectedIcon = CsIcons.Home,
         iconTextId = R.string.home,
         titleTextId = R.string.app_name,
     ),
