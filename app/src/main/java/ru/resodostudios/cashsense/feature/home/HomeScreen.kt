@@ -11,8 +11,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ArrowDropDown
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.LunchDining
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.TrendingDown
 import androidx.compose.material.icons.outlined.TrendingUp
@@ -54,15 +54,15 @@ fun HomeScreen() {
                         contentDescription = null
                     )
                 },
-                overlineContent = { Text(text = "Итоговый баланс") },
-                headlineContent = { Text(text = "1 500 500 000,60₽") },
+                headlineContent = { Text(text = "1 500 ₽") },
+                supportingContent = { Text(text = "Итоговый баланс") },
                 trailingContent = {
                     Surface(
                         modifier = Modifier.clip(RoundedCornerShape(12.dp)),
-                        color = MaterialTheme.colorScheme.errorContainer
+                        color = MaterialTheme.colorScheme.secondaryContainer
                     ) {
                         Text(
-                            text = "-1 500 000 000 ₽",
+                            text = "+1 500 ₽",
                             modifier = Modifier
                                 .padding(
                                     start = 8.dp,
@@ -74,7 +74,7 @@ fun HomeScreen() {
                             maxLines = 1,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onErrorContainer
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 },
@@ -92,7 +92,7 @@ fun HomeScreen() {
                     )
                 },
                 headlineContent = { Text(text = "1 000 ₽") },
-                supportingContent = { Text(text = "За август") },
+                supportingContent = { Text(text = "Доходы") },
                 trailingContent = {
                     Icon(
                         imageVector = Icons.Outlined.KeyboardArrowRight,
@@ -104,10 +104,7 @@ fun HomeScreen() {
                     .clip(RoundedCornerShape(12.dp))
                     .clickable {
 
-                    },
-                overlineContent = {
-                    Text(text = "Доходы")
-                }
+                    }
             )
         }
 
@@ -121,7 +118,7 @@ fun HomeScreen() {
                     )
                 },
                 headlineContent = { Text(text = "-2 500 ₽") },
-                supportingContent = { Text(text = "За август") },
+                supportingContent = { Text(text = "Расходы") },
                 trailingContent = {
                     Icon(
                         imageVector = Icons.Outlined.KeyboardArrowRight,
@@ -133,16 +130,13 @@ fun HomeScreen() {
                     .clip(RoundedCornerShape(12.dp))
                     .clickable {
 
-                    },
-                overlineContent = {
-                    Text(text = "Расходы")
-                }
+                    }
             )
         }
 
         item {
             Text(
-                text = "Транзакции",
+                text = "Недавние транзакции",
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge
@@ -151,37 +145,29 @@ fun HomeScreen() {
 
         item {
             ListItem(
-                headlineContent = { Text(text = "-500 ₽") },
-                supportingContent = { Text(text = "Фастфуд") },
-                trailingContent = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Delete,
-                            contentDescription = "Delete"
-                        )
-                    }
+                leadingContent = {
+                    Icon(
+                        imageVector = Icons.Outlined.LunchDining,
+                        contentDescription = null
+                    )
                 },
-                overlineContent = {
-                    Text(text = "10 августа")
-                }
+                supportingContent = { Text(text = "Фастфуд") },
+                headlineContent = { Text(text = "-500 ₽") },
+                trailingContent = { Text(text = "11 августа") }
             )
         }
 
         item {
             ListItem(
-                headlineContent = { Text(text = "-500 ₽") },
-                supportingContent = { Text(text = "Фастфуд") },
-                trailingContent = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Delete,
-                            contentDescription = "Delete"
-                        )
-                    }
+                leadingContent = {
+                    Icon(
+                        imageVector = Icons.Outlined.LunchDining,
+                        contentDescription = null
+                    )
                 },
-                overlineContent = {
-                    Text(text = "10 августа")
-                }
+                supportingContent = { Text(text = "Фастфуд") },
+                headlineContent = { Text(text = "-500 ₽") },
+                trailingContent = { Text(text = "11 августа") }
             )
         }
     }

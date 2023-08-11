@@ -2,10 +2,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     kotlin("kapt")
-    id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -53,11 +53,10 @@ android {
 
 dependencies {
 
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
-    platform(libs.androidx.compose.bom)
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
@@ -94,9 +93,6 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie.compose)
-
-    // Yandex Ads
-    implementation(libs.mobileads)
 
     // Room
     implementation(libs.androidx.room.ktx)
