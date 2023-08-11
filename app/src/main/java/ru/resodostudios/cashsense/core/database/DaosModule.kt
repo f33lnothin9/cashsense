@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import ru.resodostudios.cashsense.core.database.dao.CategoryDao
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 
 @Module
@@ -14,4 +15,9 @@ object DaosModule {
     fun providesTransactionsDao(
         database: CsDatabase,
     ): TransactionDao = database.transactionDao()
+
+    @Provides
+    fun providesCategoriesDao(
+        database: CsDatabase,
+    ): CategoryDao = database.categoryDao()
 }

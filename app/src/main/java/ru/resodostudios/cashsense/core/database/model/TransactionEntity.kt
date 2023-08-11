@@ -3,7 +3,7 @@ package ru.resodostudios.cashsense.core.database.model
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.resodostudios.cashsense.feature.home.domain.model.Transaction
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.time.LocalDateTime
 
 @Entity(

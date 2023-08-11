@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.home.domain.model
+package ru.resodostudios.cashsense.core.model.data
 
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import java.time.LocalDateTime
