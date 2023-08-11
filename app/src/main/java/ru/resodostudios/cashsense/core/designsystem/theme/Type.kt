@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.presentation.theme
+package ru.resodostudios.cashsense.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

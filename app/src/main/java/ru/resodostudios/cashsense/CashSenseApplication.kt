@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.presentation
+package ru.resodostudios.cashsense
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
