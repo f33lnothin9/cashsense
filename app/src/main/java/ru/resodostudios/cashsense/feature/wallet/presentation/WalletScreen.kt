@@ -1,20 +1,25 @@
 package ru.resodostudios.cashsense.feature.wallet.presentation
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.TrendingDown
 import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,17 +31,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.R
 
 @ExperimentalMaterial3Api
@@ -207,24 +218,50 @@ fun WalletScreen() {
 
     if (openDialog.value) {
         AlertDialog(
-            onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onDismissRequest.
-                openDialog.value = false
-            },
+            onDismissRequest = { openDialog.value = false },
             icon = { Icon(Icons.Outlined.ReceiptLong, contentDescription = null) },
             title = {
                 Text(text = "Новая транзакция")
             },
             text = {
-                Text(
-                    "This area typically contains the supportive text " +
-                            "which presents the details regarding the Dialog's purpose."
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    var text by rememberSaveable { mutableStateOf("") }
+
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        suffix = { Text(text = "₽") },
+                        textStyle = TextStyle(
+                            textAlign = TextAlign.End,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            letterSpacing = 0.5.sp
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        label = { Text(text = "Сумма транзакции") },
+                        maxLines = 1
+                    )
+                    TextField(
+                        value = "Фастфуд",
+                        onValueChange = { },
+                        trailingIcon = {
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(Icons.Outlined.ArrowDropDown, contentDescription = null)
+                            }
+                        },
+                        label = { Text(text = "Категория") },
+                        readOnly = true,
+                        maxLines = 1
+                    )
+                }
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         openDialog.value = false
                     }
@@ -238,7 +275,7 @@ fun WalletScreen() {
                         openDialog.value = false
                     }
                 ) {
-                    Text("Отменить")
+                    Text("Отмена")
                 }
             }
         )

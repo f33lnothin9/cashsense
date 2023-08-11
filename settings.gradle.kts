@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Cash Sense"
+rootProject.name = "cashsense"
 include(":app")
