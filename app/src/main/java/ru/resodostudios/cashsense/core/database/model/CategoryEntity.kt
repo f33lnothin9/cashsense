@@ -1,7 +1,5 @@
 package ru.resodostudios.cashsense.core.database.model
 
-import android.graphics.drawable.Icon
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.resodostudios.cashsense.core.model.data.Category
@@ -13,8 +11,7 @@ data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val title: String,
-    @Embedded
-    val icon: Icon
+    val icon: Int
 )
 
 fun CategoryEntity.asExternalModel() = Category(

@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +29,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 
 @ExperimentalMaterial3Api
 @Composable
@@ -47,6 +51,13 @@ fun CsApp(
                 onNavigateToDestination = appState::navigateToTopLevelDestination,
                 currentDestination = appState.currentDestination
             )
+        },
+        floatingActionButton = {
+            if (appState.currentTopLevelDestination == CATEGORIES) {
+                FloatingActionButton(onClick = { /*TODO*/ }) {
+                    Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
+                }
+            }
         }
     ) { padding ->
         Column(
@@ -76,12 +87,9 @@ fun CsApp(
 private fun CsBottomBar(
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?,
-    modifier: Modifier = Modifier,
+    currentDestination: NavDestination?
 ) {
-    CsNavigationBar(
-        modifier = modifier,
-    ) {
+    CsNavigationBar {
         destinations.forEach { destination ->
             val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
             CsNavigationBarItem(
