@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.home.domain.repository
+package ru.resodostudios.cashsense.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.model.data.Transaction

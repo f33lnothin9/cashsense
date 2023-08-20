@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.home
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,9 +44,11 @@ import androidx.compose.ui.unit.sp
 
 @ExperimentalMaterial3Api
 @Composable
-fun HomeScreen() {
+internal fun HomeScreen() {
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
         item {
             ListItem(
                 leadingContent = {

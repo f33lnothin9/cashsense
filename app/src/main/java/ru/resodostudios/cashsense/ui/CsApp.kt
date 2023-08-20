@@ -27,7 +27,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 
 @ExperimentalMaterial3Api
 @Composable
@@ -37,6 +36,9 @@ fun CsApp(
     var showSettingsDialog by rememberSaveable {
         mutableStateOf(false)
     }
+
+    val showFab =
+        appState.topLevelDestinations.takeLast(2).any { it == appState.currentTopLevelDestination }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -48,7 +50,7 @@ fun CsApp(
             )
         },
         floatingActionButton = {
-            if (appState.currentTopLevelDestination == CATEGORIES) {
+            if (showFab) {
                 FloatingActionButton(onClick = { /*TODO*/ }) {
                     Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
                 }
@@ -92,7 +94,7 @@ private fun CsBottomBar(
                 icon = {
                     Icon(
                         imageVector = destination.unselectedIcon,
-                        contentDescription = null,
+                        contentDescription = null
                     )
                 },
                 selectedIcon = {
@@ -101,7 +103,7 @@ private fun CsBottomBar(
                         contentDescription = null
                     )
                 },
-                label = { Text(stringResource(destination.iconTextId)) },
+                label = { Text(stringResource(destination.iconTextId)) }
             )
         }
     }
