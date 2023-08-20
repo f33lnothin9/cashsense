@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Главная</string>
+    <string name="transactions">Транзакции</string>
+    <string name="categories">Категории</string>
+
+    <string name="top_app_bar_action_icon_description">Настройки</string>
+</resources>
