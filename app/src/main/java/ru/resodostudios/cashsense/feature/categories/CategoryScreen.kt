@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.categories
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -13,10 +14,15 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 
@@ -38,7 +44,7 @@ internal fun CategoryScreen(
 ) {
 
     when (categoriesState) {
-        CategoriesUiState.Loading -> CircularProgressIndicator()
+        CategoriesUiState.Loading -> LoadingState()
         is CategoriesUiState.Success -> if (categoriesState.categories.isNotEmpty()) {
             Box(
                 modifier = Modifier
@@ -56,12 +62,12 @@ internal fun CategoryScreen(
                 }
             }
         } else {
-            Text(text = "Empty")
+            EmptyState()
         }
     }
 }
 
-fun LazyGridScope.categories(
+private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
     onDelete: (Category) -> Unit
 ) {
@@ -82,5 +88,33 @@ fun LazyGridScope.categories(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingState() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun EmptyState() {
+
+    val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_empty))
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        LottieAnimation(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(256.dp),
+            composition = lottieComposition,
+        )
     }
 }
