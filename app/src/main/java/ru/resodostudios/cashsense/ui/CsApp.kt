@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBar
 import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBarItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.home.CsDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -52,6 +53,12 @@ fun CsApp(
     if (showNewTransactionDialog) {
         CsDialog(
             onDismiss = { showNewTransactionDialog = false },
+        )
+    }
+
+    if (showNewCategoryDialog) {
+        CategoryDialog(
+            onDismiss = { showNewCategoryDialog = false }
         )
     }
 
