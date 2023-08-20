@@ -5,4 +5,9 @@
     <string name="categories">Категории</string>
 
     <string name="top_app_bar_action_icon_description">Настройки</string>
+
+    <string name="new_category">Новая категория</string>
+    <string name="name">Название</string>
+    <string name="add">Добавить</string>
+    <string name="cancel">Отменить</string>
 </resources>

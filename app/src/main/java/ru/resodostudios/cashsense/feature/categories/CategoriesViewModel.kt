@@ -51,6 +51,6 @@ sealed interface CategoriesUiState {
     data object Loading : CategoriesUiState
 
     data class Success(
-        val categories: List<Category>,
+        val categories: List<Category>
     ) : CategoriesUiState
 }

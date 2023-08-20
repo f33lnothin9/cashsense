@@ -6,4 +6,9 @@
     <string name="categories">Categories</string>
 
     <string name="top_app_bar_action_icon_description">Settings</string>
+
+    <string name="new_category">New category</string>
+    <string name="name">Name</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>

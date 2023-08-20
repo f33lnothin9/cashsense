@@ -14,9 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 
 @Composable
@@ -44,7 +46,7 @@ fun CategoryDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Category, contentDescription = null) },
-        title = { Text(text = "Новая категория") },
+        title = { Text(text = stringResource(id = R.string.new_category)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -55,7 +57,7 @@ fun CategoryDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
-                    label = { Text(text = "Название") },
+                    label = { Text(text = stringResource(id = R.string.name)) },
                     maxLines = 1
                 )
             }
@@ -67,14 +69,14 @@ fun CategoryDialog(
 
                 }
             ) {
-                Text("Добавить")
+                Text(text = stringResource(id = R.string.add))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("Отмена")
+                Text(text = stringResource(id = R.string.cancel))
             }
         }
     )
