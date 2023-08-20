@@ -27,7 +27,10 @@ fun CategoryDialog(
 
     CategoryDialog(
         onDismiss = onDismiss,
-        onConfirm = viewModel::upsertCategory
+        onConfirm = {
+            viewModel.upsertCategory(it)
+            onDismiss()
+        }
     )
 }
 
@@ -59,7 +62,10 @@ fun CategoryDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(name) }
+                onClick = {
+                    onConfirm(name)
+
+                }
             ) {
                 Text("Добавить")
             }
