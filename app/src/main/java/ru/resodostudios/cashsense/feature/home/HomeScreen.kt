@@ -177,9 +177,9 @@ internal fun HomeScreen() {
 }
 
 @Composable
-fun CsDialog(onDialog: () -> Unit) {
+fun CsDialog(onDismiss: () -> Unit) {
     AlertDialog(
-        onDismissRequest = onDialog,
+        onDismissRequest = onDismiss,
         icon = { Icon(Icons.Outlined.ReceiptLong, contentDescription = null) },
         title = {
             Text(text = "Новая транзакция")
@@ -223,14 +223,14 @@ fun CsDialog(onDialog: () -> Unit) {
         },
         confirmButton = {
             Button(
-                onClick = onDialog
+                onClick = onDismiss
             ) {
                 Text("Добавить")
             }
         },
         dismissButton = {
             TextButton(
-                onClick = onDialog
+                onClick = onDismiss
             ) {
                 Text("Отмена")
             }

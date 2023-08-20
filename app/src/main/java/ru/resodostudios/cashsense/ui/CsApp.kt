@@ -25,8 +25,10 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBar
 import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBarItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.feature.home.CsDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.TRANSACTIONS
 
 @ExperimentalMaterial3Api
 @Composable
@@ -36,9 +38,22 @@ fun CsApp(
     var showSettingsDialog by rememberSaveable {
         mutableStateOf(false)
     }
+    var showNewTransactionDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showNewCategoryDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     val showFab =
         appState.topLevelDestinations.takeLast(2).any { it == appState.currentTopLevelDestination }
+    val isTransactionsDestination = appState.currentTopLevelDestination == TRANSACTIONS
+
+    if (showNewTransactionDialog) {
+        CsDialog(
+            onDismiss = { showNewTransactionDialog = false },
+        )
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -51,7 +66,15 @@ fun CsApp(
         },
         floatingActionButton = {
             if (showFab) {
-                FloatingActionButton(onClick = { /*TODO*/ }) {
+                FloatingActionButton(
+                    onClick = {
+                        if (isTransactionsDestination) {
+                            showNewTransactionDialog = true
+                        } else {
+                            showNewCategoryDialog = true
+                        }
+                    }
+                ) {
                     Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
                 }
             }
