@@ -6,7 +6,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -27,45 +26,40 @@ fun CategoryDialog(
 ) {
 
     CategoryDialog(
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
+        onConfirm = viewModel::upsertCategory
     )
 }
 
 @Composable
-fun CategoryDialog(onDismiss: () -> Unit) {
+fun CategoryDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var name by rememberSaveable { mutableStateOf("") }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Category, contentDescription = null) },
-        title = {
-            Text(text = "Новая категория")
-        },
+        title = { Text(text = "Новая категория") },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                var text by rememberSaveable { mutableStateOf("") }
-
                 TextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = name,
+                    onValueChange = { name = it },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
                     label = { Text(text = "Название") },
                     maxLines = 1
                 )
-
-                Text(
-                    text = "Иконка",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1
-                )
             }
         },
         confirmButton = {
             Button(
-                onClick = onDismiss
+                onClick = { onConfirm(name) }
             ) {
                 Text("Добавить")
             }

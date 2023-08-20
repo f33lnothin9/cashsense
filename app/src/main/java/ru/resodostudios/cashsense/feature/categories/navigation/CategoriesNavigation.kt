@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import ru.resodostudios.cashsense.feature.categories.CategoryRoute
 
 const val categoriesNavigationRoute = "categories_route"
 
@@ -15,6 +16,6 @@ fun NavGraphBuilder.categoriesScreen() {
     composable(
         route = categoriesNavigationRoute
     ) {
-
+        CategoryRoute()
     }
 }
