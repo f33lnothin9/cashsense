@@ -7,14 +7,13 @@ import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 
-
 @Database(
     entities = [
         TransactionEntity::class,
         CategoryEntity::class
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class CsDatabase : RoomDatabase() {
 

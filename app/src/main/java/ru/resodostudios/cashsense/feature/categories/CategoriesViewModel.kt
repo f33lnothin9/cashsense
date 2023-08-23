@@ -32,6 +32,7 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             categoriesRepository.upsertCategory(
                 Category(
+                    id = null,
                     title = name,
                     icon = null
                 )

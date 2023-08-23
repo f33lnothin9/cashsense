@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.categories
+package ru.resodostudios.cashsense.feature.transactions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,28 +24,28 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.Transaction
 
 @Composable
-internal fun CategoryRoute(
-    viewModel: CategoriesViewModel = hiltViewModel()
+internal fun TransactionsRoute(
+    viewModel: TransactionsViewModel = hiltViewModel()
 ) {
-    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
-    CategoryScreen(
-        categoriesState = categoriesState,
+    val transactionsState by viewModel.transactionsUiState.collectAsStateWithLifecycle()
+    TransactionsScreen(
+        transactionsState = transactionsState,
         onDelete = viewModel::deleteCategory
     )
 }
 
 @Composable
-internal fun CategoryScreen(
-    categoriesState: CategoriesUiState,
-    onDelete: (Category) -> Unit
+internal fun TransactionsScreen(
+    transactionsState: TransactionsUiState,
+    onDelete: (Transaction) -> Unit
 ) {
 
-    when (categoriesState) {
-        CategoriesUiState.Loading -> LoadingState()
-        is CategoriesUiState.Success -> if (categoriesState.categories.isNotEmpty()) {
+    when (transactionsState) {
+        TransactionsUiState.Loading -> LoadingState()
+        is TransactionsUiState.Success -> if (transactionsState.transactions.isNotEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -55,8 +55,8 @@ internal fun CategoryScreen(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    categories(
-                        categoriesState = categoriesState,
+                    transactions(
+                        transactionsState = transactionsState,
                         onDelete = onDelete
                     )
                 }
@@ -67,18 +67,18 @@ internal fun CategoryScreen(
     }
 }
 
-private fun LazyGridScope.categories(
-    categoriesState: CategoriesUiState,
-    onDelete: (Category) -> Unit
+private fun LazyGridScope.transactions(
+    transactionsState: TransactionsUiState,
+    onDelete: (Transaction) -> Unit
 ) {
-    when (categoriesState) {
-        CategoriesUiState.Loading -> Unit
-        is CategoriesUiState.Success -> {
-            items(categoriesState.categories) { category ->
+    when (transactionsState) {
+        TransactionsUiState.Loading -> Unit
+        is TransactionsUiState.Success -> {
+            items(transactionsState.transactions) { transaction ->
                 ListItem(
-                    headlineContent = { Text(text = category.title) },
+                    headlineContent = { Text(text = transaction.name) },
                     trailingContent = {
-                        IconButton(onClick = { onDelete(category) }) {
+                        IconButton(onClick = { onDelete(transaction) }) {
                             Icon(
                                 imageVector = CsIcons.Delete,
                                 contentDescription = null

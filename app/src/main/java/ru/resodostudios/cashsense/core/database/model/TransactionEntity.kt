@@ -11,17 +11,19 @@ import java.time.LocalDateTime
 )
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Int? = null,
     val name: String,
-    val category: String,
+    val description: String?,
+    val category: String?,
     val value: Int,
     @Embedded
-    val timestamp: LocalDateTime = LocalDateTime.now()
+    val timestamp: LocalDateTime
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(
     id = id,
     name = name,
+    description = description,
     category = category,
     value = value,
     timestamp = timestamp
