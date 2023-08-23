@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,16 +28,15 @@ class TransactionsViewModel @Inject constructor(
                 initialValue = TransactionsUiState.Loading,
             )
 
-    fun upsertTransactions(name: String, category: String?, description: String?, value: Int) {
+    fun upsertTransactions(category: String?, description: String?, value: Int, date: String) {
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(
                 Transaction(
                     id = null,
-                    name = name,
                     category = category,
                     description = description,
                     value = value,
-                    timestamp = LocalDateTime.now()
+                    date = date
                 )
             )
         }

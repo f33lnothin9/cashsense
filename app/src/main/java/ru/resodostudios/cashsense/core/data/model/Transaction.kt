@@ -5,9 +5,8 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 
 fun Transaction.asEntity() = TransactionEntity(
     id = id,
-    name = name,
     category = category,
     value = value,
-    timestamp = timestamp,
+    date = date,
     description = description
 )

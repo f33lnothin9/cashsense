@@ -56,7 +56,7 @@ internal fun TransactionsScreen(
                         .fillMaxSize()
                 ) {
                     transactions(
-                        transactionsState = transactionsState,
+                        transactions = transactionsState.transactions,
                         onDelete = onDelete
                     )
                 }
@@ -68,26 +68,22 @@ internal fun TransactionsScreen(
 }
 
 private fun LazyGridScope.transactions(
-    transactionsState: TransactionsUiState,
+    transactions: List<Transaction>,
     onDelete: (Transaction) -> Unit
 ) {
-    when (transactionsState) {
-        TransactionsUiState.Loading -> Unit
-        is TransactionsUiState.Success -> {
-            items(transactionsState.transactions) { transaction ->
-                ListItem(
-                    headlineContent = { Text(text = transaction.name) },
-                    trailingContent = {
-                        IconButton(onClick = { onDelete(transaction) }) {
-                            Icon(
-                                imageVector = CsIcons.Delete,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
-            }
-        }
+    items(transactions) { transaction ->
+        ListItem(
+            headlineContent = { Text(text = transaction.value.toString()) },
+            trailingContent = {
+                IconButton(onClick = { onDelete(transaction) }) {
+                    Icon(
+                        imageVector = CsIcons.Delete,
+                        contentDescription = null
+                    )
+                }
+            },
+            supportingContent = { Text(text = transaction.date) }
+        )
     }
 }
 
