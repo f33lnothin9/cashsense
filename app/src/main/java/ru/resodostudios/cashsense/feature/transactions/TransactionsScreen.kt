@@ -32,7 +32,7 @@ import java.time.format.DateTimeFormatter
 internal fun TransactionsRoute(
     viewModel: TransactionsViewModel = hiltViewModel()
 ) {
-    val transactionsState by viewModel.transactionsUiState.collectAsStateWithLifecycle()
+    val transactionsState by viewModel.transactionsUiState.collectAsStateWithLifecycle(initialValue = TransactionsUiState.Loading)
     TransactionsScreen(
         transactionsState = transactionsState,
         onDelete = viewModel::deleteCategory

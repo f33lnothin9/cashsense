@@ -3,15 +3,14 @@ package ru.resodostudios.cashsense.feature.transactions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -20,7 +19,7 @@ class TransactionsViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository
 ) : ViewModel() {
 
-    val transactionsUiState: StateFlow<TransactionsUiState> =
+    val transactionsUiState: SharedFlow<TransactionsUiState> =
         transactionsRepository.getTransactions()
             .map<List<Transaction>, TransactionsUiState>(TransactionsUiState::Success)
             .onStart { emit(TransactionsUiState.Loading) }
@@ -34,7 +33,6 @@ class TransactionsViewModel @Inject constructor(
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(
                 Transaction(
-                    id = null,
                     category = category,
                     description = description,
                     value = value,

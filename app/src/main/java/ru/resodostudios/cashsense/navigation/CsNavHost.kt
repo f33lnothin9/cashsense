@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.navigation
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -10,7 +9,6 @@ import ru.resodostudios.cashsense.feature.home.navigation.homeScreen
 import ru.resodostudios.cashsense.feature.transactions.navigation.transactionsScreen
 import ru.resodostudios.cashsense.ui.CsAppState
 
-@ExperimentalMaterial3Api
 @Composable
 fun CsNavHost(
     appState: CsAppState,
