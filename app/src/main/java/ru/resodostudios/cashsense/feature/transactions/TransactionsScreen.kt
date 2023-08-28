@@ -25,6 +25,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun TransactionsRoute(
@@ -82,9 +84,14 @@ private fun LazyGridScope.transactions(
                     )
                 }
             },
-            supportingContent = { Text(text = transaction.date) }
+            supportingContent = { Text(text = formatLocalDate(transaction.date)) }
         )
     }
+}
+
+fun formatLocalDate(localDate: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+    return localDate.format(formatter)
 }
 
 @Composable

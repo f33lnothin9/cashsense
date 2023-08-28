@@ -42,7 +42,7 @@ fun TransactionDialog(
                 category = "Фастфуд",
                 description = "??",
                 value = it.toInt(),
-                date = LocalDateTime.now().toString()
+                date = LocalDateTime.now()
             )
             onDismiss()
         }
