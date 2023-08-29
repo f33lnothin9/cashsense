@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,7 @@ fun LoadingState() {
 }
 
 @Composable
-fun EmptyState(message: String?, animationId: Int) {
+fun EmptyState(messageId: Int, animationId: Int) {
 
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationId))
     val progress by animateLottieCompositionAsState(
@@ -59,7 +60,7 @@ fun EmptyState(message: String?, animationId: Int) {
                 progress = { progress }
             )
             Text(
-                text = message.toString(),
+                text = stringResource(id = messageId),
                 maxLines = 2,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,

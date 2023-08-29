@@ -59,7 +59,7 @@ internal fun TransactionsScreen(
                 }
             }
         } else {
-            EmptyState(message = "Nothing in Transactions", animationId = R.raw.anim_empty)
+            EmptyState(messageId = R.string.transactions_empty, animationId = R.raw.anim_empty)
         }
     }
 }

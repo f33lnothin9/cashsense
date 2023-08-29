@@ -57,7 +57,7 @@ internal fun CategoriesScreen(
                 }
             }
         } else {
-            EmptyState(message = "Nothing in Categories", animationId = R.raw.anim_empty)
+            EmptyState(messageId = R.string.categories_empty, animationId = R.raw.anim_empty)
         }
     }
 }
