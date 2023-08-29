@@ -75,7 +75,7 @@ private fun LazyGridScope.transactions(
 ) {
     items(transactions) { transaction ->
         ListItem(
-            headlineContent = { Text(text = transaction.value.toString()) },
+            headlineContent = { Text(text = "${transaction.value} ₽") },
             trailingContent = {
                 IconButton(onClick = { onDelete(transaction) }) {
                     Icon(
@@ -90,7 +90,7 @@ private fun LazyGridScope.transactions(
 }
 
 fun formatLocalDate(localDate: LocalDateTime): String {
-    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")
     return localDate.format(formatter)
 }
 
