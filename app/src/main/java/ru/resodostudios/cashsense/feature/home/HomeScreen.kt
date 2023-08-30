@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.LunchDining
 import androidx.compose.material.icons.outlined.TrendingDown
 import androidx.compose.material.icons.outlined.TrendingUp
@@ -19,6 +19,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -44,12 +47,24 @@ internal fun HomeScreen(
     transactionsState: TransactionsUiState
 ) {
 
+    var totalBalance by rememberSaveable { mutableIntStateOf(0) }
+    var expenses by rememberSaveable { mutableIntStateOf(0) }
+    var income by rememberSaveable { mutableIntStateOf(0) }
+
     when (transactionsState) {
-        TransactionsUiState.Loading -> { }
+        TransactionsUiState.Loading -> {}
         is TransactionsUiState.Success -> {
-            val totalBalance = transactionsState.transactions.fold(0) { acc, transaction ->
+            totalBalance = transactionsState.transactions.fold(0) { acc, transaction ->
                 acc + transaction.value
             }
+            expenses =
+                transactionsState.transactions.filter { it.value < 0 }.fold(0) { acc, transaction ->
+                    acc + transaction.value
+                }
+            income =
+                transactionsState.transactions.filter { it.value > 0 }.fold(0) { acc, transaction ->
+                    acc + transaction.value
+                }
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -98,11 +113,11 @@ internal fun HomeScreen(
                                 modifier = Modifier.size(24.dp)
                             )
                         },
-                        headlineContent = { Text(text = "1 000 ₽") },
+                        headlineContent = { Text(text = "$income ₽") },
                         supportingContent = { Text(text = "Доходы") },
                         trailingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.KeyboardArrowRight,
+                                imageVector = Icons.Outlined.ChevronRight,
                                 contentDescription = null
                             )
                         },
@@ -124,11 +139,11 @@ internal fun HomeScreen(
                                 modifier = Modifier.size(24.dp)
                             )
                         },
-                        headlineContent = { Text(text = "-2 500 ₽") },
+                        headlineContent = { Text(text = "$expenses ₽") },
                         supportingContent = { Text(text = "Расходы") },
                         trailingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.KeyboardArrowRight,
+                                imageVector = Icons.Outlined.ChevronRight,
                                 contentDescription = null
                             )
                         },
