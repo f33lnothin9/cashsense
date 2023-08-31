@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsUiState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsViewModel
 
@@ -52,7 +53,7 @@ internal fun HomeScreen(
     var income by rememberSaveable { mutableIntStateOf(0) }
 
     when (transactionsState) {
-        TransactionsUiState.Loading -> {}
+        TransactionsUiState.Loading -> LoadingState()
         is TransactionsUiState.Success -> {
             totalBalance = transactionsState.transactions.fold(0) { acc, transaction ->
                 acc + transaction.value
