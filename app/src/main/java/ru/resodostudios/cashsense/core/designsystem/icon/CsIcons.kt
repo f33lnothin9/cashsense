@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ReceiptLong
@@ -19,4 +20,5 @@ object CsIcons {
     val CategoryFilled = Icons.Filled.Category
     val Settings = Icons.Outlined.Settings
     val Delete = Icons.Outlined.Delete
+    val DropDown = Icons.Outlined.ArrowDropDown
 }

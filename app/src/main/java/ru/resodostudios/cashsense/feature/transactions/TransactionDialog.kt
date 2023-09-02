@@ -3,8 +3,6 @@ package ru.resodostudios.cashsense.feature.transactions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -91,7 +89,7 @@ fun TransactionDialog(
                     onValueChange = { },
                     trailingIcon = {
                         IconButton(onClick = { /*TODO*/ }) {
-                            Icon(Icons.Outlined.ArrowDropDown, contentDescription = null)
+                            Icon(CsIcons.DropDown, contentDescription = null)
                         }
                     },
                     label = { Text(text = stringResource(id = R.string.category)) },
