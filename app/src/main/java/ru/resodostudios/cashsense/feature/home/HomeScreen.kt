@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.LunchDining
 import androidx.compose.material.icons.outlined.TrendingDown
 import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.Icon
@@ -24,14 +24,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.R
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsUiState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsViewModel
+import ru.resodostudios.cashsense.feature.transactions.formatLocalDate
 
 @Composable
 internal fun HomeRoute(
@@ -159,38 +163,23 @@ internal fun HomeScreen(
 
                 item {
                     Text(
-                        text = "Недавние транзакции",
+                        text = stringResource(id = R.string.recent_transactions),
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
-
-                item {
+                items(transactionsState.transactions.take(3)) { transaction ->
                     ListItem(
                         leadingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.LunchDining,
+                                imageVector = CsIcons.Transaction,
                                 contentDescription = null
                             )
                         },
-                        supportingContent = { Text(text = "Фастфуд") },
-                        headlineContent = { Text(text = "-500 ₽") },
-                        trailingContent = { Text(text = "11 августа") }
-                    )
-                }
-
-                item {
-                    ListItem(
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Outlined.LunchDining,
-                                contentDescription = null
-                            )
-                        },
-                        supportingContent = { Text(text = "Фастфуд") },
-                        headlineContent = { Text(text = "-500 ₽") },
-                        trailingContent = { Text(text = "11 августа") }
+                        supportingContent = { Text(text = transaction.category.toString()) },
+                        headlineContent = { Text(text = "${transaction.value} ₽") },
+                        trailingContent = { Text(text = formatLocalDate(transaction.date)) }
                     )
                 }
             }
