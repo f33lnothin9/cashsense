@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDropDown
-import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.R
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import java.time.LocalDateTime
 
 @Composable
@@ -60,9 +60,9 @@ fun TransactionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Outlined.ReceiptLong, contentDescription = null) },
+        icon = { Icon(CsIcons.Transaction, contentDescription = null) },
         title = {
-            Text(text = "Новая транзакция")
+            Text(text = stringResource(id = R.string.new_transaction))
         },
         text = {
             Column(
@@ -83,7 +83,7 @@ fun TransactionDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
-                    label = { Text(text = "Сумма транзакции") },
+                    label = { Text(text = stringResource(id = R.string.sum)) },
                     maxLines = 1
                 )
                 TextField(
@@ -94,7 +94,7 @@ fun TransactionDialog(
                             Icon(Icons.Outlined.ArrowDropDown, contentDescription = null)
                         }
                     },
-                    label = { Text(text = "Категория") },
+                    label = { Text(text = stringResource(id = R.string.category)) },
                     readOnly = true,
                     maxLines = 1
                 )
@@ -104,9 +104,9 @@ fun TransactionDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
-                    label = { Text(text = "Описание") },
+                    label = { Text(text = stringResource(id = R.string.description)) },
                     maxLines = 1,
-                    supportingText = { Text(text = "не обязательно") }
+                    supportingText = { Text(text = stringResource(id = R.string.optional)) }
                 )
             }
         },
