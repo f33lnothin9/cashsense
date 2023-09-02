@@ -98,6 +98,16 @@ fun TransactionDialog(
                     readOnly = true,
                     maxLines = 1
                 )
+                TextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = "Описание") },
+                    maxLines = 1,
+                    supportingText = { Text(text = "не обязательно") }
+                )
             }
         },
         confirmButton = {
