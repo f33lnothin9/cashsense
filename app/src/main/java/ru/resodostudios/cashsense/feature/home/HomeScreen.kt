@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -79,26 +80,7 @@ internal fun HomeScreen(
                         headlineContent = { Text(text = "$totalBalance ₽") },
                         supportingContent = { Text(text = "Итоговый баланс") },
                         trailingContent = {
-                            Surface(
-                                modifier = Modifier.clip(RoundedCornerShape(12.dp)),
-                                color = MaterialTheme.colorScheme.secondaryContainer
-                            ) {
-                                Text(
-                                    text = "+1 500 ₽",
-                                    modifier = Modifier
-                                        .padding(
-                                            start = 8.dp,
-                                            top = 4.dp,
-                                            end = 8.dp,
-                                            bottom = 4.dp
-                                        ),
-                                    style = MaterialTheme.typography.labelLarge,
-                                    maxLines = 1,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            }
+                            WalletDifference(difference = income + expenses)
                         },
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -178,6 +160,34 @@ internal fun HomeScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun WalletDifference(difference: Int) {
+    var text by rememberSaveable { mutableStateOf("") }
+    text = if (difference > 0) "+$difference ₽" else "$difference ₽"
+    if (difference != 0) {
+        Surface(
+            modifier = Modifier.clip(RoundedCornerShape(12.dp)),
+            color = MaterialTheme.colorScheme.secondaryContainer
+        ) {
+            Text(
+                text = text,
+                modifier = Modifier
+                    .padding(
+                        start = 8.dp,
+                        top = 4.dp,
+                        end = 8.dp,
+                        bottom = 4.dp
+                    ),
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
         }
     }
 }
