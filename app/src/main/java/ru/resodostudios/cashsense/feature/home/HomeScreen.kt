@@ -7,11 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.TrendingDown
-import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -77,7 +72,7 @@ internal fun HomeScreen(
                     ListItem(
                         leadingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.AccountBalanceWallet,
+                                imageVector = CsIcons.Wallet,
                                 contentDescription = null
                             )
                         },
@@ -113,7 +108,7 @@ internal fun HomeScreen(
                     ListItem(
                         leadingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.TrendingUp,
+                                imageVector = CsIcons.TrendingUp,
                                 contentDescription = null,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -122,7 +117,7 @@ internal fun HomeScreen(
                         supportingContent = { Text(text = "Доходы") },
                         trailingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.ChevronRight,
+                                imageVector = CsIcons.ArrowRight,
                                 contentDescription = null
                             )
                         },
@@ -139,7 +134,7 @@ internal fun HomeScreen(
                     ListItem(
                         leadingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.TrendingDown,
+                                imageVector = CsIcons.TrendingDown,
                                 contentDescription = null,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -148,7 +143,7 @@ internal fun HomeScreen(
                         supportingContent = { Text(text = "Расходы") },
                         trailingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.ChevronRight,
+                                imageVector = CsIcons.ArrowRight,
                                 contentDescription = null
                             )
                         },
