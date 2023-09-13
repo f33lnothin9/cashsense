@@ -1,7 +1,7 @@
 [versions]
 androidGradlePlugin = "8.3.0-alpha03"
 androidxComposeCompiler = "1.5.3"
-activityCompose = "1.8.0-alpha07"
+activityCompose = "1.8.0-beta01"
 coroutines = "1.7.3"
 composeBom = "2023.09.00"
 firebaseBom = "32.2.3"
@@ -13,10 +13,10 @@ hilt = "2.48"
 hiltNavigation = "1.0.0"
 kotlin = "1.9.10"
 ksp = "1.9.10-1.0.13"
-lifecycle = "2.6.1"
+lifecycle = "2.6.2"
 lottie = "6.1.0"
 material3 = "1.2.0-alpha07"
-navigation = "2.7.1"
+navigation = "2.7.2"
 room = "2.5.2"
 
 [libraries]
