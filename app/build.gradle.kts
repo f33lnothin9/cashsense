@@ -98,6 +98,9 @@ dependencies {
     // Room
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    // Kotlin Datetime
+    implementation(libs.kotlinx.datetime)
 }
 
 ksp {
