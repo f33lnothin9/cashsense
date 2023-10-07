@@ -38,6 +38,9 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
     buildFeatures {
         compose = true
     }
