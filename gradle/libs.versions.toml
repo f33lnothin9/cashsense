@@ -1,5 +1,5 @@
 [versions]
-androidGradlePlugin = "8.3.0-alpha06"
+androidGradlePlugin = "8.3.0-alpha07"
 androidxComposeCompiler = "1.5.3"
 activityCompose = "1.8.0-rc01"
 coroutines = "1.7.3"
@@ -16,7 +16,7 @@ ksp = "1.9.10-1.0.13"
 lifecycle = "2.6.2"
 lottie = "6.1.0"
 material3 = "1.2.0-alpha09"
-navigation = "2.7.3"
+navigation = "2.7.4"
 room = "2.5.2"
 
 [libraries]
