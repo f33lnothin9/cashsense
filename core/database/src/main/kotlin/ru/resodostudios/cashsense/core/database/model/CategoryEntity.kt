@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.resodostudios.cashsense.core.model.data.Category
 
 @Entity(
     tableName = "categories",

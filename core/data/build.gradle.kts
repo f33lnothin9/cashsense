@@ -14,9 +14,8 @@ android {
 }
 
 dependencies {
-    //implementation(projects.core.analytics)
     //implementation(projects.core.common)
-    //implementation(projects.core.database)
+    implementation(projects.core.database)
     //implementation(projects.core.datastore)
     implementation(projects.core.model)
     implementation(libs.androidx.core.ktx)

@@ -39,6 +39,7 @@ android {
 dependencies {
 
     implementation(projects.core.data)
+    implementation(projects.core.model)
 
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -66,26 +67,14 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
 
     // Lottie
     implementation(libs.lottie.compose)
 
-    // Room
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
     // Kotlin Datetime
     implementation(libs.kotlinx.datetime)
-}
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.generateKotlin", "$projectDir/build/generated/ksp/main/kotlin")
+    implementation(libs.androidx.hilt.navigation.compose)
 }
