@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -36,7 +35,7 @@ internal fun CategoryRoute(
 @Composable
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
-    onDelete: (Category) -> Unit
+    onDelete: (ru.resodostudios.cashsense.core.model.data.Category) -> Unit
 ) {
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
@@ -64,7 +63,7 @@ internal fun CategoriesScreen(
 
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
-    onDelete: (Category) -> Unit
+    onDelete: (ru.resodostudios.cashsense.core.model.data.Category) -> Unit
 ) {
     when (categoriesState) {
         CategoriesUiState.Loading -> Unit

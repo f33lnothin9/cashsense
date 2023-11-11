@@ -17,7 +17,7 @@ data class TransactionEntity(
     val date: LocalDateTime
 )
 
-fun TransactionEntity.asExternalModel() = Transaction(
+fun TransactionEntity.asExternalModel() = ru.resodostudios.cashsense.core.model.data.Transaction(
     id = id,
     description = description,
     category = category,

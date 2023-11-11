@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -38,7 +37,7 @@ internal fun TransactionsRoute(
 @Composable
 internal fun TransactionsScreen(
     transactionsState: TransactionsUiState,
-    onDelete: (Transaction) -> Unit
+    onDelete: (ru.resodostudios.cashsense.core.model.data.Transaction) -> Unit
 ) {
     when (transactionsState) {
         TransactionsUiState.Loading -> LoadingState()
@@ -65,8 +64,8 @@ internal fun TransactionsScreen(
 }
 
 private fun LazyGridScope.transactions(
-    transactions: List<Transaction>,
-    onDelete: (Transaction) -> Unit
+    transactions: List<ru.resodostudios.cashsense.core.model.data.Transaction>,
+    onDelete: (ru.resodostudios.cashsense.core.model.data.Transaction) -> Unit
 ) {
     items(transactions) { transaction ->
         ListItem(

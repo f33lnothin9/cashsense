@@ -18,7 +18,7 @@ dependencies {
     //implementation(projects.core.common)
     //implementation(projects.core.database)
     //implementation(projects.core.datastore)
-    //implementation(projects.core.model)
+    implementation(projects.core.model)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.datetime)

@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -21,7 +20,7 @@ class TransactionsViewModel @Inject constructor(
 
     val transactionsUiState: SharedFlow<TransactionsUiState> =
         transactionsRepository.getTransactions()
-            .map<List<Transaction>, TransactionsUiState>(TransactionsUiState::Success)
+            .map<List<ru.resodostudios.cashsense.core.model.data.Transaction>, TransactionsUiState>(TransactionsUiState::Success)
             .onStart { emit(TransactionsUiState.Loading) }
             .stateIn(
                 scope = viewModelScope,
@@ -32,7 +31,7 @@ class TransactionsViewModel @Inject constructor(
     fun upsertTransactions(category: String?, description: String?, value: Int, date: LocalDateTime) {
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(
-                Transaction(
+                ru.resodostudios.cashsense.core.model.data.Transaction(
                     category = category,
                     description = description,
                     value = value,
@@ -42,7 +41,7 @@ class TransactionsViewModel @Inject constructor(
         }
     }
 
-    fun deleteCategory(transaction: Transaction) {
+    fun deleteCategory(transaction: ru.resodostudios.cashsense.core.model.data.Transaction) {
         viewModelScope.launch {
             transactionsRepository.deleteTransaction(transaction)
         }
@@ -54,6 +53,6 @@ sealed interface TransactionsUiState {
     data object Loading : TransactionsUiState
 
     data class Success(
-        val transactions: List<Transaction>
+        val transactions: List<ru.resodostudios.cashsense.core.model.data.Transaction>
     ) : TransactionsUiState
 }

@@ -14,7 +14,7 @@ data class CategoryEntity(
     val icon: Int?
 )
 
-fun CategoryEntity.asExternalModel() = Category(
+fun CategoryEntity.asExternalModel() = ru.resodostudios.cashsense.core.model.data.Category(
     id = id,
     title = title,
     icon = icon
