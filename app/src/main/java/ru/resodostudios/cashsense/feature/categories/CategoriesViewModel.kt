@@ -19,7 +19,7 @@ class CategoriesViewModel @Inject constructor(
 
     val categoriesUiState: StateFlow<CategoriesUiState> =
         categoriesRepository.getCategories()
-            .map<List<ru.resodostudios.cashsense.core.model.data.Category>, CategoriesUiState>(CategoriesUiState::Success)
+            .map<List<Category>, CategoriesUiState>(CategoriesUiState::Success)
             .onStart { emit(CategoriesUiState.Loading) }
             .stateIn(
                 scope = viewModelScope,
@@ -30,7 +30,7 @@ class CategoriesViewModel @Inject constructor(
     fun upsertCategory(name: String) {
         viewModelScope.launch {
             categoriesRepository.upsertCategory(
-                ru.resodostudios.cashsense.core.model.data.Category(
+                Category(
                     id = null,
                     title = name,
                     icon = null
@@ -39,7 +39,7 @@ class CategoriesViewModel @Inject constructor(
         }
     }
 
-    fun deleteCategory(category: ru.resodostudios.cashsense.core.model.data.Category) {
+    fun deleteCategory(category: Category) {
         viewModelScope.launch {
             categoriesRepository.deleteCategory(category)
         }
@@ -51,6 +51,6 @@ sealed interface CategoriesUiState {
     data object Loading : CategoriesUiState
 
     data class Success(
-        val categories: List<ru.resodostudios.cashsense.core.model.data.Category>
+        val categories: List<Category>
     ) : CategoriesUiState
 }

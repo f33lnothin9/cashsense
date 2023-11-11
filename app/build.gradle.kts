@@ -41,9 +41,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
     implementation(projects.core.model)
-
-    implementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    implementation(projects.core.ui)
 
     // Material Design 3
     implementation(libs.androidx.compose.material3)
@@ -66,9 +64,6 @@ dependencies {
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
-
-    // Lottie
-    implementation(libs.lottie.compose)
 
     // Kotlin Datetime
     implementation(libs.kotlinx.datetime)

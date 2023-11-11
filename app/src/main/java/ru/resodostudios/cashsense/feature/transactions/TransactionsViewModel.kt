@@ -20,7 +20,7 @@ class TransactionsViewModel @Inject constructor(
 
     val transactionsUiState: SharedFlow<TransactionsUiState> =
         transactionsRepository.getTransactions()
-            .map<List<ru.resodostudios.cashsense.core.model.data.Transaction>, TransactionsUiState>(TransactionsUiState::Success)
+            .map<List<Transaction>, TransactionsUiState>(TransactionsUiState::Success)
             .onStart { emit(TransactionsUiState.Loading) }
             .stateIn(
                 scope = viewModelScope,
@@ -31,7 +31,7 @@ class TransactionsViewModel @Inject constructor(
     fun upsertTransactions(category: String?, description: String?, value: Int, date: LocalDateTime) {
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(
-                ru.resodostudios.cashsense.core.model.data.Transaction(
+                Transaction(
                     category = category,
                     description = description,
                     value = value,
@@ -41,7 +41,7 @@ class TransactionsViewModel @Inject constructor(
         }
     }
 
-    fun deleteCategory(transaction: ru.resodostudios.cashsense.core.model.data.Transaction) {
+    fun deleteCategory(transaction: Transaction) {
         viewModelScope.launch {
             transactionsRepository.deleteTransaction(transaction)
         }
@@ -53,6 +53,6 @@ sealed interface TransactionsUiState {
     data object Loading : TransactionsUiState
 
     data class Success(
-        val transactions: List<ru.resodostudios.cashsense.core.model.data.Transaction>
+        val transactions: List<Transaction>
     ) : TransactionsUiState
 }
