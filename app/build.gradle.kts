@@ -1,21 +1,15 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.firebase.perf)
+    alias(libs.plugins.cashsense.android.application)
+    alias(libs.plugins.cashsense.android.application.compose)
+    alias(libs.plugins.cashsense.android.hilt)
+    alias(libs.plugins.cashsense.android.application.firebase)
 }
 
 android {
     namespace = "ru.resodostudios.cashsense"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        minSdk = 24
-        targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
 
@@ -35,18 +29,6 @@ android {
             )
         }
     }
-    kotlin {
-        jvmToolchain(19)
-    }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -55,13 +37,6 @@ android {
 }
 
 dependencies {
-
-    coreLibraryDesugaring(libs.android.desugarJdkLibs)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.perf)
 
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))

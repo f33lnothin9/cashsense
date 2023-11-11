@@ -1,4 +1,4 @@
-package com.google.samples.apps.nowinandroid
+package ru.resodostudios.cashsense
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog

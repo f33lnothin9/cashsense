@@ -1,4 +1,4 @@
-import com.google.samples.apps.nowinandroid.configureKotlinJvm
+import ru.resodostudios.cashsense.configureKotlinJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -7,7 +7,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.jvm")
-                apply("nowinandroid.android.lint")
+                apply("cashsense.android.lint")
             }
             configureKotlinJvm()
         }

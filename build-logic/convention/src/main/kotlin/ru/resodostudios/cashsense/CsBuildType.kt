@@ -1,4 +1,4 @@
-package com.google.samples.apps.nowinandroid
+package ru.resodostudios.cashsense
 
 /**
  * This is shared between :app and :benchmarks module to provide configurations type safety.

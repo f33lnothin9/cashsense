@@ -1,4 +1,4 @@
-package com.google.samples.apps.nowinandroid
+package ru.resodostudios.cashsense
 
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
