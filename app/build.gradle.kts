@@ -39,23 +39,19 @@ android {
 dependencies {
 
     implementation(projects.core.data)
+    implementation(projects.core.designsystem)
     implementation(projects.core.model)
 
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     // Material Design 3
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material3)
 
-    // UI Tests
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.test.manifest)
+    debugImplementation(libs.androidx.compose.ui.testManifest)
 
     // Integration with activities
     implementation(libs.androidx.activity.compose)
-
-    // Full set of material icons
-    implementation(libs.material.icons)
 
     // Integration with ViewModels
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -63,6 +59,7 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -75,6 +72,4 @@ dependencies {
 
     // Kotlin Datetime
     implementation(libs.kotlinx.datetime)
-
-    implementation(libs.androidx.hilt.navigation.compose)
 }
