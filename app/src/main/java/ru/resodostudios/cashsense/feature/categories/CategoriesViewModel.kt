@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    private val categoriesRepository: CategoriesRepository
+    private val categoriesRepository: ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 ) : ViewModel() {
 
     val categoriesUiState: StateFlow<CategoriesUiState> =

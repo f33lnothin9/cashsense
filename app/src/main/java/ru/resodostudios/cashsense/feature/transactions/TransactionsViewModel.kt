@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
-    private val transactionsRepository: TransactionsRepository
+    private val transactionsRepository: ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 ) : ViewModel() {
 
     val transactionsUiState: SharedFlow<TransactionsUiState> =

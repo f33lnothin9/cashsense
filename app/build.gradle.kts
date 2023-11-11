@@ -38,6 +38,8 @@ android {
 
 dependencies {
 
+    implementation(projects.core.data)
+
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
