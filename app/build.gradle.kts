@@ -36,7 +36,7 @@ android {
         }
     }
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(19)
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -110,4 +110,5 @@ dependencies {
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.generateKotlin", "$projectDir/build/generated/ksp/main/kotlin")
 }
