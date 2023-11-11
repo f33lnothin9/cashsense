@@ -10,3 +10,4 @@
 local.properties
 app/google-services.json
 app/release
+/.idea/
