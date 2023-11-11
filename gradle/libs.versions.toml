@@ -46,6 +46,13 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -54,3 +61,16 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
+
+# Plugins defined by this project
+cashsense-android-application = { id = "cashsense.android.application", version = "unspecified" }
+cashsense-android-application-compose = { id = "cashsense.android.application.compose", version = "unspecified" }
+cashsense-android-application-firebase = { id = "cashsense.android.application.firebase", version = "unspecified" }
+cashsense-android-feature = { id = "cashsense.android.feature", version = "unspecified" }
+cashsense-android-hilt = { id = "cashsense.android.hilt", version = "unspecified" }
+cashsense-android-library = { id = "cashsense.android.library", version = "unspecified" }
+cashsense-android-library-compose = { id = "cashsense.android.library.compose", version = "unspecified" }
+cashsense-android-lint = { id = "cashsense.android.lint", version = "unspecified" }
+cashsense-android-room = { id = "cashsense.android.room", version = "unspecified" }
+cashsense-android-test = { id = "cashsense.android.test", version = "unspecified" }
+cashsense-jvm-library = { id = "cashsense.jvm.library", version = "unspecified" }
