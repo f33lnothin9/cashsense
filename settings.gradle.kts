@@ -23,3 +23,5 @@ include(":core:data")
 include(":core:designsystem")
 include(":core:model")
 include(":core:ui")
+
+include(":feature:subscriptions")

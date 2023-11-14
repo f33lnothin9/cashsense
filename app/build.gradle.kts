@@ -51,9 +51,8 @@ dependencies {
     // Integration with activities
     implementation(libs.androidx.activity.compose)
 
-    // Integration with ViewModels
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewModelCompose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
