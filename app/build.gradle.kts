@@ -45,6 +45,7 @@ dependencies {
 
     implementation(projects.feature.home)
     implementation(projects.feature.subscriptions)
+    implementation(projects.feature.transactions)
 
     // Material Design 3
     implementation(libs.androidx.compose.material3)

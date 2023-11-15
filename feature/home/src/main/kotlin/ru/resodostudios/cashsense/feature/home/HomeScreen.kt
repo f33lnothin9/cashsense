@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsUiState
@@ -140,7 +139,7 @@ internal fun HomeScreen(
 
                 item {
                     Text(
-                        text = stringResource(id = R.string.recent_transactions),
+                        text = stringResource(R.string.recent_transactions),
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelLarge

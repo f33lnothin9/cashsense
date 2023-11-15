@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.transactions)
+
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.activity.compose)
 }

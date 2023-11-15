@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import java.time.LocalDateTime
@@ -37,7 +37,7 @@ internal fun TransactionsRoute(
 @Composable
 internal fun TransactionsScreen(
     transactionsState: TransactionsUiState,
-    onDelete: (ru.resodostudios.cashsense.core.model.data.Transaction) -> Unit
+    onDelete: (Transaction) -> Unit
 ) {
     when (transactionsState) {
         TransactionsUiState.Loading -> LoadingState()
@@ -64,8 +64,8 @@ internal fun TransactionsScreen(
 }
 
 private fun LazyGridScope.transactions(
-    transactions: List<ru.resodostudios.cashsense.core.model.data.Transaction>,
-    onDelete: (ru.resodostudios.cashsense.core.model.data.Transaction) -> Unit
+    transactions: List<Transaction>,
+    onDelete: (Transaction) -> Unit
 ) {
     items(transactions) { transaction ->
         ListItem(

@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 
@@ -35,7 +36,7 @@ internal fun CategoryRoute(
 @Composable
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
-    onDelete: (ru.resodostudios.cashsense.core.model.data.Category) -> Unit
+    onDelete: (Category) -> Unit
 ) {
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
@@ -63,7 +64,7 @@ internal fun CategoriesScreen(
 
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
-    onDelete: (ru.resodostudios.cashsense.core.model.data.Category) -> Unit
+    onDelete: (Category) -> Unit
 ) {
     when (categoriesState) {
         CategoriesUiState.Loading -> Unit

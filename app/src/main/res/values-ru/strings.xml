@@ -11,7 +11,6 @@
     <string name="name">Название</string>
     <string name="add">Добавить</string>
     <string name="cancel">Отменить</string>
-    <string name="recent_transactions">Недавние транзакции</string>
     <string name="transactions_empty">Ничего в Транзакциях</string>
     <string name="categories_empty">Ничего в Категориях</string>
     <string name="new_transaction">Новая транзакция</string>

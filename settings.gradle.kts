@@ -26,3 +26,4 @@ include(":core:ui")
 
 include(":feature:home")
 include(":feature:subscriptions")
+include(":feature:transactions")
