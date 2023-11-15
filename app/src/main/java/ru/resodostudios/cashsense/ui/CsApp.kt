@@ -56,7 +56,7 @@ fun CsApp(
     }
 
     if (showNewCategoryDialog) {
-        CategoryDialog(
+        ru.resodostudios.cashsense.feature.categories.CategoryDialog(
             onDismiss = { showNewCategoryDialog = false }
         )
     }

@@ -25,5 +25,6 @@ include(":core:model")
 include(":core:ui")
 
 include(":feature:home")
+include(":feature:categories")
 include(":feature:subscriptions")
 include(":feature:transactions")

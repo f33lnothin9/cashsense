@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 
 @Composable
@@ -48,11 +47,11 @@ fun CategoryDialog(
         onDismissRequest = onDismiss,
         icon = {
             Icon(
-                painter = painterResource(id = CsIcons.Category),
+                painter = painterResource(CsIcons.Category),
                 contentDescription = null
             )
         },
-        title = { Text(text = stringResource(id = R.string.new_category)) },
+        title = { Text(text = stringResource(R.string.new_category)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -63,7 +62,7 @@ fun CategoryDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
-                    label = { Text(text = stringResource(id = R.string.name)) },
+                    label = { Text(text = stringResource(R.string.name)) },
                     maxLines = 1
                 )
             }
@@ -74,14 +73,14 @@ fun CategoryDialog(
                     onConfirm(name)
                 }
             ) {
-                Text(text = stringResource(id = R.string.add))
+                Text(text = stringResource(R.string.add))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(text = stringResource(id = R.string.cancel))
+                Text(text = stringResource(R.string.cancel))
             }
         }
     )

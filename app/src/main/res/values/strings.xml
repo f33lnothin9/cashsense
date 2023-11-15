@@ -8,11 +8,5 @@
 
     <string name="top_app_bar_action_icon_description">Settings</string>
 
-    <string name="new_category">New category</string>
 
-    <string name="name">Name</string>
-
-
-    <string name="transactions_empty">Nothing in Transactions</string>
-    <string name="categories_empty">Nothing in Categories</string>
 </resources>

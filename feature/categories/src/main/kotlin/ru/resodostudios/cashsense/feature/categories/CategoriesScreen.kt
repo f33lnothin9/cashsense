@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -57,7 +56,7 @@ internal fun CategoriesScreen(
                 }
             }
         } else {
-            EmptyState(messageId = R.string.categories_empty, animationId = R.raw.anim_empty)
+            EmptyState(messageId = R.string.categories_empty, animationId = R.raw.anim_empty_categories)
         }
     }
 }
