@@ -46,7 +46,6 @@ internal fun HomeRoute(
 internal fun HomeScreen(
     transactionsState: TransactionsUiState
 ) {
-
     var totalBalance by rememberSaveable { mutableIntStateOf(0) }
     var expenses by rememberSaveable { mutableIntStateOf(0) }
     var income by rememberSaveable { mutableIntStateOf(0) }
