@@ -12,12 +12,12 @@ import ru.resodostudios.cashsense.feature.categories.navigation.categoriesNaviga
 import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.homeNavigationRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
-import ru.resodostudios.cashsense.feature.transactions.navigation.navigateToTransactions
-import ru.resodostudios.cashsense.feature.transactions.navigation.transactionsNavigationRoute
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscriptions
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsNavigationRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.TRANSACTIONS
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
 @Composable
 fun rememberCsAppState(
@@ -43,8 +43,8 @@ class CsAppState(
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
             homeNavigationRoute -> HOME
-            transactionsNavigationRoute -> TRANSACTIONS
             categoriesNavigationRoute -> CATEGORIES
+            subscriptionsNavigationRoute -> SUBSCRIPTIONS
             else -> null
         }
 
@@ -61,8 +61,8 @@ class CsAppState(
 
         when (topLevelDestination) {
             HOME -> navController.navigateToHome(topLevelNavOptions)
-            TRANSACTIONS -> navController.navigateToTransactions(topLevelNavOptions)
             CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
+            SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
         }
     }
 }

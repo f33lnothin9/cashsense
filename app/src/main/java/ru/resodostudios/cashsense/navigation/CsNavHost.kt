@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.categories.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.homeNavigationRoute
 import ru.resodostudios.cashsense.feature.home.navigation.homeScreen
-import ru.resodostudios.cashsense.feature.transactions.navigation.transactionsScreen
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsScreen
 import ru.resodostudios.cashsense.ui.CsAppState
 
 @Composable
@@ -22,7 +22,7 @@ fun CsNavHost(
         modifier = modifier,
     ) {
         homeScreen()
-        transactionsScreen()
         categoriesScreen()
+        subscriptionsScreen()
     }
 }

@@ -4,6 +4,7 @@
     <string name="home">Home</string>
     <string name="transactions">Transactions</string>
     <string name="categories">Categories</string>
+    <string name="subscriptions">Subscriptions</string>
 
     <string name="top_app_bar_action_icon_description">Settings</string>
 

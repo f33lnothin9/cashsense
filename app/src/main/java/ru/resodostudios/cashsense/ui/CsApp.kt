@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -28,7 +29,7 @@ import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.TRANSACTIONS
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 
 @Composable
 fun CsApp(
@@ -45,8 +46,8 @@ fun CsApp(
     }
 
     val showFab =
-        appState.topLevelDestinations.takeLast(2).any { it == appState.currentTopLevelDestination }
-    val isTransactionsDestination = appState.currentTopLevelDestination == TRANSACTIONS
+        appState.topLevelDestinations.take(2).any { it == appState.currentTopLevelDestination }
+    val isHomeDestination = appState.currentTopLevelDestination == HOME
 
     if (showNewTransactionDialog) {
         TransactionDialog(
@@ -73,7 +74,7 @@ fun CsApp(
             if (showFab) {
                 FloatingActionButton(
                     onClick = {
-                        if (isTransactionsDestination) {
+                        if (isHomeDestination) {
                             showNewTransactionDialog = true
                         } else {
                             showNewCategoryDialog = true
@@ -95,9 +96,7 @@ fun CsApp(
                 CsTopAppBar(
                     titleRes = destination.titleTextId,
                     actionIcon = CsIcons.Settings,
-                    actionIconContentDescription = stringResource(
-                        id = R.string.top_app_bar_action_icon_description,
-                    ),
+                    actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
                     onActionClick = { showSettingsDialog = true }
                 )
             }
@@ -121,13 +120,13 @@ private fun CsBottomBar(
                 onClick = { onNavigateToDestination(destination) },
                 icon = {
                     Icon(
-                        imageVector = destination.unselectedIcon,
+                        painter = painterResource(id = destination.unselectedIcon),
                         contentDescription = null
                     )
                 },
                 selectedIcon = {
                     Icon(
-                        imageVector = destination.selectedIcon,
+                        painter = painterResource(id = destination.selectedIcon),
                         contentDescription = null
                     )
                 },

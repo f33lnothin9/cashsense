@@ -43,6 +43,8 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.ui)
 
+    implementation(projects.feature.subscriptions)
+
     // Material Design 3
     implementation(libs.androidx.compose.material3)
 

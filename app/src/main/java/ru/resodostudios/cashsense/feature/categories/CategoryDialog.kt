@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,12 @@ fun CategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(CsIcons.Category, contentDescription = null) },
+        icon = {
+            Icon(
+                painter = painterResource(id = CsIcons.Category),
+                contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(id = R.string.new_category)) },
         text = {
             Column(
@@ -66,7 +72,6 @@ fun CategoryDialog(
             Button(
                 onClick = {
                     onConfirm(name)
-
                 }
             ) {
                 Text(text = stringResource(id = R.string.add))

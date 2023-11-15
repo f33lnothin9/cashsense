@@ -3,6 +3,7 @@
     <string name="home">Главная</string>
     <string name="transactions">Транзакции</string>
     <string name="categories">Категории</string>
+    <string name="subscriptions">Подписки</string>
 
     <string name="top_app_bar_action_icon_description">Настройки</string>
 
