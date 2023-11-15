@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.designsystem.theme
 
 import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -10,7 +11,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-val LightColors = lightColorScheme(
+val LightColorScheme = lightColorScheme(
     primary = lightPrimary,
     onPrimary = lightOnPrimary,
     primaryContainer = lightPrimaryContainer,
@@ -42,7 +43,7 @@ val LightColors = lightColorScheme(
     scrim = lightScrim,
 )
 
-val DarkColors = darkColorScheme(
+val DarkColorScheme = darkColorScheme(
     primary = darkPrimary,
     onPrimary = darkOnPrimary,
     primaryContainer = darkPrimaryContainer,
@@ -77,17 +78,16 @@ val DarkColors = darkColorScheme(
 @Composable
 fun CsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    disableDynamicTheming: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        !disableDynamicTheming && supportsDynamicTheming() -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColors
-        else -> LightColors
+        else -> if (darkTheme) DarkColorScheme else LightColorScheme
     }
 
     MaterialTheme(
@@ -96,3 +96,6 @@ fun CsTheme(
         content = content
     )
 }
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
+fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
