@@ -50,6 +50,7 @@ import com.google.samples.apps.nowinandroid.core.model.data.ThemeBrand.ANDROID
 import com.google.samples.apps.nowinandroid.core.model.data.ThemeBrand.DEFAULT
 import com.google.samples.apps.nowinandroid.core.ui.TrackScreenViewEvent
 import com.google.samples.apps.nowinandroid.feature.settings.R.string
+import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
