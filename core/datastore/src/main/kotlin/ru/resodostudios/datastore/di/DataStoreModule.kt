@@ -12,10 +12,10 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import ru.resodostudios.datastore.UserPreferencesSerializer
-import ru.resodostudios.flick.core.datastore.UserPreferences
-import ru.resodostudios.flick.core.network.Dispatcher
-import ru.resodostudios.flick.core.network.FlickDispatchers.IO
-import ru.resodostudios.flick.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.datastore.UserPreferences
+import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.network.FlickDispatchers.IO
+import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import javax.inject.Singleton
 
 @Module
