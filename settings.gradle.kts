@@ -19,6 +19,7 @@ rootProject.name = "cashsense"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":core:database")
+include(":core:datastore")
 include(":core:data")
 include(":core:designsystem")
 include(":core:model")
