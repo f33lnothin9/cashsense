@@ -1,15 +1,15 @@
-package ru.resodostudios.datastore
+package ru.resodostudios.cashsense.core.datastore
 
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.map
-import ru.resodostudios.cashsense.core.datastore.DarkThemeConfigProto
-import ru.resodostudios.cashsense.core.datastore.UserPreferences
-import ru.resodostudios.cashsense.core.datastore.copy
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.UserData
+import ru.resodostudios.flick.core.datastore.DarkThemeConfigProto
+import ru.resodostudios.flick.core.datastore.UserPreferences
+import ru.resodostudios.flick.core.datastore.copy
 import javax.inject.Inject
 
-class FlickPreferencesDataSource @Inject constructor(
+class CsPreferencesDataSource @Inject constructor(
     private val userPreferences: DataStore<UserPreferences>,
 ) {
     val userData = userPreferences.data

@@ -1,4 +1,4 @@
-package ru.resodostudios.datastore.di
+package ru.resodostudios.cashsense.datastore.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -11,7 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import ru.resodostudios.datastore.UserPreferencesSerializer
+import ru.resodostudios.cashsense.core.datastore.UserPreferencesSerializer
 import ru.resodostudios.cashsense.core.datastore.UserPreferences
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.network.FlickDispatchers.IO
