@@ -4,9 +4,6 @@ import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.map
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.UserData
-import ru.resodostudios.flick.core.datastore.DarkThemeConfigProto
-import ru.resodostudios.flick.core.datastore.UserPreferences
-import ru.resodostudios.flick.core.datastore.copy
 import javax.inject.Inject
 
 class CsPreferencesDataSource @Inject constructor(
