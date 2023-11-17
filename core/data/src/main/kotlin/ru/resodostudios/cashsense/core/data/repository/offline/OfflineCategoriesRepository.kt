@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.repository.impl
+package ru.resodostudios.cashsense.core.data.repository.offline
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -10,7 +10,7 @@ import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Category
 import javax.inject.Inject
 
-class CategoriesRepositoryImpl @Inject constructor(
+class OfflineCategoriesRepository @Inject constructor(
     private val dao: CategoryDao
 ) : CategoriesRepository {
 

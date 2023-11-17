@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.repository.impl
+package ru.resodostudios.cashsense.core.data.repository.offline
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -10,7 +10,7 @@ import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import javax.inject.Inject
 
-class TransactionsRepositoryImpl @Inject constructor(
+class OfflineTransactionsRepository @Inject constructor(
     private val dao: TransactionDao
 ) : TransactionsRepository {
 
