@@ -22,10 +22,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.R
-import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBar
-import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBarItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
@@ -67,7 +66,7 @@ fun CsApp(
     }
 
     if (showNewCategoryDialog) {
-        ru.resodostudios.cashsense.feature.categories.CategoryDialog(
+        CategoryDialog(
             onDismiss = { showNewCategoryDialog = false }
         )
     }
@@ -129,36 +128,6 @@ fun CsApp(
             CsNavHost(
                 appState = appState,
                 modifier = Modifier.padding(padding)
-            )
-        }
-    }
-}
-
-@Composable
-private fun CsBottomBar(
-    destinations: List<TopLevelDestination>,
-    onNavigateToDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?
-) {
-    CsNavigationBar {
-        destinations.forEach { destination ->
-            val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
-            CsNavigationBarItem(
-                selected = selected,
-                onClick = { onNavigateToDestination(destination) },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = destination.unselectedIcon),
-                        contentDescription = null
-                    )
-                },
-                selectedIcon = {
-                    Icon(
-                        painter = painterResource(id = destination.selectedIcon),
-                        contentDescription = null
-                    )
-                },
-                label = { Text(stringResource(destination.iconTextId)) }
             )
         }
     }
