@@ -1,10 +1,13 @@
 package ru.resodostudios.cashsense.feature.settings
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -20,16 +24,19 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
@@ -89,6 +96,8 @@ fun SettingsDialog(
                         )
                     }
                 }
+                HorizontalDivider(Modifier.padding(top = 12.dp))
+                LinksPanel()
             }
         },
         confirmButton = {
@@ -166,4 +175,25 @@ private fun SettingsDialogSectionTitle(text: String) {
         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
         color = MaterialTheme.colorScheme.primary
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun LinksPanel() {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(
+            space = 16.dp,
+            alignment = Alignment.CenterHorizontally,
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val context = LocalContext.current
+        TextButton(
+            onClick = {
+                context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+            }
+        ) {
+            Text(text = stringResource(string.licenses))
+        }
+    }
 }
