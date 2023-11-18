@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.cashsense.android.application.compose)
     alias(libs.plugins.cashsense.android.hilt)
     alias(libs.plugins.cashsense.android.application.firebase)
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
