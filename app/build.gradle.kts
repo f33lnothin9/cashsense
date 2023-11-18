@@ -48,8 +48,13 @@ dependencies {
     implementation(projects.feature.transactions)
     implementation(projects.feature.settings)
 
-    // Material Design 3
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.adaptive) {
+        this.isTransitive = false
+    }
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite) {
+        this.isTransitive = false
+    }
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 

@@ -1,7 +1,9 @@
 [versions]
 androidGradlePlugin = "8.3.0-alpha14"
-androidxComposeCompiler = "1.5.4"
 androidxAppCompat = "1.6.1"
+androidxComposeCompiler = "1.5.4"
+androidxComposeMaterial3Adaptive = "1.0.0-alpha01"
+androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha01"
 androidxDataStore = "1.0.0"
 androidxHiltNavigationCompose = "1.1.0"
 androidxLifecycle = "2.6.2"
@@ -42,6 +44,8 @@ androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "life
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
+androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3AdaptiveNavigationSuite" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
