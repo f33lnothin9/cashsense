@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBar
 import ru.resodostudios.cashsense.core.designsystem.component.CsNavigationBarItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.feature.settings.SettingsDialog
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -47,6 +48,12 @@ fun CsApp(
     val showFab =
         appState.topLevelDestinations.take(2).any { it == appState.currentTopLevelDestination }
     val isHomeDestination = appState.currentTopLevelDestination == HOME
+
+    if (showSettingsDialog) {
+        SettingsDialog(
+            onDismiss = { showSettingsDialog = false }
+        )
+    }
 
     if (showNewTransactionDialog) {
         TransactionDialog(

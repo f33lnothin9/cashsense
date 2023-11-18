@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="settings_title">Settings</string>
+    <string name="loading">Loading…</string>
+    <string name="dynamic_color">Dynamic Color</string>
+    <string name="theme">Theme</string>
+    <string name="system">System</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="dismiss_dialog_button_text">OK</string>
 </resources>
