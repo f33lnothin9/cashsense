@@ -116,29 +116,12 @@ private fun ColumnScope.SettingsPanel(
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
     SettingsDialogSectionTitle(text = stringResource(string.theme))
-    val options = listOf(
-        stringResource(string.system),
-        stringResource(string.light),
-        stringResource(string.dark)
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .fillMaxWidth()
-    ) {
-        options.forEachIndexed { index, label ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
-                selected = settings.darkThemeConfig == DarkThemeConfig.entries[index]
-            ) {
-                Text(label)
-            }
-        }
-    }
+
     AnimatedVisibility(visible = supportDynamicColor) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -154,6 +137,25 @@ private fun ColumnScope.SettingsPanel(
             )
         }
     }
+
+    val options = listOf(
+        stringResource(string.system),
+        stringResource(string.light),
+        stringResource(string.dark)
+    )
+    SingleChoiceSegmentedButtonRow(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
+                selected = settings.darkThemeConfig == DarkThemeConfig.entries[index]
+            ) {
+                Text(label)
+            }
+        }
+    }
 }
 
 @Composable
@@ -162,5 +164,6 @@ private fun SettingsDialogSectionTitle(text: String) {
         text = text,
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+        color = MaterialTheme.colorScheme.primary
     )
 }
