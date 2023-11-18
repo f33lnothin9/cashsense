@@ -2,8 +2,10 @@ package ru.resodostudios.cashsense.feature.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -11,9 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -22,6 +22,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -70,7 +71,6 @@ fun SettingsDialog(
             )
         },
         text = {
-            HorizontalDivider()
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 when (settingsUiState) {
                     Loading -> {
@@ -89,7 +89,6 @@ fun SettingsDialog(
                         )
                     }
                 }
-                HorizontalDivider(Modifier.padding(top = 8.dp))
             }
         },
         confirmButton = {
@@ -116,23 +115,6 @@ private fun ColumnScope.SettingsPanel(
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    AnimatedVisibility(visible = supportDynamicColor) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(string.dynamic_color),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            },
-            trailingContent = {
-                Switch(
-                    checked = settings.useDynamicColor,
-                    onCheckedChange = { onChangeDynamicColorPreference(it) }
-                )
-            }
-        )
-    }
     SettingsDialogSectionTitle(text = stringResource(string.theme))
     val options = listOf(
         stringResource(string.system),
@@ -141,8 +123,8 @@ private fun ColumnScope.SettingsPanel(
     )
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier
+            .padding(bottom = 8.dp)
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
     ) {
         options.forEachIndexed { index, label ->
             SegmentedButton(
@@ -154,13 +136,31 @@ private fun ColumnScope.SettingsPanel(
             }
         }
     }
+    AnimatedVisibility(visible = supportDynamicColor) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(string.dynamic_color),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Switch(
+                checked = settings.useDynamicColor,
+                onCheckedChange = { onChangeDynamicColorPreference(it) }
+            )
+        }
+    }
 }
 
 @Composable
 private fun SettingsDialogSectionTitle(text: String) {
     Text(
         text = text,
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.typography.labelLarge,
         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
     )
 }

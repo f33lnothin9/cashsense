@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+
         setContent {
             val darkTheme = shouldUseDarkTheme(uiState)
 
