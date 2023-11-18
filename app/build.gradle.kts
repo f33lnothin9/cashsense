@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite) {
         this.isTransitive = false
     }
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.window.manager)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 

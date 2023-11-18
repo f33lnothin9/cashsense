@@ -1,7 +1,11 @@
 package ru.resodostudios.cashsense.ui
 
+import androidx.compose.material3.adaptive.navigation.suite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
+import androidx.compose.material3.adaptive.navigation.suite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -21,19 +25,23 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
 @Composable
 fun rememberCsAppState(
+    windowSize: DpSize,
     navController: NavHostController = rememberNavController()
 ): CsAppState {
 
     return remember(
+        windowSize,
         navController
     ) {
         CsAppState(
+            windowSize,
             navController
         )
     }
 }
 
 class CsAppState(
+    private val windowSize: DpSize,
     val navController: NavHostController
 ) {
     val currentDestination: NavDestination?
@@ -49,6 +57,18 @@ class CsAppState(
         }
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
+
+    @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
+    val navigationSuiteType: NavigationSuiteType
+        @Composable get() {
+            return if (windowSize.width > 1240.dp) {
+                NavigationSuiteType.NavigationDrawer
+            } else if (windowSize.width >= 600.dp) {
+                NavigationSuiteType.NavigationRail
+            } else {
+                NavigationSuiteType.NavigationBar
+            }
+        }
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         val topLevelNavOptions = navOptions {

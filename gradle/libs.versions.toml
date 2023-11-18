@@ -5,11 +5,12 @@ androidxComposeCompiler = "1.5.4"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha01"
 androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha01"
 androidxDataStore = "1.0.0"
+androidDesugarJdkLibs = "2.0.4"
 androidxHiltNavigationCompose = "1.1.0"
 androidxLifecycle = "2.6.2"
 activityCompose = "1.8.0"
 androidxCore = "1.12.0"
-androidDesugarJdkLibs = "2.0.4"
+androidxWindowManager = "1.1.0"
 coroutines = "1.7.3"
 composeBom = "2023.10.01"
 firebaseBom = "32.6.0"
@@ -46,7 +47,7 @@ androidx-compose-material-iconsExtended = { group = "androidx.compose.material",
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3AdaptiveNavigationSuite" }
-androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "material3" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
@@ -54,6 +55,7 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+androidx-window-manager = { module = "androidx.window:window", version.ref = "androidxWindowManager" }
 google-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "googleOss" }
 google-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "googleOssPlugin" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
