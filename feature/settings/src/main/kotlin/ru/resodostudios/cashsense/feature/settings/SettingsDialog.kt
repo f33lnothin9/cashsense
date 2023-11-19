@@ -40,6 +40,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.settings.R.string
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
@@ -80,12 +81,7 @@ fun SettingsDialog(
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 when (settingsUiState) {
-                    Loading -> {
-                        Text(
-                            text = stringResource(string.loading),
-                            modifier = Modifier.padding(vertical = 16.dp),
-                        )
-                    }
+                    Loading -> LoadingState()
 
                     is Success -> {
                         SettingsPanel(
