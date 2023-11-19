@@ -29,6 +29,8 @@ import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
+import ru.resodostudios.cashsense.feature.categories.R as categoriesR
+import ru.resodostudios.cashsense.feature.transactions.R as transactionsR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
@@ -123,7 +125,11 @@ fun CsApp(
                             contentDescription = null,
                             modifier = Modifier.padding(end = 16.dp)
                         )
-                        Text(text = "New transaction")
+                        if (isHomeDestination) {
+                            Text(text = stringResource(transactionsR.string.new_transaction))
+                        } else {
+                            Text(text = stringResource(categoriesR.string.new_category))
+                        }
                     }
                 }
             },
