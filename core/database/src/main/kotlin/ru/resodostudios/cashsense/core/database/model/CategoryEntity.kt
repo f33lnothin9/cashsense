@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.resodostudios.cashsense.core.model.data.Category
 
 @Entity(
     tableName = "categories",
@@ -13,7 +14,7 @@ data class CategoryEntity(
     val icon: Int?
 )
 
-fun CategoryEntity.asExternalModel() = ru.resodostudios.cashsense.core.model.data.Category(
+fun CategoryEntity.asExternalModel() = Category(
     id = id,
     title = title,
     icon = icon

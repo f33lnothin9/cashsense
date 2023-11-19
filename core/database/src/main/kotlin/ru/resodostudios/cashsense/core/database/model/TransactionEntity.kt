@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.time.LocalDateTime
 
 @Entity(
@@ -16,7 +17,7 @@ data class TransactionEntity(
     val date: LocalDateTime
 )
 
-fun TransactionEntity.asExternalModel() = ru.resodostudios.cashsense.core.model.data.Transaction(
+fun TransactionEntity.asExternalModel() = Transaction(
     id = id,
     description = description,
     category = category,
