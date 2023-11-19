@@ -10,19 +10,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -77,9 +73,7 @@ internal fun HomeScreen(
                         },
                         headlineContent = { Text(text = "$totalBalance ₽") },
                         supportingContent = { Text(text = "Итоговый баланс") },
-                        trailingContent = {
-                            WalletDifference(difference = income + expenses)
-                        },
+                        trailingContent = { },
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
@@ -158,34 +152,6 @@ internal fun HomeScreen(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun WalletDifference(difference: Int) {
-    var text by rememberSaveable { mutableStateOf("") }
-    text = if (difference > 0) "+$difference ₽" else "$difference ₽"
-    if (difference != 0) {
-        Surface(
-            modifier = Modifier.clip(RoundedCornerShape(12.dp)),
-            color = MaterialTheme.colorScheme.secondaryContainer
-        ) {
-            Text(
-                text = text,
-                modifier = Modifier
-                    .padding(
-                        start = 8.dp,
-                        top = 4.dp,
-                        end = 8.dp,
-                        bottom = 4.dp
-                    ),
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 1,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
         }
     }
 }
