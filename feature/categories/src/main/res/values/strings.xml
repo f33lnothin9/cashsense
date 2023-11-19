@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="categories">Categories</string>
     <string name="new_category">New category</string>
     <string name="name">Name</string>
     <string name="categories_empty">Nothing in Categories</string>

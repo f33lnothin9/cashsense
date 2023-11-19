@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="categories">Категории</string>
     <string name="new_category">Новая категория</string>
     <string name="name">Название</string>
     <string name="categories_empty">В Категориях пусто</string>
