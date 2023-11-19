@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Delete
@@ -26,4 +27,5 @@ object CsIcons {
     val TrendingDown = Icons.AutoMirrored.Outlined.TrendingDown
     val ArrowRight = Icons.Outlined.ChevronRight
     val Wallet = Icons.Outlined.AccountBalanceWallet
+    val Add = Icons.Outlined.Add
 }

@@ -2,9 +2,7 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.R
@@ -110,7 +109,7 @@ fun CsApp(
             },
             floatingActionButton = {
                 if (showFab) {
-                    FloatingActionButton(
+                    ExtendedFloatingActionButton(
                         onClick = {
                             if (isHomeDestination) {
                                 showNewTransactionDialog = true
@@ -119,7 +118,12 @@ fun CsApp(
                             }
                         }
                     ) {
-                        Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
+                        Icon(
+                            imageVector = CsIcons.Add,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                        Text(text = "New transaction")
                     }
                 }
             },
