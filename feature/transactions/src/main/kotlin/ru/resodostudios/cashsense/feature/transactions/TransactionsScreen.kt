@@ -110,7 +110,7 @@ fun dateFormatted(date: Instant): String {
     }
 
     return DateTimeFormatter
-        .ofLocalizedDate(FormatStyle.FULL)
+        .ofLocalizedDateTime(FormatStyle.MEDIUM)
         .withLocale(Locale.getDefault())
         .withZone(zoneId)
         .format(date.toJavaInstant())
