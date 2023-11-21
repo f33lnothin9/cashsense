@@ -6,18 +6,24 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
+import ru.resodostudios.cashsense.core.database.dao.WalletDao
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DaosModule {
 
     @Provides
-    fun providesTransactionsDao(
+    fun providesTransactionDao(
         database: CsDatabase,
     ): TransactionDao = database.transactionDao()
 
     @Provides
-    fun providesCategoriesDao(
+    fun providesCategoryDao(
         database: CsDatabase,
     ): CategoryDao = database.categoryDao()
+
+    @Provides
+    fun providesWalletDao(
+        database: CsDatabase,
+    ): WalletDao = database.walletDao()
 }
