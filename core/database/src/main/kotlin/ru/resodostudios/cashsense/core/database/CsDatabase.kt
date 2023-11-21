@@ -9,7 +9,7 @@ import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
-import ru.resodostudios.cashsense.core.database.util.LocalDateTimeConverter
+import ru.resodostudios.cashsense.core.database.util.InstantConverter
 
 @Database(
     entities = [
@@ -20,7 +20,9 @@ import ru.resodostudios.cashsense.core.database.util.LocalDateTimeConverter
     version = 1,
     exportSchema = true
 )
-@TypeConverters(LocalDateTimeConverter::class)
+@TypeConverters(
+    InstantConverter::class
+)
 abstract class CsDatabase : RoomDatabase() {
 
     abstract fun transactionDao(): TransactionDao

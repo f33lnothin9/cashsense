@@ -26,7 +26,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsUiState
 import ru.resodostudios.cashsense.feature.transactions.TransactionsViewModel
-import ru.resodostudios.cashsense.feature.transactions.formatLocalDate
+import ru.resodostudios.cashsense.feature.transactions.dateFormatted
 
 @Composable
 internal fun HomeRoute(
@@ -148,7 +148,7 @@ internal fun HomeScreen(
                         },
                         supportingContent = { Text(text = transaction.category.toString()) },
                         headlineContent = { Text(text = "${transaction.value} ₽") },
-                        trailingContent = { Text(text = formatLocalDate(transaction.date)) }
+                        trailingContent = { Text(text = dateFormatted(transaction.date)) }
                     )
                 }
             }

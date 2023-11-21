@@ -23,8 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import java.time.LocalDateTime
 
 @Composable
 fun TransactionDialog(
@@ -39,7 +39,7 @@ fun TransactionDialog(
                 category = "Фастфуд",
                 description = "??",
                 value = it.toInt(),
-                date = LocalDateTime.now()
+                date = Clock.System.now()
             )
             onDismiss()
         }
