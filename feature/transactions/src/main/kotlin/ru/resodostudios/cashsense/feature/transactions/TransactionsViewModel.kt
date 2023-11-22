@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionsViewModel @Inject constructor(
-    private val transactionsRepository: ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+    private val transactionsRepository: TransactionsRepository
 ) : ViewModel() {
 
     val transactionsUiState: SharedFlow<TransactionsUiState> =
