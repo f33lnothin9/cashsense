@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.transactions)
+    implementation(projects.feature.wallets)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.activity.compose)
