@@ -26,11 +26,12 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
+import ru.resodostudios.cashsense.feature.wallets.NewWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
-import ru.resodostudios.cashsense.feature.transactions.R as transactionsR
+import ru.resodostudios.cashsense.feature.wallets.R as walletsR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
@@ -49,6 +50,9 @@ fun CsApp(
     var showNewCategoryDialog by rememberSaveable {
         mutableStateOf(false)
     }
+    var showNewWalletDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     val showFab =
         appState.topLevelDestinations.take(2).any { it == appState.currentTopLevelDestination }
@@ -59,17 +63,18 @@ fun CsApp(
             onDismiss = { showSettingsDialog = false }
         )
     }
-
     if (showNewTransactionDialog) {
         TransactionDialog(
             onDismiss = { showNewTransactionDialog = false },
         )
     }
-
     if (showNewCategoryDialog) {
         CategoryDialog(
             onDismiss = { showNewCategoryDialog = false }
         )
+    }
+    if (showNewWalletDialog) {
+        NewWalletDialog()
     }
 
     val currentDestination = appState.currentDestination
@@ -114,7 +119,7 @@ fun CsApp(
                     ExtendedFloatingActionButton(
                         onClick = {
                             if (isHomeDestination) {
-                                showNewTransactionDialog = true
+                                showNewWalletDialog = true
                             } else {
                                 showNewCategoryDialog = true
                             }
@@ -126,7 +131,7 @@ fun CsApp(
                             modifier = Modifier.padding(end = 16.dp)
                         )
                         if (isHomeDestination) {
-                            Text(text = stringResource(transactionsR.string.new_transaction))
+                            Text(text = stringResource(walletsR.string.new_wallet))
                         } else {
                             Text(text = stringResource(categoriesR.string.new_category))
                         }
