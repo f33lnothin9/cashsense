@@ -74,7 +74,9 @@ fun CsApp(
         )
     }
     if (showNewWalletDialog) {
-        NewWalletDialog()
+        NewWalletDialog(
+            onDismiss = { showNewWalletDialog = false }
+        )
     }
 
     val currentDestination = appState.currentDestination
