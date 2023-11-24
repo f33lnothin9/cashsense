@@ -59,6 +59,9 @@ private fun LazyGridScope.wallets(
     onEdit: (Wallet) -> Unit
 ) {
     items(wallets) { wallet ->
-        WalletCard(wallet = wallet)
+        WalletCard(
+            wallet = wallet,
+            onEdit = onEdit
+        )
     }
 }

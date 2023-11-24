@@ -25,7 +25,8 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 
 @Composable
 fun WalletCard(
-    wallet: Wallet
+    wallet: Wallet,
+    onEdit: (Wallet) -> Unit
 ) {
     Card(
         onClick = { /*TODO*/ },
@@ -61,7 +62,7 @@ fun WalletCard(
                     )
                 }
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onEdit(wallet) }) {
                     Icon(imageVector = CsIcons.Edit, contentDescription = null)
                 }
             }
@@ -109,7 +110,8 @@ fun WalletCardPreview() {
                 title = "Wallet 1",
                 startBalance = 100.00f,
                 currency = Currency.USD
-            )
+            ),
+            onEdit = { }
         )
     }
 }
