@@ -4,6 +4,4 @@
     <string name="new_category">New category</string>
     <string name="name">Name</string>
     <string name="categories_empty">Nothing in Categories</string>
-    <string name="add">Add</string>
-    <string name="cancel">Cancel</string>
 </resources>

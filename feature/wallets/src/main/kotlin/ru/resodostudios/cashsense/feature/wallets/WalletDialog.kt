@@ -16,11 +16,13 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun NewWalletDialog(
@@ -94,14 +96,14 @@ fun NewWalletDialog(
             Button(
                 onClick = { onConfirm() }
             ) {
-                Text("Add")
+                Text(text = stringResource(uiR.string.add))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("Cancel")
+                Text(text = stringResource(uiR.string.cancel))
             }
         }
     )

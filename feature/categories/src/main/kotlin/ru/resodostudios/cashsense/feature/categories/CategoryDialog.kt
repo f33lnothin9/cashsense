@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun CategoryDialog(
@@ -73,14 +74,14 @@ fun CategoryDialog(
                     onConfirm(name)
                 }
             ) {
-                Text(text = stringResource(R.string.add))
+                Text(text = stringResource(uiR.string.add))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(text = stringResource(R.string.cancel))
+                Text(text = stringResource(uiR.string.cancel))
             }
         }
     )

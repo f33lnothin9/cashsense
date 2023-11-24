@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun TransactionDialog(
@@ -111,14 +112,14 @@ fun TransactionDialog(
             Button(
                 onClick = { onConfirm(value) }
             ) {
-                Text(stringResource(id = R.string.add))
+                Text(text = stringResource(uiR.string.add))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss
             ) {
-                Text(stringResource(id = R.string.cancel))
+                Text(text = stringResource(uiR.string.cancel))
             }
         }
     )

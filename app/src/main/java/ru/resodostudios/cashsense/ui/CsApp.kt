@@ -102,7 +102,7 @@ fun CsApp(
                     onClick = { appState.navigateToTopLevelDestination(destination) }
                 )
             }
-        },
+        }
     ) {
         Scaffold(
             topBar = {
