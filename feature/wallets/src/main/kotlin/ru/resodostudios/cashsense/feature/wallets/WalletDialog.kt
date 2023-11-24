@@ -12,7 +12,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -44,14 +43,14 @@ fun NewWalletDialog(
     onConfirm: () -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
-    var startBalance by rememberSaveable { mutableFloatStateOf(0f) }
+    var startBalance by rememberSaveable { mutableStateOf("") }
     var currency by rememberSaveable { mutableStateOf(Currency.USD) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Wallet, contentDescription = null) },
         title = {
-            Text(text = "New wallet")
+            Text(text = stringResource(R.string.new_wallet))
         },
         text = {
             Column(
@@ -63,13 +62,14 @@ fun NewWalletDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
-                    label = { Text(text = "Title") },
+                    label = { Text(text = stringResource(uiR.string.title)) },
                     maxLines = 1
                 )
                 TextField(
-                    value = startBalance.toString(),
-                    onValueChange = { startBalance = it.toFloat() },
-                    label = { Text(text = "Start balance") },
+                    value = startBalance,
+                    onValueChange = { startBalance = it },
+                    placeholder = { Text(text = "100") },
+                    label = { Text(text = stringResource(R.string.start_balance)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
@@ -87,7 +87,7 @@ fun NewWalletDialog(
                         }
                     },
                     readOnly = true,
-                    label = { Text(text = "Currency") },
+                    label = { Text(text = stringResource(R.string.currency)) },
                     maxLines = 1
                 )
             }

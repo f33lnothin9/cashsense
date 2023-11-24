@@ -102,9 +102,9 @@ fun TransactionDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
-                    label = { Text(text = stringResource(id = R.string.description)) },
+                    label = { Text(text = stringResource(uiR.string.description)) },
                     maxLines = 1,
-                    supportingText = { Text(text = stringResource(id = R.string.optional)) }
+                    supportingText = { Text(text = stringResource(uiR.string.optional)) }
                 )
             }
         },
