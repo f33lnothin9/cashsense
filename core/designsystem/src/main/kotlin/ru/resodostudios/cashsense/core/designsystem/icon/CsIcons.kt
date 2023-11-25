@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Settings
 import ru.resodostudios.cashsense.core.designsystem.R
 
@@ -30,4 +31,5 @@ object CsIcons {
     val Wallet = Icons.Outlined.AccountBalanceWallet
     val Add = Icons.Outlined.Add
     val Edit = Icons.Outlined.Edit
+    val MoreVert = Icons.Outlined.MoreVert
 }

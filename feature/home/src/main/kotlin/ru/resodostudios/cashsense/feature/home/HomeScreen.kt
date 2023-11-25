@@ -42,7 +42,7 @@ internal fun HomeScreen(
             ) {
                 wallets(
                     wallets = walletsState.wallets,
-                    onEdit = { TODO() }
+                    onTransactionCreate = { TODO() }
                 )
             }
         } else {
@@ -56,12 +56,12 @@ internal fun HomeScreen(
 
 private fun LazyGridScope.wallets(
     wallets: List<Wallet>,
-    onEdit: (Wallet) -> Unit
+    onTransactionCreate: (Int) -> Unit
 ) {
     items(wallets) { wallet ->
         WalletCard(
             wallet = wallet,
-            onEdit = onEdit
+            onTransactionCreate = onTransactionCreate
         )
     }
 }

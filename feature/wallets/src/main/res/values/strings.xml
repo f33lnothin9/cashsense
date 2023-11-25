@@ -4,6 +4,7 @@
 
     <string name="start_balance">Start balance</string>
     <string name="currency">Currency</string>
+    <string name="add_transaction">Add transaction</string>
 
     <string name="wallets_empty">Nothing in Wallets</string>
 </resources>
