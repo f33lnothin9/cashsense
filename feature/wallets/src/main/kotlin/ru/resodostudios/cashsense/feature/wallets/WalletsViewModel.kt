@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import javax.inject.Inject
@@ -26,6 +27,18 @@ class WalletsViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = WalletsUiState.Loading
             )
+
+    fun upsertWallet(wallet: Wallet) {
+        viewModelScope.launch {
+            walletsRepository.upsertWallet(wallet)
+        }
+    }
+
+    fun deleteWallet(wallet: Wallet) {
+        viewModelScope.launch {
+            walletsRepository.deleteWallet(wallet)
+        }
+    }
 }
 
 sealed interface WalletsUiState {
