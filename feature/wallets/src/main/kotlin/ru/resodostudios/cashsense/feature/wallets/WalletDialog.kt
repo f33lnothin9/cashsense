@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -28,11 +29,11 @@ fun NewWalletDialog(
     onDismiss: () -> Unit,
     walletsViewModel: WalletsViewModel = hiltViewModel()
 ) {
-
     NewWalletDialog(
         onDismiss = onDismiss,
         onConfirm = {
-
+            walletsViewModel.upsertWallet(it)
+            onDismiss()
         }
     )
 }
@@ -40,7 +41,7 @@ fun NewWalletDialog(
 @Composable
 fun NewWalletDialog(
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: (Wallet) -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
     var startBalance by rememberSaveable { mutableStateOf("") }
@@ -94,7 +95,15 @@ fun NewWalletDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm() }
+                onClick = {
+                    onConfirm(
+                        Wallet(
+                            title = title,
+                            startBalance = startBalance.toFloat(),
+                            currency = currency
+                        )
+                    )
+                }
             ) {
                 Text(text = stringResource(uiR.string.add))
             }
