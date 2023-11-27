@@ -67,7 +67,9 @@ private fun LazyGridScope.wallets(
     items(wallets) { wallet ->
         WalletCard(
             wallet = wallet,
-            onTransactionCreate = onTransactionCreate
+            onTransactionCreate = onTransactionCreate,
+            onEdit = { },
+            onDelete = { }
         )
     }
 }

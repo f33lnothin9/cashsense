@@ -5,4 +5,6 @@
     <string name="optional">optional</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
