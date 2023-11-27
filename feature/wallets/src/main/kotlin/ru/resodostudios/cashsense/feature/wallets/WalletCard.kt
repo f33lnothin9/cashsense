@@ -138,7 +138,10 @@ fun WalletDropdownMenu(
         ) {
             DropdownMenuItem(
                 text = { Text(text = stringResource(uiR.string.edit)) },
-                onClick = { onEdit() },
+                onClick = {
+                    onEdit()
+                    showMenu = false
+                },
                 leadingIcon = {
                     Icon(
                         CsIcons.Edit,
@@ -148,7 +151,10 @@ fun WalletDropdownMenu(
             )
             DropdownMenuItem(
                 text = { Text(text = stringResource(uiR.string.delete)) },
-                onClick = { onDelete() },
+                onClick = {
+                    onDelete()
+                    showMenu = false
+                },
                 leadingIcon = {
                     Icon(
                         CsIcons.Delete,

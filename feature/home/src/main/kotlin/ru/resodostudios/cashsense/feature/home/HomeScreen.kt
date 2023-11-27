@@ -27,13 +27,17 @@ internal fun HomeRoute(
 ) {
     val walletsState by walletViewModel.walletsUiState.collectAsStateWithLifecycle()
     HomeScreen(
-        walletsState = walletsState
+        walletsState = walletsState,
+        onEdit = { TODO() },
+        onDelete = walletViewModel::deleteWallet
     )
 }
 
 @Composable
 internal fun HomeScreen(
-    walletsState: WalletsUiState
+    walletsState: WalletsUiState,
+    onEdit: (Wallet) -> Unit,
+    onDelete: (Wallet) -> Unit
 ) {
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
@@ -48,7 +52,9 @@ internal fun HomeScreen(
             ) {
                 wallets(
                     wallets = walletsState.wallets,
-                    onTransactionCreate = { TODO() }
+                    onTransactionCreate = { TODO() },
+                    onEdit = onEdit,
+                    onDelete = onDelete
                 )
             }
         } else {
@@ -62,14 +68,16 @@ internal fun HomeScreen(
 
 private fun LazyGridScope.wallets(
     wallets: List<Wallet>,
-    onTransactionCreate: (Int) -> Unit
+    onTransactionCreate: (Int) -> Unit,
+    onEdit: (Wallet) -> Unit,
+    onDelete: (Wallet) -> Unit
 ) {
     items(wallets) { wallet ->
         WalletCard(
             wallet = wallet,
             onTransactionCreate = onTransactionCreate,
-            onEdit = { },
-            onDelete = { }
+            onEdit = onEdit,
+            onDelete = onDelete
         )
     }
 }
