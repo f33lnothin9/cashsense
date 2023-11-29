@@ -39,7 +39,7 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 @Composable
 fun WalletCard(
     wallet: Wallet,
-    onTransactionCreate: (Int) -> Unit,
+    onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet) -> Unit
 ) {
@@ -106,7 +106,7 @@ fun WalletCard(
                 .fillMaxWidth()
         ) {
             Button(
-                onClick = { onTransactionCreate(wallet.id) }
+                onClick = { onTransactionCreate(wallet.walletId) }
             ) {
                 Text(text = stringResource(R.string.add_transaction))
             }

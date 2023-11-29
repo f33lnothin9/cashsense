@@ -2,17 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "38c917211deec181e59436d6e0a54bb3",
+    "identityHash": "cfc7b9716b2b6f9dec080fba8a13b613",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `category` TEXT, `value` INTEGER NOT NULL, `date` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `walletId` INTEGER NOT NULL, `description` TEXT, `category` TEXT, `value` INTEGER NOT NULL, `date` INTEGER NOT NULL)",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "transactionId",
+            "columnName": "transactionId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
+          },
+          {
+            "fieldPath": "walletId",
+            "columnName": "walletId",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "description",
@@ -42,7 +48,7 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "id"
+            "transactionId"
           ]
         },
         "indices": [],
@@ -82,11 +88,11 @@
       },
       {
         "tableName": "wallets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `startBalance` REAL NOT NULL, `currency` TEXT NOT NULL, `income` REAL NOT NULL, `expenses` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`walletId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `startBalance` REAL NOT NULL, `currency` TEXT NOT NULL, `income` REAL NOT NULL, `expenses` REAL NOT NULL)",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "walletId",
+            "columnName": "walletId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -124,7 +130,7 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "id"
+            "walletId"
           ]
         },
         "indices": [],
@@ -134,7 +140,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '38c917211deec181e59436d6e0a54bb3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cfc7b9716b2b6f9dec080fba8a13b613')"
     ]
   }
 }

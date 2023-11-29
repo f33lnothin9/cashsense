@@ -10,7 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -46,7 +46,7 @@ internal fun HomeScreen(
     onDelete: (Wallet) -> Unit
 ) {
     var showNewTransactionDialog by rememberSaveable { mutableStateOf(false) }
-    var walletId by rememberSaveable { mutableIntStateOf(0) }
+    var walletId by rememberSaveable { mutableLongStateOf(0L) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -81,7 +81,8 @@ internal fun HomeScreen(
         }
         if (showNewTransactionDialog) {
             TransactionDialog(
-                onDismiss = { showNewTransactionDialog = false }
+                onDismiss = { showNewTransactionDialog = false },
+                walletId = walletId
             )
         }
     }
@@ -89,7 +90,7 @@ internal fun HomeScreen(
 
 private fun LazyGridScope.wallets(
     wallets: List<Wallet>,
-    onTransactionCreate: (Int) -> Unit,
+    onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet) -> Unit
 ) {

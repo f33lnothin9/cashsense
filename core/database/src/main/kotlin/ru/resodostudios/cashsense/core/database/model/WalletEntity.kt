@@ -10,7 +10,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 )
 data class WalletEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val walletId: Long,
     val title: String,
     val startBalance: Float,
     val currency: Currency,
@@ -19,7 +19,7 @@ data class WalletEntity(
 )
 
 fun WalletEntity.asExternalModel() = Wallet(
-    id = id,
+    walletId = walletId,
     title = title,
     startBalance = startBalance,
     currency = currency,

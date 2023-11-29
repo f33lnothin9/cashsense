@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.model.data
 
 data class Wallet(
-    val id: Int = 0,
+    val walletId: Long = 0L,
     val title: String,
     val startBalance: Float = 0f,
     val currency: Currency,

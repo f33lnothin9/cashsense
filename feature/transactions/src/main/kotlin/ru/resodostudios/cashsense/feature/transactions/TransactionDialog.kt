@@ -25,22 +25,26 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun TransactionDialog(
     onDismiss: () -> Unit,
+    walletId: Long = 0,
     viewModel: TransactionsViewModel = hiltViewModel()
 ) {
-
     TransactionDialog(
         onDismiss = onDismiss,
         onConfirm = {
-            viewModel.upsertTransactions(
-                category = "Фастфуд",
-                description = "??",
-                value = it.toInt(),
-                date = Clock.System.now()
+            viewModel.upsertTransaction(
+                Transaction(
+                    walletId = walletId,
+                    category = "Фастфуд",
+                    description = "??",
+                    value = it.toInt(),
+                    date = Clock.System.now()
+                )
             )
             onDismiss()
         }
@@ -60,7 +64,7 @@ fun TransactionDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Transaction, contentDescription = null) },
         title = {
-            Text(text = stringResource(id = R.string.new_transaction))
+            Text(text = stringResource(R.string.new_transaction))
         },
         text = {
             Column(
@@ -81,7 +85,7 @@ fun TransactionDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
-                    label = { Text(text = stringResource(id = R.string.sum)) },
+                    label = { Text(text = stringResource(R.string.sum)) },
                     maxLines = 1
                 )
                 TextField(
@@ -92,7 +96,7 @@ fun TransactionDialog(
                             Icon(CsIcons.DropDown, contentDescription = null)
                         }
                     },
-                    label = { Text(text = stringResource(id = R.string.category)) },
+                    label = { Text(text = stringResource(R.string.category)) },
                     readOnly = true,
                     maxLines = 1
                 )

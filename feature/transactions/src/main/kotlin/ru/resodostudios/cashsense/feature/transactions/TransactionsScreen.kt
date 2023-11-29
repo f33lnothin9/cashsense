@@ -40,7 +40,7 @@ internal fun TransactionsRoute(
     val transactionsState by viewModel.transactionsUiState.collectAsStateWithLifecycle(initialValue = TransactionsUiState.Loading)
     TransactionsScreen(
         transactionsState = transactionsState,
-        onDelete = viewModel::deleteCategory
+        onDelete = viewModel::deleteTransaction
     )
 }
 

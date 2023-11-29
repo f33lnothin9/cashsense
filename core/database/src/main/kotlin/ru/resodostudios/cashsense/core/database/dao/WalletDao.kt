@@ -13,12 +13,12 @@ interface WalletDao {
     @Query(
         value = """
         SELECT * FROM wallets
-        WHERE id = :walletId
+        WHERE walletId = :walletId
     """
     )
     fun getWalletEntity(walletId: String): Flow<WalletEntity>
 
-    @Query(value = "SELECT * FROM wallets ORDER BY id DESC")
+    @Query(value = "SELECT * FROM wallets ORDER BY walletId DESC")
     fun getWalletEntities(): Flow<List<WalletEntity>>
 
     @Upsert

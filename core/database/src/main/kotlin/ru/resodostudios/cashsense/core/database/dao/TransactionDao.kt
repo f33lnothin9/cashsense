@@ -13,12 +13,12 @@ interface TransactionDao {
     @Query(
         value = """
         SELECT * FROM transactions
-        WHERE id = :transactionId
+        WHERE transactionId = :transactionId
     """,
     )
     fun getTransactionEntity(transactionId: String): Flow<TransactionEntity>
 
-    @Query(value = "SELECT * FROM transactions ORDER BY id DESC")
+    @Query(value = "SELECT * FROM transactions ORDER BY transactionId DESC")
     fun getTransactionEntities(): Flow<List<TransactionEntity>>
 
     @Upsert
