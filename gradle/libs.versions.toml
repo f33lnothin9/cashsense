@@ -1,9 +1,9 @@
 [versions]
 androidGradlePlugin = "8.3.0-alpha15"
 androidxAppCompat = "1.6.1"
-androidxComposeCompiler = "1.5.4"
-androidxComposeMaterial3 = "1.2.0-alpha11"
-androidxComposeMaterial3Adaptive = "1.0.0-alpha01"
+androidxComposeCompiler = "1.5.5"
+androidxComposeMaterial3 = "1.2.0-alpha12"
+androidxComposeMaterial3Adaptive = "1.0.0-alpha02"
 androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha01"
 androidxDataStore = "1.0.0"
 androidDesugarJdkLibs = "2.0.4"
