@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cfc7b9716b2b6f9dec080fba8a13b613",
+    "identityHash": "5476ce8ea1283920c646b00d8ac1f580",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `walletId` INTEGER NOT NULL, `description` TEXT, `category` TEXT, `value` INTEGER NOT NULL, `date` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `walletOwnerId` INTEGER NOT NULL, `description` TEXT, `category` TEXT, `value` INTEGER NOT NULL, `date` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "transactionId",
@@ -15,8 +15,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "walletId",
-            "columnName": "walletId",
+            "fieldPath": "walletOwnerId",
+            "columnName": "walletOwnerId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -140,7 +140,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cfc7b9716b2b6f9dec080fba8a13b613')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5476ce8ea1283920c646b00d8ac1f580')"
     ]
   }
 }

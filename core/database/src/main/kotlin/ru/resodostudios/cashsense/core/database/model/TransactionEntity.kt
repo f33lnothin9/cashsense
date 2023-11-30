@@ -11,7 +11,7 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val transactionId: Long,
-    val walletId: Long,
+    val walletOwnerId: Long,
     val description: String?,
     val category: String?,
     val value: Int,
@@ -20,7 +20,7 @@ data class TransactionEntity(
 
 fun TransactionEntity.asExternalModel() = Transaction(
     transactionId = transactionId,
-    walletId = walletId,
+    walletOwnerId = walletOwnerId,
     description = description,
     category = category,
     value = value,
