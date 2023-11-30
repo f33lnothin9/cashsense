@@ -39,7 +39,7 @@ fun TransactionDialog(
         onConfirm = {
             viewModel.upsertTransaction(
                 Transaction(
-                    walletId = walletId,
+                    walletOwnerId = walletId,
                     category = "Фастфуд",
                     description = "??",
                     value = it.toInt(),

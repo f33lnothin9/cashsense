@@ -32,7 +32,7 @@ class TransactionsViewModel @Inject constructor(
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(
                 Transaction(
-                    walletId = transaction.walletId,
+                    walletOwnerId = transaction.walletOwnerId,
                     category = transaction.category,
                     description = transaction.description,
                     value = transaction.value,
