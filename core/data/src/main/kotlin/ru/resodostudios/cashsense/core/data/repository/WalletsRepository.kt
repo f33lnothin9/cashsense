@@ -2,10 +2,11 @@ package ru.resodostudios.cashsense.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
 
 interface WalletsRepository {
 
-    fun getWallet(walletId: String): Flow<Wallet>
+    fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactions>
 
     fun getWallets(): Flow<List<Wallet>>
 

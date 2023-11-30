@@ -8,14 +8,15 @@ import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
 import javax.inject.Inject
 
 class OfflineWalletsRepository @Inject constructor(
     private val walletDao: WalletDao
 ) : WalletsRepository {
 
-    override fun getWallet(walletId: String): Flow<Wallet> =
-        walletDao.getWalletEntity(walletId).map { it.asExternalModel() }
+    override fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactions> =
+        walletDao.getWalletWithTransactionsEntity(walletId).map { it.asExternalModel() }
 
     override fun getWallets(): Flow<List<Wallet>> =
         walletDao.getWalletEntities().map { it.map(WalletEntity::asExternalModel) }
