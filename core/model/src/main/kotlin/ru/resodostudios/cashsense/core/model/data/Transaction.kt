@@ -7,6 +7,6 @@ data class Transaction(
     val walletOwnerId: Long,
     val description: String?,
     val category: String?,
-    val value: Int,
+    val sum: Float,
     val date: Instant
 )

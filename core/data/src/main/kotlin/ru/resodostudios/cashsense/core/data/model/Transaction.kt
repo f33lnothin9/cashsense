@@ -7,7 +7,7 @@ fun Transaction.asEntity() = TransactionEntity(
     transactionId = transactionId,
     walletOwnerId = walletOwnerId,
     category = category,
-    value = value,
+    sum = sum,
     date = date,
     description = description
 )

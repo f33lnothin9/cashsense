@@ -79,7 +79,7 @@ private fun LazyGridScope.transactions(
 ) {
     items(transactions) { transaction ->
         ListItem(
-            headlineContent = { Text(text = "${transaction.value} ₽") },
+            headlineContent = { Text(text = "${transaction.sum} ₽") },
             trailingContent = {
                 IconButton(onClick = { onDelete(transaction) }) {
                     Icon(

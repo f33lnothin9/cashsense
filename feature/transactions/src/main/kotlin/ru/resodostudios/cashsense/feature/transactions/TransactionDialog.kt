@@ -42,7 +42,7 @@ fun TransactionDialog(
                     walletOwnerId = walletId,
                     category = "Фастфуд",
                     description = "??",
-                    value = it.toInt(),
+                    sum = it.toFloat(),
                     date = Clock.System.now()
                 )
             )

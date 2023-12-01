@@ -31,7 +31,7 @@ fun WalletWithTransactionsEntity.asExternalModel() = WalletWithTransactions(
             walletOwnerId = it.walletOwnerId,
             description = it.description,
             category = it.category,
-            value = it.value,
+            sum = it.sum,
             date = it.date
         )
     }

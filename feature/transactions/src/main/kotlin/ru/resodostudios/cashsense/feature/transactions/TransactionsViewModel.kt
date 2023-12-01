@@ -35,7 +35,7 @@ class TransactionsViewModel @Inject constructor(
                     walletOwnerId = transaction.walletOwnerId,
                     category = transaction.category,
                     description = transaction.description,
-                    value = transaction.value,
+                    sum = transaction.sum,
                     date = transaction.date
                 )
             )
