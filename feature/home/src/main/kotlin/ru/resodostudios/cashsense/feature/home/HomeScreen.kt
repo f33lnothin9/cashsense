@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
@@ -53,7 +54,7 @@ internal fun HomeScreen(
     ) {
         when (walletsState) {
             WalletsUiState.Loading -> LoadingState()
-            is WalletsUiState.Success -> if (walletsState.wallets.isNotEmpty()) {
+            is WalletsUiState.Success -> if (walletsState.walletsWithTransactions.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -62,8 +63,8 @@ internal fun HomeScreen(
                         .padding(16.dp)
                         .fillMaxSize()
                 ) {
-                    wallets(
-                        wallets = walletsState.wallets,
+                    walletsWithTransactions(
+                        walletsWithTransactions = walletsState.walletsWithTransactions,
                         onTransactionCreate = {
                             walletId = it     
                             showNewTransactionDialog = true
@@ -88,15 +89,15 @@ internal fun HomeScreen(
     }
 }
 
-private fun LazyGridScope.wallets(
-    wallets: List<Wallet>,
+private fun LazyGridScope.walletsWithTransactions(
+    walletsWithTransactions: List<WalletWithTransactions>,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet) -> Unit
 ) {
-    items(wallets) { wallet ->
+    items(walletsWithTransactions) { walletWithTransactions ->
         WalletCard(
-            wallet = wallet,
+            wallet = walletWithTransactions.wallet,
             onTransactionCreate = onTransactionCreate,
             onEdit = onEdit,
             onDelete = onDelete

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,8 +20,8 @@ class WalletsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val walletsUiState: StateFlow<WalletsUiState> =
-        walletsRepository.getWallets()
-            .map<List<Wallet>, WalletsUiState>(WalletsUiState::Success)
+        walletsRepository.getWalletsWithTransactions()
+            .map<List<WalletWithTransactions>, WalletsUiState>(WalletsUiState::Success)
             .onStart { emit(WalletsUiState.Loading) }
             .stateIn(
                 scope = viewModelScope,
@@ -46,6 +47,6 @@ sealed interface WalletsUiState {
     data object Loading : WalletsUiState
 
     data class Success(
-        val wallets: List<Wallet>
+        val walletsWithTransactions: List<WalletWithTransactions>
     ) : WalletsUiState
 }
