@@ -16,6 +16,7 @@ interface WalletDao {
     @Query("SELECT * FROM wallets WHERE walletId = :walletId")
     fun getWalletWithTransactionsEntity(walletId: String): Flow<WalletWithTransactionsEntity>
 
+    @Transaction
     @Query("SELECT * FROM wallets ORDER BY walletId DESC")
     fun getWalletsWithTransactionsEntities(): Flow<List<WalletWithTransactionsEntity>>
 
