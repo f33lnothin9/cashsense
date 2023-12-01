@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
 import javax.inject.Inject
@@ -35,9 +36,9 @@ class WalletsViewModel @Inject constructor(
         }
     }
 
-    fun deleteWallet(wallet: Wallet) {
+    fun deleteWalletWithTransactions(wallet: Wallet, transactions: List<Transaction>) {
         viewModelScope.launch {
-            walletsRepository.deleteWallet(wallet)
+            walletsRepository.deleteWalletWithTransactions(wallet, transactions)
         }
     }
 }

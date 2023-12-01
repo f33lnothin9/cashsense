@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -36,7 +37,7 @@ internal fun HomeRoute(
     HomeScreen(
         walletsState = walletsState,
         onEdit = { TODO() },
-        onDelete = walletsViewModel::deleteWallet
+        onDelete = walletsViewModel::deleteWalletWithTransactions
     )
 }
 
@@ -44,7 +45,7 @@ internal fun HomeRoute(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onEdit: (Wallet) -> Unit,
-    onDelete: (Wallet) -> Unit
+    onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     var showNewTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var walletId by rememberSaveable { mutableLongStateOf(0L) }
@@ -93,11 +94,12 @@ private fun LazyGridScope.walletsWithTransactions(
     walletsWithTransactions: List<WalletWithTransactions>,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
-    onDelete: (Wallet) -> Unit
+    onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     items(walletsWithTransactions) { walletWithTransactions ->
         WalletCard(
             wallet = walletWithTransactions.wallet,
+            transactions = walletWithTransactions.transactions,
             onTransactionCreate = onTransactionCreate,
             onEdit = onEdit,
             onDelete = onDelete

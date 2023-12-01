@@ -33,15 +33,17 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Currency
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun WalletCard(
     wallet: Wallet,
+    transactions: List<Transaction>,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
-    onDelete: (Wallet) -> Unit
+    onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     OutlinedCard(
         onClick = { /*TODO*/ },
@@ -112,7 +114,7 @@ fun WalletCard(
             }
             WalletDropdownMenu(
                 onEdit = { onEdit(wallet) },
-                onDelete = { onDelete(wallet) }
+                onDelete = { onDelete(wallet, transactions) }
             )
         }
     }
@@ -178,11 +180,12 @@ fun WalletCardPreview() {
                 income = 132.0f,
                 expenses = 223.43f
             ),
+            transactions = emptyList(),
             onTransactionCreate = { },
             onEdit = {
 
             },
-            onDelete = {
+            onDelete = { wallet, transactions ->
 
             }
         )
