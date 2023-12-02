@@ -68,7 +68,10 @@ fun WalletCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = wallet.currency.symbol + wallet.startBalance,
+                    text = wallet.currency.symbol + getCurrentBalance(
+                        wallet.startBalance,
+                        transactions
+                    ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyLarge
@@ -164,6 +167,14 @@ fun WalletDropdownMenu(
             )
         }
     }
+}
+
+private fun getCurrentBalance(startBalance: Float, transactions: List<Transaction>): String {
+    var currentBalance = startBalance
+    transactions.forEach {
+        currentBalance += it.sum
+    }
+    return currentBalance.toString()
 }
 
 @Preview("Wallet Card")
