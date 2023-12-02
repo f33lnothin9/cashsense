@@ -182,10 +182,8 @@ fun WalletCardPreview() {
             ),
             transactions = emptyList(),
             onTransactionCreate = { },
-            onEdit = {
-
-            },
-            onDelete = { wallet, transactions ->
+            onEdit = { },
+            onDelete = { _, _ ->
 
             }
         )
