@@ -14,8 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import ru.resodostudios.cashsense.feature.categories.navigation.categoriesNavigationRoute
 import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCategories
-import ru.resodostudios.cashsense.feature.home.navigation.homeNavigationRoute
-import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
+import ru.resodostudios.cashsense.feature.home.navigation.homeRoute
+import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsNavigationRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -50,7 +50,7 @@ class CsAppState(
 
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
-            homeNavigationRoute -> HOME
+            homeRoute -> HOME
             categoriesNavigationRoute -> CATEGORIES
             subscriptionsNavigationRoute -> SUBSCRIPTIONS
             else -> null
@@ -80,7 +80,7 @@ class CsAppState(
         }
 
         when (topLevelDestination) {
-            HOME -> navController.navigateToHome(topLevelNavOptions)
+            HOME -> navController.navigateToHomeGraph(topLevelNavOptions)
             CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
             SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
         }

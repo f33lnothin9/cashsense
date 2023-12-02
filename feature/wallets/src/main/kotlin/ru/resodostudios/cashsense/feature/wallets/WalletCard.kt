@@ -40,12 +40,13 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 fun WalletCard(
     wallet: Wallet,
     transactions: List<Transaction>,
+    onWalletClick: (Long) -> Unit,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     OutlinedCard(
-        onClick = { /*TODO*/ },
+        onClick = { onWalletClick(wallet.walletId) },
         shape = RoundedCornerShape(20.dp)
     ) {
         Column(
@@ -178,6 +179,7 @@ fun WalletCardPreview() {
                 expenses = 223.43f
             ),
             transactions = emptyList(),
+            onWalletClick = { },
             onTransactionCreate = { },
             onEdit = { },
             onDelete = { _, _ ->

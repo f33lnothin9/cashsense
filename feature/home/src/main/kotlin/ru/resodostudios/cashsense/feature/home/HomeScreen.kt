@@ -31,11 +31,13 @@ import ru.resodostudios.cashsense.feature.wallets.WalletsViewModel
 
 @Composable
 internal fun HomeRoute(
-    walletsViewModel: WalletsViewModel = hiltViewModel()
+    onWalletClick: (Long) -> Unit,
+    walletsViewModel: WalletsViewModel = hiltViewModel(),
 ) {
     val walletsState by walletsViewModel.walletsUiState.collectAsStateWithLifecycle()
     HomeScreen(
         walletsState = walletsState,
+        onWalletClick = onWalletClick,
         onEdit = { TODO() },
         onDelete = walletsViewModel::deleteWalletWithTransactions
     )
@@ -44,6 +46,7 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
+    onWalletClick: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
@@ -66,6 +69,7 @@ internal fun HomeScreen(
                 ) {
                     walletsWithTransactions(
                         walletsWithTransactions = walletsState.walletsWithTransactions,
+                        onWalletClick = onWalletClick,
                         onTransactionCreate = {
                             walletId = it     
                             showNewTransactionDialog = true
@@ -92,6 +96,7 @@ internal fun HomeScreen(
 
 private fun LazyGridScope.walletsWithTransactions(
     walletsWithTransactions: List<WalletWithTransactions>,
+    onWalletClick: (Long) -> Unit,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
@@ -100,6 +105,7 @@ private fun LazyGridScope.walletsWithTransactions(
         WalletCard(
             wallet = walletWithTransactions.wallet,
             transactions = walletWithTransactions.transactions,
+            onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onEdit = onEdit,
             onDelete = onDelete

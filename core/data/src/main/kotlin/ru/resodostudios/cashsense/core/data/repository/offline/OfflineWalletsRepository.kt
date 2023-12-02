@@ -16,7 +16,7 @@ class OfflineWalletsRepository @Inject constructor(
     private val walletDao: WalletDao
 ) : WalletsRepository {
 
-    override fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactions> =
+    override fun getWalletWithTransactions(walletId: Long): Flow<WalletWithTransactions> =
         walletDao.getWalletWithTransactionsEntity(walletId).map { it.asExternalModel() }
 
     override fun getWalletsWithTransactions(): Flow<List<WalletWithTransactions>> =
