@@ -26,20 +26,18 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
 import ru.resodostudios.cashsense.feature.wallets.R
 import ru.resodostudios.cashsense.feature.wallets.WalletCard
-import ru.resodostudios.cashsense.feature.wallets.WalletsUiState
-import ru.resodostudios.cashsense.feature.wallets.WalletsViewModel
 
 @Composable
 internal fun HomeRoute(
     onWalletClick: (Long) -> Unit,
-    walletsViewModel: WalletsViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val walletsState by walletsViewModel.walletsUiState.collectAsStateWithLifecycle()
+    val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
     HomeScreen(
         walletsState = walletsState,
         onWalletClick = onWalletClick,
         onEdit = { TODO() },
-        onDelete = walletsViewModel::deleteWalletWithTransactions
+        onDelete = viewModel::deleteWalletWithTransactions
     )
 }
 

@@ -46,7 +46,7 @@ dependencies {
     implementation(projects.feature.categories)
     implementation(projects.feature.subscriptions)
     implementation(projects.feature.transactions)
-    implementation(projects.feature.wallets)
+    implementation(projects.feature.wallet)
     implementation(projects.feature.settings)
 
     implementation(libs.androidx.compose.material3)

@@ -34,12 +34,12 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 @Composable
 fun NewWalletDialog(
     onDismiss: () -> Unit,
-    walletsViewModel: WalletsViewModel = hiltViewModel()
+    viewModel: WalletViewModel = hiltViewModel()
 ) {
     NewWalletDialog(
         onDismiss = onDismiss,
         onConfirm = {
-            walletsViewModel.upsertWallet(it)
+            viewModel.upsertWallet(it)
             onDismiss()
         }
     )

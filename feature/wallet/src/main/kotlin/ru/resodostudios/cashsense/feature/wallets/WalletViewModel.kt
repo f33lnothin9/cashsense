@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallets
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,21 +14,25 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
+import ru.resodostudios.cashsense.feature.wallets.navigation.WalletArgs
 import javax.inject.Inject
 
 @HiltViewModel
-class WalletsViewModel @Inject constructor(
+class WalletViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val walletsRepository: WalletsRepository
 ) : ViewModel() {
 
-    val walletsUiState: StateFlow<WalletsUiState> =
-        walletsRepository.getWalletsWithTransactions()
-            .map<List<WalletWithTransactions>, WalletsUiState>(WalletsUiState::Success)
-            .onStart { emit(WalletsUiState.Loading) }
+    private val walletArgs: WalletArgs = WalletArgs(savedStateHandle)
+
+    val walletUiState: StateFlow<WalletUiState> =
+        walletsRepository.getWalletWithTransactions(walletArgs.walletId)
+            .map<WalletWithTransactions, WalletUiState>(WalletUiState::Success)
+            .onStart { emit(WalletUiState.Loading) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = WalletsUiState.Loading
+                initialValue = WalletUiState.Loading
             )
 
     fun upsertWallet(wallet: Wallet) {
@@ -43,11 +48,11 @@ class WalletsViewModel @Inject constructor(
     }
 }
 
-sealed interface WalletsUiState {
+sealed interface WalletUiState {
 
-    data object Loading : WalletsUiState
+    data object Loading : WalletUiState
 
     data class Success(
-        val walletsWithTransactions: List<WalletWithTransactions>
-    ) : WalletsUiState
+        val walletWithTransactions: WalletWithTransactions
+    ) : WalletUiState
 }

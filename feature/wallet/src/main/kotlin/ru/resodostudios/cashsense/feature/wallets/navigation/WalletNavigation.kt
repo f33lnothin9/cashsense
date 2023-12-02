@@ -26,8 +26,8 @@ fun NavGraphBuilder.walletScreen(
     composable(
         route = "wallet_route/{$walletIdArg}",
         arguments = listOf(
-            navArgument(walletIdArg) { type = NavType.LongType },
-        ),
+            navArgument(walletIdArg) { type = NavType.LongType }
+        )
     ) {
 
     }
