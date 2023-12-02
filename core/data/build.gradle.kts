@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.serialization.json)
 
     //testImplementation(projects.core.datastoreTest)
     //testImplementation(projects.core.testing)
