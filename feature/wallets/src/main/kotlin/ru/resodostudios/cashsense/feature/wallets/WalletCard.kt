@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -127,9 +126,7 @@ fun WalletDropdownMenu(
 ) {
     var showMenu by remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.TopEnd)
+        modifier = Modifier.wrapContentSize(Alignment.TopEnd)
     ) {
         IconButton(onClick = { showMenu = true }) {
             Icon(imageVector = CsIcons.MoreVert, contentDescription = null)
