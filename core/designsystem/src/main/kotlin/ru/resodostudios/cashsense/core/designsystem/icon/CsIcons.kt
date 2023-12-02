@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
@@ -32,4 +33,5 @@ object CsIcons {
     val Add = Icons.Outlined.Add
     val Edit = Icons.Outlined.Edit
     val MoreVert = Icons.Outlined.MoreVert
+    val ArrowBack = Icons.AutoMirrored.Outlined.ArrowBack
 }

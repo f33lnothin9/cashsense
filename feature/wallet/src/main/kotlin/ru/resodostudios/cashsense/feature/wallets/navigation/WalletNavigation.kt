@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ru.resodostudios.cashsense.feature.wallets.WalletRoute
 
 internal const val walletIdArg = "walletId"
 
@@ -29,6 +30,8 @@ fun NavGraphBuilder.walletScreen(
             navArgument(walletIdArg) { type = NavType.LongType }
         )
     ) {
-
+        WalletRoute(
+            onBackClick = onBackClick
+        )
     }
 }
