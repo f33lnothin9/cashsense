@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.TimeZoneBroadcastReceiver
 import java.time.ZoneId
@@ -25,11 +26,12 @@ import java.util.Locale
 
 fun LazyGridScope.transactions(
     transactions: List<Transaction>,
+    currency: Currency,
     onDelete: (Transaction) -> Unit
 ) {
     items(transactions) { transaction ->
         ListItem(
-            headlineContent = { Text(text = "${transaction.sum} ₽") },
+            headlineContent = { Text(text = "${transaction.sum} ${currency.symbol}") },
             trailingContent = {
                 IconButton(onClick = { onDelete(transaction) }) {
                     Icon(

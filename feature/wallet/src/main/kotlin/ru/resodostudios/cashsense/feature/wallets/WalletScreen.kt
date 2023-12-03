@@ -67,13 +67,14 @@ internal fun WalletScreen(
                 content = { innerPadding ->
                     LazyVerticalGrid(
                         columns = GridCells.Adaptive(300.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = innerPadding
                     ) {
                         transactions(
                             transactions = walletState.walletWithTransactions.transactions,
+                            currency = walletState.walletWithTransactions.wallet.currency,
                             onDelete = onDelete
                         )
                     }
