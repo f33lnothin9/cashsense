@@ -2,8 +2,6 @@ package ru.resodostudios.cashsense.feature.transactions
 
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,9 +13,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.ui.DefaultDropdownMenu
 import ru.resodostudios.cashsense.core.ui.TimeZoneBroadcastReceiver
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -31,14 +29,17 @@ fun LazyGridScope.transactions(
 ) {
     items(transactions) { transaction ->
         ListItem(
-            headlineContent = { Text(text = "${transaction.sum} ${currency.symbol}") },
+            headlineContent = {
+                Text(
+                    text = "${transaction.sum} ${currency.symbol}",
+                    maxLines = 1
+                )
+            },
             trailingContent = {
-                IconButton(onClick = { onDelete(transaction) }) {
-                    Icon(
-                        imageVector = CsIcons.Delete,
-                        contentDescription = null
-                    )
-                }
+                DefaultDropdownMenu(
+                    onEdit = { /*TODO*/ },
+                    onDelete = { onDelete(transaction) }
+                )
             },
             supportingContent = { Text(text = dateFormatted(transaction.date)) }
         )
