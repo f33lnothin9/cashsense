@@ -32,7 +32,7 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 fun TransactionDialog(
     onDismiss: () -> Unit,
     walletId: Long = 0,
-    viewModel: TransactionsViewModel = hiltViewModel()
+    viewModel: TransactionViewModel = hiltViewModel()
 ) {
     TransactionDialog(
         onDismiss = onDismiss,

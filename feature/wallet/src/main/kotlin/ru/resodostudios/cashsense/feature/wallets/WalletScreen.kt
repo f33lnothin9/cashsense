@@ -23,19 +23,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.transactions.TransactionViewModel
 import ru.resodostudios.cashsense.feature.transactions.transactions
 
 @Composable
 internal fun WalletRoute(
-    viewModel: WalletViewModel = hiltViewModel(),
+    walletViewModel: WalletViewModel = hiltViewModel(),
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
-    val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
+    val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
 
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
-        onDelete = { TODO() }
+        onDelete = transactionViewModel::deleteTransaction
     )
 }
 

@@ -8,5 +8,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.transactions)
+    implementation(projects.feature.transaction)
 }
