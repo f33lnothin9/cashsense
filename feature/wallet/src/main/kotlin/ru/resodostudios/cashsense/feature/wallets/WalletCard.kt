@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.DefaultDropdownMenu
+import ru.resodostudios.cashsense.core.ui.SumWithCurrencyText
 
 @Composable
 fun WalletCard(
@@ -58,14 +59,12 @@ fun WalletCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = wallet.currency.symbol + getCurrentBalance(
+                SumWithCurrencyText(
+                    sum = getCurrentBalance(
                         wallet.startBalance,
                         transactions
                     ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge
+                    currency = wallet.currency
                 )
                 VerticalDivider(modifier = Modifier.height(24.dp))
                 Row(
@@ -115,13 +114,12 @@ fun WalletCard(
 }
 
 
-
-private fun getCurrentBalance(startBalance: Float, transactions: List<Transaction>): String {
+private fun getCurrentBalance(startBalance: Float, transactions: List<Transaction>): Float {
     var currentBalance = startBalance
     transactions.forEach {
         currentBalance += it.sum
     }
-    return currentBalance.toString()
+    return currentBalance
 }
 
 @Preview("Wallet Card")

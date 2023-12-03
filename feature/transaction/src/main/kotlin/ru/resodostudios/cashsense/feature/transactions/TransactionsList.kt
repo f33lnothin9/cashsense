@@ -16,6 +16,7 @@ import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.DefaultDropdownMenu
+import ru.resodostudios.cashsense.core.ui.SumWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.TimeZoneBroadcastReceiver
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -29,12 +30,7 @@ fun LazyGridScope.transactions(
 ) {
     items(transactions) { transaction ->
         ListItem(
-            headlineContent = {
-                Text(
-                    text = "${transaction.sum} ${currency.symbol}",
-                    maxLines = 1
-                )
-            },
+            headlineContent = { SumWithCurrencyText(sum = transaction.sum, currency = currency) },
             trailingContent = {
                 DefaultDropdownMenu(
                     onEdit = { /*TODO*/ },
