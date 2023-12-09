@@ -55,24 +55,22 @@ fun TransactionDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
-    var value by rememberSaveable { mutableStateOf("") }
+    var amount by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("") }
+    var category by rememberSaveable { mutableStateOf("None") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Transaction, contentDescription = null) },
-        title = {
-            Text(text = stringResource(R.string.new_transaction))
-        },
+        title = { Text(text = stringResource(R.string.new_transaction)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 TextField(
-                    value = value,
-                    onValueChange = { value = it },
+                    value = amount,
+                    onValueChange = { amount = it },
                     suffix = { Text(text = "₽") },
                     textStyle = TextStyle(
                         textAlign = TextAlign.End,
@@ -88,7 +86,7 @@ fun TransactionDialog(
                     maxLines = 1
                 )
                 TextField(
-                    value = "Фастфуд",
+                    value = category,
                     onValueChange = { },
                     trailingIcon = {
                         IconButton(onClick = { /*TODO*/ }) {
@@ -113,7 +111,7 @@ fun TransactionDialog(
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(value) }
+                onClick = { onConfirm(amount) }
             ) {
                 Text(text = stringResource(uiR.string.add))
             }

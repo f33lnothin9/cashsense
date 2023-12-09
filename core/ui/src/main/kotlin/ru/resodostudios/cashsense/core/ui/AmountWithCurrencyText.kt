@@ -7,7 +7,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import ru.resodostudios.cashsense.core.model.data.Currency
 
 @Composable
-fun SumWithCurrencyText(
+fun AmountWithCurrencyText(
     sum: Float,
     currency: Currency
 ) {
