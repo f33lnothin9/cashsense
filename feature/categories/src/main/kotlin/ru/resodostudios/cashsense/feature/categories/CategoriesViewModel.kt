@@ -28,15 +28,9 @@ class CategoriesViewModel @Inject constructor(
                 initialValue = CategoriesUiState.Loading,
             )
 
-    fun upsertCategory(name: String) {
+    fun upsertCategory(category: Category) {
         viewModelScope.launch {
-            categoriesRepository.upsertCategory(
-                Category(
-                    id = null,
-                    title = name,
-                    icon = null
-                )
-            )
+            categoriesRepository.upsertCategory(category)
         }
     }
 

@@ -40,9 +40,8 @@ fun TransactionDialog(
             viewModel.upsertTransaction(
                 Transaction(
                     walletOwnerId = walletId,
-                    category = "Фастфуд",
                     description = "??",
-                    sum = it.toFloat(),
+                    amount = it.toFloat(),
                     date = Clock.System.now()
                 )
             )

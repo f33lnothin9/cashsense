@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -40,9 +41,9 @@ fun CategoryDialog(
 @Composable
 fun CategoryDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (Category) -> Unit
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
+    var title by rememberSaveable { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -58,8 +59,8 @@ fun CategoryDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TextField(
-                    value = name,
-                    onValueChange = { name = it },
+                    value = title,
+                    onValueChange = { title = it },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
@@ -71,7 +72,12 @@ fun CategoryDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onConfirm(name)
+                    onConfirm(
+                        Category(
+                            title = title,
+                            icon = null
+                        )
+                    )
                 }
             ) {
                 Text(text = stringResource(uiR.string.add))

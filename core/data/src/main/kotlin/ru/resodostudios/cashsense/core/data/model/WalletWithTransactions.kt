@@ -18,9 +18,9 @@ fun WalletWithTransactions.asEntity() = WalletWithTransactionsEntity(
         TransactionEntity(
             transactionId = it.transactionId,
             walletOwnerId = it.walletOwnerId,
+            categoryId = it.categoryId,
             description = it.description,
-            category = it.category,
-            sum = it.sum,
+            amount = it.amount,
             date = it.date
         )
     }

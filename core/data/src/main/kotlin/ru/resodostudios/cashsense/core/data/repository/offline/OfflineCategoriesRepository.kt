@@ -14,7 +14,7 @@ class OfflineCategoriesRepository @Inject constructor(
     private val dao: CategoryDao
 ) : CategoriesRepository {
 
-    override fun getCategory(categoryId: String): Flow<Category> =
+    override fun getCategory(categoryId: Long): Flow<Category> =
         dao.getCategoryEntity(categoryId).map { it.asExternalModel() }
 
     override fun getCategories(): Flow<List<Category>> =

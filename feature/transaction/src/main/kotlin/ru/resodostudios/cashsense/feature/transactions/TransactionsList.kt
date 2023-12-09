@@ -30,7 +30,7 @@ fun LazyGridScope.transactions(
 ) {
     items(transactions) { transaction ->
         ListItem(
-            headlineContent = { SumWithCurrencyText(sum = transaction.sum, currency = currency) },
+            headlineContent = { SumWithCurrencyText(sum = transaction.amount, currency = currency) },
             trailingContent = {
                 DefaultDropdownMenu(
                     onEdit = { /*TODO*/ },

@@ -113,11 +113,10 @@ fun WalletCard(
     }
 }
 
-
 private fun getCurrentBalance(startBalance: Float, transactions: List<Transaction>): Float {
     var currentBalance = startBalance
     transactions.forEach {
-        currentBalance += it.sum
+        currentBalance += it.amount
     }
     return currentBalance
 }

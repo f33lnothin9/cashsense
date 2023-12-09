@@ -18,9 +18,8 @@ class TransactionViewModel @Inject constructor(
             transactionRepository.upsertTransaction(
                 Transaction(
                     walletOwnerId = transaction.walletOwnerId,
-                    category = transaction.category,
                     description = transaction.description,
-                    sum = transaction.sum,
+                    amount = transaction.amount,
                     date = transaction.date
                 )
             )
