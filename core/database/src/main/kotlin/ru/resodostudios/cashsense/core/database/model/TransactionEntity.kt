@@ -11,8 +11,8 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
     foreignKeys = [
         ForeignKey(
             entity = CategoryEntity::class,
-            parentColumns = ["categoryId"],
-            childColumns = ["transactionId"],
+            parentColumns = ["id"],
+            childColumns = ["categoryId"],
             onDelete = ForeignKey.SET_NULL
         )
     ]

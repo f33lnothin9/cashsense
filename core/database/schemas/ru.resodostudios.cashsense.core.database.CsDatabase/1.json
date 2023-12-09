@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e354d2ba5f7eafafc9824a512744c03c",
+    "identityHash": "a732c56be29fe20e2f6fdc23c614a1b9",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `walletOwnerId` INTEGER NOT NULL, `categoryId` INTEGER, `description` TEXT, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, FOREIGN KEY(`transactionId`) REFERENCES `categories`(`categoryId`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `walletOwnerId` INTEGER NOT NULL, `categoryId` INTEGER, `description` TEXT, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "transactionId",
@@ -58,21 +58,21 @@
             "onDelete": "SET NULL",
             "onUpdate": "NO ACTION",
             "columns": [
-              "transactionId"
+              "categoryId"
             ],
             "referencedColumns": [
-              "categoryId"
+              "id"
             ]
           }
         ]
       },
       {
         "tableName": "categories",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `icon` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `icon` INTEGER)",
         "fields": [
           {
-            "fieldPath": "categoryId",
-            "columnName": "categoryId",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -92,7 +92,7 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "categoryId"
+            "id"
           ]
         },
         "indices": [],
@@ -152,7 +152,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e354d2ba5f7eafafc9824a512744c03c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a732c56be29fe20e2f6fdc23c614a1b9')"
     ]
   }
 }

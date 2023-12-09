@@ -11,7 +11,7 @@ data class TransactionWithCategoryEntity(
     val transaction: TransactionEntity,
     @Relation(
         parentColumn = "transactionId",
-        entityColumn = "categoryId"
+        entityColumn = "id"
     )
     val category: CategoryEntity
 )
@@ -25,7 +25,7 @@ fun TransactionWithCategoryEntity.asExternalModel() = TransactionWithCategory(
         date = transaction.date
     ),
     category = Category(
-        categoryId = category.categoryId,
+        id = category.id,
         title = category.title,
         icon = category.icon
     )

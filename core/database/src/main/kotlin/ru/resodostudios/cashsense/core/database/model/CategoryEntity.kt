@@ -9,13 +9,13 @@ import ru.resodostudios.cashsense.core.model.data.Category
 )
 data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
-    val categoryId: Long,
+    val id: Long,
     val title: String,
     val icon: Int?
 )
 
 fun CategoryEntity.asExternalModel() = Category(
-    categoryId = categoryId,
+    id = id,
     title = title,
     icon = icon
 )
