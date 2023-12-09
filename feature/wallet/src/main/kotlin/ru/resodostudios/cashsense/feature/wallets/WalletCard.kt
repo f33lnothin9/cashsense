@@ -26,7 +26,7 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
-import ru.resodostudios.cashsense.core.ui.DefaultDropdownMenu
+import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 
 @Composable
 fun WalletCard(
@@ -105,7 +105,7 @@ fun WalletCard(
             ) {
                 Text(text = stringResource(R.string.add_transaction))
             }
-            DefaultDropdownMenu(
+            EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet) },
                 onDelete = { onDelete(wallet, transactions) }
             )

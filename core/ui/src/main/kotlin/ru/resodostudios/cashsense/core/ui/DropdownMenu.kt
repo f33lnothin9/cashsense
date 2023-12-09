@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 
 @Composable
-fun DefaultDropdownMenu(
+fun EditAndDeleteDropdownMenu(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
