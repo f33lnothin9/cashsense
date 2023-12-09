@@ -12,7 +12,7 @@ data class WalletEntity(
     @PrimaryKey(autoGenerate = true)
     val walletId: Long,
     val title: String,
-    val startBalance: Float,
+    val startBalance: Double,
     val currency: Currency,
     val income: Float,
     val expenses: Float

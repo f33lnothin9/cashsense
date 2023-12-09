@@ -106,7 +106,7 @@ fun NewWalletDialog(
                     onConfirm(
                         Wallet(
                             title = title,
-                            startBalance = startBalance.toFloat(),
+                            startBalance = startBalance.toDouble(),
                             currency = currency
                         )
                     )

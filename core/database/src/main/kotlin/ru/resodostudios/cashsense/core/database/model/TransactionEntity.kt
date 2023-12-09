@@ -23,7 +23,7 @@ data class TransactionEntity(
     val walletOwnerId: Long,
     val categoryId: Long?,
     val description: String?,
-    val amount: Float,
+    val amount: Double,
     val date: Instant
 )
 

@@ -41,7 +41,7 @@ fun TransactionDialog(
                 Transaction(
                     walletOwnerId = walletId,
                     description = "??",
-                    amount = it.toFloat(),
+                    amount = it.toDouble(),
                     date = Clock.System.now()
                 )
             )

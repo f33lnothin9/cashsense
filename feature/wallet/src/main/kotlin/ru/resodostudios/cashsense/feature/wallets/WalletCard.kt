@@ -25,8 +25,8 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.ui.DefaultDropdownMenu
 import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
+import ru.resodostudios.cashsense.core.ui.DefaultDropdownMenu
 
 @Composable
 fun WalletCard(
@@ -60,7 +60,7 @@ fun WalletCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 AmountWithCurrencyText(
-                    sum = getCurrentBalance(
+                    amount = getCurrentBalance(
                         wallet.startBalance,
                         transactions
                     ),
@@ -113,7 +113,7 @@ fun WalletCard(
     }
 }
 
-private fun getCurrentBalance(startBalance: Float, transactions: List<Transaction>): Float {
+private fun getCurrentBalance(startBalance: Double, transactions: List<Transaction>): Double {
     var currentBalance = startBalance
     transactions.forEach {
         currentBalance += it.amount
@@ -128,7 +128,7 @@ fun WalletCardPreview() {
         WalletCard(
             wallet = Wallet(
                 title = "Wallet 1",
-                startBalance = 100.00f,
+                startBalance = 100.00,
                 currency = Currency.USD,
                 income = 132.0f,
                 expenses = 223.43f
