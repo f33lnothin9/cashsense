@@ -20,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
@@ -54,7 +54,7 @@ internal fun HomeScreen(
     Box {
         when (walletsState) {
             WalletsUiState.Loading -> LoadingState()
-            is WalletsUiState.Success -> if (walletsState.walletsWithTransactions.isNotEmpty()) {
+            is WalletsUiState.Success -> if (walletsState.walletsWithTransactionsAndCategories.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -62,8 +62,8 @@ internal fun HomeScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    walletsWithTransactions(
-                        walletsWithTransactions = walletsState.walletsWithTransactions,
+                    walletsWithTransactionsAndCategories(
+                        walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = {
                             walletId = it     
@@ -89,17 +89,17 @@ internal fun HomeScreen(
     }
 }
 
-private fun LazyGridScope.walletsWithTransactions(
-    walletsWithTransactions: List<WalletWithTransactions>,
+private fun LazyGridScope.walletsWithTransactionsAndCategories(
+    walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (Long) -> Unit,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
-    items(walletsWithTransactions) { walletWithTransactions ->
+    items(walletsWithTransactionsAndCategories) { walletWithTransactionsAndCategories ->
         WalletCard(
-            wallet = walletWithTransactions.wallet,
-            transactions = walletWithTransactions.transactions,
+            wallet = walletWithTransactionsAndCategories.wallet,
+            transactionsWithCategories = walletWithTransactionsAndCategories.transactionsWithCategories,
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onEdit = onEdit,

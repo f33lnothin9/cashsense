@@ -67,7 +67,6 @@ fun TransactionDialog(
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 TextField(
                     value = amount,
                     onValueChange = { amount = it },

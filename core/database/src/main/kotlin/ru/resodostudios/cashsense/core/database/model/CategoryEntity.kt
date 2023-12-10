@@ -9,8 +9,8 @@ import ru.resodostudios.cashsense.core.model.data.Category
 )
 data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
-    val title: String,
+    val id: Long?,
+    val title: String?,
     val icon: Int?
 )
 

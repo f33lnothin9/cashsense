@@ -70,7 +70,7 @@ private fun LazyGridScope.categories(
         is CategoriesUiState.Success -> {
             items(categoriesState.categories) { category ->
                 ListItem(
-                    headlineContent = { Text(text = category.title) },
+                    headlineContent = { Text(text = category.title.toString()) },
                     trailingContent = {
                         IconButton(onClick = { onDelete(category) }) {
                             Icon(

@@ -57,7 +57,7 @@ internal fun WalletScreen(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = walletState.walletWithTransactions.wallet.title) },
+                        title = { Text(text = walletState.walletWithTransactionsAndCategories.wallet.title) },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(imageVector = CsIcons.ArrowBack, contentDescription = null)
@@ -75,8 +75,8 @@ internal fun WalletScreen(
                         contentPadding = innerPadding
                     ) {
                         transactions(
-                            transactions = walletState.walletWithTransactions.transactions,
-                            currency = walletState.walletWithTransactions.wallet.currency,
+                            transactionsWithCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories,
+                            currency = walletState.walletWithTransactionsAndCategories.wallet.currency,
                             onDelete = onDelete
                         )
                     }

@@ -15,6 +15,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.TimeZoneBroadcastReceiver
@@ -24,25 +25,29 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 fun LazyGridScope.transactions(
-    transactions: List<Transaction>,
+    transactionsWithCategories: List<TransactionWithCategory>,
     currency: Currency,
     onDelete: (Transaction) -> Unit
 ) {
-    items(transactions) { transaction ->
+    items(transactionsWithCategories) { transactionWithCategory ->
         ListItem(
             headlineContent = {
                 AmountWithCurrencyText(
-                    amount = transaction.amount,
+                    amount = transactionWithCategory.transaction.amount,
                     currency = currency
                 )
             },
             trailingContent = {
                 EditAndDeleteDropdownMenu(
                     onEdit = { /*TODO*/ },
-                    onDelete = { onDelete(transaction) }
+                    onDelete = { onDelete(transactionWithCategory.transaction) }
                 )
             },
-            supportingContent = { Text(text = dateFormatted(transaction.date)) }
+            supportingContent = {
+                Text(
+                    text = if (transactionWithCategory.category?.title == null) "None" else transactionWithCategory.category!!.title.toString()
+                )
+            }
         )
     }
 }

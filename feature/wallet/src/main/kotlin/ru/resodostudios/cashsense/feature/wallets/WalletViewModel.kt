@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.feature.wallets.navigation.WalletArgs
 import javax.inject.Inject
 
@@ -27,7 +27,7 @@ class WalletViewModel @Inject constructor(
 
     val walletUiState: StateFlow<WalletUiState> =
         walletsRepository.getWalletWithTransactions(walletArgs.walletId)
-            .map<WalletWithTransactions, WalletUiState>(WalletUiState::Success)
+            .map<WalletWithTransactionsAndCategories, WalletUiState>(WalletUiState::Success)
             .onStart { emit(WalletUiState.Loading) }
             .stateIn(
                 scope = viewModelScope,
@@ -53,6 +53,6 @@ sealed interface WalletUiState {
     data object Loading : WalletUiState
 
     data class Success(
-        val walletWithTransactions: WalletWithTransactions
+        val walletWithTransactionsAndCategories: WalletWithTransactionsAndCategories
     ) : WalletUiState
 }

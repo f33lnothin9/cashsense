@@ -1,11 +1,13 @@
 package ru.resodostudios.cashsense.core.data.model
 
+import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
+import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
-import ru.resodostudios.cashsense.core.database.model.WalletWithTransactionsEntity
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactions
+import ru.resodostudios.cashsense.core.database.model.WalletWithTransactionsAndCategoriesEntity
+import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 
-fun WalletWithTransactions.asEntity() = WalletWithTransactionsEntity(
+fun WalletWithTransactionsAndCategories.asEntity() = WalletWithTransactionsAndCategoriesEntity(
     wallet = WalletEntity(
         walletId = wallet.walletId,
         title = wallet.title,
@@ -14,14 +16,21 @@ fun WalletWithTransactions.asEntity() = WalletWithTransactionsEntity(
         income = wallet.income,
         expenses = wallet.expenses
     ),
-    transactions = transactions.map {
-        TransactionEntity(
-            transactionId = it.transactionId,
-            walletOwnerId = it.walletOwnerId,
-            categoryId = it.categoryId,
-            description = it.description,
-            amount = it.amount,
-            date = it.date
+    transactionsWithCategories = transactionsWithCategories.map {
+        TransactionWithCategoryEntity(
+            transaction = TransactionEntity(
+                transactionId = it.transaction.transactionId,
+                walletOwnerId = it.transaction.walletOwnerId,
+                categoryId = it.transaction.categoryId,
+                description = it.transaction.description,
+                amount = it.transaction.amount,
+                date = it.transaction.date
+            ),
+            category = CategoryEntity(
+                id = it.category?.id,
+                title = it.category?.title,
+                icon = it.category?.icon
+            )
         )
     }
 )

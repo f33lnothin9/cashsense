@@ -24,6 +24,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
@@ -31,7 +32,7 @@ import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 @Composable
 fun WalletCard(
     wallet: Wallet,
-    transactions: List<Transaction>,
+    transactionsWithCategories: List<TransactionWithCategory>,
     onWalletClick: (Long) -> Unit,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
@@ -62,7 +63,7 @@ fun WalletCard(
                 AmountWithCurrencyText(
                     amount = getCurrentBalance(
                         wallet.startBalance,
-                        transactions
+                        transactionsWithCategories.map { it.transaction }
                     ),
                     currency = wallet.currency
                 )
@@ -107,7 +108,7 @@ fun WalletCard(
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet) },
-                onDelete = { onDelete(wallet, transactions) }
+                onDelete = { onDelete(wallet, transactionsWithCategories.map { it.transaction }) }
             )
         }
     }
@@ -133,7 +134,7 @@ fun WalletCardPreview() {
                 income = 132.0f,
                 expenses = 223.43f
             ),
-            transactions = emptyList(),
+            transactionsWithCategories = emptyList(),
             onWalletClick = { },
             onTransactionCreate = { },
             onEdit = { },
