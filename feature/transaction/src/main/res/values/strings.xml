@@ -3,6 +3,7 @@
     <string name="transactions_empty">Nothing in Transactions</string>
 
     <string name="new_transaction">New transaction</string>
-    <string name="sum">Sum</string>
+    <string name="amount">Amount</string>
     <string name="category">Category</string>
+    <string name="none">None</string>
 </resources>

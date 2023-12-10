@@ -1,10 +1,14 @@
 package ru.resodostudios.cashsense.feature.transactions
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -13,18 +17,18 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -57,7 +61,7 @@ fun TransactionDialog(
 ) {
     var amount by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("None") }
+    var category by rememberSaveable { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -70,18 +74,10 @@ fun TransactionDialog(
                 TextField(
                     value = amount,
                     onValueChange = { amount = it },
-                    suffix = { Text(text = "₽") },
-                    textStyle = TextStyle(
-                        textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        letterSpacing = 0.5.sp
-                    ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
-                    label = { Text(text = stringResource(R.string.sum)) },
+                    label = { Text(text = stringResource(R.string.amount)) },
                     maxLines = 1
                 )
                 TextField(
@@ -94,7 +90,8 @@ fun TransactionDialog(
                     },
                     label = { Text(text = stringResource(R.string.category)) },
                     readOnly = true,
-                    maxLines = 1
+                    maxLines = 1,
+                    placeholder = { Text(text = stringResource(R.string.none)) }
                 )
                 TextField(
                     value = description,
@@ -123,4 +120,34 @@ fun TransactionDialog(
             }
         }
     )
+}
+
+@Composable
+private fun CategoryDropDownMenu(
+    categories: List<Category>,
+    onCategoryClick: (Category) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier.wrapContentSize(Alignment.TopStart)
+    ) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(CsIcons.DropDown, contentDescription = null)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            for (category in categories) {
+                DropdownMenuItem(
+                    text = { Text(text = category.title.toString()) },
+                    onClick = {
+                        onCategoryClick(category)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
 }
