@@ -10,10 +10,10 @@ import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 @Dao
 interface CategoryDao {
 
-    @Query("SELECT * FROM categories WHERE id = :categoryId")
+    @Query("SELECT * FROM categories WHERE categoryId = :categoryId")
     fun getCategoryEntity(categoryId: Long): Flow<CategoryEntity>
 
-    @Query("SELECT * FROM categories ORDER BY id DESC")
+    @Query("SELECT * FROM categories ORDER BY categoryId DESC")
     fun getCategoryEntities(): Flow<List<CategoryEntity>>
 
     @Upsert

@@ -15,14 +15,7 @@ class TransactionViewModel @Inject constructor(
 
     fun upsertTransaction(transaction: Transaction) {
         viewModelScope.launch {
-            transactionRepository.upsertTransaction(
-                Transaction(
-                    walletOwnerId = transaction.walletOwnerId,
-                    description = transaction.description,
-                    amount = transaction.amount,
-                    date = transaction.date
-                )
-            )
+            transactionRepository.upsertTransaction(transaction)
         }
     }
 

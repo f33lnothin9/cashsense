@@ -26,29 +26,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
+import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun TransactionDialog(
     onDismiss: () -> Unit,
     walletId: Long = 0,
-    viewModel: TransactionViewModel = hiltViewModel()
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+
     TransactionDialog(
+        categoriesState = categoriesState,
+        walletId = walletId,
         onDismiss = onDismiss,
         onConfirm = {
-            viewModel.upsertTransaction(
-                Transaction(
-                    walletOwnerId = walletId,
-                    description = "??",
-                    amount = it.toDouble(),
-                    date = Clock.System.now()
-                )
-            )
+            transactionViewModel.upsertTransaction(it)
             onDismiss()
         }
     )
@@ -56,76 +58,101 @@ fun TransactionDialog(
 
 @Composable
 fun TransactionDialog(
+    categoriesState: CategoriesUiState,
+    walletId: Long = 0,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (Transaction) -> Unit
 ) {
     var amount by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf("") }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = { Icon(CsIcons.Transaction, contentDescription = null) },
-        title = { Text(text = stringResource(R.string.new_transaction)) },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                TextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    label = { Text(text = stringResource(R.string.amount)) },
-                    maxLines = 1
-                )
-                TextField(
-                    value = category,
-                    onValueChange = { },
-                    trailingIcon = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(CsIcons.DropDown, contentDescription = null)
+    var categoryId = 0L
+
+    when (categoriesState) {
+        CategoriesUiState.Loading -> LoadingState()
+        is CategoriesUiState.Success ->
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                icon = { Icon(CsIcons.Transaction, contentDescription = null) },
+                title = { Text(text = stringResource(R.string.new_transaction)) },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        TextField(
+                            value = amount,
+                            onValueChange = { amount = it },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal
+                            ),
+                            label = { Text(text = stringResource(R.string.amount)) },
+                            maxLines = 1
+                        )
+                        TextField(
+                            value = category,
+                            onValueChange = { },
+                            trailingIcon = {
+                                CategoryDropDownMenu(
+                                    categories = categoriesState.categories,
+                                    onCategoryClick = {
+                                        category = it.title.toString()
+                                        categoryId = it.categoryId!!
+                                    },
+                                    onCategoryCreate = {
+
+                                    }
+                                )
+                            },
+                            label = { Text(text = stringResource(R.string.category)) },
+                            readOnly = true,
+                            maxLines = 1,
+                            placeholder = { Text(text = stringResource(R.string.none)) }
+                        )
+                        TextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text
+                            ),
+                            label = { Text(text = stringResource(uiR.string.description)) },
+                            maxLines = 1,
+                            supportingText = { Text(text = stringResource(uiR.string.optional)) }
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            onConfirm(
+                                Transaction(
+                                    walletOwnerId = walletId,
+                                    description = "??",
+                                    amount = amount.toDouble(),
+                                    date = Clock.System.now()
+                                )
+                            )
                         }
-                    },
-                    label = { Text(text = stringResource(R.string.category)) },
-                    readOnly = true,
-                    maxLines = 1,
-                    placeholder = { Text(text = stringResource(R.string.none)) }
-                )
-                TextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = { Text(text = stringResource(uiR.string.description)) },
-                    maxLines = 1,
-                    supportingText = { Text(text = stringResource(uiR.string.optional)) }
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onConfirm(amount) }
-            ) {
-                Text(text = stringResource(uiR.string.add))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text(text = stringResource(uiR.string.cancel))
-            }
-        }
-    )
+                    ) {
+                        Text(text = stringResource(uiR.string.add))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = onDismiss
+                    ) {
+                        Text(text = stringResource(uiR.string.cancel))
+                    }
+                }
+            )
+    }
 }
 
 @Composable
 private fun CategoryDropDownMenu(
     categories: List<Category>,
-    onCategoryClick: (Category) -> Unit
+    onCategoryClick: (Category) -> Unit,
+    onCategoryCreate: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -139,6 +166,16 @@ private fun CategoryDropDownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            DropdownMenuItem(
+                text = { Text(text = "Create") },
+                leadingIcon = {
+                    Icon(imageVector = CsIcons.Add, contentDescription = null)
+                },
+                onClick = {
+                    onCategoryCreate()
+                    expanded = false
+                }
+            )
             for (category in categories) {
                 DropdownMenuItem(
                     text = { Text(text = category.title.toString()) },

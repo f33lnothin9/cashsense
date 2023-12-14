@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEntity
 
@@ -27,4 +28,10 @@ interface TransactionDao {
 
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)
+
+    @Upsert
+    suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef)
+
+    @Delete
+    suspend fun deleteTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef)
 }

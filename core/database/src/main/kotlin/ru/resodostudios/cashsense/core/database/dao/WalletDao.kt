@@ -25,5 +25,8 @@ interface WalletDao {
     suspend fun upsertWallet(wallet: WalletEntity)
 
     @Delete
-    suspend fun deleteWalletWithTransactions(wallet: WalletEntity, transactions: List<TransactionEntity>)
+    suspend fun deleteWalletWithTransactions(
+        wallet: WalletEntity,
+        transactions: List<TransactionEntity>
+    )
 }

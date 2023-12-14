@@ -1,27 +1,17 @@
 package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Transaction
 
 @Entity(
-    tableName = "transactions",
-    foreignKeys = [
-        ForeignKey(
-            entity = CategoryEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["categoryId"],
-            onDelete = ForeignKey.SET_NULL
-        )
-    ]
+    tableName = "transactions"
 )
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val transactionId: Long,
     val walletOwnerId: Long,
-    val categoryId: Long?,
     val description: String?,
     val amount: Double,
     val date: Instant
@@ -30,7 +20,6 @@ data class TransactionEntity(
 fun TransactionEntity.asExternalModel() = Transaction(
     transactionId = transactionId,
     walletOwnerId = walletOwnerId,
-    categoryId = categoryId,
     description = description,
     amount = amount,
     date = date

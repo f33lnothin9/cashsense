@@ -16,20 +16,19 @@ fun WalletWithTransactionsAndCategories.asEntity() = WalletWithTransactionsAndCa
         income = wallet.income,
         expenses = wallet.expenses
     ),
-    transactionsWithCategories = transactionsWithCategories.map {
+    transactions = transactionsWithCategories.map {
         TransactionWithCategoryEntity(
             transaction = TransactionEntity(
                 transactionId = it.transaction.transactionId,
                 walletOwnerId = it.transaction.walletOwnerId,
-                categoryId = it.transaction.categoryId,
                 description = it.transaction.description,
                 amount = it.transaction.amount,
                 date = it.transaction.date
             ),
             category = CategoryEntity(
-                id = it.category?.id,
-                title = it.category?.title,
-                icon = it.category?.icon
+                categoryId = it.category.categoryId,
+                title = it.category.title,
+                icon = it.category.icon
             )
         )
     }

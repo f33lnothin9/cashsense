@@ -26,6 +26,7 @@ internal fun CategoryRoute(
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
+
     CategoriesScreen(
         categoriesState = categoriesState,
         onDelete = viewModel::deleteCategory

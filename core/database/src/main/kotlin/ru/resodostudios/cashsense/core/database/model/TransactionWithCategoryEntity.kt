@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
 
 data class TransactionWithCategoryEntity(
@@ -8,7 +9,8 @@ data class TransactionWithCategoryEntity(
     val transaction: TransactionEntity,
     @Relation(
         parentColumn = "transactionId",
-        entityColumn = "id"
+        entityColumn = "categoryId",
+        associateBy = Junction(TransactionCategoryCrossRef::class)
     )
     val category: CategoryEntity?
 )

@@ -45,7 +45,7 @@ fun LazyGridScope.transactions(
             },
             supportingContent = {
                 Text(
-                    text = if (transactionWithCategory.category?.title == null) "None" else transactionWithCategory.category!!.title.toString()
+                    text = transactionWithCategory.category.title.toString()
                 )
             }
         )
