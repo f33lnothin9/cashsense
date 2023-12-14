@@ -21,4 +21,12 @@ interface CategoryDao {
 
     @Delete
     suspend fun deleteCategory(category: CategoryEntity)
+
+    @Query(
+        value = """
+            DELETE FROM transaction_category_cross_ref
+            WHERE categoryId = :categoryId
+        """
+    )
+    suspend fun deleteCategoryFromTransactions(categoryId: Long)
 }

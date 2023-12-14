@@ -23,6 +23,8 @@ class OfflineCategoriesRepository @Inject constructor(
     override suspend fun upsertCategory(category: Category) =
         dao.upsertCategory(category.asEntity())
 
-    override suspend fun deleteCategory(category: Category) =
+    override suspend fun deleteCategory(category: Category) {
         dao.deleteCategory(category.asEntity())
+        dao.deleteCategoryFromTransactions(category.categoryId!!)
+    }
 }
