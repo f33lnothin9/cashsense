@@ -10,7 +10,7 @@ data class TransactionWithCategoryEntity(
     @Relation(
         parentColumn = "transactionId",
         entityColumn = "categoryId",
-        associateBy = Junction(TransactionCategoryCrossRef::class)
+        associateBy = Junction(TransactionCategoryCrossRefEntity::class)
     )
     val category: CategoryEntity?
 )

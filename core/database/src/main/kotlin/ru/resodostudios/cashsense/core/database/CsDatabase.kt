@@ -7,7 +7,7 @@ import ru.resodostudios.cashsense.core.database.dao.CategoryDao
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
-import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRef
+import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.util.InstantConverter
@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.database.util.InstantConverter
         TransactionEntity::class,
         CategoryEntity::class,
         WalletEntity::class,
-        TransactionCategoryCrossRef::class
+        TransactionCategoryCrossRefEntity::class
     ],
     version = 1,
     exportSchema = true
