@@ -6,6 +6,7 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 fun Transaction.asEntity() = TransactionEntity(
     transactionId = transactionId,
     walletOwnerId = walletOwnerId,
+    categoryOwnerId = categoryOwnerId,
     amount = amount,
     date = date,
     description = description

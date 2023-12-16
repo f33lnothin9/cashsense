@@ -31,9 +31,11 @@ import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
+import java.util.UUID
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -51,6 +53,14 @@ fun TransactionDialog(
         onDismiss = onDismiss,
         onConfirm = {
             transactionViewModel.upsertTransaction(it)
+            if (it.categoryOwnerId != null) {
+                transactionViewModel.upsertTransactionCategoryCrossRef(
+                    TransactionCategoryCrossRef(
+                        transactionId = it.transactionId,
+                        categoryId = it.categoryOwnerId!!
+                    )
+                )
+            }
             onDismiss()
         }
     )
@@ -67,7 +77,7 @@ fun TransactionDialog(
     var description by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf("") }
 
-    var categoryId = 0L
+    var categoryId: Long? = null
 
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
@@ -97,7 +107,7 @@ fun TransactionDialog(
                                     categories = categoriesState.categories,
                                     onCategoryClick = {
                                         category = it.title.toString()
-                                        categoryId = it.categoryId!!
+                                        categoryId = it.categoryId
                                     },
                                     onCategoryCreate = {
 
@@ -126,7 +136,9 @@ fun TransactionDialog(
                         onClick = {
                             onConfirm(
                                 Transaction(
+                                    transactionId = UUID.randomUUID(),
                                     walletOwnerId = walletId,
+                                    categoryOwnerId = categoryId,
                                     description = "??",
                                     amount = amount.toDouble(),
                                     date = Clock.System.now()

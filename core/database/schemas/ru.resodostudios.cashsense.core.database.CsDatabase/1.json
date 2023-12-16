@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c3e8ef96aafdeef4153caa92b711551d",
+    "identityHash": "ae4d3ef31eedffa3a950b28cfefd1ca3",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `walletOwnerId` INTEGER NOT NULL, `description` TEXT, `amount` REAL NOT NULL, `date` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` BLOB NOT NULL, `walletOwnerId` INTEGER NOT NULL, `categoryOwnerId` INTEGER, `description` TEXT, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`transactionId`))",
         "fields": [
           {
             "fieldPath": "transactionId",
             "columnName": "transactionId",
-            "affinity": "INTEGER",
+            "affinity": "BLOB",
             "notNull": true
           },
           {
@@ -19,6 +19,12 @@
             "columnName": "walletOwnerId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "categoryOwnerId",
+            "columnName": "categoryOwnerId",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "description",
@@ -40,7 +46,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "transactionId"
           ]
@@ -132,12 +138,12 @@
       },
       {
         "tableName": "transaction_category_cross_ref",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, PRIMARY KEY(`transactionId`, `categoryId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` BLOB NOT NULL, `categoryId` INTEGER NOT NULL, PRIMARY KEY(`transactionId`, `categoryId`))",
         "fields": [
           {
             "fieldPath": "transactionId",
             "columnName": "transactionId",
-            "affinity": "INTEGER",
+            "affinity": "BLOB",
             "notNull": true
           },
           {
@@ -161,7 +167,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c3e8ef96aafdeef4153caa92b711551d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ae4d3ef31eedffa3a950b28cfefd1ca3')"
     ]
   }
 }

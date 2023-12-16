@@ -4,14 +4,16 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import java.util.UUID
 
 @Entity(
     tableName = "transactions"
 )
 data class TransactionEntity(
-    @PrimaryKey(autoGenerate = true)
-    val transactionId: Long,
+    @PrimaryKey
+    val transactionId: UUID,
     val walletOwnerId: Long,
+    val categoryOwnerId: Long?,
     val description: String?,
     val amount: Double,
     val date: Instant

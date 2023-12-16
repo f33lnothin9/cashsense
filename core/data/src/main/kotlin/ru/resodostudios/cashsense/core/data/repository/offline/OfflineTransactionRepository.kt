@@ -7,6 +7,7 @@ import ru.resodostudios.cashsense.core.data.repository.TransactionRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import javax.inject.Inject
 
 class OfflineTransactionRepository @Inject constructor(
@@ -21,4 +22,7 @@ class OfflineTransactionRepository @Inject constructor(
 
     override suspend fun deleteTransaction(transaction: Transaction) =
         dao.deleteTransaction(transaction.asEntity())
+
+    override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) =
+        dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())
 }
