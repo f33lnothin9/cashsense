@@ -139,7 +139,7 @@ fun TransactionDialog(
                                     transactionId = UUID.randomUUID(),
                                     walletOwnerId = walletId,
                                     categoryOwnerId = categoryId,
-                                    description = "??",
+                                    description = description,
                                     amount = amount.toDouble(),
                                     date = Clock.System.now()
                                 )
