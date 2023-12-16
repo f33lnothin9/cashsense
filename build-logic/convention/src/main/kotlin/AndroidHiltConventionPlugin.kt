@@ -1,7 +1,8 @@
-import ru.resodostudios.cashsense.libs
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
+import ru.resodostudios.cashsense.libs
 
 class AndroidHiltConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -17,8 +18,6 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
                 "kspAndroidTest"(libs.findLibrary("hilt.compiler").get())
                 "kspTest"(libs.findLibrary("hilt.compiler").get())
             }
-
         }
     }
-
 }

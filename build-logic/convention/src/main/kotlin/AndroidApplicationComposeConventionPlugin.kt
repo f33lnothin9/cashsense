@@ -1,8 +1,9 @@
+
 import com.android.build.api.dsl.ApplicationExtension
-import ru.resodostudios.cashsense.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
+import ru.resodostudios.cashsense.configureAndroidCompose
 
 class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -13,5 +14,4 @@ class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
             configureAndroidCompose(extension)
         }
     }
-
 }
