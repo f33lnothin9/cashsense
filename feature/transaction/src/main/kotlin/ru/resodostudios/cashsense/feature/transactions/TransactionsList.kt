@@ -30,7 +30,7 @@ fun LazyGridScope.transactions(
     currency: Currency,
     onDelete: (Transaction) -> Unit
 ) {
-    items(transactionsWithCategories) { transactionWithCategory ->
+    items(transactionsWithCategories.sortedByDescending { it.transaction.date }) { transactionWithCategory ->
         ListItem(
             headlineContent = {
                 AmountWithCurrencyText(
