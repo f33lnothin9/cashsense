@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.model.data.Currency
@@ -45,7 +46,7 @@ fun LazyGridScope.transactions(
             },
             supportingContent = {
                 Text(
-                    text = transactionWithCategory.category.title.toString()
+                    text = if (transactionWithCategory.category.title == null) stringResource(R.string.none) else transactionWithCategory.category.title.toString()
                 )
             }
         )
