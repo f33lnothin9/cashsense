@@ -27,7 +27,7 @@ fun EditAndDeleteDropdownMenu(
         modifier = Modifier.wrapContentSize(Alignment.TopEnd)
     ) {
         IconButton(onClick = { showMenu = true }) {
-            Icon(imageVector = CsIcons.MoreVert, contentDescription = null)
+            Icon(imageVector = CsIcons.MoreVert, contentDescription = stringResource(R.string.dropdown_menu_icon_description))
         }
         DropdownMenu(
             expanded = showMenu,
