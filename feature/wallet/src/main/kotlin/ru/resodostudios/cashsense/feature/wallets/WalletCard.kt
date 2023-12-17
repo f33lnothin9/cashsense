@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +30,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
+import kotlin.math.abs
 
 @Composable
 fun WalletCard(
@@ -68,16 +69,18 @@ fun WalletCard(
                 currency = wallet.currency
             )
 
-            WalletFinancesSection(transactions = transactions)
+            if (transactions.isNotEmpty()) {
+                WalletFinancesSection(transactions = transactions)
+            }
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 14.dp, end = 4.dp, bottom = 12.dp)
+                .padding(start = 14.dp, end = 12.dp, bottom = 12.dp, top = 8.dp)
                 .fillMaxWidth()
         ) {
-            OutlinedButton(
+            Button(
                 onClick = { onTransactionCreate(wallet.walletId) }
             ) {
                 Text(text = stringResource(R.string.add_transaction))
@@ -92,7 +95,7 @@ fun WalletCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun WalletFinancesSection(
+private fun WalletFinancesSection(
     transactions: List<Transaction>
 ) {
     FlowRow(
@@ -153,7 +156,7 @@ fun WalletFinancesSection(
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
-                    text = walletExpenses.toString().drop(1),
+                    text = abs(walletExpenses).toString(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelLarge
