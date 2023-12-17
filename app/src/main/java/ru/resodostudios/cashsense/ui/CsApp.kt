@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.ui
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,12 +27,12 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
-import ru.resodostudios.cashsense.feature.wallets.NewWalletDialog
+import ru.resodostudios.cashsense.feature.wallets.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
-import ru.resodostudios.cashsense.feature.categories.R as categoriesR
-import ru.resodostudios.cashsense.feature.wallets.R as walletsR
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
@@ -47,16 +48,12 @@ fun CsApp(
     var showNewTransactionDialog by rememberSaveable {
         mutableStateOf(false)
     }
-    var showNewCategoryDialog by rememberSaveable {
+    var showAddCategoryDialog by rememberSaveable {
         mutableStateOf(false)
     }
-    var showNewWalletDialog by rememberSaveable {
+    var showAddWalletDialog by rememberSaveable {
         mutableStateOf(false)
     }
-
-    val showFab =
-        appState.topLevelDestinations.take(2).any { it == appState.currentTopLevelDestination }
-    val isHomeDestination = appState.currentTopLevelDestination == HOME
 
     if (showSettingsDialog) {
         SettingsDialog(
@@ -68,14 +65,14 @@ fun CsApp(
             onDismiss = { showNewTransactionDialog = false },
         )
     }
-    if (showNewCategoryDialog) {
+    if (showAddCategoryDialog) {
         CategoryDialog(
-            onDismiss = { showNewCategoryDialog = false }
+            onDismiss = { showAddCategoryDialog = false }
         )
     }
-    if (showNewWalletDialog) {
-        NewWalletDialog(
-            onDismiss = { showNewWalletDialog = false }
+    if (showAddWalletDialog) {
+        AddWalletDialog(
+            onDismiss = { showAddWalletDialog = false }
         )
     }
 
@@ -91,9 +88,9 @@ fun CsApp(
                     icon = {
                         Icon(
                             painter = if (isSelected) {
-                                painterResource(id = destination.selectedIcon)
+                                painterResource(destination.selectedIcon)
                             } else {
-                                painterResource(id = destination.unselectedIcon)
+                                painterResource(destination.unselectedIcon)
                             },
                             contentDescription = null
                         )
@@ -117,27 +114,35 @@ fun CsApp(
                 }
             },
             floatingActionButton = {
-                if (showFab) {
-                    ExtendedFloatingActionButton(
-                        onClick = {
-                            if (isHomeDestination) {
-                                showNewWalletDialog = true
-                            } else {
-                                showNewCategoryDialog = true
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = CsIcons.Add,
-                            contentDescription = null,
-                            modifier = Modifier.padding(end = 16.dp)
-                        )
-                        if (isHomeDestination) {
-                            Text(text = stringResource(walletsR.string.new_wallet))
-                        } else {
-                            Text(text = stringResource(categoriesR.string.new_category))
+                when (appState.currentTopLevelDestination) {
+                    HOME -> {
+                        ExtendedFloatingActionButton(
+                            onClick = { showAddWalletDialog = true }
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Add,
+                                contentDescription = null
+                            )
+                            Text(
+                                text = stringResource(ru.resodostudios.cashsense.feature.wallets.R.string.add_wallet),
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
                         }
                     }
+
+                    CATEGORIES -> {
+                        FloatingActionButton(
+                            onClick = { showAddCategoryDialog = true }
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Add,
+                                contentDescription = null
+                            )
+                        }
+                    }
+
+                    SUBSCRIPTIONS -> {}
+                    null -> {}
                 }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0)

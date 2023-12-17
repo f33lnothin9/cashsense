@@ -2,8 +2,8 @@ package ru.resodostudios.cashsense.feature.wallets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -38,11 +38,11 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
-fun NewWalletDialog(
+fun AddWalletDialog(
     onDismiss: () -> Unit,
     viewModel: WalletViewModel = hiltViewModel()
 ) {
-    NewWalletDialog(
+    AddWalletDialog(
         onDismiss = onDismiss,
         onConfirm = {
             viewModel.upsertWallet(it)
@@ -53,7 +53,7 @@ fun NewWalletDialog(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NewWalletDialog(
+fun AddWalletDialog(
     onDismiss: () -> Unit,
     onConfirm: (Wallet) -> Unit
 ) {
@@ -67,49 +67,55 @@ fun NewWalletDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Wallet, contentDescription = null) },
         title = {
-            Text(text = stringResource(R.string.new_wallet))
+            Text(text = stringResource(R.string.wallet))
         },
         text = {
-            Column(
+            LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    label = { Text(text = stringResource(uiR.string.title)) },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .focusRequester(titleTextField)
-                        .focusProperties { next = amountTextField }
-                )
-                OutlinedTextField(
-                    value = startBalance,
-                    onValueChange = { startBalance = it },
-                    placeholder = { Text(text = "100") },
-                    label = { Text(text = stringResource(R.string.start_balance)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier.focusRequester(amountTextField)
-                )
-                OutlinedTextField(
-                    value = currency.name,
-                    onValueChange = { },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    trailingIcon = {
-                        CurrencyDropDownMenu { currency = it }
-                    },
-                    readOnly = true,
-                    label = { Text(text = stringResource(R.string.currency)) },
-                    maxLines = 1
-                )
+                item {
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        label = { Text(text = stringResource(uiR.string.title)) },
+                        maxLines = 1,
+                        modifier = Modifier
+                            .focusRequester(titleTextField)
+                            .focusProperties { next = amountTextField }
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = startBalance,
+                        onValueChange = { startBalance = it },
+                        placeholder = { Text(text = "100") },
+                        label = { Text(text = stringResource(R.string.start_balance)) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier.focusRequester(amountTextField)
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = currency.name,
+                        onValueChange = { },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        trailingIcon = {
+                            CurrencyDropDownMenu { currency = it }
+                        },
+                        readOnly = true,
+                        label = { Text(text = stringResource(R.string.currency)) },
+                        maxLines = 1
+                    )
+                }
             }
         },
         confirmButton = {
