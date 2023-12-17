@@ -12,9 +12,7 @@ fun WalletWithTransactionsAndCategories.asEntity() = WalletWithTransactionsAndCa
         walletId = wallet.walletId,
         title = wallet.title,
         startBalance = wallet.startBalance,
-        currency = wallet.currency,
-        income = wallet.income,
-        expenses = wallet.expenses
+        currency = wallet.currency
     ),
     transactions = transactionsWithCategories.map {
         TransactionWithCategoryEntity(

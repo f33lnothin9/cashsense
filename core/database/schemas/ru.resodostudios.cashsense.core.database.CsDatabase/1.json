@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ae4d3ef31eedffa3a950b28cfefd1ca3",
+    "identityHash": "789200a5756bc8f0f0cc1794499cb17f",
     "entities": [
       {
         "tableName": "transactions",
@@ -88,7 +88,7 @@
       },
       {
         "tableName": "wallets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`walletId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `startBalance` REAL NOT NULL, `currency` TEXT NOT NULL, `income` REAL NOT NULL, `expenses` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`walletId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `startBalance` REAL NOT NULL, `currency` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "walletId",
@@ -112,18 +112,6 @@
             "fieldPath": "currency",
             "columnName": "currency",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "income",
-            "columnName": "income",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "expenses",
-            "columnName": "expenses",
-            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -167,7 +155,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ae4d3ef31eedffa3a950b28cfefd1ca3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '789200a5756bc8f0f0cc1794499cb17f')"
     ]
   }
 }

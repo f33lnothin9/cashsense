@@ -66,9 +66,7 @@ fun AddWalletDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Wallet, contentDescription = null) },
-        title = {
-            Text(text = stringResource(R.string.wallet))
-        },
+        title = { Text(text = stringResource(R.string.add_wallet)) },
         text = {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -130,7 +128,7 @@ fun AddWalletDialog(
                     )
                 }
             ) {
-                Text(text = stringResource(uiR.string.add))
+                Text(text = stringResource(uiR.string.save))
             }
         },
         dismissButton = {
@@ -144,6 +142,114 @@ fun AddWalletDialog(
     LaunchedEffect(Unit) {
         titleTextField.requestFocus()
     }
+}
+
+@Composable
+fun EditWalletDialog(
+    onDismiss: () -> Unit,
+    wallet: Wallet,
+    viewModel: WalletViewModel = hiltViewModel()
+) {
+    EditWalletDialog(
+        onDismiss = onDismiss,
+        onConfirm = {
+            viewModel.upsertWallet(it)
+            onDismiss()
+        },
+        wallet = wallet
+    )
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun EditWalletDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (Wallet) -> Unit,
+    wallet: Wallet
+) {
+    var title by rememberSaveable { mutableStateOf(wallet.title) }
+    var startBalance by rememberSaveable { mutableStateOf(wallet.startBalance.toString()) }
+    var currency by rememberSaveable { mutableStateOf(wallet.currency) }
+
+    val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(CsIcons.Wallet, contentDescription = null) },
+        title = { Text(text = stringResource(R.string.edit_wallet)) },
+        text = {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        label = { Text(text = stringResource(uiR.string.title)) },
+                        maxLines = 1,
+                        modifier = Modifier
+                            .focusRequester(titleTextField)
+                            .focusProperties { next = amountTextField }
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = startBalance,
+                        onValueChange = { startBalance = it },
+                        placeholder = { Text(text = "100") },
+                        label = { Text(text = stringResource(R.string.start_balance)) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier.focusRequester(amountTextField)
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = currency.name,
+                        onValueChange = { },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        trailingIcon = {
+                            CurrencyDropDownMenu { currency = it }
+                        },
+                        readOnly = true,
+                        label = { Text(text = stringResource(R.string.currency)) },
+                        maxLines = 1
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirm(
+                        Wallet(
+                            walletId = wallet.walletId,
+                            title = title,
+                            startBalance = startBalance.toDouble(),
+                            currency = currency
+                        )
+                    )
+                }
+            ) {
+                Text(text = stringResource(uiR.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(text = stringResource(uiR.string.cancel))
+            }
+        }
+    )
 }
 
 @Composable

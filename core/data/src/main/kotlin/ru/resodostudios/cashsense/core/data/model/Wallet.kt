@@ -7,7 +7,5 @@ fun Wallet.asEntity() = WalletEntity(
     walletId = walletId,
     title = title,
     startBalance = startBalance,
-    currency = currency,
-    income = income,
-    expenses = expenses
+    currency = currency
 )

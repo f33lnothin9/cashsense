@@ -74,7 +74,7 @@ fun WalletCard(
                 ) {
                     Icon(imageVector = CsIcons.TrendingUp, contentDescription = null)
                     Text(
-                        text = wallet.income.toString(),
+                        text = "0",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge
@@ -86,7 +86,7 @@ fun WalletCard(
                 ) {
                     Icon(imageVector = CsIcons.TrendingDown, contentDescription = null)
                     Text(
-                        text = wallet.expenses.toString(),
+                        text = "0",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge
@@ -130,9 +130,7 @@ fun WalletCardPreview() {
             wallet = Wallet(
                 title = "Wallet 1",
                 startBalance = 100.00,
-                currency = Currency.USD,
-                income = 132.0f,
-                expenses = 223.43f
+                currency = Currency.USD
             ),
             transactionsWithCategories = emptyList(),
             onWalletClick = { },

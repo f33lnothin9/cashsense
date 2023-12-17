@@ -13,16 +13,12 @@ data class WalletEntity(
     val walletId: Long,
     val title: String,
     val startBalance: Double,
-    val currency: Currency,
-    val income: Float,
-    val expenses: Float
+    val currency: Currency
 )
 
 fun WalletEntity.asExternalModel() = Wallet(
     walletId = walletId,
     title = title,
     startBalance = startBalance,
-    currency = currency,
-    income = income,
-    expenses = expenses
+    currency = currency
 )

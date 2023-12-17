@@ -146,7 +146,7 @@ fun TransactionDialog(
                             )
                         }
                     ) {
-                        Text(text = stringResource(uiR.string.add))
+                        Text(text = stringResource(uiR.string.save))
                     }
                 },
                 dismissButton = {

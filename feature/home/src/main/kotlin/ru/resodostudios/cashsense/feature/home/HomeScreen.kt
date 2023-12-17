@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
+import ru.resodostudios.cashsense.feature.wallets.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallets.R
 import ru.resodostudios.cashsense.feature.wallets.WalletCard
 
@@ -36,7 +38,6 @@ internal fun HomeRoute(
     HomeScreen(
         walletsState = walletsState,
         onWalletClick = onWalletClick,
-        onEdit = { TODO() },
         onDelete = viewModel::deleteWalletWithTransactions
     )
 }
@@ -45,11 +46,13 @@ internal fun HomeRoute(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (Long) -> Unit,
-    onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     var showNewTransactionDialog by rememberSaveable { mutableStateOf(false) }
+    var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
+
     var walletId by rememberSaveable { mutableLongStateOf(0L) }
+    var wallet by remember { mutableStateOf(Wallet()) }
 
     Box {
         when (walletsState) {
@@ -66,19 +69,29 @@ internal fun HomeScreen(
                         walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = {
-                            walletId = it     
+                            walletId = it
                             showNewTransactionDialog = true
                         },
-                        onEdit = onEdit,
+                        onEdit = {
+                            wallet = it
+                            showEditWalletDialog = true
+                        },
                         onDelete = onDelete
                     )
                 }
+
             } else {
                 EmptyState(
                     messageId = R.string.wallets_empty,
                     animationId = R.raw.anim_wallet_empty
                 )
             }
+        }
+        if (showEditWalletDialog) {
+            EditWalletDialog(
+                onDismiss = { showEditWalletDialog = false },
+                wallet = wallet
+            )
         }
         if (showNewTransactionDialog) {
             TransactionDialog(

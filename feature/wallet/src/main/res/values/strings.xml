@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="wallet">Wallet</string>
+    <string name="edit_wallet">Edit wallet</string>
     <string name="add_wallet">Add wallet</string>
     <string name="start_balance">Start balance</string>
     <string name="currency">Currency</string>
