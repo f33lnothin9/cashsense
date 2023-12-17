@@ -83,7 +83,9 @@ fun AddWalletDialog(
                         maxLines = 1,
                         modifier = Modifier
                             .focusRequester(titleTextField)
-                            .focusProperties { next = amountTextField }
+                            .focusProperties { next = amountTextField },
+                        placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                        supportingText = { Text(text = stringResource(uiR.string.required)) }
                     )
                 }
                 item {
