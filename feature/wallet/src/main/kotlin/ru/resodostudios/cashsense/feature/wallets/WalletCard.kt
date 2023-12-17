@@ -38,6 +38,8 @@ fun WalletCard(
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
+    val transactions = transactionsWithCategories.map { it.transaction }
+
     OutlinedCard(
         onClick = { onWalletClick(wallet.walletId) },
         shape = RoundedCornerShape(20.dp)
@@ -68,25 +70,31 @@ fun WalletCard(
                     currency = wallet.currency
                 )
                 VerticalDivider(modifier = Modifier.height(24.dp))
+
+                val positiveTransactions = transactions.filter { it.amount > 0 }
+                val walletIncome = positiveTransactions.sumOf { it.amount }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(imageVector = CsIcons.TrendingUp, contentDescription = null)
                     Text(
-                        text = "0",
+                        text = walletIncome.toString(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
+
+                val negativeTransactions = transactions.filter { it.amount < 0 }
+                val walletExpenses = negativeTransactions.sumOf { it.amount }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(imageVector = CsIcons.TrendingDown, contentDescription = null)
                     Text(
-                        text = "0",
+                        text = walletExpenses.toString(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge

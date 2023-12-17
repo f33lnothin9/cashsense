@@ -51,7 +51,7 @@ internal fun HomeScreen(
     var showNewTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
 
-    var walletId by rememberSaveable { mutableLongStateOf(0L) }
+    var walletId by remember { mutableLongStateOf(0L) }
     var wallet by remember { mutableStateOf(Wallet()) }
 
     Box {
@@ -79,7 +79,6 @@ internal fun HomeScreen(
                         onDelete = onDelete
                     )
                 }
-
             } else {
                 EmptyState(
                     messageId = R.string.wallets_empty,
