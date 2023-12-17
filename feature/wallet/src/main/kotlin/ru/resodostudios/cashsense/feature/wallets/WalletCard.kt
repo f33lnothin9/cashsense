@@ -2,17 +2,19 @@ package ru.resodostudios.cashsense.feature.wallets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,50 +59,16 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge
             )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                AmountWithCurrencyText(
-                    amount = getCurrentBalance(
-                        wallet.startBalance,
-                        transactionsWithCategories.map { it.transaction }
-                    ),
-                    currency = wallet.currency
-                )
-                VerticalDivider(modifier = Modifier.height(24.dp))
 
-                val positiveTransactions = transactions.filter { it.amount > 0 }
-                val walletIncome = positiveTransactions.sumOf { it.amount }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(imageVector = CsIcons.TrendingUp, contentDescription = null)
-                    Text(
-                        text = walletIncome.toString(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
+            AmountWithCurrencyText(
+                amount = getCurrentBalance(
+                    wallet.startBalance,
+                    transactionsWithCategories.map { it.transaction }
+                ),
+                currency = wallet.currency
+            )
 
-                val negativeTransactions = transactions.filter { it.amount < 0 }
-                val walletExpenses = negativeTransactions.sumOf { it.amount }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(imageVector = CsIcons.TrendingDown, contentDescription = null)
-                    Text(
-                        text = walletExpenses.toString(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
+            WalletFinancesSection(transactions = transactions)
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -109,7 +77,7 @@ fun WalletCard(
                 .padding(start = 14.dp, end = 4.dp, bottom = 12.dp)
                 .fillMaxWidth()
         ) {
-            Button(
+            OutlinedButton(
                 onClick = { onTransactionCreate(wallet.walletId) }
             ) {
                 Text(text = stringResource(R.string.add_transaction))
@@ -118,6 +86,79 @@ fun WalletCard(
                 onEdit = { onEdit(wallet) },
                 onDelete = { onDelete(wallet, transactionsWithCategories.map { it.transaction }) }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun WalletFinancesSection(
+    transactions: List<Transaction>
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        maxItemsInEachRow = 2,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val positiveTransactions = transactions.filter { it.amount > 0 }
+        val walletIncome = positiveTransactions.sumOf { it.amount }
+        Surface(
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    top = 3.dp,
+                    end = 8.dp,
+                    bottom = 3.dp
+                )
+            ) {
+                Icon(
+                    imageVector = CsIcons.TrendingUp,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = walletIncome.toString(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+
+        val negativeTransactions = transactions.filter { it.amount < 0 }
+        val walletExpenses = negativeTransactions.sumOf { it.amount }
+        Surface(
+            color = MaterialTheme.colorScheme.errorContainer,
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    top = 3.dp,
+                    end = 8.dp,
+                    bottom = 3.dp
+                )
+            ) {
+                Icon(
+                    imageVector = CsIcons.TrendingDown,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = walletExpenses.toString().drop(1),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
     }
 }
