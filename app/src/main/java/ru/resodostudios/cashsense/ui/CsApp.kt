@@ -33,6 +33,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
+import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
@@ -136,7 +137,7 @@ fun CsApp(
                         ) {
                             Icon(
                                 imageVector = CsIcons.Add,
-                                contentDescription = null
+                                contentDescription = stringResource(categoriesR.string.add_category_icon_description)
                             )
                         }
                     }
