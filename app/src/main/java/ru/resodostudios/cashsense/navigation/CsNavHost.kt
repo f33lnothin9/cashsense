@@ -7,8 +7,8 @@ import ru.resodostudios.cashsense.feature.categories.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_GRAPH_ROUTE_PATTERN
 import ru.resodostudios.cashsense.feature.home.navigation.homeGraph
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsScreen
-import ru.resodostudios.cashsense.feature.wallets.navigation.navigateToWallet
-import ru.resodostudios.cashsense.feature.wallets.navigation.walletScreen
+import ru.resodostudios.cashsense.feature.wallet.navigation.navigateToWallet
+import ru.resodostudios.cashsense.feature.wallet.navigation.walletScreen
 import ru.resodostudios.cashsense.ui.CsAppState
 
 @Composable

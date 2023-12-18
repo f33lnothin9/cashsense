@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallets
+package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
-import ru.resodostudios.cashsense.feature.wallets.navigation.WalletArgs
+import ru.resodostudios.cashsense.feature.wallet.navigation.WalletArgs
 import javax.inject.Inject
 
 @HiltViewModel

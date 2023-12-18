@@ -27,13 +27,14 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
-import ru.resodostudios.cashsense.feature.wallets.AddWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
+import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
@@ -125,7 +126,7 @@ fun CsApp(
                                 contentDescription = null
                             )
                             Text(
-                                text = stringResource(ru.resodostudios.cashsense.feature.wallets.R.string.add_wallet),
+                                text = stringResource(walletR.string.add_wallet),
                                 modifier = Modifier.padding(start = 16.dp)
                             )
                         }

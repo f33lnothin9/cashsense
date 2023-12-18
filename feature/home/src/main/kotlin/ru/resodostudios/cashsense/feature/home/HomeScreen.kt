@@ -25,9 +25,8 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
-import ru.resodostudios.cashsense.feature.wallets.EditWalletDialog
-import ru.resodostudios.cashsense.feature.wallets.R
-import ru.resodostudios.cashsense.feature.wallets.WalletCard
+import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.WalletCard
 
 @Composable
 internal fun HomeRoute(
