@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transactions
+package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

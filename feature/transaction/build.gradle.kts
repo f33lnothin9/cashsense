@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.transactions"
+    namespace = "ru.resodostudios.cashsense.feature.transaction"
 }
 
 dependencies {

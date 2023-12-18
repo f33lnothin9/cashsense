@@ -24,8 +24,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.feature.transactions.TransactionViewModel
-import ru.resodostudios.cashsense.feature.transactions.transactions
+import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
+import ru.resodostudios.cashsense.feature.transaction.transactions
 
 @Composable
 internal fun WalletRoute(

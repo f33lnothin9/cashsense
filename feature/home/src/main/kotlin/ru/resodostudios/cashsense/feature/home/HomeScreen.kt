@@ -24,9 +24,10 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
+import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
 internal fun HomeRoute(
@@ -80,8 +81,8 @@ internal fun HomeScreen(
                 }
             } else {
                 EmptyState(
-                    messageId = R.string.wallets_empty,
-                    animationId = R.raw.anim_wallet_empty
+                    messageId = walletR.string.wallets_empty,
+                    animationId = walletR.raw.anim_wallet_empty
                 )
             }
         }

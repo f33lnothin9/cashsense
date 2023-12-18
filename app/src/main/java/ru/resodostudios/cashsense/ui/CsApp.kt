@@ -26,7 +26,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
-import ru.resodostudios.cashsense.feature.transactions.TransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
