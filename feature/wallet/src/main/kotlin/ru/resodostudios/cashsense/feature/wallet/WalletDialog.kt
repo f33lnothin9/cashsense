@@ -1,16 +1,15 @@
 package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -102,18 +100,9 @@ fun AddWalletDialog(
                     )
                 }
                 item {
-                    OutlinedTextField(
-                        value = currency.name,
-                        onValueChange = { },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text
-                        ),
-                        trailingIcon = {
-                            CurrencyDropDownMenu { currency = it }
-                        },
-                        readOnly = true,
-                        label = { Text(text = stringResource(R.string.currency)) },
-                        maxLines = 1
+                    CurrencyExposedDropdownMenuBox(
+                        currencyName = currency.name,
+                        onCurrencyClick = { currency = it }
                     )
                 }
             }
@@ -212,18 +201,9 @@ fun EditWalletDialog(
                     )
                 }
                 item {
-                    OutlinedTextField(
-                        value = currency.name,
-                        onValueChange = { },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text
-                        ),
-                        trailingIcon = {
-                            CurrencyDropDownMenu { currency = it }
-                        },
-                        readOnly = true,
-                        label = { Text(text = stringResource(R.string.currency)) },
-                        maxLines = 1
+                    CurrencyExposedDropdownMenuBox(
+                        currencyName = currency.name,
+                        onCurrencyClick = { currency = it }
                     )
                 }
             }
@@ -254,29 +234,42 @@ fun EditWalletDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CurrencyDropDownMenu(
+fun CurrencyExposedDropdownMenuBox(
+    currencyName: String,
     onCurrencyClick: (Currency) -> Unit
 ) {
+    val currencyList = Currency.entries
     var expanded by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier.wrapContentSize(Alignment.TopStart)
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
     ) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(CsIcons.DropDown, contentDescription = null)
-        }
-        DropdownMenu(
+        OutlinedTextField(
+            modifier = Modifier.menuAnchor(),
+            readOnly = true,
+            value = currencyName,
+            onValueChange = {},
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text
+            ),
+            label = { Text(text = stringResource(R.string.currency)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+        )
+        ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
-            for (currency in Currency.entries) {
+            currencyList.forEach { selectionOption ->
                 DropdownMenuItem(
-                    text = { Text(text = currency.name) },
+                    text = { Text(selectionOption.name) },
                     onClick = {
-                        onCurrencyClick(currency)
+                        onCurrencyClick(selectionOption)
                         expanded = false
-                    }
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }
