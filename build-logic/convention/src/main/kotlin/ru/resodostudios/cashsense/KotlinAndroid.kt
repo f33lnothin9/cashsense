@@ -59,9 +59,7 @@ private fun Project.configureKotlin() {
             val warningsAsErrors: String? by project
             allWarningsAsErrors = warningsAsErrors.toBoolean()
             freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
             )
         }
     }
