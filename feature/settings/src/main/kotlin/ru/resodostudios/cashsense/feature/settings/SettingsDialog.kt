@@ -165,7 +165,7 @@ private fun SettingsDialogSectionTitle(text: String) {
         text = text,
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 
