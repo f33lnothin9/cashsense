@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -179,6 +180,12 @@ private fun LinksPanel() {
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
+        val uriHandler = LocalUriHandler.current
+        TextButton(
+            onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
+        ) {
+            Text(text = stringResource(string.privacy_policy))
+        }
         val context = LocalContext.current
         TextButton(
             onClick = {
@@ -189,3 +196,5 @@ private fun LinksPanel() {
         }
     }
 }
+
+private const val PRIVACY_POLICY_URL = "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"

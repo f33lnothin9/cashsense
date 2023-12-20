@@ -6,6 +6,7 @@
     <string name="system">System</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
+    <string name="privacy_policy">Privacy policy</string>
     <string name="licenses">Licenses</string>
     <string name="dismiss_dialog_button_text">OK</string>
 </resources>
