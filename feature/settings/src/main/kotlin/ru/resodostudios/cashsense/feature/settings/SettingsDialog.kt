@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -97,14 +96,11 @@ fun SettingsDialog(
             }
         },
         confirmButton = {
-            Text(
-                text = stringResource(string.dismiss_dialog_button_text),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable { onDismiss() },
-            )
+            TextButton(
+                onClick = { onDismiss() }
+            ) {
+                Text(text = stringResource(string.dismiss_dialog_button_text))
+            }
         },
         icon = {
             Icon(imageVector = CsIcons.Settings, contentDescription = null)
