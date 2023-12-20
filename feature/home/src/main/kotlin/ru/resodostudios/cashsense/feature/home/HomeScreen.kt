@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -51,16 +51,16 @@ internal fun HomeScreen(
     var showNewTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
 
-    var walletId by remember { mutableLongStateOf(0L) }
+    var walletId by rememberSaveable { mutableLongStateOf(0L) }
     var wallet by remember { mutableStateOf(Wallet()) }
 
     Box {
         when (walletsState) {
             WalletsUiState.Loading -> LoadingState()
             is WalletsUiState.Success -> if (walletsState.walletsWithTransactionsAndCategories.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(300.dp),
+                    verticalItemSpacing = 16.dp,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp)
@@ -101,7 +101,7 @@ internal fun HomeScreen(
     }
 }
 
-private fun LazyGridScope.walletsWithTransactionsAndCategories(
+private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (Long) -> Unit,
     onTransactionCreate: (Long) -> Unit,
