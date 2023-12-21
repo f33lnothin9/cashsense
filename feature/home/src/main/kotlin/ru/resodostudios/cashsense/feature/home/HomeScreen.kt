@@ -24,7 +24,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
 import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
@@ -101,7 +101,7 @@ internal fun HomeScreen(
             )
         }
         if (showNewTransactionDialog) {
-            TransactionDialog(
+            AddTransactionDialog(
                 onDismiss = { showNewTransactionDialog = false },
                 walletId = walletId
             )

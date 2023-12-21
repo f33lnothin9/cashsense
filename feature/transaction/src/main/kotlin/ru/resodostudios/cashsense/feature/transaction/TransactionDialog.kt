@@ -40,7 +40,7 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 
 @Composable
-fun TransactionDialog(
+fun AddTransactionDialog(
     onDismiss: () -> Unit,
     walletId: Long = 0,
     transactionViewModel: TransactionViewModel = hiltViewModel(),
@@ -48,7 +48,7 @@ fun TransactionDialog(
 ) {
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
 
-    TransactionDialog(
+    AddTransactionDialog(
         categoriesState = categoriesState,
         walletId = walletId,
         onDismiss = onDismiss,
@@ -68,7 +68,7 @@ fun TransactionDialog(
 }
 
 @Composable
-fun TransactionDialog(
+fun AddTransactionDialog(
     categoriesState: CategoriesUiState,
     walletId: Long = 0,
     onDismiss: () -> Unit,
