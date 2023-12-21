@@ -29,6 +29,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 fun LazyGridScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
@@ -63,7 +64,7 @@ fun LazyGridScope.transactions(
                 },
                 supportingContent = {
                     Text(
-                        text = if (transactionWithCategory.category.title == null) stringResource(R.string.none) else transactionWithCategory.category.title.toString()
+                        text = if (transactionWithCategory.category.title == null) stringResource(uiR.string.none) else transactionWithCategory.category.title.toString()
                     )
                 }
             )

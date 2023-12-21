@@ -64,7 +64,7 @@ fun AddWalletDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(CsIcons.Wallet, contentDescription = null) },
-        title = { Text(text = stringResource(R.string.add_wallet)) },
+        title = { Text(text = stringResource(R.string.new_wallet)) },
         text = {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp)

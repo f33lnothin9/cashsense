@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Настройки</string>
+    <string name="dynamic_color">Динамический цвет</string>
+    <string name="theme">Тема</string>
+    <string name="system">Системная</string>
+    <string name="light">Светлая</string>
+    <string name="dark">Тёмная</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="licenses">Лицензии</string>
+    <string name="dismiss_dialog_button_text">ОК</string>
+</resources>

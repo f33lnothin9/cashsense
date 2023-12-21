@@ -37,6 +37,7 @@ import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import java.util.UUID
 import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 
 @Composable
 fun TransactionDialog(
@@ -114,10 +115,10 @@ fun TransactionDialog(
                                     }
                                 )
                             },
-                            label = { Text(text = stringResource(R.string.category)) },
+                            label = { Text(text = stringResource(categoriesR.string.category)) },
                             readOnly = true,
                             maxLines = 1,
-                            placeholder = { Text(text = stringResource(R.string.none)) }
+                            placeholder = { Text(text = stringResource(uiR.string.none)) }
                         )
                         TextField(
                             value = description,

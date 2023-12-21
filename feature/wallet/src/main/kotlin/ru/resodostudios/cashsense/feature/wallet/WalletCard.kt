@@ -31,6 +31,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import kotlin.math.abs
+import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 fun WalletCard(
@@ -83,7 +84,7 @@ fun WalletCard(
             Button(
                 onClick = { onTransactionCreate(wallet.walletId) }
             ) {
-                Text(text = stringResource(R.string.add_transaction))
+                Text(text = stringResource(transactionR.string.add_transaction))
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet) },

@@ -2,6 +2,7 @@
 <resources>
     <string name="add_category_icon_description">Add category</string>
     <string name="categories">Categories</string>
+    <string name="category">Category</string>
     <string name="new_category">New category</string>
     <string name="name">Name</string>
     <string name="categories_empty">Nothing in Categories</string>

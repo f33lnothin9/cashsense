@@ -154,7 +154,7 @@ private fun ColumnScope.SettingsPanel(
                 onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
                 selected = settings.darkThemeConfig == DarkThemeConfig.entries[index]
             ) {
-                Text(label)
+                Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
     }
@@ -197,4 +197,5 @@ private fun LinksPanel() {
     }
 }
 
-private const val PRIVACY_POLICY_URL = "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"
+private const val PRIVACY_POLICY_URL =
+    "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"

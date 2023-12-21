@@ -2,6 +2,7 @@
 <resources>
     <string name="add_category_icon_description">Добавить категорию</string>
     <string name="categories">Категории</string>
+    <string name="category">Категория</string>
     <string name="new_category">Новая категория</string>
     <string name="name">Название</string>
     <string name="categories_empty">В Категориях пусто</string>
