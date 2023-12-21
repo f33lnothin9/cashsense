@@ -97,6 +97,7 @@ google-services = { id = "com.google.gms.google-services", version.ref = "gmsPlu
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 
 # Plugins defined by this project
 cashsense-android-application = { id = "cashsense.android.application", version = "unspecified" }
