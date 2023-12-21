@@ -24,7 +24,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.feature.categories.CategoryDialog
+import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
 import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
@@ -68,7 +68,7 @@ fun CsApp(
         )
     }
     if (showAddCategoryDialog) {
-        CategoryDialog(
+        AddCategoryDialog(
             onDismiss = { showAddCategoryDialog = false }
         )
     }

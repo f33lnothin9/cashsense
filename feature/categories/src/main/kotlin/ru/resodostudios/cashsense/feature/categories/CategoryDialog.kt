@@ -21,11 +21,11 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
-fun CategoryDialog(
+fun AddCategoryDialog(
     onDismiss: () -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    CategoryDialog(
+    AddCategoryDialog(
         onDismiss = onDismiss,
         onConfirm = {
             viewModel.upsertCategory(it)
@@ -35,7 +35,7 @@ fun CategoryDialog(
 }
 
 @Composable
-fun CategoryDialog(
+fun AddCategoryDialog(
     onDismiss: () -> Unit,
     onConfirm: (Category) -> Unit
 ) {
