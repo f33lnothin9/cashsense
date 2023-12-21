@@ -12,13 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
@@ -52,7 +52,15 @@ internal fun HomeScreen(
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     var walletId by rememberSaveable { mutableLongStateOf(0L) }
-    var wallet by remember { mutableStateOf(Wallet()) }
+    var walletState by rememberSaveable {
+        mutableStateOf(
+            Wallet(
+                title = "",
+                startBalance = 0.0,
+                currency = Currency.USD
+            )
+        )
+    }
 
     Box {
         when (walletsState) {
@@ -73,7 +81,7 @@ internal fun HomeScreen(
                             showNewTransactionDialog = true
                         },
                         onEdit = {
-                            wallet = it
+                            walletState = it
                             showEditWalletDialog = true
                         },
                         onDelete = onDelete
@@ -89,7 +97,7 @@ internal fun HomeScreen(
         if (showEditWalletDialog) {
             EditWalletDialog(
                 onDismiss = { showEditWalletDialog = false },
-                wallet = wallet
+                wallet = walletState
             )
         }
         if (showNewTransactionDialog) {
