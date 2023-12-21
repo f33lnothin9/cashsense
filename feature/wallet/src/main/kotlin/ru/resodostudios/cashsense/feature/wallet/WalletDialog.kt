@@ -3,16 +3,12 @@ package ru.resodostudios.cashsense.feature.wallet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
@@ -61,75 +58,63 @@ fun AddWalletDialog(
 
     val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = { Icon(CsIcons.Wallet, contentDescription = null) },
-        title = { Text(text = stringResource(R.string.new_wallet)) },
-        text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        label = { Text(text = stringResource(uiR.string.title)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .focusRequester(titleTextField)
-                            .focusProperties { next = amountTextField },
-                        placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                        supportingText = { Text(text = stringResource(uiR.string.required)) }
-                    )
-                }
-                item {
-                    OutlinedTextField(
-                        value = startBalance,
-                        onValueChange = { startBalance = it },
-                        placeholder = { Text(text = "100") },
-                        label = { Text(text = stringResource(R.string.start_balance)) },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal
-                        ),
-                        maxLines = 1,
-                        modifier = Modifier.focusRequester(amountTextField)
-                    )
-                }
-                item {
-                    CurrencyExposedDropdownMenuBox(
-                        currencyName = currency.name,
-                        onCurrencyClick = { currency = it }
-                    )
-                }
-            }
+    CsAlertDialog(
+        titleRes = R.string.new_wallet,
+        confirmButtonTextRes = uiR.string.add,
+        dismissButtonTextRes = uiR.string.cancel,
+        icon = CsIcons.Wallet,
+        onConfirm = {
+            onConfirm(
+                Wallet(
+                    title = title,
+                    startBalance = startBalance.toDouble(),
+                    currency = currency
+                )
+            )
         },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm(
-                        Wallet(
-                            title = title,
-                            startBalance = startBalance.toDouble(),
-                            currency = currency
-                        )
-                    )
-                }
-            ) {
-                Text(text = stringResource(uiR.string.save))
+        onDismiss = onDismiss
+    ) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    label = { Text(text = stringResource(uiR.string.title)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .focusRequester(titleTextField)
+                        .focusProperties { next = amountTextField },
+                    placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) }
+                )
             }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text(text = stringResource(uiR.string.cancel))
+            item {
+                OutlinedTextField(
+                    value = startBalance,
+                    onValueChange = { startBalance = it },
+                    placeholder = { Text(text = "100") },
+                    label = { Text(text = stringResource(R.string.start_balance)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(amountTextField)
+                )
+            }
+            item {
+                CurrencyExposedDropdownMenuBox(
+                    currencyName = currency.name,
+                    onCurrencyClick = { currency = it }
+                )
             }
         }
-    )
+    }
     LaunchedEffect(Unit) {
         titleTextField.requestFocus()
     }
@@ -164,74 +149,62 @@ fun EditWalletDialog(
 
     val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = { Icon(CsIcons.Wallet, contentDescription = null) },
-        title = { Text(text = stringResource(R.string.edit_wallet)) },
-        text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        label = { Text(text = stringResource(uiR.string.title)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .focusRequester(titleTextField)
-                            .focusProperties { next = amountTextField }
-                    )
-                }
-                item {
-                    OutlinedTextField(
-                        value = startBalance,
-                        onValueChange = { startBalance = it },
-                        placeholder = { Text(text = "100") },
-                        label = { Text(text = stringResource(R.string.start_balance)) },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal
-                        ),
-                        maxLines = 1,
-                        modifier = Modifier.focusRequester(amountTextField)
-                    )
-                }
-                item {
-                    CurrencyExposedDropdownMenuBox(
-                        currencyName = currency.name,
-                        onCurrencyClick = { currency = it }
-                    )
-                }
-            }
+    CsAlertDialog(
+        titleRes = R.string.edit_wallet,
+        confirmButtonTextRes = uiR.string.save,
+        dismissButtonTextRes = uiR.string.cancel,
+        icon = CsIcons.Wallet,
+        onConfirm = {
+            onConfirm(
+                Wallet(
+                    walletId = wallet.walletId,
+                    title = title,
+                    startBalance = startBalance.toDouble(),
+                    currency = currency
+                )
+            )
         },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm(
-                        Wallet(
-                            walletId = wallet.walletId,
-                            title = title,
-                            startBalance = startBalance.toDouble(),
-                            currency = currency
-                        )
-                    )
-                }
-            ) {
-                Text(text = stringResource(uiR.string.save))
+        onDismiss = onDismiss
+    ) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    label = { Text(text = stringResource(uiR.string.title)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .focusRequester(titleTextField)
+                        .focusProperties { next = amountTextField }
+                )
             }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text(text = stringResource(uiR.string.cancel))
+            item {
+                OutlinedTextField(
+                    value = startBalance,
+                    onValueChange = { startBalance = it },
+                    placeholder = { Text(text = "100") },
+                    label = { Text(text = stringResource(R.string.start_balance)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(amountTextField)
+                )
+            }
+            item {
+                CurrencyExposedDropdownMenuBox(
+                    currencyName = currency.name,
+                    onCurrencyClick = { currency = it }
+                )
             }
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
