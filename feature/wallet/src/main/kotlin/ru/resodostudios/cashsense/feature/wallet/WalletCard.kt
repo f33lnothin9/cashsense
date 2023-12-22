@@ -100,7 +100,6 @@ private fun WalletFinancesSection(
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        maxItemsInEachRow = 2,
         modifier = Modifier.fillMaxWidth()
     ) {
         val positiveTransactions = transactions.filter { it.amount > 0 }

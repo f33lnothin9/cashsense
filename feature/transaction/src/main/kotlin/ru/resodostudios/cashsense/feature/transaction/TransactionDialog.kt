@@ -1,16 +1,16 @@
 package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -100,25 +99,14 @@ fun AddTransactionDialog(
                             label = { Text(text = stringResource(R.string.amount)) },
                             maxLines = 1
                         )
-                        TextField(
-                            value = category,
-                            onValueChange = { },
-                            trailingIcon = {
-                                CategoryDropDownMenu(
-                                    categories = categoriesState.categories,
-                                    onCategoryClick = {
-                                        category = it.title.toString()
-                                        categoryId = it.categoryId
-                                    },
-                                    onCategoryCreate = {
-
-                                    }
-                                )
+                        CategoryExposedDropdownMenuBox(
+                            categoryName = category,
+                            categories = categoriesState.categories,
+                            onCategoryClick = {
+                                category = it.title.toString()
+                                categoryId = it.categoryId
                             },
-                            label = { Text(text = stringResource(categoriesR.string.category)) },
-                            readOnly = true,
-                            maxLines = 1,
-                            placeholder = { Text(text = stringResource(uiR.string.none)) }
+                            onCategoryCreate = { TODO() }
                         )
                         TextField(
                             value = description,
@@ -161,26 +149,38 @@ fun AddTransactionDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CategoryDropDownMenu(
+private fun CategoryExposedDropdownMenuBox(
+    categoryName: String,
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
     onCategoryCreate: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier.wrapContentSize(Alignment.TopStart)
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
     ) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(CsIcons.DropDown, contentDescription = null)
-        }
-        DropdownMenu(
+        OutlinedTextField(
+            modifier = Modifier.menuAnchor(),
+            readOnly = true,
+            value = categoryName,
+            onValueChange = {},
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text
+            ),
+            label = { Text(text = stringResource(categoriesR.string.category)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            placeholder = { Text(text = stringResource(uiR.string.none)) }
+        )
+        ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text(text = "Create") },
+                text = { Text(text = stringResource(uiR.string.add)) },
                 leadingIcon = {
                     Icon(imageVector = CsIcons.Add, contentDescription = null)
                 },
@@ -189,13 +189,14 @@ private fun CategoryDropDownMenu(
                     expanded = false
                 }
             )
-            for (category in categories) {
+            categories.forEach { selectionOption ->
                 DropdownMenuItem(
-                    text = { Text(text = category.title.toString()) },
+                    text = { Text(selectionOption.title.toString()) },
                     onClick = {
-                        onCategoryClick(category)
+                        onCategoryClick(selectionOption)
                         expanded = false
-                    }
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }

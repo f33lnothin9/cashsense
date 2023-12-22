@@ -209,7 +209,7 @@ fun EditWalletDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CurrencyExposedDropdownMenuBox(
+private fun CurrencyExposedDropdownMenuBox(
     currencyName: String,
     onCurrencyClick: (Currency) -> Unit
 ) {
