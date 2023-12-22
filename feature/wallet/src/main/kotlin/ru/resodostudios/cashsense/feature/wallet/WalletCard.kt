@@ -61,7 +61,6 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge
             )
-
             AmountWithCurrencyText(
                 amount = getCurrentBalance(
                     wallet.startBalance,
@@ -69,7 +68,6 @@ fun WalletCard(
                 ),
                 currency = wallet.currency
             )
-
             if (transactions.isNotEmpty()) {
                 WalletFinancesSection(transactions = transactions)
             }
@@ -78,7 +76,7 @@ fun WalletCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 14.dp, end = 12.dp, bottom = 12.dp, top = 8.dp)
+                .padding(start = 14.dp, end = 6.dp, bottom = 12.dp, top = 8.dp)
                 .fillMaxWidth()
         ) {
             Button(
