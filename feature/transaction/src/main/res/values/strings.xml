@@ -2,6 +2,7 @@
 <resources>
     <string name="transactions_empty">Nothing in Transactions</string>
     <string name="add_transaction">Add transaction</string>
+    <string name="edit_transaction">Edit transaction</string>
     <string name="new_transaction">New transaction</string>
     <string name="amount">Amount</string>
 </resources>

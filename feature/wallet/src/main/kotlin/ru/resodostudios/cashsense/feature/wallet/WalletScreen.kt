@@ -15,17 +15,25 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.transaction.EditTransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.transaction.transactions
+import java.util.UUID
 
 @Composable
 internal fun WalletRoute(
@@ -50,6 +58,24 @@ internal fun WalletScreen(
     onDelete: (Transaction) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
+    var showEditTransactionDialog by rememberSaveable { mutableStateOf(false) }
+
+    var transactionWithCategoryState by rememberSaveable {
+        mutableStateOf(
+            TransactionWithCategory(
+                transaction = Transaction(
+                    transactionId = UUID.randomUUID(),
+                    walletOwnerId = 0L,
+                    amount = 0.0,
+                    description = null,
+                    date = Clock.System.now()
+                ),
+                category = Category()
+            )
+        )
+    }
 
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
@@ -84,7 +110,17 @@ internal fun WalletScreen(
                         transactions(
                             transactionsWithCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories,
                             currency = walletState.walletWithTransactionsAndCategories.wallet.currency,
+                            onEdit = {
+                                transactionWithCategoryState = it
+                                showEditTransactionDialog = true
+                            },
                             onDelete = onDelete
+                        )
+                    }
+                    if (showEditTransactionDialog) {
+                        EditTransactionDialog(
+                            transactionWithCategory = transactionWithCategoryState,
+                            onDismiss = { showEditTransactionDialog = false }
                         )
                     }
                 }

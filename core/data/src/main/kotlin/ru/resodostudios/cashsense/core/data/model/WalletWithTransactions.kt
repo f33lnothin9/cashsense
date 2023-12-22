@@ -25,9 +25,9 @@ fun WalletWithTransactionsAndCategories.asEntity() = WalletWithTransactionsAndCa
                 date = it.transaction.date
             ),
             category = CategoryEntity(
-                categoryId = it.category.categoryId,
-                title = it.category.title,
-                icon = it.category.icon
+                categoryId = it.category?.categoryId,
+                title = it.category?.title,
+                icon = it.category?.icon
             )
         )
     }

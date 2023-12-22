@@ -34,6 +34,7 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 fun LazyGridScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
     currency: Currency,
+    onEdit: (TransactionWithCategory) -> Unit,
     onDelete: (Transaction) -> Unit
 ) {
     var currentDate: String? = null
@@ -58,13 +59,13 @@ fun LazyGridScope.transactions(
                 },
                 trailingContent = {
                     EditAndDeleteDropdownMenu(
-                        onEdit = { /*TODO*/ },
+                        onEdit = { onEdit(transactionWithCategory) },
                         onDelete = { onDelete(transactionWithCategory.transaction) }
                     )
                 },
                 supportingContent = {
                     Text(
-                        text = if (transactionWithCategory.category.title == null) stringResource(uiR.string.none) else transactionWithCategory.category.title.toString()
+                        text = if (transactionWithCategory.category?.title == null) stringResource(uiR.string.none) else transactionWithCategory.category!!.title.toString()
                     )
                 }
             )

@@ -48,7 +48,7 @@ internal fun HomeScreen(
     onWalletClick: (Long) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
-    var showNewTransactionDialog by rememberSaveable { mutableStateOf(false) }
+    var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     var walletId by rememberSaveable { mutableLongStateOf(0L) }
@@ -78,7 +78,7 @@ internal fun HomeScreen(
                         onWalletClick = onWalletClick,
                         onTransactionCreate = {
                             walletId = it
-                            showNewTransactionDialog = true
+                            showAddTransactionDialog = true
                         },
                         onEdit = {
                             walletState = it
@@ -100,9 +100,9 @@ internal fun HomeScreen(
                 wallet = walletState
             )
         }
-        if (showNewTransactionDialog) {
+        if (showAddTransactionDialog) {
             AddTransactionDialog(
-                onDismiss = { showNewTransactionDialog = false },
+                onDismiss = { showAddTransactionDialog = false },
                 walletId = walletId
             )
         }

@@ -9,4 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.transaction)
+    implementation(projects.feature.categories)
+
+    implementation(libs.kotlinx.datetime)
 }

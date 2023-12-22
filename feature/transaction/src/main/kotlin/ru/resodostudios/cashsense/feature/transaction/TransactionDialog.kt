@@ -1,10 +1,8 @@
 package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -12,8 +10,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Clock
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
@@ -81,71 +79,168 @@ fun AddTransactionDialog(
 
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
-        is CategoriesUiState.Success ->
-            AlertDialog(
-                onDismissRequest = onDismiss,
-                icon = { Icon(CsIcons.Transaction, contentDescription = null) },
-                title = { Text(text = stringResource(R.string.new_transaction)) },
-                text = {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        TextField(
-                            value = amount,
-                            onValueChange = { amount = it },
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Decimal
-                            ),
-                            label = { Text(text = stringResource(R.string.amount)) },
-                            maxLines = 1
-                        )
-                        CategoryExposedDropdownMenuBox(
-                            categoryName = category,
-                            categories = categoriesState.categories,
-                            onCategoryClick = {
-                                category = it.title.toString()
-                                categoryId = it.categoryId
-                            },
-                            onCategoryCreate = { TODO() }
-                        )
-                        TextField(
-                            value = description,
-                            onValueChange = { description = it },
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text
-                            ),
-                            label = { Text(text = stringResource(uiR.string.description)) },
-                            maxLines = 1,
-                            supportingText = { Text(text = stringResource(uiR.string.optional)) }
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            onConfirm(
-                                Transaction(
-                                    transactionId = UUID.randomUUID(),
-                                    walletOwnerId = walletId,
-                                    categoryOwnerId = categoryId,
-                                    description = description,
-                                    amount = amount.toDouble(),
-                                    date = Clock.System.now()
-                                )
-                            )
-                        }
-                    ) {
-                        Text(text = stringResource(uiR.string.save))
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = onDismiss
-                    ) {
-                        Text(text = stringResource(uiR.string.cancel))
-                    }
+        is CategoriesUiState.Success -> CsAlertDialog(
+            titleRes = R.string.new_transaction,
+            confirmButtonTextRes = uiR.string.add,
+            dismissButtonTextRes = uiR.string.cancel,
+            icon = CsIcons.Transaction,
+            onConfirm = {
+                onConfirm(
+                    Transaction(
+                        transactionId = UUID.randomUUID(),
+                        walletOwnerId = walletId,
+                        categoryOwnerId = categoryId,
+                        description = description,
+                        amount = amount.toDouble(),
+                        date = Clock.System.now()
+                    )
+                )
+            },
+            onDismiss = onDismiss
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    OutlinedTextField(
+                        value = amount,
+                        onValueChange = { amount = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        label = { Text(text = stringResource(R.string.amount)) },
+                        maxLines = 1
+                    )
                 }
-            )
+                item {
+                    CategoryExposedDropdownMenuBox(
+                        categoryName = category,
+                        categories = categoriesState.categories,
+                        onCategoryClick = {
+                            category = it.title.toString()
+                            categoryId = it.categoryId
+                        },
+                        onCategoryCreate = { TODO() }
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        label = { Text(text = stringResource(uiR.string.description)) },
+                        maxLines = 1,
+                        supportingText = { Text(text = stringResource(uiR.string.optional)) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditTransactionDialog(
+    transactionWithCategory: TransactionWithCategory,
+    onDismiss: () -> Unit,
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel()
+) {
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+
+    EditTransactionDialog(
+        categoriesState = categoriesState,
+        transactionWithCategory = transactionWithCategory,
+        onDismiss = onDismiss,
+        onConfirm = {
+            transactionViewModel.upsertTransaction(it)
+            if (it.categoryOwnerId != null) {
+                transactionViewModel.upsertTransactionCategoryCrossRef(
+                    TransactionCategoryCrossRef(
+                        transactionId = transactionWithCategory.transaction.transactionId,
+                        categoryId = it.categoryOwnerId!!
+                    )
+                )
+            }
+            onDismiss()
+        }
+    )
+}
+
+@Composable
+fun EditTransactionDialog(
+    transactionWithCategory: TransactionWithCategory,
+    categoriesState: CategoriesUiState,
+    onDismiss: () -> Unit,
+    onConfirm: (Transaction) -> Unit
+) {
+    var amount by rememberSaveable { mutableStateOf(transactionWithCategory.transaction.amount.toString()) }
+    var description by rememberSaveable { mutableStateOf(transactionWithCategory.transaction.description) }
+    var category by rememberSaveable { mutableStateOf(transactionWithCategory.category?.title) }
+
+    var categoryId: Long? = null
+
+    when (categoriesState) {
+        CategoriesUiState.Loading -> LoadingState()
+        is CategoriesUiState.Success -> CsAlertDialog(
+            titleRes = R.string.edit_transaction,
+            confirmButtonTextRes = uiR.string.save,
+            dismissButtonTextRes = uiR.string.cancel,
+            icon = CsIcons.Transaction,
+            onConfirm = {
+                onConfirm(
+                    Transaction(
+                        transactionId = transactionWithCategory.transaction.transactionId,
+                        walletOwnerId = transactionWithCategory.transaction.walletOwnerId,
+                        categoryOwnerId = categoryId,
+                        description = description,
+                        amount = amount.toDouble(),
+                        date = transactionWithCategory.transaction.date
+                    )
+                )
+            },
+            onDismiss = onDismiss
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    OutlinedTextField(
+                        value = amount,
+                        onValueChange = { amount = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        label = { Text(text = stringResource(R.string.amount)) },
+                        maxLines = 1
+                    )
+                }
+                item {
+                    CategoryExposedDropdownMenuBox(
+                        categoryName = if (category == null) stringResource(uiR.string.none) else category.toString(),
+                        categories = categoriesState.categories,
+                        onCategoryClick = {
+                            category = it.title
+                            categoryId = it.categoryId
+                        },
+                        onCategoryCreate = { TODO() }
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = description.toString(),
+                        onValueChange = { description = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        label = { Text(text = stringResource(uiR.string.description)) },
+                        maxLines = 1,
+                        supportingText = { Text(text = stringResource(uiR.string.optional)) }
+                    )
+                }
+            }
+        }
     }
 }
 
