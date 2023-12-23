@@ -7,9 +7,7 @@ import androidx.navigation.compose.composable
 
 const val subscriptionsNavigationRoute = "subscriptions_route"
 
-fun NavController.navigateToSubscriptions(navOptions: NavOptions? = null) {
-    this.navigate(subscriptionsNavigationRoute, navOptions)
-}
+fun NavController.navigateToSubscriptions(navOptions: NavOptions? = null) = navigate(subscriptionsNavigationRoute, navOptions)
 
 fun NavGraphBuilder.subscriptionsScreen() {
     composable(
