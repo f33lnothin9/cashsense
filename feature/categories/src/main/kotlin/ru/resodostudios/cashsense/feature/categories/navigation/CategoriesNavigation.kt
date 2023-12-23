@@ -8,9 +8,7 @@ import ru.resodostudios.cashsense.feature.categories.CategoryRoute
 
 const val categoriesNavigationRoute = "categories_route"
 
-fun NavController.navigateToCategories(navOptions: NavOptions? = null) {
-    this.navigate(categoriesNavigationRoute, navOptions)
-}
+fun NavController.navigateToCategories(navOptions: NavOptions? = null) = navigate(categoriesNavigationRoute, navOptions)
 
 fun NavGraphBuilder.categoriesScreen() {
     composable(
