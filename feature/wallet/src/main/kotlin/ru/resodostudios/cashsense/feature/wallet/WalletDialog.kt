@@ -114,9 +114,9 @@ fun AddWalletDialog(
                 )
             }
         }
-    }
-    LaunchedEffect(Unit) {
-        titleTextField.requestFocus()
+        LaunchedEffect(Unit) {
+            titleTextField.requestFocus()
+        }
     }
 }
 
