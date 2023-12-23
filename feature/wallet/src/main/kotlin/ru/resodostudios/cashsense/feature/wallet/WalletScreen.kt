@@ -46,7 +46,10 @@ internal fun WalletRoute(
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
-        onDelete = transactionViewModel::deleteTransaction
+        onDelete = {
+            transactionViewModel.deleteTransactionCategoryCrossRef(it.transactionId)
+            transactionViewModel.deleteTransaction(it)
+        }
     )
 }
 
