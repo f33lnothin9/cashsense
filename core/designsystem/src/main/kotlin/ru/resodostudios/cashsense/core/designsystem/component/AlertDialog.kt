@@ -9,6 +9,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun CsAlertDialog(
@@ -23,7 +24,12 @@ fun CsAlertDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(icon, contentDescription = null) },
-        title = { Text(text = stringResource(titleRes)) },
+        title = {
+            Text(
+                text = stringResource(titleRes),
+                textAlign = TextAlign.Center
+            )
+        },
         text = content,
         confirmButton = {
             Button(
