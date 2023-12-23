@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCatego
 import ru.resodostudios.cashsense.feature.home.navigation.homeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscriptions
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsNavigationRoute
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.SUBSCRIPTIONS_ROUTE
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -52,7 +52,7 @@ class CsAppState(
         @Composable get() = when (currentDestination?.route) {
             homeRoute -> HOME
             categoriesNavigationRoute -> CATEGORIES
-            subscriptionsNavigationRoute -> SUBSCRIPTIONS
+            SUBSCRIPTIONS_ROUTE -> SUBSCRIPTIONS
             else -> null
         }
 

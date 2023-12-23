@@ -5,13 +5,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 
-const val subscriptionsNavigationRoute = "subscriptions_route"
+const val SUBSCRIPTIONS_ROUTE = "subscriptions_route"
 
-fun NavController.navigateToSubscriptions(navOptions: NavOptions? = null) = navigate(subscriptionsNavigationRoute, navOptions)
+fun NavController.navigateToSubscriptions(navOptions: NavOptions? = null) = navigate(SUBSCRIPTIONS_ROUTE, navOptions)
 
 fun NavGraphBuilder.subscriptionsScreen() {
     composable(
-        route = subscriptionsNavigationRoute
+        route = SUBSCRIPTIONS_ROUTE
     ) {
 
     }
