@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import ru.resodostudios.cashsense.feature.categories.navigation.categoriesNavigationRoute
+import ru.resodostudios.cashsense.feature.categories.navigation.CATEGORIES_ROUTE
 import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.homeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
@@ -51,7 +51,7 @@ class CsAppState(
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
             homeRoute -> HOME
-            categoriesNavigationRoute -> CATEGORIES
+            CATEGORIES_ROUTE -> CATEGORIES
             SUBSCRIPTIONS_ROUTE -> SUBSCRIPTIONS
             else -> null
         }
