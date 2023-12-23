@@ -15,10 +15,8 @@ internal class WalletArgs(val walletId: Long) {
             this(savedStateHandle.get<Long>(walletIdArg) ?: 0L)
 }
 
-fun NavController.navigateToWallet(walletId: Long) {
-    this.navigate("wallet_route/$walletId") {
-        launchSingleTop = true
-    }
+fun NavController.navigateToWallet(walletId: Long) = navigate("wallet_route/$walletId") {
+    launchSingleTop = true
 }
 
 fun NavGraphBuilder.walletScreen(
