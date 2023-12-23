@@ -218,7 +218,7 @@ private fun CurrencyExposedDropdownMenuBox(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it },
+        onExpandedChange = { expanded = it }
     ) {
         OutlinedTextField(
             modifier = Modifier.menuAnchor(),
@@ -233,7 +233,7 @@ private fun CurrencyExposedDropdownMenuBox(
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
+            onDismissRequest = { expanded = false }
         ) {
             currencyList.forEach { selectionOption ->
                 DropdownMenuItem(
