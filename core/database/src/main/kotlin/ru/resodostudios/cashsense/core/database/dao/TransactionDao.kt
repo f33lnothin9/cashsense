@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEntity
+import java.util.UUID
 
 @Dao
 interface TransactionDao {
@@ -38,5 +39,5 @@ interface TransactionDao {
             WHERE transactionId = :transactionId
         """
     )
-    suspend fun deleteTransactionCategoryCrossRef(transactionId: Long)
+    suspend fun deleteTransactionCategoryCrossRef(transactionId: UUID)
 }

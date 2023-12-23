@@ -156,9 +156,10 @@ fun EditTransactionDialog(
         onConfirm = {
             transactionViewModel.upsertTransaction(it)
             if (it.categoryOwnerId != null) {
+                transactionViewModel.deleteTransactionCategoryCrossRef(it.transactionId)
                 transactionViewModel.upsertTransactionCategoryCrossRef(
                     TransactionCategoryCrossRef(
-                        transactionId = transactionWithCategory.transaction.transactionId,
+                        transactionId = it.transactionId,
                         categoryId = it.categoryOwnerId!!
                     )
                 )
