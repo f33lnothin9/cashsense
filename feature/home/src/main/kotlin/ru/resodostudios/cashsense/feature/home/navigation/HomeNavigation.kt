@@ -10,9 +10,7 @@ import ru.resodostudios.cashsense.feature.home.HomeRoute
 const val HOME_GRAPH_ROUTE_PATTERN = "home_graph"
 const val homeRoute = "home_route"
 
-fun NavController.navigateToHomeGraph(navOptions: NavOptions? = null) {
-    this.navigate(HOME_GRAPH_ROUTE_PATTERN, navOptions)
-}
+fun NavController.navigateToHomeGraph(navOptions: NavOptions? = null) = navigate(HOME_GRAPH_ROUTE_PATTERN, navOptions)
 
 fun NavGraphBuilder.homeGraph(
     onWalletClick: (Long) -> Unit,
