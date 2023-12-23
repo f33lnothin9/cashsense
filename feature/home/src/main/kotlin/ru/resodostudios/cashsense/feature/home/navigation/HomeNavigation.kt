@@ -8,7 +8,7 @@ import androidx.navigation.navigation
 import ru.resodostudios.cashsense.feature.home.HomeRoute
 
 const val HOME_GRAPH_ROUTE_PATTERN = "home_graph"
-const val homeRoute = "home_route"
+const val HOME_ROUTE = "home_route"
 
 fun NavController.navigateToHomeGraph(navOptions: NavOptions? = null) = navigate(HOME_GRAPH_ROUTE_PATTERN, navOptions)
 
@@ -18,9 +18,9 @@ fun NavGraphBuilder.homeGraph(
 ) {
     navigation(
         route = HOME_GRAPH_ROUTE_PATTERN,
-        startDestination = homeRoute,
+        startDestination = HOME_ROUTE,
     ) {
-        composable(route = homeRoute) {
+        composable(route = HOME_ROUTE) {
             HomeRoute(onWalletClick)
         }
         nestedGraphs()
