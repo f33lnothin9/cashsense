@@ -1,8 +1,10 @@
 package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -106,47 +108,42 @@ fun AddTransactionDialog(
             },
             onDismiss = onDismiss
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                item {
-                    OutlinedTextField(
-                        value = amount,
-                        onValueChange = { amount = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal
-                        ),
-                        label = { Text(text = stringResource(R.string.amount)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .focusRequester(amountTextField)
-                            .focusProperties { next = descriptionTextField }
-                    )
-                }
-                item {
-                    CategoryExposedDropdownMenuBox(
-                        categoryName = category,
-                        categories = categoriesState.categories,
-                        onCategoryClick = {
-                            category = it.title.toString()
-                            categoryId = it.categoryId
-                        },
-                        onCategoryCreate = { TODO() }
-                    )
-                }
-                item {
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text
-                        ),
-                        label = { Text(text = stringResource(uiR.string.description)) },
-                        maxLines = 1,
-                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
-                        modifier = Modifier.focusRequester(descriptionTextField)
-                    )
-                }
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    label = { Text(text = stringResource(R.string.amount)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .focusRequester(amountTextField)
+                        .focusProperties { next = descriptionTextField }
+                )
+                CategoryExposedDropdownMenuBox(
+                    categoryName = category,
+                    categories = categoriesState.categories,
+                    onCategoryClick = {
+                        category = it.title.toString()
+                        categoryId = it.categoryId
+                    },
+                    onCategoryCreate = { TODO() }
+                )
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(uiR.string.description)) },
+                    maxLines = 1,
+                    supportingText = { Text(text = stringResource(uiR.string.optional)) },
+                    modifier = Modifier.focusRequester(descriptionTextField)
+                )
             }
             LaunchedEffect(Unit) {
                 amountTextField.requestFocus()
@@ -221,47 +218,42 @@ fun EditTransactionDialog(
             },
             onDismiss = onDismiss
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                item {
-                    OutlinedTextField(
-                        value = amount,
-                        onValueChange = { amount = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal
-                        ),
-                        label = { Text(text = stringResource(R.string.amount)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .focusRequester(amountTextField)
-                            .focusProperties { next = descriptionTextField }
-                    )
-                }
-                item {
-                    CategoryExposedDropdownMenuBox(
-                        categoryName = if (category == null) stringResource(uiR.string.none) else category.toString(),
-                        categories = categoriesState.categories,
-                        onCategoryClick = {
-                            category = it.title
-                            categoryId = it.categoryId
-                        },
-                        onCategoryCreate = { TODO() }
-                    )
-                }
-                item {
-                    OutlinedTextField(
-                        value = description.toString(),
-                        onValueChange = { description = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text
-                        ),
-                        label = { Text(text = stringResource(uiR.string.description)) },
-                        maxLines = 1,
-                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
-                        modifier = Modifier.focusRequester(descriptionTextField)
-                    )
-                }
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    label = { Text(text = stringResource(R.string.amount)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .focusRequester(amountTextField)
+                        .focusProperties { next = descriptionTextField }
+                )
+                CategoryExposedDropdownMenuBox(
+                    categoryName = if (category == null) stringResource(uiR.string.none) else category.toString(),
+                    categories = categoriesState.categories,
+                    onCategoryClick = {
+                        category = it.title
+                        categoryId = it.categoryId
+                    },
+                    onCategoryCreate = { TODO() }
+                )
+                OutlinedTextField(
+                    value = description.toString(),
+                    onValueChange = { description = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(uiR.string.description)) },
+                    maxLines = 1,
+                    supportingText = { Text(text = stringResource(uiR.string.optional)) },
+                    modifier = Modifier.focusRequester(descriptionTextField)
+                )
             }
             LaunchedEffect(Unit) {
                 amountTextField.requestFocus()
