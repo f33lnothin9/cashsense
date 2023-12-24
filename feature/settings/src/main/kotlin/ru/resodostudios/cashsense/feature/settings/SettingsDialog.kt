@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.settings
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.play.core.review.ReviewManagerFactory
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
@@ -194,7 +198,33 @@ private fun LinksPanel() {
         ) {
             Text(text = stringResource(string.licenses))
         }
+        val activity = context.findActivity()
+        TextButton(
+            onClick = {
+                showFeedbackDialog(context, activity)
+            }
+        ) {
+            Text(text = stringResource(string.feature_settings_rate_us))
+        }
     }
+}
+
+private fun showFeedbackDialog(context: Context, activity: Activity) {
+    val reviewManager = ReviewManagerFactory.create(context)
+    reviewManager
+        .requestReviewFlow()
+        .addOnCompleteListener {
+            if (it.isSuccessful) reviewManager.launchReviewFlow(activity, it.result)
+        }
+}
+
+internal fun Context.findActivity(): Activity {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    throw IllegalStateException("Permissions should be called in the context of an Activity")
 }
 
 private const val PRIVACY_POLICY_URL =

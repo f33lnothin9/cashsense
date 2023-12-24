@@ -8,5 +8,6 @@
     <string name="dark">Dark</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="licenses">Licenses</string>
+    <string name="feature_settings_rate_us">Rate us</string>
     <string name="dismiss_dialog_button_text">OK</string>
 </resources>

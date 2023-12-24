@@ -8,5 +8,6 @@
     <string name="dark">Тёмная</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="licenses">Лицензии</string>
+    <string name="feature_settings_rate_us">Оцените нас</string>
     <string name="dismiss_dialog_button_text">ОК</string>
 </resources>
