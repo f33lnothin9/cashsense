@@ -113,8 +113,8 @@ fun EditCategoryDialog(
     val titleTextField = remember { FocusRequester() }
 
     CsAlertDialog(
-        titleRes = R.string.new_category,
-        confirmButtonTextRes = uiR.string.add,
+        titleRes = R.string.feature_categories_edit_category,
+        confirmButtonTextRes = uiR.string.save,
         dismissButtonTextRes = uiR.string.cancel,
         icon = Icons.Outlined.Category,
         onConfirm = {
