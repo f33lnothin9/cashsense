@@ -55,14 +55,14 @@ fun EmptyState(messageId: Int, animationId: Int) {
             verticalArrangement = Arrangement.Center
         ) {
             LottieAnimation(
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(230.dp),
                 composition = lottieComposition,
                 progress = { progress }
             )
             Text(
                 text = stringResource(id = messageId),
                 maxLines = 2,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis
             )
