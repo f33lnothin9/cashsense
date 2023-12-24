@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.feature.categories
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Category
@@ -63,19 +63,21 @@ fun AddCategoryDialog(
         },
         onDismiss = onDismiss
     ) {
-        Column(
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                ),
-                label = { Text(text = stringResource(R.string.name)) },
-                maxLines = 1,
-                modifier = Modifier.focusRequester(titleTextField)
-            )
+            item {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(R.string.name)) },
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(titleTextField)
+                )
+            }
         }
         LaunchedEffect(Unit) {
             titleTextField.requestFocus()
