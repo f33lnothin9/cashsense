@@ -1,8 +1,10 @@
 package ru.resodostudios.cashsense.feature.categories
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material3.OutlinedTextField
@@ -63,21 +65,20 @@ fun AddCategoryDialog(
         },
         onDismiss = onDismiss
     ) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            item {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = { Text(text = stringResource(R.string.name)) },
-                    maxLines = 1,
-                    modifier = Modifier.focusRequester(titleTextField)
-                )
-            }
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
+                label = { Text(text = stringResource(R.string.name)) },
+                maxLines = 1,
+                modifier = Modifier.focusRequester(titleTextField)
+            )
         }
         LaunchedEffect(Unit) {
             titleTextField.requestFocus()
@@ -127,21 +128,20 @@ fun EditCategoryDialog(
         },
         onDismiss = onDismiss
     ) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            item {
-                OutlinedTextField(
-                    value = title.toString(),
-                    onValueChange = { title = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = { Text(text = stringResource(R.string.name)) },
-                    maxLines = 1,
-                    modifier = Modifier.focusRequester(titleTextField)
-                )
-            }
+            OutlinedTextField(
+                value = title.toString(),
+                onValueChange = { title = it },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text
+                ),
+                label = { Text(text = stringResource(R.string.name)) },
+                maxLines = 1,
+                modifier = Modifier.focusRequester(titleTextField)
+            )
         }
         LaunchedEffect(Unit) {
             titleTextField.requestFocus()
