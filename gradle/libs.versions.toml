@@ -1,5 +1,6 @@
 [versions]
 androidGradlePlugin = "8.3.0-alpha18"
+androidPlayReview = "2.0.1"
 androidxAppCompat = "1.6.1"
 androidxComposeCompiler = "1.5.7"
 androidxComposeMaterial3 = "1.2.0-beta01"
@@ -35,6 +36,8 @@ room = "2.6.1"
 
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
+android-play-review = { group = "com.google.android.play", name = "review", version.ref = "androidPlayReview" }
+android-play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "androidPlayReview" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }

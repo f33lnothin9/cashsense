@@ -12,4 +12,6 @@ dependencies {
     implementation(libs.google.oss.licenses) {
         exclude(group = "androidx.appcompat")
     }
+    implementation(libs.android.play.review)
+    implementation(libs.android.play.review.ktx)
 }
