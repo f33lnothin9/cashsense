@@ -1,8 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -74,45 +76,40 @@ fun AddWalletDialog(
         },
         onDismiss = onDismiss
     ) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            item {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    label = { Text(text = stringResource(uiR.string.title)) },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .focusRequester(titleTextField)
-                        .focusProperties { next = amountTextField },
-                    placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                    supportingText = { Text(text = stringResource(uiR.string.required)) }
-                )
-            }
-            item {
-                OutlinedTextField(
-                    value = startBalance,
-                    onValueChange = { startBalance = it },
-                    placeholder = { Text(text = "100") },
-                    label = { Text(text = stringResource(R.string.start_balance)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier.focusRequester(amountTextField)
-                )
-            }
-            item {
-                CurrencyExposedDropdownMenuBox(
-                    currencyName = currency.name,
-                    onCurrencyClick = { currency = it }
-                )
-            }
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                label = { Text(text = stringResource(uiR.string.title)) },
+                maxLines = 1,
+                modifier = Modifier
+                    .focusRequester(titleTextField)
+                    .focusProperties { next = amountTextField },
+                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                supportingText = { Text(text = stringResource(uiR.string.required)) }
+            )
+            OutlinedTextField(
+                value = startBalance,
+                onValueChange = { startBalance = it },
+                placeholder = { Text(text = "100") },
+                label = { Text(text = stringResource(R.string.start_balance)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal
+                ),
+                maxLines = 1,
+                modifier = Modifier.focusRequester(amountTextField)
+            )
+            CurrencyExposedDropdownMenuBox(
+                currencyName = currency.name,
+                onCurrencyClick = { currency = it }
+            )
         }
         LaunchedEffect(Unit) {
             titleTextField.requestFocus()
@@ -166,43 +163,38 @@ fun EditWalletDialog(
         },
         onDismiss = onDismiss
     ) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            item {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    label = { Text(text = stringResource(uiR.string.title)) },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .focusRequester(titleTextField)
-                        .focusProperties { next = amountTextField }
-                )
-            }
-            item {
-                OutlinedTextField(
-                    value = startBalance,
-                    onValueChange = { startBalance = it },
-                    placeholder = { Text(text = "100") },
-                    label = { Text(text = stringResource(R.string.start_balance)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier.focusRequester(amountTextField)
-                )
-            }
-            item {
-                CurrencyExposedDropdownMenuBox(
-                    currencyName = currency.name,
-                    onCurrencyClick = { currency = it }
-                )
-            }
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                label = { Text(text = stringResource(uiR.string.title)) },
+                maxLines = 1,
+                modifier = Modifier
+                    .focusRequester(titleTextField)
+                    .focusProperties { next = amountTextField }
+            )
+            OutlinedTextField(
+                value = startBalance,
+                onValueChange = { startBalance = it },
+                placeholder = { Text(text = "100") },
+                label = { Text(text = stringResource(R.string.start_balance)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal
+                ),
+                maxLines = 1,
+                modifier = Modifier.focusRequester(amountTextField)
+            )
+            CurrencyExposedDropdownMenuBox(
+                currencyName = currency.name,
+                onCurrencyClick = { currency = it }
+            )
         }
         LaunchedEffect(Unit) {
             titleTextField.requestFocus()
