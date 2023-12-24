@@ -48,7 +48,7 @@ fun AddTransactionDialog(
     transactionViewModel: TransactionViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle(initialValue = CategoriesUiState.Loading)
 
     AddTransactionDialog(
         categoriesState = categoriesState,
@@ -162,7 +162,7 @@ fun EditTransactionDialog(
     transactionViewModel: TransactionViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle(initialValue = CategoriesUiState.Loading)
 
     EditTransactionDialog(
         categoriesState = categoriesState,

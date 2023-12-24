@@ -21,12 +21,14 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
+import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
 
 @Composable
 internal fun CategoryRoute(
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle(initialValue = Loading)
 
     CategoriesScreen(
         categoriesState = categoriesState,
@@ -44,8 +46,8 @@ internal fun CategoriesScreen(
     var categoryState by rememberSaveable { mutableStateOf(Category()) }
 
     when (categoriesState) {
-        CategoriesUiState.Loading -> LoadingState()
-        is CategoriesUiState.Success -> if (categoriesState.categories.isNotEmpty()) {
+        Loading -> LoadingState()
+        is Success -> if (categoriesState.categories.isNotEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -86,8 +88,8 @@ private fun LazyGridScope.categories(
     onDelete: (Category) -> Unit
 ) {
     when (categoriesState) {
-        CategoriesUiState.Loading -> Unit
-        is CategoriesUiState.Success -> {
+        Loading -> Unit
+        is Success -> {
             items(categoriesState.categories) { category ->
                 ListItem(
                     headlineContent = { Text(text = category.title.toString()) },
