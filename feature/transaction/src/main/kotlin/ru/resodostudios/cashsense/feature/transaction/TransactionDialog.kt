@@ -11,12 +11,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -64,6 +69,7 @@ fun AddTransactionDialog(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddTransactionDialog(
     categoriesState: CategoriesUiState,
@@ -74,6 +80,8 @@ fun AddTransactionDialog(
     var amount by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf("") }
+
+    val (amountTextField, descriptionTextField) = remember { FocusRequester.createRefs() }
 
     var categoryId: Long? = null
 
@@ -109,7 +117,10 @@ fun AddTransactionDialog(
                             keyboardType = KeyboardType.Decimal
                         ),
                         label = { Text(text = stringResource(R.string.amount)) },
-                        maxLines = 1
+                        maxLines = 1,
+                        modifier = Modifier
+                            .focusRequester(amountTextField)
+                            .focusProperties { next = descriptionTextField }
                     )
                 }
                 item {
@@ -132,9 +143,13 @@ fun AddTransactionDialog(
                         ),
                         label = { Text(text = stringResource(uiR.string.description)) },
                         maxLines = 1,
-                        supportingText = { Text(text = stringResource(uiR.string.optional)) }
+                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
+                        modifier = Modifier.focusRequester(descriptionTextField)
                     )
                 }
+            }
+            LaunchedEffect(Unit) {
+                amountTextField.requestFocus()
             }
         }
     }
@@ -169,6 +184,7 @@ fun EditTransactionDialog(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditTransactionDialog(
     transactionWithCategory: TransactionWithCategory,
@@ -179,6 +195,8 @@ fun EditTransactionDialog(
     var amount by rememberSaveable { mutableStateOf(transactionWithCategory.transaction.amount.toString()) }
     var description by rememberSaveable { mutableStateOf(transactionWithCategory.transaction.description) }
     var category by rememberSaveable { mutableStateOf(transactionWithCategory.category?.title) }
+
+    val (amountTextField, descriptionTextField) = remember { FocusRequester.createRefs() }
 
     var categoryId: Long? = null
 
@@ -214,7 +232,10 @@ fun EditTransactionDialog(
                             keyboardType = KeyboardType.Decimal
                         ),
                         label = { Text(text = stringResource(R.string.amount)) },
-                        maxLines = 1
+                        maxLines = 1,
+                        modifier = Modifier
+                            .focusRequester(amountTextField)
+                            .focusProperties { next = descriptionTextField }
                     )
                 }
                 item {
@@ -237,9 +258,13 @@ fun EditTransactionDialog(
                         ),
                         label = { Text(text = stringResource(uiR.string.description)) },
                         maxLines = 1,
-                        supportingText = { Text(text = stringResource(uiR.string.optional)) }
+                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
+                        modifier = Modifier.focusRequester(descriptionTextField)
                     )
                 }
+            }
+            LaunchedEffect(Unit) {
+                amountTextField.requestFocus()
             }
         }
     }
