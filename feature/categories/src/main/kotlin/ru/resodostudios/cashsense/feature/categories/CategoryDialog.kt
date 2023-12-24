@@ -84,3 +84,67 @@ fun AddCategoryDialog(
         }
     }
 }
+
+@Composable
+fun EditCategoryDialog(
+    category: Category,
+    onDismiss: () -> Unit,
+    viewModel: CategoriesViewModel = hiltViewModel()
+) {
+    EditCategoryDialog(
+        category = category,
+        onDismiss = onDismiss,
+        onConfirm = {
+            viewModel.upsertCategory(it)
+            onDismiss()
+        }
+    )
+}
+
+@Composable
+fun EditCategoryDialog(
+    category: Category,
+    onDismiss: () -> Unit,
+    onConfirm: (Category) -> Unit
+) {
+    var title by rememberSaveable { mutableStateOf(category.title) }
+
+    val titleTextField = remember { FocusRequester() }
+
+    CsAlertDialog(
+        titleRes = R.string.new_category,
+        confirmButtonTextRes = uiR.string.add,
+        dismissButtonTextRes = uiR.string.cancel,
+        icon = Icons.Outlined.Category,
+        onConfirm = {
+            onConfirm(
+                Category(
+                    categoryId = category.categoryId,
+                    title = title,
+                    icon = null
+                )
+            )
+        },
+        onDismiss = onDismiss
+    ) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                OutlinedTextField(
+                    value = title.toString(),
+                    onValueChange = { title = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(R.string.name)) },
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(titleTextField)
+                )
+            }
+        }
+        LaunchedEffect(Unit) {
+            titleTextField.requestFocus()
+        }
+    }
+}

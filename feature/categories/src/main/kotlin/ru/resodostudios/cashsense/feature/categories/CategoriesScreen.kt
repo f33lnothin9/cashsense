@@ -6,18 +6,19 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 
@@ -38,6 +39,10 @@ internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onDelete: (Category) -> Unit
 ) {
+    var showEditCategoryDialog by rememberSaveable { mutableStateOf(false) }
+
+    var categoryState by rememberSaveable { mutableStateOf(Category()) }
+
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
         is CategoriesUiState.Success -> if (categoriesState.categories.isNotEmpty()) {
@@ -52,18 +57,32 @@ internal fun CategoriesScreen(
                 ) {
                     categories(
                         categoriesState = categoriesState,
+                        onEdit = {
+                            categoryState = it
+                            showEditCategoryDialog = true
+                        },
                         onDelete = onDelete
+                    )
+                }
+                if (showEditCategoryDialog) {
+                    EditCategoryDialog(
+                        category = categoryState,
+                        onDismiss = { showEditCategoryDialog = false }
                     )
                 }
             }
         } else {
-            EmptyState(messageId = R.string.categories_empty, animationId = R.raw.anim_empty_categories)
+            EmptyState(
+                messageId = R.string.categories_empty,
+                animationId = R.raw.anim_empty_categories
+            )
         }
     }
 }
 
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
+    onEdit: (Category) -> Unit,
     onDelete: (Category) -> Unit
 ) {
     when (categoriesState) {
@@ -73,12 +92,10 @@ private fun LazyGridScope.categories(
                 ListItem(
                     headlineContent = { Text(text = category.title.toString()) },
                     trailingContent = {
-                        IconButton(onClick = { onDelete(category) }) {
-                            Icon(
-                                imageVector = CsIcons.Delete,
-                                contentDescription = null
-                            )
-                        }
+                        EditAndDeleteDropdownMenu(
+                            onEdit = { onEdit(category) },
+                            onDelete = { onDelete(category) }
+                        )
                     }
                 )
             }
