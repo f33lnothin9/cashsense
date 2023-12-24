@@ -204,6 +204,9 @@ fun EditWalletDialog(
                 )
             }
         }
+        LaunchedEffect(Unit) {
+            titleTextField.requestFocus()
+        }
     }
 }
 
