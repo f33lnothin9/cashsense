@@ -1,17 +1,18 @@
 [versions]
 androidGradlePlugin = "8.3.0-alpha18"
+androidDesugarJdkLibs = "2.0.4"
 androidPlayReview = "2.0.1"
+androidxActivityCompose = "1.8.2"
 androidxAppCompat = "1.6.1"
+androidxCore = "1.12.0"
+androidxCoreSplashscreen = "1.1.0-alpha02"
 androidxComposeCompiler = "1.5.7"
 androidxComposeMaterial3 = "1.2.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha03"
 androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha02"
 androidxDataStore = "1.0.0"
-androidDesugarJdkLibs = "2.0.4"
 androidxHiltNavigationCompose = "1.1.0"
 androidxLifecycle = "2.6.2"
-activityCompose = "1.8.2"
-androidxCore = "1.12.0"
 androidxWindowManager = "1.2.0"
 composeBom = "2023.10.01"
 firebaseBom = "32.7.0"
@@ -20,7 +21,6 @@ firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.4.0"
 googleOss = "17.0.1"
 googleOssPlugin = "0.10.6"
-splashScreen = "1.0.1"
 hilt = "2.50"
 kotlin = "1.9.21"
 kotlinxCoroutines = "1.7.3"
@@ -38,7 +38,7 @@ room = "2.6.1"
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 android-play-review = { group = "com.google.android.play", name = "review", version.ref = "androidPlayReview" }
 android-play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "androidPlayReview" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
@@ -53,7 +53,7 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
