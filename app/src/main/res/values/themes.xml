@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.CashSense" parent="android:Theme.Material.NoActionBar" />
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Allows us to override night specific attributes in the
+         values-night folder. -->
+    <style name="NightAdjusted.Theme.Cs" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- The final theme we use -->
+    <style name="Theme.Cs" parent="NightAdjusted.Theme.Cs" />
+
+    <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+
+    <style name="Theme.Cs.Splash" parent="NightAdjusted.Theme.Splash">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Cs</item>
+    </style>
+
 </resources>
