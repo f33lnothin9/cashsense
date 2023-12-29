@@ -62,7 +62,6 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 
-    // Integration with activities
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.androidx.lifecycle.viewModelCompose)
@@ -79,4 +78,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.kotlinx.datetime)
+
+    implementation(libs.android.play.app.update)
+    implementation(libs.android.play.app.update.ktx)
 }
