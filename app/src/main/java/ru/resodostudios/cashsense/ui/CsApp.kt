@@ -68,12 +68,14 @@ fun CsApp(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val updateDownloadedMessage = stringResource(R.string.update_downloaded)
+    val installActionLabel = stringResource(R.string.install)
     LaunchedEffect(isUpdateDownloaded) {
         if (isUpdateDownloaded) {
             val snackbarResult = snackbarHostState.showSnackbar(
-                message = "Update downloaded.",
+                message = updateDownloadedMessage,
                 duration = SnackbarDuration.Indefinite,
-                actionLabel = "Install",
+                actionLabel = installActionLabel,
                 withDismissAction = true
             )
             if (snackbarResult == SnackbarResult.ActionPerformed) appUpdateManager.completeUpdate()
