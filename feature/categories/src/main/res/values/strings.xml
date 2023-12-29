@@ -5,6 +5,5 @@
     <string name="category">Category</string>
     <string name="new_category">New category</string>
     <string name="feature_categories_edit_category">Edit category</string>
-    <string name="name">Name</string>
     <string name="categories_empty">Nothing in Categories</string>
 </resources>
