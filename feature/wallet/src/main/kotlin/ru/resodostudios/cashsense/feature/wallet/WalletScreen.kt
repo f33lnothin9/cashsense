@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +31,9 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.EditTransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.R
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.transaction.transactions
 import java.util.UUID
@@ -98,6 +101,14 @@ internal fun WalletScreen(
                             IconButton(onClick = onBackClick) {
                                 Icon(imageVector = CsIcons.ArrowBack, contentDescription = null)
                             }
+                        },
+                        actions = {
+                            IconButton(onClick = { showAddTransactionDialog = true }) {
+                                Icon(
+                                    imageVector = CsIcons.Add,
+                                    contentDescription = stringResource(R.string.add_transaction_icon_description)
+                                )
+                            }
                         }
                     )
                 },
@@ -118,6 +129,12 @@ internal fun WalletScreen(
                                 showEditTransactionDialog = true
                             },
                             onDelete = onDelete
+                        )
+                    }
+                    if (showAddTransactionDialog) {
+                        AddTransactionDialog(
+                            walletId = walletState.walletWithTransactionsAndCategories.wallet.walletId,
+                            onDismiss = { showAddTransactionDialog = false }
                         )
                     }
                     if (showEditTransactionDialog) {

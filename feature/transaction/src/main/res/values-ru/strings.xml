@@ -5,4 +5,5 @@
     <string name="edit_transaction">Изменение транзакции</string>
     <string name="new_transaction">Новая транзакция</string>
     <string name="amount">Сумма</string>
+    <string name="add_transaction_icon_description">Добавить транзакцию</string>
 </resources>
