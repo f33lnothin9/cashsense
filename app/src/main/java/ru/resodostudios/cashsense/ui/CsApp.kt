@@ -33,7 +33,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsDialog
-import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -54,9 +53,6 @@ fun CsApp(
     )
 ) {
     var showSettingsDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showNewTransactionDialog by rememberSaveable {
         mutableStateOf(false)
     }
     var showAddCategoryDialog by rememberSaveable {
@@ -85,11 +81,6 @@ fun CsApp(
     if (showSettingsDialog) {
         SettingsDialog(
             onDismiss = { showSettingsDialog = false }
-        )
-    }
-    if (showNewTransactionDialog) {
-        AddTransactionDialog(
-            onDismiss = { showNewTransactionDialog = false },
         )
     }
     if (showAddCategoryDialog) {
