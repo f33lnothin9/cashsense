@@ -79,7 +79,7 @@ fun SettingsDialog(
         title = {
             Text(
                 text = stringResource(string.settings_title),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge
             )
         },
         text = {
