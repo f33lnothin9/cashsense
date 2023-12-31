@@ -76,6 +76,8 @@ fun AddCategoryDialog(
                     keyboardType = KeyboardType.Text
                 ),
                 label = { Text(text = stringResource(uiR.string.title)) },
+                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                supportingText = { Text(text = stringResource(uiR.string.required)) },
                 maxLines = 1,
                 modifier = Modifier.focusRequester(titleTextField)
             )
@@ -139,6 +141,8 @@ fun EditCategoryDialog(
                     keyboardType = KeyboardType.Text
                 ),
                 label = { Text(text = stringResource(uiR.string.title)) },
+                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                supportingText = { Text(text = stringResource(uiR.string.required)) },
                 maxLines = 1,
                 modifier = Modifier.focusRequester(titleTextField)
             )
