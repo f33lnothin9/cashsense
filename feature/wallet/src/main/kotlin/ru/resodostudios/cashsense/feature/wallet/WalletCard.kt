@@ -28,8 +28,9 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
+import ru.resodostudios.cashsense.core.ui.getFormattedAmount
+import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import kotlin.math.abs
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -61,12 +62,17 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge
             )
-            AmountWithCurrencyText(
-                amount = getCurrentBalance(
-                    wallet.startBalance,
-                    transactionsWithCategories.map { it.transaction }
+            Text(
+                text = getFormattedAmountAndCurrency(
+                    amount = getCurrentBalance(
+                        wallet.startBalance,
+                        transactionsWithCategories.map { it.transaction }
+                    ),
+                    currencyName = wallet.currency.name
                 ),
-                currency = wallet.currency
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyLarge
             )
             if (transactions.isNotEmpty()) {
                 WalletFinancesSection(transactions = transactions)
@@ -124,7 +130,7 @@ private fun WalletFinancesSection(
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
-                    text = walletIncome.toString(),
+                    text = getFormattedAmount(amount = walletIncome),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelLarge
@@ -154,7 +160,7 @@ private fun WalletFinancesSection(
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
-                    text = abs(walletExpenses).toString(),
+                    text = getFormattedAmount(amount = abs(walletExpenses)),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelLarge

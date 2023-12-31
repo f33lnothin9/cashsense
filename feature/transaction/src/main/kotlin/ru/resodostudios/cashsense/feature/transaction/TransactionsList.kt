@@ -16,15 +16,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.AmountWithCurrencyText
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.TimeZoneBroadcastReceiver
+import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -52,9 +53,13 @@ fun LazyGridScope.transactions(
             }
             ListItem(
                 headlineContent = {
-                    AmountWithCurrencyText(
-                        amount = transactionWithCategory.transaction.amount,
-                        currency = currency
+                    Text(
+                        text = getFormattedAmountAndCurrency(
+                            amount = transactionWithCategory.transaction.amount,
+                            currencyName = currency.name
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 trailingContent = {
