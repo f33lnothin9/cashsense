@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import ru.resodostudios.cashsense.feature.subscriptions.SubscriptionsRoute
 
 const val SUBSCRIPTIONS_ROUTE = "subscriptions_route"
 
@@ -13,6 +14,6 @@ fun NavGraphBuilder.subscriptionsScreen() {
     composable(
         route = SUBSCRIPTIONS_ROUTE
     ) {
-
+        SubscriptionsRoute()
     }
 }

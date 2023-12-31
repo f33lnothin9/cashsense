@@ -5,5 +5,5 @@
     <string name="category">Категория</string>
     <string name="new_category">Новая категория</string>
     <string name="feature_categories_edit_category">Изменение категории</string>
-    <string name="categories_empty">В Категориях пусто</string>
+    <string name="categories_empty">В категориях пусто</string>
 </resources>
