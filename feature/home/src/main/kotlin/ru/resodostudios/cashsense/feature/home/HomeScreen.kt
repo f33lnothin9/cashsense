@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
@@ -62,48 +61,46 @@ internal fun HomeScreen(
         )
     }
 
-    Box {
-        when (walletsState) {
-            WalletsUiState.Loading -> LoadingState()
-            is WalletsUiState.Success -> if (walletsState.walletsWithTransactionsAndCategories.isNotEmpty()) {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(300.dp),
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    walletsWithTransactionsAndCategories(
-                        walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
-                        onWalletClick = onWalletClick,
-                        onTransactionCreate = {
-                            walletId = it
-                            showAddTransactionDialog = true
-                        },
-                        onEdit = {
-                            walletState = it
-                            showEditWalletDialog = true
-                        },
-                        onDelete = onDelete
-                    )
-                }
-            } else {
-                EmptyState(
-                    messageId = walletR.string.wallets_empty,
-                    animationId = walletR.raw.anim_wallet_empty
+    when (walletsState) {
+        WalletsUiState.Loading -> LoadingState()
+        is WalletsUiState.Success -> if (walletsState.walletsWithTransactionsAndCategories.isNotEmpty()) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(300.dp),
+                verticalItemSpacing = 16.dp,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                walletsWithTransactionsAndCategories(
+                    walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
+                    onWalletClick = onWalletClick,
+                    onTransactionCreate = {
+                        walletId = it
+                        showAddTransactionDialog = true
+                    },
+                    onEdit = {
+                        walletState = it
+                        showEditWalletDialog = true
+                    },
+                    onDelete = onDelete
                 )
             }
-        }
-        if (showEditWalletDialog) {
-            EditWalletDialog(
-                onDismiss = { showEditWalletDialog = false },
-                wallet = walletState
-            )
-        }
-        if (showAddTransactionDialog) {
-            AddTransactionDialog(
-                onDismiss = { showAddTransactionDialog = false },
-                walletId = walletId
+            if (showEditWalletDialog) {
+                EditWalletDialog(
+                    onDismiss = { showEditWalletDialog = false },
+                    wallet = walletState
+                )
+            }
+            if (showAddTransactionDialog) {
+                AddTransactionDialog(
+                    onDismiss = { showAddTransactionDialog = false },
+                    walletId = walletId
+                )
+            }
+        } else {
+            EmptyState(
+                messageId = walletR.string.wallets_empty,
+                animationId = walletR.raw.anim_wallet_empty
             )
         }
     }

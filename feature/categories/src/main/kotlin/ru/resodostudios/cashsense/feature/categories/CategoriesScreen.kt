@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.categories
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -48,30 +47,24 @@ internal fun CategoriesScreen(
     when (categoriesState) {
         Loading -> LoadingState()
         is Success -> if (categoriesState.categories.isNotEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(300.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    categories(
-                        categoriesState = categoriesState,
-                        onEdit = {
-                            categoryState = it
-                            showEditCategoryDialog = true
-                        },
-                        onDelete = onDelete
-                    )
-                }
-                if (showEditCategoryDialog) {
-                    EditCategoryDialog(
-                        category = categoryState,
-                        onDismiss = { showEditCategoryDialog = false }
-                    )
-                }
+                categories(
+                    categoriesState = categoriesState,
+                    onEdit = {
+                        categoryState = it
+                        showEditCategoryDialog = true
+                    },
+                    onDelete = onDelete
+                )
+            }
+            if (showEditCategoryDialog) {
+                EditCategoryDialog(
+                    category = categoryState,
+                    onDismiss = { showEditCategoryDialog = false }
+                )
             }
         } else {
             EmptyState(
