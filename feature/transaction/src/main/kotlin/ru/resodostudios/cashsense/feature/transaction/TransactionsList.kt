@@ -2,8 +2,8 @@ package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,7 +32,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
-fun LazyGridScope.transactions(
+fun LazyListScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
     currency: Currency,
     onEdit: (TransactionWithCategory) -> Unit,
@@ -79,7 +79,7 @@ fun LazyGridScope.transactions(
 }
 
 @Composable
-fun dateFormatted(date: Instant): String {
+private fun dateFormatted(date: Instant): String {
     var zoneId by remember { mutableStateOf(ZoneId.systemDefault()) }
 
     val context = LocalContext.current
