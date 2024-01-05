@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="ic_launcher_background_tint">#000000</color>
-    <color name="ic_launcher_foreground_tint_primary">#1A6C30</color>
-    <color name="ic_launcher_foreground_tint_inverse_primary">#88D990</color>
-    <color name="ic_launcher_foreground_tint_on_primary_container">#002108</color>
-</resources>
