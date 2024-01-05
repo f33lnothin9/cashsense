@@ -10,6 +10,7 @@ import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
+import ru.resodostudios.cashsense.core.database.util.BigDecimalConverter
 import ru.resodostudios.cashsense.core.database.util.InstantConverter
 
 @Database(
@@ -23,10 +24,10 @@ import ru.resodostudios.cashsense.core.database.util.InstantConverter
     exportSchema = true
 )
 @TypeConverters(
-    InstantConverter::class
+    InstantConverter::class,
+    BigDecimalConverter::class
 )
 abstract class CsDatabase : RoomDatabase() {
-
     abstract fun transactionDao(): TransactionDao
 
     abstract fun categoryDao(): CategoryDao
