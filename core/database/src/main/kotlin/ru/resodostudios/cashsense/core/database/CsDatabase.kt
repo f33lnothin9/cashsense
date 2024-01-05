@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
+import ru.resodostudios.cashsense.core.database.dao.SubscriptionDao
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
@@ -35,4 +36,6 @@ abstract class CsDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
 
     abstract fun walletDao(): WalletDao
+
+    abstract fun subscriptionDao(): SubscriptionDao
 }
