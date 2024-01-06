@@ -41,5 +41,4 @@ internal fun SubscriptionsScreen(
             }
         }
     }
-
 }
