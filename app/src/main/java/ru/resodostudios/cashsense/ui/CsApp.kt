@@ -72,8 +72,7 @@ fun CsApp(
             val snackbarResult = snackbarHostState.showSnackbar(
                 message = updateDownloadedMessage,
                 duration = SnackbarDuration.Indefinite,
-                actionLabel = installActionLabel,
-                withDismissAction = true
+                actionLabel = installActionLabel
             )
             if (snackbarResult == SnackbarResult.ActionPerformed) appUpdateManager.completeUpdate()
         }
