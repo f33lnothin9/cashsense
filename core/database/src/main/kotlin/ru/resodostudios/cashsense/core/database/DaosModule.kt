@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
+import ru.resodostudios.cashsense.core.database.dao.SubscriptionDao
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.dao.WalletDao
 
@@ -26,4 +27,9 @@ object DaosModule {
     fun providesWalletDao(
         database: CsDatabase,
     ): WalletDao = database.walletDao()
+
+    @Provides
+    fun providesSubscriptionDao(
+        database: CsDatabase,
+    ): SubscriptionDao = database.subscriptionDao()
 }
