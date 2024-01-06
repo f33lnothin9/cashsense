@@ -40,6 +40,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
+import ru.resodostudios.cashsense.feature.subscriptions.R as subscriptionsR
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
@@ -160,7 +161,16 @@ fun CsApp(
                         }
                     }
 
-                    SUBSCRIPTIONS -> {}
+                    SUBSCRIPTIONS -> {
+                        FloatingActionButton(
+                            onClick = { TODO() }
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Add,
+                                contentDescription = stringResource(subscriptionsR.string.feature_subscriptions_add_subscription_icon_description)
+                            )
+                        }
+                    }
                     null -> {}
                 }
             },

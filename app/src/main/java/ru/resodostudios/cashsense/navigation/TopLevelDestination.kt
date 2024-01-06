@@ -27,7 +27,7 @@ enum class TopLevelDestination(
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.SubscriptionsFilled,
         unselectedIcon = CsIcons.Subscriptions,
-        iconTextId = subscriptionsR.string.subscriptions,
-        titleTextId = subscriptionsR.string.subscriptions,
+        iconTextId = subscriptionsR.string.feature_subscriptions_title,
+        titleTextId = subscriptionsR.string.feature_subscriptions_title,
     )
 }
