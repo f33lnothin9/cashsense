@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_subscriptions_title">Подписки</string>
+    <string name="feature_subscriptions_new_subscription">Новая подписка</string>
     <string name="feature_subscriptions_empty_message">В подписках пусто</string>
     <string name="feature_subscriptions_add_subscription_icon_description">Добавить подписку</string>
 </resources>

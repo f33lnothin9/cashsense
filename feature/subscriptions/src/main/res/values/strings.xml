@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_subscriptions_title">Subscriptions</string>
+    <string name="feature_subscriptions_new_subscription">New subscriptions</string>
     <string name="feature_subscriptions_empty_message">Nothing in Subscriptions</string>
     <string name="feature_subscriptions_add_subscription_icon_description">Add subscription</string>
 </resources>
