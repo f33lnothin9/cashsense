@@ -11,4 +11,5 @@
     <string name="delete">Удалить</string>
     <string name="required">*обязательно</string>
     <string name="none">Отсутствует</string>
+    <string name="amount">Сумма</string>
 </resources>

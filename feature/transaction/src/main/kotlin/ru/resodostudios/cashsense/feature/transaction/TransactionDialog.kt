@@ -118,7 +118,7 @@ fun AddTransactionDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
-                    label = { Text(text = stringResource(R.string.amount)) },
+                    label = { Text(text = stringResource(uiR.string.amount)) },
                     maxLines = 1,
                     modifier = Modifier
                         .focusRequester(amountTextField)
@@ -228,7 +228,7 @@ fun EditTransactionDialog(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
-                    label = { Text(text = stringResource(R.string.amount)) },
+                    label = { Text(text = stringResource(uiR.string.amount)) },
                     maxLines = 1,
                     modifier = Modifier
                         .focusRequester(amountTextField)
