@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.categories.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_GRAPH_ROUTE_PATTERN
 import ru.resodostudios.cashsense.feature.home.navigation.homeGraph
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.addSubscriptionScreen
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsGraph
 import ru.resodostudios.cashsense.feature.wallet.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.navigation.walletScreen
@@ -34,7 +35,9 @@ fun CsNavHost(
         categoriesScreen()
         subscriptionsGraph(
             nestedGraphs = {
-
+                addSubscriptionScreen(
+                    onBackClick = navController::popBackStack
+                )
             }
         )
     }
