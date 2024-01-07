@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Settings
@@ -24,6 +25,7 @@ object CsIcons {
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
     val Settings = Icons.Outlined.Settings
     val Transaction = Icons.AutoMirrored.Outlined.ReceiptLong
+    val Confirm = Icons.Outlined.Done
     val Delete = Icons.Outlined.Delete
     val DropDown = Icons.Outlined.ArrowDropDown
     val TrendingUp = Icons.AutoMirrored.Outlined.TrendingUp
