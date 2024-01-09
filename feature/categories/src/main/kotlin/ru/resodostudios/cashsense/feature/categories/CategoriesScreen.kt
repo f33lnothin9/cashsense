@@ -27,7 +27,7 @@ import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
 internal fun CategoryRoute(
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle(initialValue = Loading)
+    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     CategoriesScreen(
         categoriesState = categoriesState,
