@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="core_ui_currency">Currency</string>
     <string name="dropdown_menu_icon_description">Dropdown menu</string>
     <string name="save">Save</string>
     <string name="add">Add</string>

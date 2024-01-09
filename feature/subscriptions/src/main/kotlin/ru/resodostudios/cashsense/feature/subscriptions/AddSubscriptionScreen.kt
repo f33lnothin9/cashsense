@@ -34,6 +34,7 @@ import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -59,6 +60,7 @@ internal fun AddSubscriptionScreen(
 ) {
     var title by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
+    var currency by rememberSaveable { mutableStateOf(Currency.USD.name) }
 
     val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
@@ -78,7 +80,7 @@ internal fun AddSubscriptionScreen(
                                 Subscription(
                                     title = title,
                                     amount = BigDecimal(amount),
-                                    currency = Currency.USD,
+                                    currency = currency,
                                     paymentDate = Clock.System.now(),
                                     notificationDate = null,
                                     repeatingInterval = null
@@ -134,6 +136,14 @@ internal fun AddSubscriptionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(amountTextField)
+                )
+            }
+            item {
+                CurrencyExposedDropdownMenuBox(
+                    currencyName = currency,
+                    onCurrencyClick = {
+                        currency = it.name
+                    }
                 )
             }
         }

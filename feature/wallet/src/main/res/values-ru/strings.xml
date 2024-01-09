@@ -4,6 +4,5 @@
     <string name="add_wallet">Добавить кошелёк</string>
     <string name="new_wallet">Новый кошелёк</string>
     <string name="start_balance">Начальный баланс</string>
-    <string name="currency">Валюта</string>
     <string name="wallets_empty">В кошельках пусто</string>
 </resources>
