@@ -86,7 +86,8 @@ internal fun AddSubscriptionScreen(
                                     repeatingInterval = null
                                 )
                             )
-                        }
+                        },
+                        enabled = title.isNotBlank() && amount.isNotBlank()
                     ) {
                         Icon(
                             imageVector = CsIcons.Confirm,
