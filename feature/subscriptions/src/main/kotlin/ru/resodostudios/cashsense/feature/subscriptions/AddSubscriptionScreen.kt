@@ -86,6 +86,7 @@ internal fun AddSubscriptionScreen(
                                     repeatingInterval = null
                                 )
                             )
+                            onBackClick()
                         },
                         enabled = title.isNotBlank() && amount.isNotBlank()
                     ) {
