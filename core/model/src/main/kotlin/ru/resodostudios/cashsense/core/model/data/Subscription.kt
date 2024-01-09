@@ -8,6 +8,8 @@ data class Subscription(
     val subscriptionId: UUID = UUID.randomUUID(),
     val title: String,
     val amount: BigDecimal,
+    val currency: Currency,
     val paymentDate: Instant,
-    val notificationDate: Instant?
+    val notificationDate: Instant?,
+    val repeatingInterval: Long?
 )

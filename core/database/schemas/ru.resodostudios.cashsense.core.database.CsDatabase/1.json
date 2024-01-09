@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7e85bb6cd8b8c567eac2bb6a09830b63",
+    "identityHash": "c1140044ef714fe9f0aaab391d5227f0",
     "entities": [
       {
         "tableName": "transactions",
@@ -126,7 +126,7 @@
       },
       {
         "tableName": "subscriptions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subscriptionId` BLOB NOT NULL, `title` TEXT NOT NULL, `amount` TEXT NOT NULL, `paymentDate` INTEGER NOT NULL, `notificationDate` INTEGER, PRIMARY KEY(`subscriptionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subscriptionId` BLOB NOT NULL, `title` TEXT NOT NULL, `amount` TEXT NOT NULL, `currency` TEXT NOT NULL, `paymentDate` INTEGER NOT NULL, `notificationDate` INTEGER, `repeatingInterval` INTEGER, PRIMARY KEY(`subscriptionId`))",
         "fields": [
           {
             "fieldPath": "subscriptionId",
@@ -147,6 +147,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "currency",
+            "columnName": "currency",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "paymentDate",
             "columnName": "paymentDate",
             "affinity": "INTEGER",
@@ -155,6 +161,12 @@
           {
             "fieldPath": "notificationDate",
             "columnName": "notificationDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "repeatingInterval",
+            "columnName": "repeatingInterval",
             "affinity": "INTEGER",
             "notNull": false
           }
@@ -199,7 +211,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e85bb6cd8b8c567eac2bb6a09830b63')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c1140044ef714fe9f0aaab391d5227f0')"
     ]
   }
 }
