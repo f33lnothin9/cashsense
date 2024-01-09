@@ -30,7 +30,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Subscription
+import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -39,7 +42,8 @@ internal fun AddSubscriptionRoute(
     viewModel: SubscriptionsViewModel = hiltViewModel()
 ) {
     AddSubscriptionScreen(
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onConfirmClick = viewModel::upsertSubscription
     )
 }
 
@@ -49,7 +53,8 @@ internal fun AddSubscriptionRoute(
 )
 @Composable
 internal fun AddSubscriptionScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onConfirmClick: (Subscription) -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
@@ -66,7 +71,18 @@ internal fun AddSubscriptionScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = {
+                            onConfirmClick(
+                                Subscription(
+                                    title = title,
+                                    amount = BigDecimal(amount),
+                                    paymentDate = Instant.fromEpochMilliseconds(545L),
+                                    notificationDate = null
+                                )
+                            )
+                        }
+                    ) {
                         Icon(
                             imageVector = CsIcons.Confirm,
                             contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
