@@ -19,8 +19,9 @@ fun CsAlertDialog(
     @StringRes dismissButtonTextRes: Int,
     icon: ImageVector,
     onConfirm: () -> Unit,
+    isConfirmEnabled: Boolean,
     onDismiss: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -35,7 +36,8 @@ fun CsAlertDialog(
         text = content,
         confirmButton = {
             Button(
-                onClick = onConfirm
+                onClick = onConfirm,
+                enabled = isConfirmEnabled
             ) {
                 Text(text = stringResource(confirmButtonTextRes))
             }

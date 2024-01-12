@@ -63,29 +63,31 @@ fun AddCategoryDialog(
                 )
             )
         },
-        onDismiss = onDismiss
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                ),
-                label = { Text(text = stringResource(uiR.string.title)) },
-                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(text = stringResource(uiR.string.required)) },
-                maxLines = 1,
-                modifier = Modifier.focusRequester(titleTextField)
-            )
-        }
-        LaunchedEffect(Unit) {
-            titleTextField.requestFocus()
-        }
-    }
+        isConfirmEnabled = title.isNotBlank(),
+        onDismiss = onDismiss,
+        {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(uiR.string.title)) },
+                    placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(titleTextField)
+                )
+            }
+            LaunchedEffect(Unit) {
+                titleTextField.requestFocus()
+            }
+        },
+    )
 }
 
 @Composable
@@ -128,27 +130,29 @@ fun EditCategoryDialog(
                 )
             )
         },
-        onDismiss = onDismiss
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            OutlinedTextField(
-                value = title.toString(),
-                onValueChange = { title = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                ),
-                label = { Text(text = stringResource(uiR.string.title)) },
-                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(text = stringResource(uiR.string.required)) },
-                maxLines = 1,
-                modifier = Modifier.focusRequester(titleTextField)
-            )
-        }
-        LaunchedEffect(Unit) {
-            titleTextField.requestFocus()
-        }
-    }
+        isConfirmEnabled = title?.isNotBlank() ?: false,
+        onDismiss = onDismiss,
+        {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = title.toString(),
+                    onValueChange = { title = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(uiR.string.title)) },
+                    placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(titleTextField)
+                )
+            }
+            LaunchedEffect(Unit) {
+                titleTextField.requestFocus()
+            }
+        },
+    )
 }

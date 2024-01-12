@@ -37,6 +37,7 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import java.util.UUID
@@ -106,49 +107,51 @@ fun AddTransactionDialog(
                     )
                 )
             },
-            onDismiss = onDismiss
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    label = { Text(text = stringResource(uiR.string.amount)) },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .focusRequester(amountTextField)
-                        .focusProperties { next = descriptionTextField }
-                )
-                CategoryExposedDropdownMenuBox(
-                    categoryName = category,
-                    categories = categoriesState.categories,
-                    onCategoryClick = {
-                        category = it.title.toString()
-                        categoryId = it.categoryId
-                    },
-                    onCategoryCreate = { TODO() }
-                )
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = { Text(text = stringResource(uiR.string.description)) },
-                    maxLines = 1,
-                    supportingText = { Text(text = stringResource(uiR.string.optional)) },
-                    modifier = Modifier.focusRequester(descriptionTextField)
-                )
-            }
-            LaunchedEffect(Unit) {
-                amountTextField.requestFocus()
-            }
-        }
+            isConfirmEnabled = validateAmount(amount).second,
+            onDismiss = onDismiss,
+            {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    OutlinedTextField(
+                        value = amount,
+                        onValueChange = { amount = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        label = { Text(text = stringResource(uiR.string.amount)) },
+                        maxLines = 1,
+                        modifier = Modifier
+                            .focusRequester(amountTextField)
+                            .focusProperties { next = descriptionTextField }
+                    )
+                    CategoryExposedDropdownMenuBox(
+                        categoryName = category,
+                        categories = categoriesState.categories,
+                        onCategoryClick = {
+                            category = it.title.toString()
+                            categoryId = it.categoryId
+                        },
+                        onCategoryCreate = { TODO() }
+                    )
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        label = { Text(text = stringResource(uiR.string.description)) },
+                        maxLines = 1,
+                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
+                        modifier = Modifier.focusRequester(descriptionTextField)
+                    )
+                }
+                LaunchedEffect(Unit) {
+                    amountTextField.requestFocus()
+                }
+            },
+        )
     }
 }
 
@@ -216,49 +219,51 @@ fun EditTransactionDialog(
                     )
                 )
             },
-            onDismiss = onDismiss
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    label = { Text(text = stringResource(uiR.string.amount)) },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .focusRequester(amountTextField)
-                        .focusProperties { next = descriptionTextField }
-                )
-                CategoryExposedDropdownMenuBox(
-                    categoryName = if (category == null) stringResource(uiR.string.none) else category.toString(),
-                    categories = categoriesState.categories,
-                    onCategoryClick = {
-                        category = it.title
-                        categoryId = it.categoryId
-                    },
-                    onCategoryCreate = { TODO() }
-                )
-                OutlinedTextField(
-                    value = description.toString(),
-                    onValueChange = { description = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = { Text(text = stringResource(uiR.string.description)) },
-                    maxLines = 1,
-                    supportingText = { Text(text = stringResource(uiR.string.optional)) },
-                    modifier = Modifier.focusRequester(descriptionTextField)
-                )
-            }
-            LaunchedEffect(Unit) {
-                amountTextField.requestFocus()
-            }
-        }
+            isConfirmEnabled = validateAmount(amount).second,
+            onDismiss = onDismiss,
+            {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    OutlinedTextField(
+                        value = amount,
+                        onValueChange = { amount = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        label = { Text(text = stringResource(uiR.string.amount)) },
+                        maxLines = 1,
+                        modifier = Modifier
+                            .focusRequester(amountTextField)
+                            .focusProperties { next = descriptionTextField }
+                    )
+                    CategoryExposedDropdownMenuBox(
+                        categoryName = if (category == null) stringResource(uiR.string.none) else category.toString(),
+                        categories = categoriesState.categories,
+                        onCategoryClick = {
+                            category = it.title
+                            categoryId = it.categoryId
+                        },
+                        onCategoryCreate = { TODO() }
+                    )
+                    OutlinedTextField(
+                        value = description.toString(),
+                        onValueChange = { description = it },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text
+                        ),
+                        label = { Text(text = stringResource(uiR.string.description)) },
+                        maxLines = 1,
+                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
+                        modifier = Modifier.focusRequester(descriptionTextField)
+                    )
+                }
+                LaunchedEffect(Unit) {
+                    amountTextField.requestFocus()
+                }
+            },
+        )
     }
 }
 
