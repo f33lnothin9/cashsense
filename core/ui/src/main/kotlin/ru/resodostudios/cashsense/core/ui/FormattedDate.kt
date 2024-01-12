@@ -15,7 +15,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 @Composable
-fun FormattedDate(date: Instant): String {
+fun formattedDate(date: Instant): String {
     var zoneId by remember { mutableStateOf(ZoneId.systemDefault()) }
 
     val context = LocalContext.current

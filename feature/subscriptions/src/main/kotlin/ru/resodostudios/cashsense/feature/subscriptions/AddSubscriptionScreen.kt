@@ -6,15 +6,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,10 +36,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
+import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -62,6 +69,9 @@ internal fun AddSubscriptionScreen(
     var title by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
     var currency by rememberSaveable { mutableStateOf(Currency.USD.name) }
+    var paymentDate by rememberSaveable { mutableStateOf("") }
+
+    val paymentDatePickerState = rememberDatePickerState()
 
     val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
@@ -140,6 +150,62 @@ internal fun AddSubscriptionScreen(
                         .fillMaxWidth()
                         .focusRequester(amountTextField)
                 )
+            }
+            item {
+                var openDialog by remember { mutableStateOf(false) }
+                OutlinedTextField(
+                    value = if (paymentDate.isNotEmpty()) {
+                        formattedDate(Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!))
+                    } else {
+                        stringResource(uiR.string.none)
+                    },
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text(text = "Payment date") },
+                    placeholder = { Text(text = "Payment date*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    trailingIcon = {
+                        IconButton(onClick = { openDialog = true }) {
+                            Icon(imageVector = CsIcons.Calendar, contentDescription = null)
+                        }
+                    },
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (openDialog) {
+                    val confirmEnabled = remember {
+                        derivedStateOf { paymentDatePickerState.selectedDateMillis != null }
+                    }
+                    DatePickerDialog(
+                        onDismissRequest = {
+                            openDialog = false
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    openDialog = false
+                                    paymentDate =
+                                        Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
+                                            .toString()
+                                },
+                                enabled = confirmEnabled.value
+                            ) {
+                                Text("OK")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    openDialog = false
+                                }
+                            ) {
+                                Text("Cancel")
+                            }
+                        }
+                    ) {
+                        DatePicker(state = paymentDatePickerState)
+                    }
+                }
             }
             item {
                 CurrencyExposedDropdownMenuBox(

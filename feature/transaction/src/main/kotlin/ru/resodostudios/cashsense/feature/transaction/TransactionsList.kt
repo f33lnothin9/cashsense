@@ -15,7 +15,7 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
-import ru.resodostudios.cashsense.core.ui.FormattedDate
+import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -30,8 +30,8 @@ fun LazyListScope.transactions(
 
     items(sortedTransactions) { transactionWithCategory ->
         Column {
-            if (currentDate != FormattedDate(date = transactionWithCategory.transaction.date)) {
-                currentDate = FormattedDate(date = transactionWithCategory.transaction.date)
+            if (currentDate != formattedDate(date = transactionWithCategory.transaction.date)) {
+                currentDate = formattedDate(date = transactionWithCategory.transaction.date)
                 Text(
                     text = currentDate!!,
                     style = MaterialTheme.typography.labelLarge,
