@@ -35,6 +35,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
+import ru.resodostudios.cashsense.core.ui.validateAmount
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -88,7 +89,7 @@ internal fun AddSubscriptionScreen(
                             )
                             onBackClick()
                         },
-                        enabled = title.isNotBlank() && amount.isNotBlank()
+                        enabled = title.isNotBlank() && validateAmount(amount).second
                     ) {
                         Icon(
                             imageVector = CsIcons.Confirm,
@@ -127,7 +128,7 @@ internal fun AddSubscriptionScreen(
             item {
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = { amount = it },
+                    onValueChange = { amount = validateAmount(it).first },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
