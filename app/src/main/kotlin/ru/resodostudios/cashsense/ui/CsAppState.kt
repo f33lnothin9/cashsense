@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.ui
 import androidx.compose.material3.adaptive.navigation.suite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigation.suite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -16,8 +17,8 @@ import ru.resodostudios.cashsense.feature.categories.navigation.CATEGORIES_ROUTE
 import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscriptionsGraph
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.SUBSCRIPTIONS_ROUTE
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscriptionsGraph
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -40,6 +41,7 @@ fun rememberCsAppState(
     }
 }
 
+@Stable
 class CsAppState(
     private val windowSize: DpSize,
     val navController: NavHostController

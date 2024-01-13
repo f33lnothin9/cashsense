@@ -72,10 +72,6 @@ internal fun AddSubscriptionScreen(
     var currency by rememberSaveable { mutableStateOf(Currency.USD.name) }
     var paymentDate by rememberSaveable { mutableStateOf("") }
 
-    val paymentDatePickerState = rememberDatePickerState()
-
-    val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -111,6 +107,8 @@ internal fun AddSubscriptionScreen(
             )
         }
     ) { paddingValues ->
+        val paymentDatePickerState = rememberDatePickerState()
+        val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(150.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

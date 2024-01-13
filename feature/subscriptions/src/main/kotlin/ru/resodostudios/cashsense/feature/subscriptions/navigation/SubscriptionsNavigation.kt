@@ -21,7 +21,7 @@ const val EDIT_SUBSCRIPTION_ROUTE = "edit_subscription_route"
 
 internal class SubscriptionArgs(val subscriptionId: String) {
     constructor(savedStateHandle: SavedStateHandle) :
-            this(savedStateHandle.get<String>(SUBSCRIPTION_ID_ARG).toString())
+            this(savedStateHandle.get<String>(SUBSCRIPTION_ID_ARG)!!)
 }
 
 fun NavController.navigateToSubscriptionsGraph(navOptions: NavOptions? = null) =
@@ -31,7 +31,7 @@ fun NavController.navigateToAddSubscription() = navigate(ADD_SUBSCRIPTION_ROUTE)
     launchSingleTop = true
 }
 
-fun NavController.navigateToEditSubscription(subscriptionId: String) = navigate("$EDIT_SUBSCRIPTION_ROUTE/{$subscriptionId}") {
+fun NavController.navigateToEditSubscription(subscriptionId: String) = navigate("$EDIT_SUBSCRIPTION_ROUTE/$subscriptionId") {
     launchSingleTop = true
 }
 

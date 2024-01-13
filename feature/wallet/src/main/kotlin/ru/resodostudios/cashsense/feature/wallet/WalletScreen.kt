@@ -62,8 +62,6 @@ internal fun WalletScreen(
     onBackClick: () -> Unit,
     onDelete: (Transaction) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -85,6 +83,7 @@ internal fun WalletScreen(
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
+            val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
