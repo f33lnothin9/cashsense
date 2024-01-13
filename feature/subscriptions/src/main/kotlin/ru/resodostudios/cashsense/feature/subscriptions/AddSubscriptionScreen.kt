@@ -164,8 +164,8 @@ internal fun AddSubscriptionScreen(
                     },
                     onValueChange = { },
                     readOnly = true,
-                    label = { Text(text = "Payment date") },
-                    placeholder = { Text(text = "Payment date*") },
+                    label = { Text(text = stringResource(R.string.feature_subscriptions_payment_date)) },
+                    placeholder = { Text(text = "${stringResource(R.string.feature_subscriptions_payment_date)}*") },
                     supportingText = { Text(text = stringResource(uiR.string.required)) },
                     trailingIcon = {
                         IconButton(onClick = { openDialog = true }) {
@@ -180,9 +180,7 @@ internal fun AddSubscriptionScreen(
                         derivedStateOf { paymentDatePickerState.selectedDateMillis != null }
                     }
                     DatePickerDialog(
-                        onDismissRequest = {
-                            openDialog = false
-                        },
+                        onDismissRequest = { openDialog = false },
                         confirmButton = {
                             TextButton(
                                 onClick = {
@@ -193,16 +191,14 @@ internal fun AddSubscriptionScreen(
                                 },
                                 enabled = confirmEnabled.value
                             ) {
-                                Text("OK")
+                                Text(stringResource(uiR.string.core_ui_ok))
                             }
                         },
                         dismissButton = {
                             TextButton(
-                                onClick = {
-                                    openDialog = false
-                                }
+                                onClick = { openDialog = false }
                             ) {
-                                Text("Cancel")
+                                Text(stringResource(uiR.string.core_ui_cancel))
                             }
                         }
                     ) {

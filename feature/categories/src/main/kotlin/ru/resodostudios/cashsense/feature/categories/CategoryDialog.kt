@@ -53,7 +53,7 @@ fun AddCategoryDialog(
     CsAlertDialog(
         titleRes = R.string.new_category,
         confirmButtonTextRes = uiR.string.add,
-        dismissButtonTextRes = uiR.string.cancel,
+        dismissButtonTextRes = uiR.string.core_ui_cancel,
         icon = Icons.Outlined.Category,
         onConfirm = {
             onConfirm(
@@ -119,7 +119,7 @@ fun EditCategoryDialog(
     CsAlertDialog(
         titleRes = R.string.feature_categories_edit_category,
         confirmButtonTextRes = uiR.string.save,
-        dismissButtonTextRes = uiR.string.cancel,
+        dismissButtonTextRes = uiR.string.core_ui_cancel,
         icon = Icons.Outlined.Category,
         onConfirm = {
             onConfirm(

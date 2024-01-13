@@ -4,4 +4,5 @@
     <string name="feature_subscriptions_new_subscription">New subscription</string>
     <string name="feature_subscriptions_empty_message">Nothing in Subscriptions</string>
     <string name="feature_subscriptions_add_subscription_icon_description">Add subscription</string>
+    <string name="feature_subscriptions_payment_date">Payment date</string>
 </resources>

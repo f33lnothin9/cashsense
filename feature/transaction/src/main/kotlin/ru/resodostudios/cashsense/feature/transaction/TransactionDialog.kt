@@ -93,7 +93,7 @@ fun AddTransactionDialog(
         is CategoriesUiState.Success -> CsAlertDialog(
             titleRes = R.string.new_transaction,
             confirmButtonTextRes = uiR.string.add,
-            dismissButtonTextRes = uiR.string.cancel,
+            dismissButtonTextRes = uiR.string.core_ui_cancel,
             icon = CsIcons.Transaction,
             onConfirm = {
                 onConfirm(
@@ -205,7 +205,7 @@ fun EditTransactionDialog(
         is CategoriesUiState.Success -> CsAlertDialog(
             titleRes = R.string.edit_transaction,
             confirmButtonTextRes = uiR.string.save,
-            dismissButtonTextRes = uiR.string.cancel,
+            dismissButtonTextRes = uiR.string.core_ui_cancel,
             icon = CsIcons.Transaction,
             onConfirm = {
                 onConfirm(

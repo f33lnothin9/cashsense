@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="core_ui_currency">Валюта</string>
+    <string name="core_ui_ok">ОК</string>
+    <string name="core_ui_cancel">Отменить</string>
     <string name="dropdown_menu_icon_description">Выпадающее меню</string>
     <string name="save">Сохранить</string>
     <string name="add">Добавить</string>
-    <string name="cancel">Отменить</string>
     <string name="optional">опционально</string>
     <string name="title">Название</string>
     <string name="description">Описание</string>
