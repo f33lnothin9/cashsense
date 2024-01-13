@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenu
@@ -85,9 +84,7 @@ fun CurrencyExposedDropdownMenuBox(
         onExpandedChange = { expanded = it }
     ) {
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(),
+            modifier = Modifier.menuAnchor(),
             readOnly = true,
             value = currencyName,
             onValueChange = {},
@@ -108,8 +105,7 @@ fun CurrencyExposedDropdownMenuBox(
                         onCurrencyClick(selectionOption)
                         expanded = false
                     },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    modifier = Modifier.fillMaxWidth()
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
             }
         }
