@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DatePicker
@@ -111,13 +112,15 @@ internal fun AddSubscriptionScreen(
         }
     ) { paddingValues ->
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(300.dp),
+            columns = GridCells.Adaptive(150.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = paddingValues,
             modifier = Modifier.padding(16.dp)
         ) {
-            item {
+            item(
+                span = { GridItemSpan(2) }
+            ) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
