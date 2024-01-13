@@ -6,9 +6,7 @@ import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
@@ -29,10 +27,8 @@ object CsIcons {
     val Confirm = Icons.Outlined.Done
     val Calendar = Icons.Outlined.CalendarToday
     val Delete = Icons.Outlined.Delete
-    val DropDown = Icons.Outlined.ArrowDropDown
     val TrendingUp = Icons.AutoMirrored.Outlined.TrendingUp
     val TrendingDown = Icons.AutoMirrored.Outlined.TrendingDown
-    val ArrowRight = Icons.Outlined.ChevronRight
     val Wallet = Icons.Outlined.Wallet
     val Add = Icons.Outlined.Add
     val Edit = Icons.Outlined.Edit
