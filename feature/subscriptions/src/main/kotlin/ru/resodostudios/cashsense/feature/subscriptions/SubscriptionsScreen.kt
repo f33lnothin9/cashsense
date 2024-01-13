@@ -18,16 +18,16 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
-import java.util.UUID
 
 @Composable
 internal fun SubscriptionsRoute(
+    onEdit: (String) -> Unit,
     viewModel: SubscriptionsViewModel = hiltViewModel()
 ) {
     val subscriptionsState by viewModel.subscriptionsUiState.collectAsStateWithLifecycle()
     SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
-        onEdit = { },
+        onEdit = onEdit,
         onDelete = viewModel::deleteSubscription
     )
 }
@@ -35,7 +35,7 @@ internal fun SubscriptionsRoute(
 @Composable
 internal fun SubscriptionsScreen(
     subscriptionsState: SubscriptionsUiState,
-    onEdit: (UUID) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (Subscription) -> Unit
 ) {
     when (subscriptionsState) {
@@ -64,7 +64,7 @@ internal fun SubscriptionsScreen(
                             },
                             trailingContent = {
                                 EditAndDeleteDropdownMenu(
-                                    onEdit = { onEdit(subscription.subscriptionId) },
+                                    onEdit = { onEdit(subscription.subscriptionId.toString()) },
                                     onDelete = { onDelete(subscription) }
                                 )
                             }
