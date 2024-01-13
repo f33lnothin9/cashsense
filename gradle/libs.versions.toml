@@ -1,7 +1,6 @@
 [versions]
 androidGradlePlugin = "8.3.0-beta02"
 androidDesugarJdkLibs = "2.0.4"
-androidPlayAppUpdate = "2.1.0"
 androidxActivityCompose = "1.8.2"
 androidxAppCompat = "1.6.1"
 androidxComposeCompiler = "1.5.8"
@@ -9,7 +8,7 @@ androidxComposeMaterial3 = "1.2.0-alpha12"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha04"
 androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha02"
 androidxCore = "1.12.0"
-androidxCoreSplashscreen = "1.1.0-alpha02"
+androidxCoreSplashscreen = "1.0.1"
 androidxDataStore = "1.0.0"
 androidxHiltNavigationCompose = "1.1.0"
 androidxLifecycle = "2.7.0"
@@ -36,8 +35,6 @@ room = "2.6.1"
 
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
-android-play-app-update = { group = "com.google.android.play", name = "app-update", version.ref = "androidPlayAppUpdate" }
-android-play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "androidPlayAppUpdate" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }

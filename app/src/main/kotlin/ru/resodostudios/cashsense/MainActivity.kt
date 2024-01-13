@@ -2,12 +2,10 @@ package ru.resodostudios.cashsense
 
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -24,13 +22,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -44,27 +35,12 @@ import ru.resodostudios.cashsense.ui.CsApp
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var appUpdateManager: AppUpdateManager
-
-    private var isUpdateDownloaded = false
-
     private val viewModel: MainActivityViewModel by viewModels()
-
-    private val updateLauncher = registerForActivityResult(
-        ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        if (result.resultCode != RESULT_OK) Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
-    }
-
-    private val appUpdateListener = InstallStateUpdatedListener { state ->
-        if (state.installStatus() == InstallStatus.DOWNLOADED) isUpdateDownloaded = true
-    }
 
     @OptIn(ExperimentalMaterial3AdaptiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        appUpdateManager = AppUpdateManagerFactory.create(this)
 
         var uiState: MainActivityUiState by mutableStateOf(Loading)
 
@@ -84,8 +60,6 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
-
-        checkForUpdate()
 
         setContent {
             val darkTheme = shouldUseDarkTheme(uiState)
@@ -109,51 +83,10 @@ class MainActivity : ComponentActivity() {
                 disableDynamicTheming = shouldDisableDynamicTheming(uiState),
             ) {
                 CsApp(
-                    appUpdateManager = appUpdateManager,
-                    isUpdateDownloaded = isUpdateDownloaded,
                     windowSize = currentWindowSize().toDpSize()
                 )
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        appUpdateManager.unregisterListener(appUpdateListener)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        appUpdateManager
-            .appUpdateInfo
-            .addOnSuccessListener { appUpdateInfo ->
-                if (appUpdateInfo.updateAvailability()
-                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                ) {
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        updateLauncher,
-                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build())
-                }
-            }
-    }
-
-    private fun checkForUpdate() {
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
-            ) {
-                appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    updateLauncher,
-                    AppUpdateOptions
-                        .newBuilder(AppUpdateType.FLEXIBLE)
-                        .build()
-                )
-            }
-        }
-        appUpdateManager.registerListener(appUpdateListener)
     }
 }
 

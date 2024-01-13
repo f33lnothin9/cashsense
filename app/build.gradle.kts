@@ -58,6 +58,9 @@ dependencies {
         this.isTransitive = false
     }
     implementation(libs.androidx.compose.material3.windowSizeClass)
+
+    implementation(libs.androidx.core.splashscreen)
+
     implementation(libs.androidx.window.manager)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
@@ -67,18 +70,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
 
-    // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Splash Screen
-    implementation(libs.androidx.core.splashscreen)
-
     implementation(libs.kotlinx.datetime)
-
-    implementation(libs.android.play.app.update)
-    implementation(libs.android.play.app.update.ktx)
 }

@@ -7,19 +7,13 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigation.suite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigation.suite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigation.suite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -29,7 +23,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.google.android.play.core.appupdate.AppUpdateManager
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -49,8 +42,6 @@ import ru.resodostudios.cashsense.feature.wallet.R as walletR
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
 fun CsApp(
-    appUpdateManager: AppUpdateManager,
-    isUpdateDownloaded: Boolean,
     windowSize: DpSize,
     appState: CsAppState = rememberCsAppState(
         windowSize = windowSize
@@ -64,19 +55,6 @@ fun CsApp(
     }
     var showAddWalletDialog by rememberSaveable {
         mutableStateOf(false)
-    }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    val updateDownloadedMessage = stringResource(R.string.update_downloaded)
-    val installActionLabel = stringResource(R.string.install)
-    LaunchedEffect(isUpdateDownloaded) {
-        val snackbarResult = snackbarHostState.showSnackbar(
-            message = updateDownloadedMessage,
-            duration = SnackbarDuration.Indefinite,
-            actionLabel = installActionLabel
-        )
-        if (snackbarResult == SnackbarResult.ActionPerformed) appUpdateManager.completeUpdate()
     }
 
     if (showSettingsDialog) {
@@ -132,7 +110,6 @@ fun CsApp(
                     )
                 }
             },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton = {
                 when (appState.currentTopLevelDestination) {
                     HOME -> {
