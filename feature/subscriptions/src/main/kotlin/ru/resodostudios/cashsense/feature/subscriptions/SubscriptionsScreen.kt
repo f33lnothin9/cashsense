@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 
 @Composable
@@ -50,6 +51,9 @@ internal fun SubscriptionsScreen(
                                         currencyName = subscription.currency
                                     )
                                 )
+                            },
+                            overlineContent = {
+                                Text(text = formattedDate(date = subscription.paymentDate))
                             }
                         )
                     }

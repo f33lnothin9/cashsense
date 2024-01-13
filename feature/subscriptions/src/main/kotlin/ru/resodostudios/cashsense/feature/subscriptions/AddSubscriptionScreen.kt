@@ -36,8 +36,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
@@ -93,7 +93,7 @@ internal fun AddSubscriptionScreen(
                                     title = title,
                                     amount = BigDecimal(amount),
                                     currency = currency,
-                                    paymentDate = Clock.System.now(),
+                                    paymentDate = paymentDate.toInstant(),
                                     notificationDate = null,
                                     repeatingInterval = null
                                 )
