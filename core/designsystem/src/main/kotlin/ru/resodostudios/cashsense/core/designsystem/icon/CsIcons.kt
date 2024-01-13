@@ -5,7 +5,6 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.CalendarToday
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.R
 
 object CsIcons {
@@ -33,7 +33,7 @@ object CsIcons {
     val TrendingUp = Icons.AutoMirrored.Outlined.TrendingUp
     val TrendingDown = Icons.AutoMirrored.Outlined.TrendingDown
     val ArrowRight = Icons.Outlined.ChevronRight
-    val Wallet = Icons.Outlined.AccountBalanceWallet
+    val Wallet = Icons.Outlined.Wallet
     val Add = Icons.Outlined.Add
     val Edit = Icons.Outlined.Edit
     val MoreVert = Icons.Outlined.MoreVert
