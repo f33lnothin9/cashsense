@@ -59,7 +59,7 @@ fun AddWalletDialog(
     val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
     CsAlertDialog(
-        titleRes = R.string.new_wallet,
+        titleRes = R.string.feature_wallet_new_wallet,
         confirmButtonTextRes = uiR.string.add,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         icon = CsIcons.Wallet,

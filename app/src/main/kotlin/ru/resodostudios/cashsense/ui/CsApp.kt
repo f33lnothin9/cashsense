@@ -140,11 +140,11 @@ fun CsApp(
                             onClick = { showAddWalletDialog = true }
                         ) {
                             Icon(
-                                imageVector = CsIcons.Add,
+                                imageVector = CsIcons.Wallet,
                                 contentDescription = null
                             )
                             Text(
-                                text = stringResource(walletR.string.add_wallet),
+                                text = stringResource(walletR.string.feature_wallet_new_wallet),
                                 modifier = Modifier.padding(start = 16.dp)
                             )
                         }
