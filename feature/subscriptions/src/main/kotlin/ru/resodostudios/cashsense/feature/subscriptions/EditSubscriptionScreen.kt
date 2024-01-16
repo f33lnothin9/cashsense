@@ -110,7 +110,7 @@ internal fun EditSubscriptionScreen(
                                     )
                                     onBackClick()
                                 },
-                                enabled = title.isNotBlank() && validateAmount(amount).second
+                                enabled = title.isNotBlank() && amount.validateAmount().second
                             ) {
                                 Icon(
                                     imageVector = CsIcons.Confirm,
@@ -154,7 +154,7 @@ internal fun EditSubscriptionScreen(
                         item {
                             OutlinedTextField(
                                 value = amount,
-                                onValueChange = { amount = validateAmount(it).first },
+                                onValueChange = { amount = amount.validateAmount().first },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Decimal
                                 ),

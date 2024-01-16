@@ -81,9 +81,7 @@ internal fun AddSubscriptionScreen(
                             onSubscriptionEvent(SubscriptionEvent.Confirm)
                             onBackClick()
                         },
-                        enabled = subscriptionState.title.isNotBlank() && validateAmount(
-                            subscriptionState.amount
-                        ).second && subscriptionState.paymentDate.isNotBlank()
+                        enabled = subscriptionState.title.isNotBlank() && subscriptionState.amount.validateAmount().second && subscriptionState.paymentDate.isNotBlank()
                     ) {
                         Icon(
                             imageVector = CsIcons.Confirm,
@@ -126,7 +124,13 @@ internal fun AddSubscriptionScreen(
             item {
                 OutlinedTextField(
                     value = subscriptionState.amount,
-                    onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateAmount(validateAmount(it).first)) },
+                    onValueChange = {
+                        onSubscriptionEvent(
+                            SubscriptionEvent.UpdateAmount(
+                                it.validateAmount().first
+                            )
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),

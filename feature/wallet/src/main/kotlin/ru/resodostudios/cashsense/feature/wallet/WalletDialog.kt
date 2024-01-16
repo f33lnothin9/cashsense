@@ -72,7 +72,7 @@ fun AddWalletDialog(
                 )
             )
         },
-        isConfirmEnabled = title.isNotBlank() && validateAmount(startBalance).second,
+        isConfirmEnabled = title.isNotBlank() && startBalance.validateAmount().second,
         onDismiss = onDismiss,
         {
             Column(
@@ -96,7 +96,7 @@ fun AddWalletDialog(
                 )
                 OutlinedTextField(
                     value = startBalance,
-                    onValueChange = { startBalance = it },
+                    onValueChange = { startBalance = it.validateAmount().first },
                     placeholder = { Text(text = "100") },
                     label = { Text(text = stringResource(R.string.start_balance)) },
                     keyboardOptions = KeyboardOptions(
@@ -161,7 +161,7 @@ fun EditWalletDialog(
                 )
             )
         },
-        isConfirmEnabled = title.isNotBlank() && validateAmount(startBalance).second,
+        isConfirmEnabled = title.isNotBlank() && startBalance.validateAmount().second,
         onDismiss = onDismiss,
         {
             Column(
@@ -183,7 +183,7 @@ fun EditWalletDialog(
                 )
                 OutlinedTextField(
                     value = startBalance,
-                    onValueChange = { startBalance = it },
+                    onValueChange = { startBalance = it.validateAmount().first },
                     placeholder = { Text(text = "100") },
                     label = { Text(text = stringResource(R.string.start_balance)) },
                     keyboardOptions = KeyboardOptions(

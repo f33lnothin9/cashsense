@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.ui
 
-fun validateAmount(input: String): Pair<String, Boolean> {
-    var cleanedInput = input.replace(",", ".")
+fun String.validateAmount(): Pair<String, Boolean> {
+    var cleanedInput = this.replace(",", ".")
     val parts = cleanedInput.split(".")
 
     val validInput = if (parts.size > 1) {

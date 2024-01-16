@@ -107,7 +107,7 @@ fun AddTransactionDialog(
                     )
                 )
             },
-            isConfirmEnabled = validateAmount(amount).second,
+            isConfirmEnabled = amount.validateAmount().second,
             onDismiss = onDismiss,
             {
                 Column(
@@ -116,7 +116,7 @@ fun AddTransactionDialog(
                 ) {
                     OutlinedTextField(
                         value = amount,
-                        onValueChange = { amount = it },
+                        onValueChange = { amount = it.validateAmount().first },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal
                         ),
@@ -219,7 +219,7 @@ fun EditTransactionDialog(
                     )
                 )
             },
-            isConfirmEnabled = validateAmount(amount).second,
+            isConfirmEnabled = amount.validateAmount().second,
             onDismiss = onDismiss,
             {
                 Column(
@@ -228,7 +228,7 @@ fun EditTransactionDialog(
                 ) {
                     OutlinedTextField(
                         value = amount,
-                        onValueChange = { amount = it },
+                        onValueChange = { amount = it.validateAmount().first },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal
                         ),
