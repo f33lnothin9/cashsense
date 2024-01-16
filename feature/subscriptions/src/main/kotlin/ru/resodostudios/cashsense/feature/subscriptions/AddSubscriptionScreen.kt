@@ -92,7 +92,6 @@ internal fun AddSubscriptionScreen(
             )
         }
     ) { paddingValues ->
-        val paymentDatePickerState = rememberDatePickerState()
         val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(150.dp),
@@ -144,6 +143,7 @@ internal fun AddSubscriptionScreen(
                 )
             }
             item {
+                val paymentDatePickerState = rememberDatePickerState()
                 var openDialog by remember { mutableStateOf(false) }
                 OutlinedTextField(
                     value = if (subscriptionState.paymentDate.isNotEmpty()) {
