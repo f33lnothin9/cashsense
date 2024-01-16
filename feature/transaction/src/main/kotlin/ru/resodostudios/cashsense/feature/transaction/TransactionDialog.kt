@@ -145,7 +145,6 @@ fun AddTransactionDialog(
                         ),
                         label = { Text(text = stringResource(uiR.string.description)) },
                         maxLines = 1,
-                        supportingText = { Text(text = stringResource(uiR.string.optional)) },
                         modifier = Modifier.focusRequester(descriptionTextField)
                     )
                 }
@@ -250,8 +249,7 @@ fun EditTransactionDialog(
                         keyboardType = KeyboardType.Text
                     ),
                     label = { Text(text = stringResource(uiR.string.description)) },
-                    maxLines = 1,
-                    supportingText = { Text(text = stringResource(uiR.string.optional)) }
+                    maxLines = 1
                 )
             }
         }
