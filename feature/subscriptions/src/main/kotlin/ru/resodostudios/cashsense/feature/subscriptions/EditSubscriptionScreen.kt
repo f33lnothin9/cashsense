@@ -22,18 +22,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -64,10 +59,7 @@ internal fun EditSubscriptionRoute(
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalComposeUiApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditSubscriptionScreen(
     onBackClick: () -> Unit,
@@ -123,7 +115,6 @@ internal fun EditSubscriptionScreen(
                 contentWindowInsets = WindowInsets.waterfall,
                 content = { paddingValues ->
                     val paymentDatePickerState = rememberDatePickerState()
-                    val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
                     LazyVerticalGrid(
                         columns = GridCells.Adaptive(150.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -145,10 +136,7 @@ internal fun EditSubscriptionScreen(
                                 placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title) + "*") },
                                 supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
                                 maxLines = 1,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .focusRequester(titleTextField)
-                                    .focusProperties { next = amountTextField }
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                         item {
@@ -161,10 +149,7 @@ internal fun EditSubscriptionScreen(
                                 label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount)) },
                                 placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount) + "*") },
                                 supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .focusRequester(amountTextField)
+                                maxLines = 1
                             )
                         }
                         item {
@@ -228,9 +213,6 @@ internal fun EditSubscriptionScreen(
                                 }
                             )
                         }
-                    }
-                    LaunchedEffect(Unit) {
-                        titleTextField.requestFocus()
                     }
                 }
             )
