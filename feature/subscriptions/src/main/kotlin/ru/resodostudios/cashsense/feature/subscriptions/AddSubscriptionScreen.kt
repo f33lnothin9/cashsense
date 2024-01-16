@@ -24,7 +24,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -36,25 +35,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Currency
-import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
-import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 internal fun AddSubscriptionRoute(
     onBackClick: () -> Unit,
-    viewModel: SubscriptionsViewModel = hiltViewModel()
+    viewModel: SubscriptionViewModel = hiltViewModel()
 ) {
+    val subscriptionState by viewModel.subscriptionState.collectAsStateWithLifecycle()
     AddSubscriptionScreen(
-        onBackClick = onBackClick,
-        onConfirmClick = viewModel::upsertSubscription
+        subscriptionState = subscriptionState,
+        onSubscriptionEvent = viewModel::onSubscriptionEvent,
+        onBackClick = onBackClick
     )
 }
 
@@ -64,14 +62,10 @@ internal fun AddSubscriptionRoute(
 )
 @Composable
 internal fun AddSubscriptionScreen(
-    onBackClick: () -> Unit,
-    onConfirmClick: (Subscription) -> Unit
+    subscriptionState: SubscriptionState,
+    onSubscriptionEvent: (SubscriptionEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
-    var title by rememberSaveable { mutableStateOf("") }
-    var amount by rememberSaveable { mutableStateOf("") }
-    var currency by rememberSaveable { mutableStateOf(Currency.USD.name) }
-    var paymentDate by rememberSaveable { mutableStateOf("") }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -84,19 +78,12 @@ internal fun AddSubscriptionScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onConfirmClick(
-                                Subscription(
-                                    title = title,
-                                    amount = BigDecimal(amount),
-                                    currency = currency,
-                                    paymentDate = paymentDate.toInstant(),
-                                    notificationDate = null,
-                                    repeatingInterval = null
-                                )
-                            )
+                            onSubscriptionEvent(SubscriptionEvent.Confirm)
                             onBackClick()
                         },
-                        enabled = title.isNotBlank() && validateAmount(amount).second
+                        enabled = subscriptionState.title.isNotBlank() && validateAmount(
+                            subscriptionState.amount
+                        ).second && subscriptionState.paymentDate.isNotBlank()
                     ) {
                         Icon(
                             imageVector = CsIcons.Confirm,
@@ -120,8 +107,8 @@ internal fun AddSubscriptionScreen(
                 span = { GridItemSpan(2) }
             ) {
                 OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
+                    value = subscriptionState.title,
+                    onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateTitle(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -138,8 +125,8 @@ internal fun AddSubscriptionScreen(
             }
             item {
                 OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = validateAmount(it).first },
+                    value = subscriptionState.amount,
+                    onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateAmount(validateAmount(it).first)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
@@ -155,7 +142,7 @@ internal fun AddSubscriptionScreen(
             item {
                 var openDialog by remember { mutableStateOf(false) }
                 OutlinedTextField(
-                    value = if (paymentDate.isNotEmpty()) {
+                    value = if (subscriptionState.paymentDate.isNotEmpty()) {
                         formattedDate(Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!))
                     } else {
                         stringResource(uiR.string.none)
@@ -183,9 +170,12 @@ internal fun AddSubscriptionScreen(
                             TextButton(
                                 onClick = {
                                     openDialog = false
-                                    paymentDate =
-                                        Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
-                                            .toString()
+                                    onSubscriptionEvent(
+                                        SubscriptionEvent.UpdatePaymentDate(
+                                            Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
+                                                .toString()
+                                        )
+                                    )
                                 },
                                 enabled = confirmEnabled.value
                             ) {
@@ -206,10 +196,8 @@ internal fun AddSubscriptionScreen(
             }
             item {
                 CurrencyExposedDropdownMenuBox(
-                    currencyName = currency,
-                    onCurrencyClick = {
-                        currency = it.name
-                    }
+                    currencyName = subscriptionState.currency,
+                    onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) }
                 )
             }
         }
