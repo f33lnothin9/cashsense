@@ -28,12 +28,6 @@ class SubscriptionsViewModel @Inject constructor(
                 initialValue = SubscriptionsUiState.Loading
             )
 
-    fun upsertSubscription(subscription: Subscription) {
-        viewModelScope.launch {
-            subscriptionsRepository.upsertSubscription(subscription)
-        }
-    }
-
     fun deleteSubscription(subscription: Subscription) {
         viewModelScope.launch {
             subscriptionsRepository.deleteSubscription(subscription)
