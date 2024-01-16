@@ -123,6 +123,8 @@ fun AddTransactionDialog(
                             keyboardType = KeyboardType.Decimal
                         ),
                         label = { Text(text = stringResource(uiR.string.amount)) },
+                        placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
+                        supportingText = { Text(text = stringResource(uiR.string.required)) },
                         maxLines = 1,
                         modifier = Modifier
                             .focusRequester(amountTextField)
@@ -231,6 +233,8 @@ fun EditTransactionDialog(
                         keyboardType = KeyboardType.Decimal
                     ),
                     label = { Text(text = stringResource(uiR.string.amount)) },
+                    placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
                     maxLines = 1
                 )
                 CategoryExposedDropdownMenuBox(
