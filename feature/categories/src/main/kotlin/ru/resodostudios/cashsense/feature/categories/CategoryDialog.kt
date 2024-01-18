@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -78,6 +79,7 @@ fun AddCategoryDialog(
         isConfirmEnabled = title.isNotBlank(),
         onDismiss = onDismiss
     ) {
+        val focusManager = LocalFocusManager.current
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.verticalScroll(rememberScrollState())
@@ -88,17 +90,20 @@ fun AddCategoryDialog(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
-                label = { Text(text = stringResource(uiR.string.title)) },
+                label = { Text(text = stringResource(uiR.string.core_ui_icon) + " & " + stringResource(uiR.string.title)) },
                 placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
                 supportingText = { Text(text = stringResource(uiR.string.required)) },
                 maxLines = 1,
-                modifier = Modifier.focusRequester(titleTextField),
                 leadingIcon = {
                     IconPickerDropdownMenu(
                         currentIconId = iconId,
-                        onIconClick = { iconId = it }
+                        onIconClick = {
+                            iconId = it
+                            focusManager.clearFocus()
+                        }
                     )
-                }
+                },
+                modifier = Modifier.focusRequester(titleTextField)
             )
         }
         LaunchedEffect(Unit) {
@@ -130,6 +135,7 @@ fun EditCategoryDialog(
     onConfirm: (Category) -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf(category.title) }
+    var iconId by rememberSaveable { mutableIntStateOf(category.icon!!) }
 
     CsAlertDialog(
         titleRes = R.string.feature_categories_edit_category,
@@ -141,7 +147,7 @@ fun EditCategoryDialog(
                 Category(
                     categoryId = category.categoryId,
                     title = title,
-                    icon = null
+                    icon = iconId
                 )
             )
         },
@@ -158,10 +164,16 @@ fun EditCategoryDialog(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
-                label = { Text(text = stringResource(uiR.string.title)) },
+                label = { Text(text = stringResource(uiR.string.core_ui_icon) + " & " + stringResource(uiR.string.title)) },
                 placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
                 supportingText = { Text(text = stringResource(uiR.string.required)) },
-                maxLines = 1
+                maxLines = 1,
+                leadingIcon = {
+                    IconPickerDropdownMenu(
+                        currentIconId = iconId,
+                        onIconClick = { iconId = it }
+                    )
+                }
             )
         }
     }
