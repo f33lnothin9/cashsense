@@ -1,47 +1,41 @@
 package ru.resodostudios.cashsense.feature.categories
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Brush
 import androidx.compose.material.icons.outlined.Category
-import androidx.compose.material.icons.outlined.Checkroom
-import androidx.compose.material.icons.outlined.DirectionsBus
-import androidx.compose.material.icons.outlined.Fastfood
-import androidx.compose.material.icons.outlined.FitnessCenter
-import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material.icons.outlined.Medication
-import androidx.compose.material.icons.outlined.Memory
-import androidx.compose.material.icons.outlined.Restaurant
-import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material.icons.outlined.SportsEsports
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -64,7 +58,7 @@ fun AddCategoryDialog(
     onConfirm: (Category) -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
-    var icon by rememberSaveable { mutableStateOf(Icons.Outlined.Category.name.split(".")[1]) }
+    var iconId by rememberSaveable { mutableIntStateOf(designsystemR.drawable.ic_outlined_category) }
 
     val titleTextField = remember { FocusRequester() }
 
@@ -77,7 +71,7 @@ fun AddCategoryDialog(
             onConfirm(
                 Category(
                     title = title,
-                    icon = null
+                    icon = iconId
                 )
             )
         },
@@ -98,12 +92,12 @@ fun AddCategoryDialog(
                 placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
                 supportingText = { Text(text = stringResource(uiR.string.required)) },
                 maxLines = 1,
-                modifier = Modifier.focusRequester(titleTextField)
-            )
-            IconPickerDropdownMenuBox(
-                iconName = icon,
-                onIconClick = {
-                    icon = it.name.split(".")[1]
+                modifier = Modifier.focusRequester(titleTextField),
+                leadingIcon = {
+                    IconPickerDropdownMenu(
+                        currentIconId = iconId,
+                        onIconClick = { iconId = it }
+                    )
                 }
             )
         }
@@ -173,72 +167,69 @@ fun EditCategoryDialog(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun IconPickerDropdownMenuBox(
-    iconName: String,
-    onIconClick: (ImageVector) -> Unit
+private fun IconPickerDropdownMenu(
+    currentIconId: Int,
+    onIconClick: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     val icons = listOf(
-        Icons.Outlined.ShoppingCart,
-        Icons.Outlined.Restaurant,
-        Icons.Outlined.Fastfood,
-        Icons.Outlined.DirectionsBus,
-        Icons.Outlined.Medication,
-        Icons.Outlined.Checkroom,
-        Icons.Outlined.Memory,
-        Icons.Outlined.SportsEsports,
-        Icons.Outlined.Map,
-        Icons.Outlined.FitnessCenter,
-        Icons.Outlined.Brush
+        designsystemR.drawable.ic_outlined_category,
+        R.drawable.ic_outlined_account_balance,
+        R.drawable.ic_outlined_apparel,
+        R.drawable.ic_outlined_chair,
+        R.drawable.ic_outlined_exercise,
+        R.drawable.ic_outlined_fastfood,
+        R.drawable.ic_outlined_directions_bus,
+        R.drawable.ic_outlined_handyman,
+        R.drawable.ic_outlined_language,
+        R.drawable.ic_outlined_local_bar,
+        R.drawable.ic_outlined_local_gas_station,
+        R.drawable.ic_outlined_memory,
+        R.drawable.ic_outlined_payments,
+        R.drawable.ic_outlined_pets,
+        R.drawable.ic_outlined_phishing,
+        R.drawable.ic_outlined_pill,
+        R.drawable.ic_outlined_receipt_long,
+        R.drawable.ic_outlined_restaurant,
+        R.drawable.ic_outlined_school,
+        R.drawable.ic_outlined_self_care,
+        R.drawable.ic_outlined_shopping_cart,
+        R.drawable.ic_outlined_sim_card,
+        R.drawable.ic_outlined_smoking_rooms,
+        R.drawable.ic_outlined_sports_esports,
+        R.drawable.ic_outlined_travel
     )
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it }
+    Box(
+        modifier = Modifier.wrapContentSize(Alignment.TopEnd)
     ) {
-        OutlinedTextField(
-            modifier = Modifier.menuAnchor(),
-            readOnly = true,
-            value = iconName,
-            onValueChange = {},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text
-            ),
-            label = { Text(text = "Icon") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            leadingIcon = {
-                Icon(imageVector = getIconByName(iconName), contentDescription = null)
-            }
-        )
-        ExposedDropdownMenu(
+        IconButton(onClick = { expanded = true }) {
+            Icon(painter = painterResource(currentIconId), contentDescription = null)
+        }
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            icons.forEach { icon ->
-                DropdownMenuItem(
-                    text = { Text(icon.name.split(".")[1]) },
-                    leadingIcon = {
+            FlowRow(
+                maxItemsInEachRow = 5
+            ) {
+                icons.forEach { icon ->
+                    IconButton(
+                        onClick = {
+                            onIconClick(icon)
+                            expanded = false
+                        }
+                    ) {
                         Icon(
-                            imageVector = getIconByName(icon.name.split(".")[1]),
+                            painter = painterResource(icon),
                             contentDescription = null
                         )
-                    },
-                    onClick = {
-                        onIconClick(icon)
-                        expanded = false
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                )
+                    }
+                }
             }
         }
     }
-}
-
-private fun getIconByName(name: String): ImageVector {
-    val cl = Class.forName("androidx.compose.material.icons.outlined.${name}Kt")
-    val method = cl.declaredMethods.first()
-    return method.invoke(null, Icons.Outlined) as ImageVector
 }
