@@ -29,7 +29,6 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
-import ru.resodostudios.cashsense.core.ui.getFormattedAmount
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import kotlin.math.abs
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -74,9 +73,10 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
             )
-            if (transactions.isNotEmpty()) {
-                WalletFinancesSection(transactions = transactions)
-            }
+            WalletFinancesSection(
+                transactions = transactions,
+                currencyName = wallet.currency.name
+            )
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -101,7 +101,8 @@ fun WalletCard(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun WalletFinancesSection(
-    transactions: List<Transaction>
+    transactions: List<Transaction>,
+    currencyName: String
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -110,61 +111,71 @@ private fun WalletFinancesSection(
     ) {
         val positiveTransactions = transactions.filter { it.amount > 0 }
         val walletIncome = positiveTransactions.sumOf { it.amount }
-        Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(
-                    start = 8.dp,
-                    top = 3.dp,
-                    end = 8.dp,
-                    bottom = 3.dp
-                )
+        if (walletIncome != 0.0) {
+            Surface(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(24.dp)
             ) {
-                Icon(
-                    imageVector = CsIcons.TrendingUp,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Text(
-                    text = getFormattedAmount(amount = walletIncome),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.labelLarge
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        top = 3.dp,
+                        end = 8.dp,
+                        bottom = 3.dp
+                    )
+                ) {
+                    Icon(
+                        imageVector = CsIcons.TrendingUp,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = getFormattedAmountAndCurrency(
+                            amount = abs(walletIncome),
+                            currencyName = currencyName
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
 
         val negativeTransactions = transactions.filter { it.amount < 0 }
         val walletExpenses = negativeTransactions.sumOf { it.amount }
-        Surface(
-            color = MaterialTheme.colorScheme.errorContainer,
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(
-                    start = 8.dp,
-                    top = 3.dp,
-                    end = 8.dp,
-                    bottom = 3.dp
-                )
+        if (walletExpenses != 0.0) {
+            Surface(
+                color = MaterialTheme.colorScheme.errorContainer,
+                shape = RoundedCornerShape(24.dp)
             ) {
-                Icon(
-                    imageVector = CsIcons.TrendingDown,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Text(
-                    text = getFormattedAmount(amount = abs(walletExpenses)),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.labelLarge
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        top = 3.dp,
+                        end = 8.dp,
+                        bottom = 3.dp
+                    )
+                ) {
+                    Icon(
+                        imageVector = CsIcons.TrendingDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = getFormattedAmountAndCurrency(
+                            amount = abs(walletExpenses),
+                            currencyName = currencyName
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
     }

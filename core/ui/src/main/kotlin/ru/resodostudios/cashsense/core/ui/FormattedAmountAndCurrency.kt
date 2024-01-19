@@ -11,9 +11,3 @@ fun getFormattedAmountAndCurrency(amount: Double, currencyName: String): String 
 
     return currencyFormat.format(amount)
 }
-
-fun getFormattedAmount(amount: Double): String {
-    val amountFormat = NumberFormat.getInstance(Locale.getDefault())
-
-    return amountFormat.format(amount)
-}
