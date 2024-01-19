@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,7 @@ import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import java.util.UUID
+import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 
@@ -51,10 +54,7 @@ fun AddTransactionDialog(
     transactionViewModel: TransactionViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle(
-        initialValue = CategoriesUiState.Loading
-    )
-
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
     AddTransactionDialog(
         categoriesState = categoriesState,
         walletId = walletId,
@@ -84,11 +84,9 @@ fun AddTransactionDialog(
 ) {
     var amount by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("") }
+    var category by rememberSaveable { mutableStateOf(Category()) }
 
     val (amountTextField, descriptionTextField) = remember { FocusRequester.createRefs() }
-
-    var categoryId: Long? = null
 
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
@@ -102,7 +100,7 @@ fun AddTransactionDialog(
                     Transaction(
                         transactionId = UUID.randomUUID(),
                         walletOwnerId = walletId,
-                        categoryOwnerId = categoryId,
+                        categoryOwnerId = category.categoryId,
                         description = description,
                         amount = amount.toDouble(),
                         date = Clock.System.now()
@@ -110,51 +108,48 @@ fun AddTransactionDialog(
                 )
             },
             isConfirmEnabled = amount.validateAmount().second,
-            onDismiss = onDismiss,
-            {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    OutlinedTextField(
-                        value = amount,
-                        onValueChange = { amount = it.validateAmount().first },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal
-                        ),
-                        label = { Text(text = stringResource(uiR.string.amount)) },
-                        placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
-                        supportingText = { Text(text = stringResource(uiR.string.required)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .focusRequester(amountTextField)
-                            .focusProperties { next = descriptionTextField }
-                    )
-                    CategoryExposedDropdownMenuBox(
-                        categoryName = category,
-                        categories = categoriesState.categories,
-                        onCategoryClick = {
-                            category = it.title.toString()
-                            categoryId = it.categoryId
-                        },
-                        onCategoryCreate = { TODO() }
-                    )
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text
-                        ),
-                        label = { Text(text = stringResource(uiR.string.description)) },
-                        maxLines = 1,
-                        modifier = Modifier.focusRequester(descriptionTextField)
-                    )
-                }
-                LaunchedEffect(Unit) {
-                    amountTextField.requestFocus()
-                }
-            },
-        )
+            onDismiss = onDismiss
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it.validateAmount().first },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    label = { Text(text = stringResource(uiR.string.amount)) },
+                    placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .focusRequester(amountTextField)
+                        .focusProperties { next = descriptionTextField }
+                )
+                CategoryExposedDropdownMenuBox(
+                    title = category.title ?: stringResource(uiR.string.none),
+                    icon = designsystemR.drawable.ic_outlined_category,
+                    categories = categoriesState.categories,
+                    onCategoryClick = { category = it },
+                    onCategoryCreate = { TODO() }
+                )
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    label = { Text(text = stringResource(uiR.string.description)) },
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(descriptionTextField)
+                )
+            }
+            LaunchedEffect(Unit) {
+                amountTextField.requestFocus()
+            }
+        }
     }
 }
 
@@ -166,7 +161,6 @@ fun EditTransactionDialog(
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
-
     EditTransactionDialog(
         categoriesState = categoriesState,
         transactionWithCategory = transactionWithCategory,
@@ -196,9 +190,7 @@ fun EditTransactionDialog(
 ) {
     var amount by rememberSaveable { mutableStateOf(transactionWithCategory.transaction.amount.toString()) }
     var description by rememberSaveable { mutableStateOf(transactionWithCategory.transaction.description) }
-    var category by rememberSaveable { mutableStateOf(transactionWithCategory.category?.title) }
-
-    var categoryId: Long? = null
+    var category by rememberSaveable { mutableStateOf(transactionWithCategory.category) }
 
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
@@ -212,7 +204,7 @@ fun EditTransactionDialog(
                     Transaction(
                         transactionId = transactionWithCategory.transaction.transactionId,
                         walletOwnerId = transactionWithCategory.transaction.walletOwnerId,
-                        categoryOwnerId = categoryId,
+                        categoryOwnerId = category?.categoryId,
                         description = description,
                         amount = amount.toDouble(),
                         date = transactionWithCategory.transaction.date
@@ -238,12 +230,10 @@ fun EditTransactionDialog(
                     maxLines = 1
                 )
                 CategoryExposedDropdownMenuBox(
-                    categoryName = if (category == null) stringResource(uiR.string.none) else category.toString(),
+                    title = category?.title ?: stringResource(uiR.string.none),
+                    icon = category?.icon ?: designsystemR.drawable.ic_outlined_category,
                     categories = categoriesState.categories,
-                    onCategoryClick = {
-                        category = it.title
-                        categoryId = it.categoryId
-                    },
+                    onCategoryClick = { category = it },
                     onCategoryCreate = { TODO() }
                 )
                 OutlinedTextField(
@@ -263,12 +253,14 @@ fun EditTransactionDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryExposedDropdownMenuBox(
-    categoryName: String,
+    title: String,
+    icon: Int,
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
     onCategoryCreate: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var iconId by rememberSaveable { mutableIntStateOf(icon) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -277,14 +269,20 @@ private fun CategoryExposedDropdownMenuBox(
         OutlinedTextField(
             modifier = Modifier.menuAnchor(),
             readOnly = true,
-            value = categoryName,
+            value = title,
             onValueChange = {},
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text
             ),
             label = { Text(text = stringResource(categoriesR.string.category)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            placeholder = { Text(text = stringResource(uiR.string.none)) }
+            placeholder = { Text(text = stringResource(uiR.string.none)) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(iconId),
+                    contentDescription = null
+                )
+            }
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -300,14 +298,21 @@ private fun CategoryExposedDropdownMenuBox(
                     expanded = false
                 }
             )
-            categories.forEach { selectionOption ->
+            categories.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text(selectionOption.title.toString()) },
+                    text = { Text(category.title.toString()) },
                     onClick = {
-                        onCategoryClick(selectionOption)
+                        onCategoryClick(category)
+                        iconId = category.icon!!
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(category.icon!!),
+                            contentDescription = null
+                        )
+                    }
                 )
             }
         }
