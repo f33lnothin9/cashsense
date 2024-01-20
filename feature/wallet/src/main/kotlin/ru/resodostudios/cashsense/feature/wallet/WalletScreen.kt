@@ -32,6 +32,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
@@ -40,6 +41,7 @@ import ru.resodostudios.cashsense.feature.transaction.R
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.transaction.transactions
 import java.util.UUID
+import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletRoute(
@@ -119,27 +121,35 @@ internal fun WalletScreen(
                 },
                 contentWindowInsets = WindowInsets.waterfall,
                 content = { paddingValues ->
-                    val sortedTransactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
-                        .groupBy { formattedDate(it.transaction.date) }
-                        .toSortedMap()
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(300.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
-                        transactions(
-                            transactionsWithCategories = sortedTransactionsAndCategories,
-                            currency = walletState.walletWithTransactionsAndCategories.wallet.currency,
-                            onEdit = {
-                                transactionWithCategoryState = it
-                                showEditTransactionDialog = true
-                            },
-                            onDelete = onDelete
+                    if (walletState.walletWithTransactionsAndCategories.transactionsWithCategories.isNotEmpty()) {
+                        val sortedTransactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+                            .groupBy { formattedDate(it.transaction.date) }
+                            .toSortedMap()
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(300.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        ) {
+                            transactions(
+                                transactionsWithCategories = sortedTransactionsAndCategories,
+                                currency = walletState.walletWithTransactionsAndCategories.wallet.currency,
+                                onEdit = {
+                                    transactionWithCategoryState = it
+                                    showEditTransactionDialog = true
+                                },
+                                onDelete = onDelete
+                            )
+                        }
+                    } else {
+                        EmptyState(
+                            messageRes = transactionR.string.transactions_empty,
+                            animationRes = transactionR.raw.anim_transactions_empty
                         )
                     }
+
                     if (showAddTransactionDialog) {
                         AddTransactionDialog(
                             walletId = walletState.walletWithTransactionsAndCategories.wallet.walletId,
