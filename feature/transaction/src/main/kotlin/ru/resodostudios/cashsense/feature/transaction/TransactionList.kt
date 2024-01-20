@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.feature.transaction
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -17,31 +17,37 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
-import ru.resodostudios.cashsense.core.ui.formattedDate
+import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import java.util.SortedMap
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 
-fun LazyListScope.transactions(
-    transactionsWithCategories: List<TransactionWithCategory>,
+fun LazyGridScope.transactions(
+    transactionsWithCategories: SortedMap<String, List<TransactionWithCategory>>,
     currency: Currency,
     onEdit: (TransactionWithCategory) -> Unit,
     onDelete: (Transaction) -> Unit
 ) {
-    var currentDate: String? = null
-    val sortedTransactions = transactionsWithCategories.sortedByDescending { it.transaction.date }
-
-    items(sortedTransactions) { transactionWithCategory ->
-        val category = transactionWithCategory.category
-        Column {
-            if (currentDate != formattedDate(date = transactionWithCategory.transaction.date)) {
-                currentDate = formattedDate(date = transactionWithCategory.transaction.date)
-                Text(
-                    text = currentDate!!,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(16.dp)
-                )
+    val groupedTransactionsAndCategories = transactionsWithCategories.map {
+        GroupedTransactionsWithCategories(
+            date = it.key,
+            transactionsWithCategories = it.value.sortedByDescending { transactionWithCategory ->
+                transactionWithCategory.transaction.date
             }
+        )
+    }
+    groupedTransactionsAndCategories.forEach { group ->
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            Text(
+                text = group.date,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        items(group.transactionsWithCategories) { transactionWithCategory ->
+            val category = transactionWithCategory.category
             ListItem(
                 headlineContent = {
                     Text(
@@ -61,18 +67,14 @@ fun LazyListScope.transactions(
                 },
                 supportingContent = {
                     Text(
-                        text = if (transactionWithCategory.category?.title == null) stringResource(
-                            uiR.string.none
-                        ) else transactionWithCategory.category!!.title.toString()
+                        text = transactionWithCategory.category?.title ?: stringResource(R.string.none),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 leadingContent = {
                     Icon(
-                        painter = if (category?.icon != null) {
-                            painterResource(category.icon!!)
-                        } else {
-                            painterResource(categoriesR.drawable.ic_outlined_receipt_long)
-                        },
+                        painter = painterResource(category?.icon ?: categoriesR.drawable.ic_outlined_receipt_long),
                         contentDescription = null
                     )
                 }
@@ -80,3 +82,8 @@ fun LazyListScope.transactions(
         }
     }
 }
+
+private data class GroupedTransactionsWithCategories(
+    val date: String,
+    val transactionsWithCategories: List<TransactionWithCategory>
+)

@@ -3,8 +3,10 @@ package ru.resodostudios.cashsense.feature.wallet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.waterfall
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +32,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.EditTransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.R
@@ -111,14 +114,20 @@ internal fun WalletScreen(
                     )
                 },
                 contentWindowInsets = WindowInsets.waterfall,
-                content = { innerPadding ->
-                    LazyColumn(
+                content = { paddingValues ->
+                    val sortedTransactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+                        .groupBy { formattedDate(it.transaction.date) }
+                        .toSortedMap()
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(300.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = innerPadding
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
                     ) {
                         transactions(
-                            transactionsWithCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories,
+                            transactionsWithCategories = sortedTransactionsAndCategories,
                             currency = walletState.walletWithTransactionsAndCategories.wallet.currency,
                             onEdit = {
                                 transactionWithCategoryState = it
