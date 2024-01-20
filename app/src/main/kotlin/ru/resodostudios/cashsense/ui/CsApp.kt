@@ -27,7 +27,7 @@ import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
-import ru.resodostudios.cashsense.feature.settings.SettingsDialog
+import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToAddSubscription
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
@@ -47,7 +47,7 @@ fun CsApp(
         windowSize = windowSize
     )
 ) {
-    var showSettingsDialog by rememberSaveable {
+    var showSettingsBottomSheet by rememberSaveable {
         mutableStateOf(false)
     }
     var showAddCategoryDialog by rememberSaveable {
@@ -57,9 +57,9 @@ fun CsApp(
         mutableStateOf(false)
     }
 
-    if (showSettingsDialog) {
-        SettingsDialog(
-            onDismiss = { showSettingsDialog = false }
+    if (showSettingsBottomSheet) {
+        SettingsBottomSheet(
+            onDismiss = { showSettingsBottomSheet = false }
         )
     }
     if (showAddCategoryDialog) {
@@ -106,7 +106,7 @@ fun CsApp(
                         titleRes = destination.titleTextId,
                         actionIconRes = CsIcons.Settings,
                         actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                        onActionClick = { showSettingsDialog = true }
+                        onActionClick = { showSettingsBottomSheet = true }
                     )
                 }
             },
