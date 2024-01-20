@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -48,7 +49,7 @@ fun EditAndDeleteDropdownMenu(
                 },
                 leadingIcon = {
                     Icon(
-                        CsIcons.Edit,
+                        painter = painterResource(CsIcons.Edit),
                         contentDescription = null
                     )
                 }
@@ -61,7 +62,7 @@ fun EditAndDeleteDropdownMenu(
                 },
                 leadingIcon = {
                     Icon(
-                        CsIcons.Delete,
+                        painter = painterResource(CsIcons.Delete),
                         contentDescription = null
                     )
                 }
