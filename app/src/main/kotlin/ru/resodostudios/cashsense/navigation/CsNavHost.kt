@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.categories.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_GRAPH_ROUTE_PATTERN
 import ru.resodostudios.cashsense.feature.home.navigation.homeGraph
+import ru.resodostudios.cashsense.feature.settings.navigation.settingsScreen
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.addSubscriptionScreen
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.editSubscriptionScreen
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToEditSubscription
@@ -18,13 +19,13 @@ import ru.resodostudios.cashsense.ui.CsAppState
 fun CsNavHost(
     appState: CsAppState,
     modifier: Modifier = Modifier,
-    startDestination: String = HOME_GRAPH_ROUTE_PATTERN,
+    startDestination: String = HOME_GRAPH_ROUTE_PATTERN
 ) {
     val navController = appState.navController
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier,
+        modifier = modifier
     ) {
         homeGraph(
             onWalletClick = navController::navigateToWallet,
@@ -45,6 +46,9 @@ fun CsNavHost(
                     onBackClick = navController::popBackStack
                 )
             }
+        )
+        settingsScreen(
+            onBackClick = navController::popBackStack
         )
     }
 }
