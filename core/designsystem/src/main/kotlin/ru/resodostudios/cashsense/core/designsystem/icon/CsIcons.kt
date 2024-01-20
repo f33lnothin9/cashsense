@@ -27,7 +27,9 @@ object CsIcons {
     val DirectionsBus = R.drawable.ic_outlined_directions_bus
     val Exercise = R.drawable.ic_outlined_exercise
     val Fastfood = R.drawable.ic_outlined_fastfood
+    val FormatPaint = R.drawable.ic_outlined_format_paint
     val Handyman = R.drawable.ic_outlined_handyman
+    val HistoryEdu = R.drawable.ic_outlined_history_edu
     val Language = R.drawable.ic_outlined_language
     val LocalBar = R.drawable.ic_outlined_local_bar
     val LocalGasStation = R.drawable.ic_outlined_local_gas_station
@@ -36,6 +38,7 @@ object CsIcons {
     val Pets = R.drawable.ic_outlined_pets
     val Phishing = R.drawable.ic_outlined_phishing
     val Pill = R.drawable.ic_outlined_pill
+    val Policy = R.drawable.ic_outlined_policy
     val Restaurant = R.drawable.ic_outlined_restaurant
     val School = R.drawable.ic_outlined_school
     val SelfCare = R.drawable.ic_outlined_self_care
