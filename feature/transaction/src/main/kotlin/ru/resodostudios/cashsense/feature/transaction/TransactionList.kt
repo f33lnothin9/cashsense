@@ -29,11 +29,9 @@ fun LazyGridScope.transactions(
     onDelete: (Transaction) -> Unit
 ) {
     val groupedTransactionsAndCategories = transactionsWithCategories.map {
-        GroupedTransactionsWithCategories(
-            date = it.key,
-            transactionsWithCategories = it.value.sortedByDescending { transactionWithCategory ->
-                transactionWithCategory.transaction.date
-            }
+        Pair(
+            it.key,
+            it.value
         )
     }
     groupedTransactionsAndCategories.forEach { group ->
@@ -41,12 +39,12 @@ fun LazyGridScope.transactions(
             span = { GridItemSpan(maxLineSpan) }
         ) {
             Text(
-                text = group.date,
+                text = group.first,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(16.dp)
             )
         }
-        items(group.transactionsWithCategories) { transactionWithCategory ->
+        items(group.second) { transactionWithCategory ->
             val category = transactionWithCategory.category
             ListItem(
                 headlineContent = {
@@ -82,8 +80,3 @@ fun LazyGridScope.transactions(
         }
     }
 }
-
-private data class GroupedTransactionsWithCategories(
-    val date: String,
-    val transactionsWithCategories: List<TransactionWithCategory>
-)

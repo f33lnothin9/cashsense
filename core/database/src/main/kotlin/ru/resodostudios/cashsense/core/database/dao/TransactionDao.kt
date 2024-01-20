@@ -13,11 +13,10 @@ import java.util.UUID
 
 @Dao
 interface TransactionDao {
-
     @Query("SELECT * FROM transactions WHERE transactionId = :transactionId")
     fun getTransactionEntity(transactionId: String): Flow<TransactionEntity>
 
-    @Query("SELECT * FROM transactions ORDER BY transactionId DESC")
+    @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getTransactionEntities(): Flow<List<TransactionEntity>>
 
     @Transaction

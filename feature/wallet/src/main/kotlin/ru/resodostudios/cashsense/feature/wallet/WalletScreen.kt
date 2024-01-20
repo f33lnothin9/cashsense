@@ -123,8 +123,9 @@ internal fun WalletScreen(
                 content = { paddingValues ->
                     if (walletState.walletWithTransactionsAndCategories.transactionsWithCategories.isNotEmpty()) {
                         val sortedTransactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+                            .sortedByDescending { it.transaction.date }
                             .groupBy { formattedDate(it.transaction.date) }
-                            .toSortedMap()
+                            .toSortedMap(compareByDescending { it })
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(300.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
