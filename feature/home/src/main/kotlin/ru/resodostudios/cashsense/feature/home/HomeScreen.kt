@@ -24,6 +24,7 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
@@ -31,13 +32,19 @@ import ru.resodostudios.cashsense.feature.wallet.R as walletR
 @Composable
 internal fun HomeRoute(
     onWalletClick: (Long) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
 ) {
-    val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
     HomeScreen(
         walletsState = walletsState,
         onWalletClick = onWalletClick,
-        onDelete = viewModel::deleteWalletWithTransactions
+        onDelete = { wallet, transactions ->
+            homeViewModel.deleteWalletWithTransactions(wallet, transactions)
+            transactions.forEach { transaction ->
+                transactionViewModel.deleteTransactionCategoryCrossRef(transaction.transactionId)
+            }
+        }
     )
 }
 
