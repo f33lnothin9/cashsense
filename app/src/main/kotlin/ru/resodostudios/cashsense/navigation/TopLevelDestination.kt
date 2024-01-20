@@ -10,24 +10,24 @@ enum class TopLevelDestination(
     val selectedIcon: Int,
     val unselectedIcon: Int,
     val iconTextId: Int,
-    val titleTextId: Int,
+    val titleTextId: Int
 ) {
     HOME(
         selectedIcon = CsIcons.HomeFilled,
         unselectedIcon = CsIcons.Home,
         iconTextId = homeR.string.home,
-        titleTextId = R.string.app_name,
+        titleTextId = R.string.app_name
     ),
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
         unselectedIcon = CsIcons.Category,
         iconTextId = categoriesR.string.categories,
-        titleTextId = categoriesR.string.categories,
+        titleTextId = categoriesR.string.categories
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.SubscriptionsFilled,
         unselectedIcon = CsIcons.Subscriptions,
         iconTextId = subscriptionsR.string.feature_subscriptions_title,
-        titleTextId = subscriptionsR.string.feature_subscriptions_title,
+        titleTextId = subscriptionsR.string.feature_subscriptions_title
     )
 }
