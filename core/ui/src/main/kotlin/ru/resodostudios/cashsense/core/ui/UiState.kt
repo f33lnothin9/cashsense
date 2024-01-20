@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.core.ui
 
+import androidx.annotation.RawRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,13 +35,15 @@ fun LoadingState() {
 }
 
 @Composable
-fun EmptyState(messageId: Int, animationId: Int) {
-    val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationId))
+fun EmptyState(
+    @StringRes messageRes: Int,
+    @RawRes animationRes: Int
+) {
+    val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationRes))
     val progress by animateLottieCompositionAsState(
         composition = lottieComposition,
         iterations = LottieConstants.IterateForever
     )
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -55,7 +59,7 @@ fun EmptyState(messageId: Int, animationId: Int) {
                 progress = { progress }
             )
             Text(
-                text = stringResource(id = messageId),
+                text = stringResource(messageRes),
                 maxLines = 2,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,

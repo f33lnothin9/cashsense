@@ -73,8 +73,8 @@ internal fun SubscriptionsScreen(
                 }
             } else {
                 EmptyState(
-                    messageId = R.string.feature_subscriptions_empty_message,
-                    animationId = R.raw.anim_empty_state
+                    messageRes = R.string.feature_subscriptions_empty_message,
+                    animationRes = R.raw.anim_empty_state
                 )
             }
         }

@@ -70,8 +70,8 @@ internal fun CategoriesScreen(
             }
         } else {
             EmptyState(
-                messageId = R.string.categories_empty,
-                animationId = R.raw.anim_empty_categories
+                messageRes = R.string.categories_empty,
+                animationRes = R.raw.anim_empty_categories
             )
         }
     }

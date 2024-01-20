@@ -106,8 +106,8 @@ internal fun HomeScreen(
             }
         } else {
             EmptyState(
-                messageId = walletR.string.wallets_empty,
-                animationId = walletR.raw.anim_wallet_empty
+                messageRes = walletR.string.wallets_empty,
+                animationRes = walletR.raw.anim_wallet_empty
             )
         }
     }
