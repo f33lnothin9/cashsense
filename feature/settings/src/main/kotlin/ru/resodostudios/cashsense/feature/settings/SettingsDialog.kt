@@ -49,13 +49,13 @@ import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
 
 @Composable
-fun SettingsRoute(
-    onBackClick: () -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel()
+fun SettingsDialog(
+    onDismiss: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
-    SettingsScreen(
-        onBackClick = onBackClick,
+    SettingsDialog(
+        onDismiss = onDismiss,
         settingsUiState = settingsUiState,
         onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
         onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
@@ -63,8 +63,8 @@ fun SettingsRoute(
 }
 
 @Composable
-fun SettingsScreen(
-    onBackClick: () -> Unit,
+fun SettingsDialog(
+    onDismiss: () -> Unit,
     settingsUiState: SettingsUiState,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
@@ -73,7 +73,7 @@ fun SettingsScreen(
     val configuration = LocalConfiguration.current
     AlertDialog(
         modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
-        onDismissRequest = { onBackClick() },
+        onDismissRequest = { onDismiss() },
         title = {
             Text(
                 text = stringResource(string.settings_title),
@@ -99,7 +99,7 @@ fun SettingsScreen(
         },
         confirmButton = {
             TextButton(
-                onClick = { onBackClick() }
+                onClick = { onDismiss() }
             ) {
                 Text(text = stringResource(string.dismiss_dialog_button_text))
             }
