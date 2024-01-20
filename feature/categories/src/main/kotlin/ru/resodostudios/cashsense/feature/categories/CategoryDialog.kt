@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -59,7 +60,7 @@ fun AddCategoryDialog(
     onConfirm: (Category) -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
-    var iconId by rememberSaveable { mutableIntStateOf(designsystemR.drawable.ic_outlined_category) }
+    var iconId by rememberSaveable { mutableIntStateOf(CsIcons.Category) }
 
     val titleTextField = remember { FocusRequester() }
 

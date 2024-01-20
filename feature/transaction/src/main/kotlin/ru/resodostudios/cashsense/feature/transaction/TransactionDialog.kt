@@ -132,8 +132,7 @@ fun AddTransactionDialog(
                     title = category.title ?: stringResource(uiR.string.none),
                     icon = designsystemR.drawable.ic_outlined_category,
                     categories = categoriesState.categories,
-                    onCategoryClick = { category = it },
-                    onCategoryCreate = { TODO() }
+                    onCategoryClick = { category = it }
                 )
                 OutlinedTextField(
                     value = description,
@@ -233,8 +232,7 @@ fun EditTransactionDialog(
                     title = category?.title ?: stringResource(uiR.string.none),
                     icon = category?.icon ?: designsystemR.drawable.ic_outlined_category,
                     categories = categoriesState.categories,
-                    onCategoryClick = { category = it },
-                    onCategoryCreate = { TODO() }
+                    onCategoryClick = { category = it }
                 )
                 OutlinedTextField(
                     value = description.toString(),
@@ -256,8 +254,7 @@ private fun CategoryExposedDropdownMenuBox(
     title: String,
     icon: Int,
     categories: List<Category>,
-    onCategoryClick: (Category) -> Unit,
-    onCategoryCreate: () -> Unit
+    onCategoryClick: (Category) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(icon) }
@@ -288,16 +285,6 @@ private fun CategoryExposedDropdownMenuBox(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            DropdownMenuItem(
-                text = { Text(text = stringResource(uiR.string.add)) },
-                leadingIcon = {
-                    Icon(imageVector = CsIcons.Add, contentDescription = null)
-                },
-                onClick = {
-                    onCategoryCreate()
-                    expanded = false
-                }
-            )
             categories.forEach { category ->
                 DropdownMenuItem(
                     text = { Text(category.title.toString()) },
