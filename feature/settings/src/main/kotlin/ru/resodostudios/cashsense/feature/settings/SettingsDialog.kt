@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -70,7 +71,6 @@ fun SettingsDialog(
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit
 ) {
     val configuration = LocalConfiguration.current
-
     AlertDialog(
         modifier = Modifier.widthIn(max = configuration.screenWidthDp.dp - 80.dp),
         onDismissRequest = { onDismiss() },
@@ -84,7 +84,6 @@ fun SettingsDialog(
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 when (settingsUiState) {
                     Loading -> LoadingState()
-
                     is Success -> {
                         SettingsPanel(
                             settings = settingsUiState.settings,
@@ -106,7 +105,10 @@ fun SettingsDialog(
             }
         },
         icon = {
-            Icon(imageVector = CsIcons.Settings, contentDescription = null)
+            Icon(
+                painter = painterResource(CsIcons.Settings),
+                contentDescription = null
+            )
         }
     )
 }
@@ -141,7 +143,7 @@ private fun ColumnScope.SettingsPanel(
                 thumbContent = if (settings.useDynamicColor) {
                     {
                         Icon(
-                            imageVector = CsIcons.Confirm,
+                            painter = painterResource(CsIcons.Confirm),
                             contentDescription = null,
                             modifier = Modifier.size(SwitchDefaults.IconSize)
                         )
@@ -167,7 +169,11 @@ private fun ColumnScope.SettingsPanel(
                 onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
                 selected = settings.darkThemeConfig == DarkThemeConfig.entries[index]
             ) {
-                Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    text = label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

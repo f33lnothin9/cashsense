@@ -1,16 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.icon
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
-import androidx.compose.material.icons.automirrored.outlined.TrendingDown
-import androidx.compose.material.icons.automirrored.outlined.TrendingUp
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.R
 
 object CsIcons {
@@ -20,16 +9,39 @@ object CsIcons {
     val CategoryFilled = R.drawable.ic_filled_category
     val Subscriptions = R.drawable.ic_outlined_subscriptions
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
-    val Settings = Icons.Outlined.Settings
-    val Transaction = Icons.AutoMirrored.Outlined.ReceiptLong
-    val Confirm = Icons.Outlined.Done
-    val Calendar = Icons.Outlined.CalendarToday
+    val Settings = R.drawable.ic_outlined_settings
+    val Transaction = R.drawable.ic_outlined_receipt_long
+    val Confirm = R.drawable.ic_outlined_check
+    val Calendar = R.drawable.ic_outlined_event
     val Delete = R.drawable.ic_outlined_delete
-    val TrendingUp = Icons.AutoMirrored.Outlined.TrendingUp
-    val TrendingDown = Icons.AutoMirrored.Outlined.TrendingDown
-    val Wallet = Icons.Outlined.Wallet
-    val Add = Icons.Outlined.Add
+    val TrendingUp = R.drawable.ic_outlined_trending_up
+    val TrendingDown = R.drawable.ic_outlined_trending_down
+    val Wallet = R.drawable.ic_outlined_wallet
+    val Add = R.drawable.ic_outlined_add
     val Edit = R.drawable.ic_outlined_edit
-    val MoreVert = Icons.Outlined.MoreVert
-    val ArrowBack = Icons.AutoMirrored.Outlined.ArrowBack
+    val MoreVert = R.drawable.ic_outlined_more_vert
+    val ArrowBack = R.drawable.ic_outlined_arrow_back
+    val AccountBalance = R.drawable.ic_outlined_account_balance
+    val Apparel = R.drawable.ic_outlined_apparel
+    val Chair = R.drawable.ic_outlined_chair
+    val DirectionsBus = R.drawable.ic_outlined_directions_bus
+    val Exercise = R.drawable.ic_outlined_exercise
+    val Fastfood = R.drawable.ic_outlined_fastfood
+    val Handyman = R.drawable.ic_outlined_handyman
+    val Language = R.drawable.ic_outlined_language
+    val LocalBar = R.drawable.ic_outlined_local_bar
+    val LocalGasStation = R.drawable.ic_outlined_local_gas_station
+    val Memory = R.drawable.ic_outlined_memory
+    val Payments = R.drawable.ic_outlined_payments
+    val Pets = R.drawable.ic_outlined_pets
+    val Phishing = R.drawable.ic_outlined_phishing
+    val Pill = R.drawable.ic_outlined_pill
+    val Restaurant = R.drawable.ic_outlined_restaurant
+    val School = R.drawable.ic_outlined_school
+    val SelfCare = R.drawable.ic_outlined_self_care
+    val ShoppingCart = R.drawable.ic_outlined_shopping_cart
+    val SimCard = R.drawable.ic_outlined_sim_card
+    val SmokingRooms = R.drawable.ic_outlined_smoking_rooms
+    val SportsEsports = R.drawable.ic_outlined_sports_esports
+    val Travel = R.drawable.ic_outlined_travel
 }

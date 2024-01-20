@@ -104,7 +104,7 @@ fun CsApp(
                 if (destination != null) {
                     CsTopAppBar(
                         titleRes = destination.titleTextId,
-                        actionIcon = CsIcons.Settings,
+                        actionIconRes = CsIcons.Settings,
                         actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
                         onActionClick = { showSettingsDialog = true }
                     )
@@ -117,7 +117,7 @@ fun CsApp(
                             onClick = { showAddWalletDialog = true }
                         ) {
                             Icon(
-                                imageVector = CsIcons.Wallet,
+                                painter = painterResource(CsIcons.Wallet),
                                 contentDescription = null
                             )
                             Text(
@@ -132,7 +132,7 @@ fun CsApp(
                             onClick = { showAddCategoryDialog = true }
                         ) {
                             Icon(
-                                imageVector = CsIcons.Add,
+                                painter = painterResource(CsIcons.Add),
                                 contentDescription = stringResource(categoriesR.string.add_category_icon_description)
                             )
                         }
@@ -143,7 +143,7 @@ fun CsApp(
                             onClick = { appState.navController.navigateToAddSubscription() }
                         ) {
                             Icon(
-                                imageVector = CsIcons.Add,
+                                painter = painterResource(CsIcons.Add),
                                 contentDescription = stringResource(subscriptionsR.string.feature_subscriptions_add_subscription_icon_description)
                             )
                         }

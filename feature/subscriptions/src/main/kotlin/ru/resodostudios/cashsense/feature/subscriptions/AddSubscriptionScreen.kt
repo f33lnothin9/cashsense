@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -72,7 +73,7 @@ internal fun AddSubscriptionScreen(
                 title = { Text(text = stringResource(R.string.feature_subscriptions_new_subscription)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(imageVector = CsIcons.ArrowBack, contentDescription = null)
+                        Icon(painter = painterResource(CsIcons.ArrowBack), contentDescription = null)
                     }
                 },
                 actions = {
@@ -84,7 +85,7 @@ internal fun AddSubscriptionScreen(
                         enabled = subscriptionState.title.isNotBlank() && subscriptionState.amount.validateAmount().second && subscriptionState.paymentDate.isNotBlank()
                     ) {
                         Icon(
-                            imageVector = CsIcons.Confirm,
+                            painter = painterResource(CsIcons.Confirm),
                             contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
                         )
                     }
@@ -158,7 +159,10 @@ internal fun AddSubscriptionScreen(
                     supportingText = { Text(text = stringResource(uiR.string.required)) },
                     trailingIcon = {
                         IconButton(onClick = { openDialog = true }) {
-                            Icon(imageVector = CsIcons.Calendar, contentDescription = null)
+                            Icon(
+                                painter = painterResource(CsIcons.Calendar),
+                                contentDescription = null
+                            )
                         }
                     },
                     maxLines = 1,

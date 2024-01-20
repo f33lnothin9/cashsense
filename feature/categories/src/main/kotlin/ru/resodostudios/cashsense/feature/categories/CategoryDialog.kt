@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -68,7 +65,7 @@ fun AddCategoryDialog(
         titleRes = R.string.new_category,
         confirmButtonTextRes = uiR.string.add,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        icon = Icons.Outlined.Category,
+        iconRes = CsIcons.Category,
         onConfirm = {
             onConfirm(
                 Category(
@@ -142,7 +139,7 @@ fun EditCategoryDialog(
         titleRes = R.string.feature_categories_edit_category,
         confirmButtonTextRes = uiR.string.save,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        icon = Icons.Outlined.Category,
+        iconRes = CsIcons.Category,
         onConfirm = {
             onConfirm(
                 Category(
@@ -189,31 +186,31 @@ private fun IconPickerDropdownMenu(
     var expanded by remember { mutableStateOf(false) }
 
     val icons = listOf(
-        designsystemR.drawable.ic_outlined_category,
-        R.drawable.ic_outlined_account_balance,
-        R.drawable.ic_outlined_apparel,
-        R.drawable.ic_outlined_chair,
-        R.drawable.ic_outlined_exercise,
-        R.drawable.ic_outlined_fastfood,
-        R.drawable.ic_outlined_directions_bus,
-        R.drawable.ic_outlined_handyman,
-        R.drawable.ic_outlined_language,
-        R.drawable.ic_outlined_local_bar,
-        R.drawable.ic_outlined_local_gas_station,
-        R.drawable.ic_outlined_memory,
-        R.drawable.ic_outlined_payments,
-        R.drawable.ic_outlined_pets,
-        R.drawable.ic_outlined_phishing,
-        R.drawable.ic_outlined_pill,
-        R.drawable.ic_outlined_receipt_long,
-        R.drawable.ic_outlined_restaurant,
-        R.drawable.ic_outlined_school,
-        R.drawable.ic_outlined_self_care,
-        R.drawable.ic_outlined_shopping_cart,
-        R.drawable.ic_outlined_sim_card,
-        R.drawable.ic_outlined_smoking_rooms,
-        R.drawable.ic_outlined_sports_esports,
-        R.drawable.ic_outlined_travel
+        CsIcons.Category,
+        CsIcons.AccountBalance,
+        CsIcons.Apparel,
+        CsIcons.Chair,
+        CsIcons.Exercise,
+        CsIcons.Fastfood,
+        CsIcons.DirectionsBus,
+        CsIcons.Handyman,
+        CsIcons.Language,
+        CsIcons.LocalBar,
+        CsIcons.LocalGasStation,
+        CsIcons.Memory,
+        CsIcons.Payments,
+        CsIcons.Pets,
+        CsIcons.Phishing,
+        CsIcons.Pill,
+        CsIcons.Transaction,
+        CsIcons.Restaurant,
+        CsIcons.School,
+        CsIcons.SelfCare,
+        CsIcons.ShoppingCart,
+        CsIcons.SimCard,
+        CsIcons.SmokingRooms,
+        CsIcons.SportsEsports,
+        CsIcons.Travel
     )
 
     Box(

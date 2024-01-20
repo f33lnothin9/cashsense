@@ -94,7 +94,7 @@ fun AddTransactionDialog(
             titleRes = R.string.new_transaction,
             confirmButtonTextRes = uiR.string.add,
             dismissButtonTextRes = uiR.string.core_ui_cancel,
-            icon = CsIcons.Transaction,
+            iconRes = CsIcons.Transaction,
             onConfirm = {
                 onConfirm(
                     Transaction(
@@ -197,7 +197,7 @@ fun EditTransactionDialog(
             titleRes = R.string.edit_transaction,
             confirmButtonTextRes = uiR.string.save,
             dismissButtonTextRes = uiR.string.core_ui_cancel,
-            icon = CsIcons.Transaction,
+            iconRes = CsIcons.Transaction,
             onConfirm = {
                 onConfirm(
                     Transaction(

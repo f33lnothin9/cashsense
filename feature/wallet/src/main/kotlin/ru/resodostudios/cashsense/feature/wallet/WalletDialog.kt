@@ -62,7 +62,7 @@ fun AddWalletDialog(
         titleRes = R.string.feature_wallet_new_wallet,
         confirmButtonTextRes = uiR.string.add,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        icon = CsIcons.Wallet,
+        iconRes = CsIcons.Wallet,
         onConfirm = {
             onConfirm(
                 Wallet(
@@ -147,7 +147,7 @@ fun EditWalletDialog(
         titleRes = R.string.edit_wallet,
         confirmButtonTextRes = uiR.string.save,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        icon = CsIcons.Wallet,
+        iconRes = CsIcons.Wallet,
         onConfirm = {
             onConfirm(
                 Wallet(

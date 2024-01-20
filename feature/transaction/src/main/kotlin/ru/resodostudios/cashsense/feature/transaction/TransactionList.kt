@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -20,7 +21,6 @@ import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import java.util.SortedMap
-import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 
 fun LazyGridScope.transactions(
     transactionsWithCategories: SortedMap<String, List<TransactionWithCategory>>,
@@ -74,7 +74,7 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        painter = painterResource(category?.icon ?: categoriesR.drawable.ic_outlined_receipt_long),
+                        painter = painterResource(category?.icon ?: CsIcons.Transaction),
                         contentDescription = null
                     )
                 }

@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -83,7 +84,10 @@ internal fun EditSubscriptionScreen(
                         title = { Text(text = stringResource(R.string.feature_subscriptions_edit_subscription)) },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
-                                Icon(imageVector = CsIcons.ArrowBack, contentDescription = null)
+                                Icon(
+                                    painter = painterResource(CsIcons.ArrowBack),
+                                    contentDescription = null
+                                )
                             }
                         },
                         actions = {
@@ -105,7 +109,7 @@ internal fun EditSubscriptionScreen(
                                 enabled = title.isNotBlank() && amount.validateAmount().second
                             ) {
                                 Icon(
-                                    imageVector = CsIcons.Confirm,
+                                    painter = painterResource(CsIcons.Confirm),
                                     contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
                                 )
                             }
@@ -164,7 +168,7 @@ internal fun EditSubscriptionScreen(
                                 trailingIcon = {
                                     IconButton(onClick = { openDialog = true }) {
                                         Icon(
-                                            imageVector = CsIcons.Calendar,
+                                            painter = painterResource(CsIcons.Calendar),
                                             contentDescription = null
                                         )
                                     }
@@ -182,11 +186,9 @@ internal fun EditSubscriptionScreen(
                                         TextButton(
                                             onClick = {
                                                 openDialog = false
-                                                paymentDate =
-                                                    Instant.fromEpochMilliseconds(
-                                                        paymentDatePickerState.selectedDateMillis!!
-                                                    )
-                                                        .toString()
+                                                paymentDate = Instant
+                                                    .fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
+                                                    .toString()
                                             },
                                             enabled = confirmEnabled.value
                                         ) {

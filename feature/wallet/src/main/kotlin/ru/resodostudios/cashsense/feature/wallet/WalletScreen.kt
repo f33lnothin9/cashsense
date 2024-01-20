@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -100,13 +101,16 @@ internal fun WalletScreen(
                         },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
-                                Icon(imageVector = CsIcons.ArrowBack, contentDescription = null)
+                                Icon(
+                                    painter = painterResource(CsIcons.ArrowBack),
+                                    contentDescription = null
+                                )
                             }
                         },
                         actions = {
                             IconButton(onClick = { showAddTransactionDialog = true }) {
                                 Icon(
-                                    imageVector = CsIcons.Add,
+                                    painter = painterResource(CsIcons.Add),
                                     contentDescription = stringResource(R.string.add_transaction_icon_description)
                                 )
                             }
