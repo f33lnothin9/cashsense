@@ -1,9 +1,12 @@
+import ru.resodostudios.cashsense.CsBuildType
+
 plugins {
     alias(libs.plugins.cashsense.android.application)
     alias(libs.plugins.cashsense.android.application.compose)
     alias(libs.plugins.cashsense.android.hilt)
     alias(libs.plugins.cashsense.android.application.firebase)
     id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -21,6 +24,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = CsBuildType.DEBUG.applicationIdSuffix
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -72,4 +78,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.kotlinx.datetime)
+
+    baselineProfile(projects.baselineprofile)
+}
+
+baselineProfile {
+    automaticGenerationDuringBuild = false
 }
