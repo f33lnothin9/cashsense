@@ -123,7 +123,7 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     items(walletsWithTransactionsAndCategories) { walletWithTransactionsAndCategories ->
         WalletCard(
             wallet = walletWithTransactionsAndCategories.wallet,
-            transactionsWithCategories = walletWithTransactionsAndCategories.transactionsWithCategories,
+            transactions = walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction },
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onEdit = onEdit,

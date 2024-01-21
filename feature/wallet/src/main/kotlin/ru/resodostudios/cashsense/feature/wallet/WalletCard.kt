@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -27,7 +28,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
@@ -37,17 +37,17 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 @Composable
 fun WalletCard(
     wallet: Wallet,
-    transactionsWithCategories: List<TransactionWithCategory>,
+    transactions: List<Transaction>,
     onWalletClick: (Long) -> Unit,
     onTransactionCreate: (Long) -> Unit,
     onEdit: (Wallet) -> Unit,
-    onDelete: (Wallet, List<Transaction>) -> Unit
+    onDelete: (Wallet, List<Transaction>) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val transactions = transactionsWithCategories.map { it.transaction }
-
     OutlinedCard(
         onClick = { onWalletClick(wallet.walletId) },
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        modifier = modifier
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -66,7 +66,7 @@ fun WalletCard(
                 text = getFormattedAmountAndCurrency(
                     amount = getCurrentBalance(
                         wallet.startBalance,
-                        transactionsWithCategories.map { it.transaction }
+                        transactions
                     ),
                     currencyName = wallet.currency.name
                 ),
@@ -93,7 +93,7 @@ fun WalletCard(
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet) },
-                onDelete = { onDelete(wallet, transactionsWithCategories.map { it.transaction }) }
+                onDelete = { onDelete(wallet, transactions) }
             )
         }
     }
@@ -190,23 +190,30 @@ private fun getCurrentBalance(startBalance: Double, transactions: List<Transacti
     return currentBalance
 }
 
-@Preview("Wallet Card")
+@Preview(
+    name = "Wallet Card",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun WalletCardPreview() {
     CsTheme {
-        WalletCard(
-            wallet = Wallet(
-                title = "Wallet 1",
-                startBalance = 100.00,
-                currency = Currency.USD
-            ),
-            transactionsWithCategories = emptyList(),
-            onWalletClick = { },
-            onTransactionCreate = { },
-            onEdit = { },
-            onDelete = { _, _ ->
+        Surface {
+            WalletCard(
+                wallet = Wallet(
+                    title = "Wallet 1",
+                    startBalance = 1500.85,
+                    currency = Currency.USD
+                ),
+                transactions = emptyList(),
+                onWalletClick = { },
+                onTransactionCreate = { },
+                onEdit = { },
+                onDelete = { _, _ ->
 
-            }
-        )
+                },
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 }
