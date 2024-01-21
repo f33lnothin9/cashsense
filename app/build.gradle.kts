@@ -5,13 +5,11 @@ plugins {
     alias(libs.plugins.cashsense.android.application.compose)
     alias(libs.plugins.cashsense.android.hilt)
     alias(libs.plugins.cashsense.android.application.firebase)
-    id("com.google.android.gms.oss-licenses-plugin")
     alias(libs.plugins.baselineprofile)
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense"
-
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
         versionCode = 4
@@ -30,6 +28,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            baselineProfile.automaticGenerationDuringBuild = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -41,6 +40,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+    namespace = "ru.resodostudios.cashsense"
 }
 
 dependencies {
@@ -56,28 +61,21 @@ dependencies {
     implementation(projects.feature.wallet)
     implementation(projects.feature.settings)
 
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.material3.windowSizeClass)
-
-    implementation(libs.androidx.core.splashscreen)
-
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.window.manager)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.datetime)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
-
-    implementation(libs.androidx.activity.compose)
-
-    implementation(libs.androidx.lifecycle.viewModelCompose)
-    implementation(libs.androidx.lifecycle.runtimeCompose)
-
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.hilt.navigation.compose)
-
-    implementation(libs.kotlinx.coroutines.android)
-
-    implementation(libs.kotlinx.datetime)
 
     baselineProfile(projects.baselineprofile)
 }

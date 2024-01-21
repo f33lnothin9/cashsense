@@ -21,7 +21,7 @@ dependencies {
     debugApi(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     //androidTestImplementation(projects.core.testing)
 }
