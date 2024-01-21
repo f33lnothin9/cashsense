@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -74,9 +76,11 @@ fun SettingsBottomSheet(
         windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         Column(
-            modifier = Modifier.then(
-                if (VERSION.SDK_INT <= 25) Modifier.padding(bottom = 40.dp) else Modifier.navigationBarsPadding()
-            )
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .then(
+                    if (VERSION.SDK_INT <= 25) Modifier.padding(bottom = 40.dp) else Modifier.navigationBarsPadding()
+                )
         ) {
             when (settingsUiState) {
                 Loading -> LoadingState()
@@ -203,5 +207,4 @@ private fun SettingsBottomSheetSectionTitle(text: String) {
     )
 }
 
-private const val PRIVACY_POLICY_URL =
-    "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"
+private const val PRIVACY_POLICY_URL = "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"
