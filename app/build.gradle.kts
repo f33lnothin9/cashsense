@@ -51,12 +51,8 @@ dependencies {
     implementation(projects.feature.settings)
 
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.adaptive) {
-        this.isTransitive = false
-    }
-    implementation(libs.androidx.compose.material3.adaptive.navigation.suite) {
-        this.isTransitive = false
-    }
+    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.material3.windowSizeClass)
 
     implementation(libs.androidx.core.splashscreen)
