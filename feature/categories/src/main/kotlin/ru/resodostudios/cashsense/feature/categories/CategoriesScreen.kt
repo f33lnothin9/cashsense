@@ -95,7 +95,7 @@ private fun LazyGridScope.categories(
                         )
                     },
                     leadingContent = {
-                        category.icon?.let { painterResource(it) }?.let {
+                        category.iconRes?.let { painterResource(it) }?.let {
                             Icon(painter = it, contentDescription = null)
                         }
                     }

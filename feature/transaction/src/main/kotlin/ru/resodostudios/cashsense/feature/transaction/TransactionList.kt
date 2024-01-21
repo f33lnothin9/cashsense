@@ -72,7 +72,7 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        painter = painterResource(category?.icon ?: CsIcons.Transaction),
+                        painter = painterResource(category?.iconRes ?: CsIcons.Transaction),
                         contentDescription = null
                     )
                 }

@@ -230,7 +230,7 @@ fun EditTransactionDialog(
                 )
                 CategoryExposedDropdownMenuBox(
                     title = category?.title ?: stringResource(uiR.string.none),
-                    icon = category?.icon ?: designsystemR.drawable.ic_outlined_category,
+                    icon = category?.iconRes ?: designsystemR.drawable.ic_outlined_category,
                     categories = categoriesState.categories,
                     onCategoryClick = { category = it }
                 )
@@ -290,13 +290,13 @@ private fun CategoryExposedDropdownMenuBox(
                     text = { Text(category.title.toString()) },
                     onClick = {
                         onCategoryClick(category)
-                        iconId = category.icon!!
+                        iconId = category.iconRes!!
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            painter = painterResource(category.icon!!),
+                            painter = painterResource(category.iconRes!!),
                             contentDescription = null
                         )
                     }

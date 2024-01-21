@@ -27,7 +27,7 @@ fun WalletWithTransactionsAndCategories.asEntity() = WalletWithTransactionsAndCa
             category = CategoryEntity(
                 categoryId = it.category?.categoryId,
                 title = it.category?.title,
-                icon = it.category?.icon
+                iconRes = it.category?.iconRes
             )
         )
     }

@@ -70,7 +70,7 @@ fun AddCategoryDialog(
             onConfirm(
                 Category(
                     title = title,
-                    icon = iconId
+                    iconRes = iconId
                 )
             )
         },
@@ -133,7 +133,7 @@ fun EditCategoryDialog(
     onConfirm: (Category) -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf(category.title) }
-    var iconId by rememberSaveable { mutableIntStateOf(category.icon!!) }
+    var iconId by rememberSaveable { mutableIntStateOf(category.iconRes!!) }
 
     CsAlertDialog(
         titleRes = R.string.feature_categories_edit_category,
@@ -145,7 +145,7 @@ fun EditCategoryDialog(
                 Category(
                     categoryId = category.categoryId,
                     title = title,
-                    icon = iconId
+                    iconRes = iconId
                 )
             )
         },

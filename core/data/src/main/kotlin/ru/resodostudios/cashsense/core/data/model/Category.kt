@@ -6,5 +6,5 @@ import ru.resodostudios.cashsense.core.model.data.Category
 fun Category.asEntity() = CategoryEntity(
     categoryId = categoryId,
     title = title,
-    icon = icon
+    iconRes = iconRes
 )
