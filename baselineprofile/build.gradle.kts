@@ -11,8 +11,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    targetProjectPath = ":app"
-
     testOptions.managedDevices.devices {
         create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel6Api34") {
             device = "Pixel 6"
@@ -20,6 +18,8 @@ android {
             systemImageSource = "aosp"
         }
     }
+
+    targetProjectPath = ":app"
 }
 
 baselineProfile {

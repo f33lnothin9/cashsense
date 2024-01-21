@@ -4506,7 +4506,7 @@ HSPLandroidx/compose/runtime/collection/MutableVector;->clear()V
 HSPLandroidx/compose/runtime/collection/MutableVector;->contains(Ljava/lang/Object;)Z
 HSPLandroidx/compose/runtime/collection/MutableVector;->ensureCapacity(I)V
 HSPLandroidx/compose/runtime/collection/MutableVector;->getContent()[Ljava/lang/Object;
-HSPLandroidx/compose/runtime/collection/MutableVector;->getSize()I
+HPLandroidx/compose/runtime/collection/MutableVector;->getSize()I
 HSPLandroidx/compose/runtime/collection/MutableVector;->indexOf(Ljava/lang/Object;)I
 HSPLandroidx/compose/runtime/collection/MutableVector;->isEmpty()Z
 HSPLandroidx/compose/runtime/collection/MutableVector;->isNotEmpty()Z
@@ -4674,6 +4674,7 @@ HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementati
 HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->getIndex()I
 HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->hasNextKey()Z
 HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->hasNextNode()Z
+HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->moveToNextNode()V
 HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->reset([Ljava/lang/Object;I)V
 HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->reset([Ljava/lang/Object;II)V
 HSPLandroidx/compose/runtime/external/kotlinx/collections/immutable/implementations/immutableMap/TrieNodeBaseIterator;->setIndex(I)V
@@ -5008,6 +5009,7 @@ HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet$Companion;-><init>(Lkotlin/
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet$Companion;->getEMPTY()Landroidx/compose/runtime/snapshots/SnapshotIdSet;
 Landroidx/compose/runtime/snapshots/SnapshotIdSetKt;
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSetKt;->access$lowestBitOf(J)I
+HSPLandroidx/compose/runtime/snapshots/SnapshotIdSetKt;->binarySearch([II)I
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSetKt;->lowestBitOf(J)I
 Landroidx/compose/runtime/snapshots/SnapshotKt;
 HSPLandroidx/compose/runtime/snapshots/SnapshotKt;-><clinit>()V
@@ -7761,6 +7763,7 @@ HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;-><clinit>()V
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;-><init>(Landroidx/compose/ui/node/LayoutNode;)V
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->access$getRoot$p(Landroidx/compose/ui/node/MeasureAndLayoutDelegate;)Landroidx/compose/ui/node/LayoutNode;
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->callOnLayoutCompletedListeners()V
+HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->dispatchOnPositionedCallbacks$default(Landroidx/compose/ui/node/MeasureAndLayoutDelegate;ZILjava/lang/Object;)V
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->dispatchOnPositionedCallbacks(Z)V
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->doLookaheadRemeasure-sdFAvZA(Landroidx/compose/ui/node/LayoutNode;Landroidx/compose/ui/unit/Constraints;)Z
 HSPLandroidx/compose/ui/node/MeasureAndLayoutDelegate;->doRemeasure-sdFAvZA(Landroidx/compose/ui/node/LayoutNode;Landroidx/compose/ui/unit/Constraints;)Z
@@ -8340,6 +8343,7 @@ HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->access$getMain$delegate$c
 HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->access$getToRunOnFrame$p(Landroidx/compose/ui/platform/AndroidUiDispatcher;)Ljava/util/List;
 HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->access$performFrameDispatch(Landroidx/compose/ui/platform/AndroidUiDispatcher;J)V
 HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->access$performTrampolineDispatch(Landroidx/compose/ui/platform/AndroidUiDispatcher;)V
+HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->access$setScheduledFrameDispatch$p(Landroidx/compose/ui/platform/AndroidUiDispatcher;Z)V
 HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->dispatch(Lkotlin/coroutines/CoroutineContext;Ljava/lang/Runnable;)V
 HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->getChoreographer()Landroid/view/Choreographer;
 HSPLandroidx/compose/ui/platform/AndroidUiDispatcher;->getFrameClock()Landroidx/compose/runtime/MonotonicFrameClock;
@@ -11719,20 +11723,21 @@ HSPLandroidx/emoji2/text/MetadataRepo;->put(Landroidx/emoji2/text/TypefaceEmojiR
 Landroidx/emoji2/text/MetadataRepo$Node;
 HSPLandroidx/emoji2/text/MetadataRepo$Node;-><init>()V
 HSPLandroidx/emoji2/text/MetadataRepo$Node;-><init>(I)V
-HSPLandroidx/emoji2/text/MetadataRepo$Node;->get(I)Landroidx/emoji2/text/MetadataRepo$Node;
+HPLandroidx/emoji2/text/MetadataRepo$Node;->get(I)Landroidx/emoji2/text/MetadataRepo$Node;
 HSPLandroidx/emoji2/text/MetadataRepo$Node;->put(Landroidx/emoji2/text/TypefaceEmojiRasterizer;II)V
 Landroidx/emoji2/text/SpannableBuilder;
 Landroidx/emoji2/text/TypefaceEmojiRasterizer;
 HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;-><clinit>()V
 HPLandroidx/emoji2/text/TypefaceEmojiRasterizer;-><init>(Landroidx/emoji2/text/MetadataRepo;I)V
-HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getCodepointAt(I)I
+HPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getCodepointAt(I)I
 HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getCodepointsLength()I
 HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getId()I
 HSPLandroidx/emoji2/text/TypefaceEmojiRasterizer;->getMetadataItem()Landroidx/emoji2/text/flatbuffer/MetadataItem;
 Landroidx/emoji2/text/UnprecomputeTextOnModificationSpannable;
 Landroidx/emoji2/text/flatbuffer/MetadataItem;
 HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;-><init>()V
-HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;->__assign(ILjava/nio/ByteBuffer;)Landroidx/emoji2/text/flatbuffer/MetadataItem;
+HPLandroidx/emoji2/text/flatbuffer/MetadataItem;->__assign(ILjava/nio/ByteBuffer;)Landroidx/emoji2/text/flatbuffer/MetadataItem;
+HPLandroidx/emoji2/text/flatbuffer/MetadataItem;->__init(ILjava/nio/ByteBuffer;)V
 HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;->codepoints(I)I
 HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;->codepointsLength()I
 HSPLandroidx/emoji2/text/flatbuffer/MetadataItem;->id()I
@@ -13149,13 +13154,10 @@ HSPLcom/airbnb/lottie/LottieCompositionFactory;->fromRawRes(Landroid/content/Con
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->fromRawResSync(Landroid/content/Context;ILjava/lang/String;)Lcom/airbnb/lottie/LottieResult;
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->isNightMode(Landroid/content/Context;)Z
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->isZipCompressed(Lokio/BufferedSource;)Ljava/lang/Boolean;
-HSPLcom/airbnb/lottie/LottieCompositionFactory;->lambda$cache$15(Lcom/airbnb/lottie/LottieComposition;)Lcom/airbnb/lottie/LottieResult;
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->lambda$cache$16(Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;Lcom/airbnb/lottie/LottieComposition;)V
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->lambda$fromRawRes$2(Ljava/lang/ref/WeakReference;Landroid/content/Context;ILjava/lang/String;)Lcom/airbnb/lottie/LottieResult;
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->notifyTaskCacheIdleListeners(Z)V
 HSPLcom/airbnb/lottie/LottieCompositionFactory;->rawResCacheKey(Landroid/content/Context;I)Ljava/lang/String;
-Lcom/airbnb/lottie/LottieCompositionFactory$$ExternalSyntheticLambda5;
-HSPLcom/airbnb/lottie/LottieCompositionFactory$$ExternalSyntheticLambda5;->call()Ljava/lang/Object;
 Lcom/airbnb/lottie/LottieCompositionFactory$$ExternalSyntheticLambda6;
 HSPLcom/airbnb/lottie/LottieCompositionFactory$$ExternalSyntheticLambda6;-><init>(Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;)V
 HSPLcom/airbnb/lottie/LottieCompositionFactory$$ExternalSyntheticLambda6;->onResult(Ljava/lang/Object;)V
@@ -13781,7 +13783,7 @@ HSPLcom/airbnb/lottie/model/layer/BaseLayer;->intersectBoundsWithMatte(Landroid/
 HSPLcom/airbnb/lottie/model/layer/BaseLayer;->invalidateSelf()V
 HSPLcom/airbnb/lottie/model/layer/BaseLayer;->lambda$setupInOutAnimations$0$com-airbnb-lottie-model-layer-BaseLayer()V
 HSPLcom/airbnb/lottie/model/layer/BaseLayer;->onValueChanged()V
-HPLcom/airbnb/lottie/model/layer/BaseLayer;->recordRenderTime(F)V
+HSPLcom/airbnb/lottie/model/layer/BaseLayer;->recordRenderTime(F)V
 HSPLcom/airbnb/lottie/model/layer/BaseLayer;->setMatteLayer(Lcom/airbnb/lottie/model/layer/BaseLayer;)V
 HSPLcom/airbnb/lottie/model/layer/BaseLayer;->setParentLayer(Lcom/airbnb/lottie/model/layer/BaseLayer;)V
 HSPLcom/airbnb/lottie/model/layer/BaseLayer;->setVisible(Z)V
@@ -13970,7 +13972,7 @@ HSPLcom/airbnb/lottie/parser/moshi/JsonReader;-><clinit>()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonReader;-><init>()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonReader;->access$000(Lokio/BufferedSink;Ljava/lang/String;)V
 HSPLcom/airbnb/lottie/parser/moshi/JsonReader;->of(Lokio/BufferedSource;)Lcom/airbnb/lottie/parser/moshi/JsonReader;
-HPLcom/airbnb/lottie/parser/moshi/JsonReader;->pushScope(I)V
+HSPLcom/airbnb/lottie/parser/moshi/JsonReader;->pushScope(I)V
 HSPLcom/airbnb/lottie/parser/moshi/JsonReader;->string(Lokio/BufferedSink;Ljava/lang/String;)V
 Lcom/airbnb/lottie/parser/moshi/JsonReader$Options;
 HSPLcom/airbnb/lottie/parser/moshi/JsonReader$Options;-><init>([Ljava/lang/String;Lokio/Options;)V
@@ -13987,7 +13989,7 @@ HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->beginArray()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->beginObject()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->close()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->endArray()V
-HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->endObject()V
+HPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->endObject()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->findName(Ljava/lang/String;Lcom/airbnb/lottie/parser/moshi/JsonReader$Options;)I
 HPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->hasNext()Z
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->isLiteral(I)Z
@@ -13996,9 +13998,11 @@ HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->nextInt()I
 HPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->nextName()Ljava/lang/String;
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->nextString()Ljava/lang/String;
 HPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->peek()Lcom/airbnb/lottie/parser/moshi/JsonReader$Token;
+HPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->peekKeyword()I
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->readEscapeCharacter()C
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->skipName()V
 HSPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->skipQuotedValue(Lokio/ByteString;)V
+HPLcom/airbnb/lottie/parser/moshi/JsonUtf8Reader;->skipValue()V
 Lcom/airbnb/lottie/utils/BaseLottieAnimator;
 HSPLcom/airbnb/lottie/utils/BaseLottieAnimator;-><init>()V
 HSPLcom/airbnb/lottie/utils/BaseLottieAnimator;->addUpdateListener(Landroid/animation/ValueAnimator$AnimatorUpdateListener;)V
@@ -18609,6 +18613,7 @@ HSPLcom/google/firebase/perf/config/DeviceCacheManager;-><clinit>()V
 HSPLcom/google/firebase/perf/config/DeviceCacheManager;-><init>(Ljava/util/concurrent/ExecutorService;)V
 HSPLcom/google/firebase/perf/config/DeviceCacheManager;->getBoolean(Ljava/lang/String;)Lcom/google/firebase/perf/util/Optional;
 HSPLcom/google/firebase/perf/config/DeviceCacheManager;->getDouble(Ljava/lang/String;)Lcom/google/firebase/perf/util/Optional;
+HSPLcom/google/firebase/perf/config/DeviceCacheManager;->getFirebaseApplicationContext()Landroid/content/Context;
 HSPLcom/google/firebase/perf/config/DeviceCacheManager;->getInstance()Lcom/google/firebase/perf/config/DeviceCacheManager;
 HSPLcom/google/firebase/perf/config/DeviceCacheManager;->getLong(Ljava/lang/String;)Lcom/google/firebase/perf/util/Optional;
 HSPLcom/google/firebase/perf/config/DeviceCacheManager;->getString(Ljava/lang/String;)Lcom/google/firebase/perf/util/Optional;
@@ -21000,7 +21005,7 @@ HSPLkotlin/coroutines/AbstractCoroutineContextKey;-><init>(Lkotlin/coroutines/Co
 Lkotlin/coroutines/CombinedContext;
 HSPLkotlin/coroutines/CombinedContext;-><init>(Lkotlin/coroutines/CoroutineContext;Lkotlin/coroutines/CoroutineContext$Element;)V
 HSPLkotlin/coroutines/CombinedContext;->fold(Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-HSPLkotlin/coroutines/CombinedContext;->get(Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+HPLkotlin/coroutines/CombinedContext;->get(Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
 HSPLkotlin/coroutines/CombinedContext;->minusKey(Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 HSPLkotlin/coroutines/CombinedContext;->plus(Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 Lkotlin/coroutines/Continuation;
@@ -21702,7 +21707,6 @@ Lkotlinx/coroutines/IncompleteStateBox;
 Lkotlinx/coroutines/InvokeOnCancel;
 HSPLkotlinx/coroutines/InvokeOnCancel;-><init>(Lkotlin/jvm/functions/Function1;)V
 HSPLkotlinx/coroutines/InvokeOnCancel;->invoke(Ljava/lang/Throwable;)V
-Lkotlinx/coroutines/InvokeOnCancelling;
 Lkotlinx/coroutines/InvokeOnCompletion;
 HSPLkotlinx/coroutines/InvokeOnCompletion;-><init>(Lkotlin/jvm/functions/Function1;)V
 Lkotlinx/coroutines/Job;
@@ -22568,7 +22572,6 @@ HSPLkotlinx/coroutines/internal/MainDispatcherLoader;->loadMainDispatcher()Lkotl
 Lkotlinx/coroutines/internal/MainDispatchersKt;
 HSPLkotlinx/coroutines/internal/MainDispatchersKt;-><clinit>()V
 HSPLkotlinx/coroutines/internal/MainDispatchersKt;->tryCreateDispatcher(Lkotlinx/coroutines/internal/MainDispatcherFactory;Ljava/util/List;)Lkotlinx/coroutines/MainCoroutineDispatcher;
-Lkotlinx/coroutines/internal/OnUndeliveredElementKt;
 Lkotlinx/coroutines/internal/OpDescriptor;
 HSPLkotlinx/coroutines/internal/OpDescriptor;-><init>()V
 Lkotlinx/coroutines/internal/Removed;
@@ -22791,6 +22794,7 @@ HSPLokio/Buffer;->readByteArray(J)[B
 HSPLokio/Buffer;->readByteString()Lokio/ByteString;
 HSPLokio/Buffer;->readFully([B)V
 HSPLokio/Buffer;->readInt()I
+HPLokio/Buffer;->readUtf8(J)Ljava/lang/String;
 HPLokio/Buffer;->selectPrefix(Lokio/Options;Z)I
 HSPLokio/Buffer;->size()J
 HSPLokio/Buffer;->writableSegment(I)Lokio/Segment;
@@ -22867,7 +22871,7 @@ HSPLokio/Timeout$1;-><init>()V
 Lokio/Util;
 HSPLokio/Util;-><clinit>()V
 HSPLokio/Util;->arrayRangeEquals([BI[BII)Z
-HPLokio/Util;->checkOffsetAndCount(JJJ)V
+HSPLokio/Util;->checkOffsetAndCount(JJJ)V
 Lru/resodostudios/cashsense/ComposableSingletons$MainActivityKt;
 HSPLru/resodostudios/cashsense/ComposableSingletons$MainActivityKt;-><clinit>()V
 HSPLru/resodostudios/cashsense/ComposableSingletons$MainActivityKt;-><init>()V
