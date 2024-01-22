@@ -29,9 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -85,7 +86,7 @@ internal fun EditSubscriptionScreen(
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(
-                                    painter = painterResource(CsIcons.ArrowBack),
+                                    imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
                                     contentDescription = null
                                 )
                             }
@@ -109,7 +110,7 @@ internal fun EditSubscriptionScreen(
                                 enabled = title.isNotBlank() && amount.validateAmount().second
                             ) {
                                 Icon(
-                                    painter = painterResource(CsIcons.Confirm),
+                                    imageVector = ImageVector.vectorResource(CsIcons.Confirm),
                                     contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
                                 )
                             }
@@ -168,7 +169,7 @@ internal fun EditSubscriptionScreen(
                                 trailingIcon = {
                                     IconButton(onClick = { openDialog = true }) {
                                         Icon(
-                                            painter = painterResource(CsIcons.Calendar),
+                                            imageVector = ImageVector.vectorResource(CsIcons.Calendar),
                                             contentDescription = null
                                         )
                                     }

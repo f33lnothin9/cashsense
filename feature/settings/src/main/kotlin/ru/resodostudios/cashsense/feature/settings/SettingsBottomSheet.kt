@@ -28,10 +28,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -123,7 +124,7 @@ private fun ColumnScope.SettingsPanel(
             },
             leadingContent = {
                 Icon(
-                    painter = painterResource(CsIcons.FormatPaint),
+                    imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
                     contentDescription = null
                 )
             },
@@ -134,7 +135,7 @@ private fun ColumnScope.SettingsPanel(
                     thumbContent = if (settings.useDynamicColor) {
                         {
                             Icon(
-                                painter = painterResource(CsIcons.Confirm),
+                                imageVector = ImageVector.vectorResource(CsIcons.Confirm),
                                 contentDescription = null,
                                 modifier = Modifier.size(SwitchDefaults.IconSize)
                             )
@@ -178,7 +179,7 @@ private fun ColumnScope.SettingsPanel(
         headlineContent = { Text(text = stringResource(R.string.feature_settings_privacy_policy)) },
         leadingContent = {
             Icon(
-                painter = painterResource(CsIcons.Policy),
+                imageVector = ImageVector.vectorResource(CsIcons.Policy),
                 contentDescription = null
             )
         },
@@ -189,7 +190,7 @@ private fun ColumnScope.SettingsPanel(
         headlineContent = { Text(text = stringResource(R.string.feature_settings_licenses)) },
         leadingContent = {
             Icon(
-                painter = painterResource(CsIcons.HistoryEdu),
+                imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
                 contentDescription = null
             )
         },

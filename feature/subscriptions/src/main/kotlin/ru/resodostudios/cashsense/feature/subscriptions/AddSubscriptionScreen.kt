@@ -30,8 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,10 @@ internal fun AddSubscriptionScreen(
                 title = { Text(text = stringResource(R.string.feature_subscriptions_new_subscription)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(painter = painterResource(CsIcons.ArrowBack), contentDescription = null)
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                            contentDescription = null
+                        )
                     }
                 },
                 actions = {
@@ -85,7 +89,7 @@ internal fun AddSubscriptionScreen(
                         enabled = subscriptionState.title.isNotBlank() && subscriptionState.amount.validateAmount().second && subscriptionState.paymentDate.isNotBlank()
                     ) {
                         Icon(
-                            painter = painterResource(CsIcons.Confirm),
+                            imageVector = ImageVector.vectorResource(CsIcons.Confirm),
                             contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
                         )
                     }
@@ -160,7 +164,7 @@ internal fun AddSubscriptionScreen(
                     trailingIcon = {
                         IconButton(onClick = { openDialog = true }) {
                             Icon(
-                                painter = painterResource(CsIcons.Calendar),
+                                imageVector = ImageVector.vectorResource(CsIcons.Calendar),
                                 contentDescription = null
                             )
                         }

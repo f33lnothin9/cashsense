@@ -17,8 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -84,10 +85,10 @@ fun CsApp(
                     selected = isSelected,
                     icon = {
                         Icon(
-                            painter = if (isSelected) {
-                                painterResource(destination.selectedIcon)
+                            imageVector = if (isSelected) {
+                                ImageVector.vectorResource(destination.selectedIcon)
                             } else {
-                                painterResource(destination.unselectedIcon)
+                                ImageVector.vectorResource(destination.unselectedIcon)
                             },
                             contentDescription = null
                         )
@@ -117,7 +118,7 @@ fun CsApp(
                             onClick = { showAddWalletDialog = true }
                         ) {
                             Icon(
-                                painter = painterResource(CsIcons.Wallet),
+                                imageVector = ImageVector.vectorResource(CsIcons.Wallet),
                                 contentDescription = null
                             )
                             Text(
@@ -132,7 +133,7 @@ fun CsApp(
                             onClick = { showAddCategoryDialog = true }
                         ) {
                             Icon(
-                                painter = painterResource(CsIcons.Add),
+                                imageVector = ImageVector.vectorResource(CsIcons.Add),
                                 contentDescription = stringResource(categoriesR.string.add_category_icon_description)
                             )
                         }
@@ -143,7 +144,7 @@ fun CsApp(
                             onClick = { appState.navController.navigateToAddSubscription() }
                         ) {
                             Icon(
-                                painter = painterResource(CsIcons.Add),
+                                imageVector = ImageVector.vectorResource(CsIcons.Add),
                                 contentDescription = stringResource(subscriptionsR.string.feature_subscriptions_add_subscription_icon_description)
                             )
                         }
