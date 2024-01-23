@@ -37,7 +37,6 @@ class SubscriptionsViewModel @Inject constructor(
 
 sealed interface SubscriptionsUiState {
     data object Loading : SubscriptionsUiState
-
     data class Success(
         val subscriptions: List<Subscription>
     ) : SubscriptionsUiState

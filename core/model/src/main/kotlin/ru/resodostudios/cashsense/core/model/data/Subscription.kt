@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.util.UUID
 
 data class Subscription(
-    val subscriptionId: UUID = UUID.randomUUID(),
+    val subscriptionId: UUID,
     val title: String,
     val amount: BigDecimal,
     val currency: String,

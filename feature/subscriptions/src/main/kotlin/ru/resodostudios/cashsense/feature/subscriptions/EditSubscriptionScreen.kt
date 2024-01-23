@@ -26,7 +26,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,12 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
-import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
-import java.math.BigDecimal
 
 @Composable
 internal fun EditSubscriptionRoute(
@@ -56,7 +52,7 @@ internal fun EditSubscriptionRoute(
     val subscriptionState by viewModel.subscriptionUiState.collectAsStateWithLifecycle()
     EditSubscriptionScreen(
         onBackClick = onBackClick,
-        onConfirmClick = viewModel::upsertSubscription,
+        onSubscriptionEvent = viewModel::onSubscriptionEvent,
         subscriptionState = subscriptionState
     )
 }
@@ -65,160 +61,144 @@ internal fun EditSubscriptionRoute(
 @Composable
 internal fun EditSubscriptionScreen(
     onBackClick: () -> Unit,
-    onConfirmClick: (Subscription) -> Unit,
+    onSubscriptionEvent: (SubscriptionEvent) -> Unit,
     subscriptionState: SubscriptionUiState
 ) {
-    when (subscriptionState) {
-        SubscriptionUiState.Loading -> LoadingState()
-        is SubscriptionUiState.Success -> {
-            val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-            var title by rememberSaveable { mutableStateOf(subscriptionState.subscription.title) }
-            var amount by rememberSaveable { mutableStateOf(subscriptionState.subscription.amount.toString()) }
-            var currency by rememberSaveable { mutableStateOf(subscriptionState.subscription.currency) }
-            var paymentDate by rememberSaveable { mutableStateOf(subscriptionState.subscription.paymentDate.toString()) }
-
-            Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = stringResource(R.string.feature_subscriptions_edit_subscription)) },
-                        navigationIcon = {
-                            IconButton(onClick = onBackClick) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(R.string.feature_subscriptions_edit_subscription)) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                            contentDescription = null
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            onSubscriptionEvent(SubscriptionEvent.Confirm)
+                            onBackClick()
+                        },
+                        enabled = subscriptionState.title.isNotBlank() && subscriptionState.amount.validateAmount().second && subscriptionState.paymentDate.isNotBlank()
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Confirm),
+                            contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
+                        )
+                    }
+                }
+            )
+        },
+        contentWindowInsets = WindowInsets.waterfall,
+        content = { paddingValues ->
+            val paymentDatePickerState = rememberDatePickerState()
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(150.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = paddingValues,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                item(
+                    span = { GridItemSpan(2) }
+                ) {
+                    OutlinedTextField(
+                        value = subscriptionState.title,
+                        onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateTitle(it)) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title)) },
+                        placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title) + "*") },
+                        supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = subscriptionState.amount,
+                        onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateAmount(it.validateAmount().first)) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount)) },
+                        placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount) + "*") },
+                        supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
+                        maxLines = 1
+                    )
+                }
+                item {
+                    var openDialog by remember { mutableStateOf(false) }
+                    OutlinedTextField(
+                        value = if (subscriptionState.paymentDate.isNotEmpty()) {
+                            formattedDate(subscriptionState.paymentDate.toInstant())
+                        } else {
+                            stringResource(ru.resodostudios.cashsense.core.ui.R.string.none)
+                        },
+                        onValueChange = { },
+                        readOnly = true,
+                        label = { Text(text = stringResource(R.string.feature_subscriptions_payment_date)) },
+                        placeholder = { Text(text = "${stringResource(R.string.feature_subscriptions_payment_date)}*") },
+                        supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
+                        trailingIcon = {
+                            IconButton(onClick = { openDialog = true }) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                                    imageVector = ImageVector.vectorResource(CsIcons.Calendar),
                                     contentDescription = null
                                 )
                             }
                         },
-                        actions = {
-                            IconButton(
-                                onClick = {
-                                    onConfirmClick(
-                                        Subscription(
-                                            subscriptionId = subscriptionState.subscription.subscriptionId,
-                                            title = title,
-                                            amount = BigDecimal(amount),
-                                            currency = currency,
-                                            paymentDate = paymentDate.toInstant(),
-                                            notificationDate = null,
-                                            repeatingInterval = null
-                                        )
-                                    )
-                                    onBackClick()
-                                },
-                                enabled = title.isNotBlank() && amount.validateAmount().second
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(CsIcons.Confirm),
-                                    contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
-                                )
-                            }
-                        }
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
                     )
-                },
-                contentWindowInsets = WindowInsets.waterfall,
-                content = { paddingValues ->
-                    val paymentDatePickerState = rememberDatePickerState()
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(150.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = paddingValues,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        item(
-                            span = { GridItemSpan(2) }
-                        ) {
-                            OutlinedTextField(
-                                value = title,
-                                onValueChange = { title = it },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Next
-                                ),
-                                label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title)) },
-                                placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title) + "*") },
-                                supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                                maxLines = 1,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                    if (openDialog) {
+                        val confirmEnabled = remember {
+                            derivedStateOf { paymentDatePickerState.selectedDateMillis != null }
                         }
-                        item {
-                            OutlinedTextField(
-                                value = amount,
-                                onValueChange = { amount = amount.validateAmount().first },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Decimal
-                                ),
-                                label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount)) },
-                                placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount) + "*") },
-                                supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                                maxLines = 1
-                            )
-                        }
-                        item {
-                            var openDialog by remember { mutableStateOf(false) }
-                            OutlinedTextField(
-                                value = formattedDate(paymentDate.toInstant()),
-                                onValueChange = { },
-                                readOnly = true,
-                                label = { Text(text = stringResource(R.string.feature_subscriptions_payment_date)) },
-                                placeholder = { Text(text = "${stringResource(R.string.feature_subscriptions_payment_date)}*") },
-                                supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                                trailingIcon = {
-                                    IconButton(onClick = { openDialog = true }) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(CsIcons.Calendar),
-                                            contentDescription = null
-                                        )
-                                    }
-                                },
-                                maxLines = 1,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            if (openDialog) {
-                                val confirmEnabled = remember {
-                                    derivedStateOf { paymentDatePickerState.selectedDateMillis != null }
-                                }
-                                DatePickerDialog(
-                                    onDismissRequest = { openDialog = false },
-                                    confirmButton = {
-                                        TextButton(
-                                            onClick = {
-                                                openDialog = false
-                                                paymentDate = Instant
-                                                    .fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
+                        DatePickerDialog(
+                            onDismissRequest = { openDialog = false },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        openDialog = false
+                                        onSubscriptionEvent(
+                                            SubscriptionEvent.UpdatePaymentDate(
+                                                Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
                                                     .toString()
-                                            },
-                                            enabled = confirmEnabled.value
-                                        ) {
-                                            Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.core_ui_ok))
-                                        }
+                                            )
+                                        )
                                     },
-                                    dismissButton = {
-                                        TextButton(
-                                            onClick = { openDialog = false }
-                                        ) {
-                                            Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.core_ui_cancel))
-                                        }
-                                    }
+                                    enabled = confirmEnabled.value
                                 ) {
-                                    DatePicker(state = paymentDatePickerState)
+                                    Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.core_ui_ok))
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = { openDialog = false }
+                                ) {
+                                    Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.core_ui_cancel))
                                 }
                             }
-                        }
-                        item {
-                            CurrencyExposedDropdownMenuBox(
-                                currencyName = currency,
-                                onCurrencyClick = {
-                                    currency = it.name
-                                }
-                            )
+                        ) {
+                            DatePicker(state = paymentDatePickerState)
                         }
                     }
                 }
-            )
+                item {
+                    CurrencyExposedDropdownMenuBox(
+                        currencyName = subscriptionState.currency,
+                        onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) }
+                    )
+                }
+            }
         }
-    }
+    )
 }

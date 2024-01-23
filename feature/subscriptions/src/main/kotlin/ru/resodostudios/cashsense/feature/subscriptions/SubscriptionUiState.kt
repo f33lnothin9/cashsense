@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.feature.subscriptions
 
-data class SubscriptionState(
+data class SubscriptionUiState(
     val title: String = "",
     val amount: String = "",
     val paymentDate: String = "",

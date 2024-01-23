@@ -11,7 +11,6 @@ import androidx.navigation.navigation
 import ru.resodostudios.cashsense.feature.subscriptions.AddSubscriptionRoute
 import ru.resodostudios.cashsense.feature.subscriptions.EditSubscriptionRoute
 import ru.resodostudios.cashsense.feature.subscriptions.SubscriptionsRoute
-import java.util.UUID
 
 internal const val SUBSCRIPTION_ID_ARG = "subscriptionId"
 
@@ -22,7 +21,7 @@ const val EDIT_SUBSCRIPTION_ROUTE = "edit_subscription_route"
 
 internal class SubscriptionArgs(val subscriptionId: String) {
     constructor(savedStateHandle: SavedStateHandle) :
-            this(savedStateHandle.get<String>(SUBSCRIPTION_ID_ARG) ?: UUID.randomUUID().toString())
+            this(savedStateHandle.get<String>(SUBSCRIPTION_ID_ARG) ?: "")
 }
 
 fun NavController.navigateToSubscriptionsGraph(navOptions: NavOptions? = null) =

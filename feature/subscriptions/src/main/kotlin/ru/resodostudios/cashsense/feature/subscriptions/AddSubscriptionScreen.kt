@@ -50,7 +50,7 @@ internal fun AddSubscriptionRoute(
     onBackClick: () -> Unit,
     viewModel: SubscriptionViewModel = hiltViewModel()
 ) {
-    val subscriptionState by viewModel.subscriptionState.collectAsStateWithLifecycle()
+    val subscriptionState by viewModel.subscriptionUiState.collectAsStateWithLifecycle()
     AddSubscriptionScreen(
         subscriptionState = subscriptionState,
         onSubscriptionEvent = viewModel::onSubscriptionEvent,
@@ -64,7 +64,7 @@ internal fun AddSubscriptionRoute(
 )
 @Composable
 internal fun AddSubscriptionScreen(
-    subscriptionState: SubscriptionState,
+    subscriptionState: SubscriptionUiState,
     onSubscriptionEvent: (SubscriptionEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
