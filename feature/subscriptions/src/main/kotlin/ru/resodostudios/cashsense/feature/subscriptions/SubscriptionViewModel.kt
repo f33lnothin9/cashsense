@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toInstant
@@ -22,26 +24,26 @@ class SubscriptionViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val subscriptionArgs: SubscriptionArgs = SubscriptionArgs(savedStateHandle)
-
     private val subscriptionId: String = subscriptionArgs.subscriptionId
 
     private val _subscriptionUiState = MutableStateFlow(SubscriptionUiState())
-
     val subscriptionUiState = _subscriptionUiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            if (subscriptionId.isNotBlank()) {
-                subscriptionsRepository.getSubscription(UUID.fromString(subscriptionId)).collect {
-                    _subscriptionUiState.emit(
-                        SubscriptionUiState(
-                            title = it.title,
-                            amount = it.amount.toString(),
-                            paymentDate = it.paymentDate.toString(),
-                            currency = it.currency
+        if (subscriptionId.isNotBlank()) {
+            viewModelScope.launch {
+                subscriptionsRepository.getSubscription(UUID.fromString(subscriptionId))
+                    .onEach {
+                        _subscriptionUiState.emit(
+                            SubscriptionUiState(
+                                title = it.title,
+                                amount = it.amount.toString(),
+                                paymentDate = it.paymentDate.toString(),
+                                currency = it.currency
+                            )
                         )
-                    )
-                }
+                    }
+                    .collect()
             }
         }
     }
