@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.ui
 
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -36,7 +36,6 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
-import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 import ru.resodostudios.cashsense.feature.subscription.R as subscriptionsR
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
@@ -99,9 +98,10 @@ fun CsApp(
             }
         }
     ) {
+        val destination = appState.currentTopLevelDestination
+
         Scaffold(
             topBar = {
-                val destination = appState.currentTopLevelDestination
                 if (destination != null) {
                     CsTopAppBar(
                         titleRes = destination.titleTextId,
@@ -112,10 +112,13 @@ fun CsApp(
                 }
             },
             floatingActionButton = {
-                when (appState.currentTopLevelDestination) {
+                when (destination) {
                     HOME -> {
                         ExtendedFloatingActionButton(
-                            onClick = { showAddWalletDialog = true }
+                            onClick = { showAddWalletDialog = true },
+                            modifier = Modifier.then(
+                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
+                            )
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Wallet),
@@ -130,18 +133,24 @@ fun CsApp(
 
                     CATEGORIES -> {
                         FloatingActionButton(
-                            onClick = { showAddCategoryDialog = true }
+                            onClick = { showAddCategoryDialog = true },
+                            modifier = Modifier.then(
+                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
+                            )
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                contentDescription = stringResource(categoriesR.string.add_category_icon_description)
+                                contentDescription = stringResource(ru.resodostudios.cashsense.feature.categories.R.string.add_category_icon_description)
                             )
                         }
                     }
 
                     SUBSCRIPTIONS -> {
                         FloatingActionButton(
-                            onClick = { appState.navController.navigateToSubscription(" ") }
+                            onClick = { appState.navController.navigateToSubscription(" ") },
+                            modifier = Modifier.then(
+                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
+                            )
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Add),
@@ -153,11 +162,7 @@ fun CsApp(
                     null -> {}
                 }
             },
-            contentWindowInsets = if (appState.navigationSuiteType == NavigationSuiteType.NavigationBar) {
-                WindowInsets(0, 0, 0, 0)
-            } else {
-                WindowInsets.navigationBars
-            }
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { padding ->
             CsNavHost(
                 appState = appState,
