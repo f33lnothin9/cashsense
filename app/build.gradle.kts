@@ -57,6 +57,7 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.categories)
     implementation(projects.feature.subscriptions)
+    implementation(projects.feature.subscription)
     implementation(projects.feature.transaction)
     implementation(projects.feature.wallet)
     implementation(projects.feature.settings)

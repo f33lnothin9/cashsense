@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.subscriptions
+package ru.resodostudios.cashsense.feature.subscription
 
 sealed interface SubscriptionEvent {
     data class UpdateTitle(val title: String) : SubscriptionEvent

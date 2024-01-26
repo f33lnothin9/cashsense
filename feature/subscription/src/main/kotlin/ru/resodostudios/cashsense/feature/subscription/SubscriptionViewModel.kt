@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.subscriptions
+package ru.resodostudios.cashsense.feature.subscription
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.SubscriptionArgs
+import ru.resodostudios.cashsense.feature.subscription.navigation.SubscriptionArgs
 import java.util.UUID
 import javax.inject.Inject
 

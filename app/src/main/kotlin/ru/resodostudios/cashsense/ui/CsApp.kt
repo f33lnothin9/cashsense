@@ -29,7 +29,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscription
+import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -37,7 +37,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
-import ru.resodostudios.cashsense.feature.subscriptions.R as subscriptionsR
+import ru.resodostudios.cashsense.feature.subscription.R as subscriptionsR
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
@@ -145,7 +145,7 @@ fun CsApp(
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                contentDescription = stringResource(subscriptionsR.string.feature_subscriptions_add_subscription_icon_description)
+                                contentDescription = stringResource(subscriptionsR.string.feature_subscription_add_subscription_icon_description)
                             )
                         }
                     }

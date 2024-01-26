@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.subscriptions
+package ru.resodostudios.cashsense.feature.subscription
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,7 +64,7 @@ internal fun SubscriptionScreen(
     Scaffold(
         topBar = {
             val titleRes =
-                if (subscriptionUiState.isEditing) R.string.feature_subscriptions_edit_subscription else R.string.feature_subscriptions_new_subscription
+                if (subscriptionUiState.isEditing) R.string.feature_subscription_edit_subscription else R.string.feature_subscription_new_subscription
 
             TopAppBar(
                 title = { Text(text = stringResource(titleRes)) },
@@ -88,7 +88,7 @@ internal fun SubscriptionScreen(
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Confirm),
-                            contentDescription = stringResource(R.string.feature_subscriptions_add_subscription_icon_description)
+                            contentDescription = stringResource(R.string.feature_subscription_add_subscription_icon_description)
                         )
                     }
                 }
@@ -141,8 +141,8 @@ internal fun SubscriptionScreen(
                     },
                     onValueChange = { },
                     readOnly = true,
-                    label = { Text(text = stringResource(R.string.feature_subscriptions_payment_date)) },
-                    placeholder = { Text(text = "${stringResource(R.string.feature_subscriptions_payment_date)}*") },
+                    label = { Text(text = stringResource(R.string.feature_subscription_payment_date)) },
+                    placeholder = { Text(text = "${stringResource(R.string.feature_subscription_payment_date)}*") },
                     supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
                     trailingIcon = {
                         IconButton(onClick = { openDialog = true }) {

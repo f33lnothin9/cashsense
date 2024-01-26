@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.categories.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_GRAPH_ROUTE_PATTERN
 import ru.resodostudios.cashsense.feature.home.navigation.homeGraph
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscription
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionScreen
+import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
+import ru.resodostudios.cashsense.feature.subscription.navigation.subscriptionScreen
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsGraph
 import ru.resodostudios.cashsense.feature.wallet.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.navigation.walletScreen
@@ -20,6 +20,7 @@ fun CsNavHost(
     startDestination: String = HOME_GRAPH_ROUTE_PATTERN,
 ) {
     val navController = appState.navController
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
