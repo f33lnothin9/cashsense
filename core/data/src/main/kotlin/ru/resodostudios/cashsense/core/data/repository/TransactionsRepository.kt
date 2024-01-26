@@ -5,8 +5,7 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import java.util.UUID
 
-interface TransactionRepository {
-
+interface TransactionsRepository {
     fun getTransaction(transactionId: String): Flow<Transaction>
 
     suspend fun upsertTransaction(transaction: Transaction)

@@ -13,17 +13,17 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 import javax.inject.Inject
 
 class OfflineWalletsRepository @Inject constructor(
-    private val walletDao: WalletDao
+    private val dao: WalletDao
 ) : WalletsRepository {
     override fun getWalletWithTransactions(walletId: Long): Flow<WalletWithTransactionsAndCategories> =
-        walletDao.getWalletWithTransactionsEntity(walletId).map { it.asExternalModel() }
+        dao.getWalletWithTransactionsEntity(walletId).map { it.asExternalModel() }
 
     override fun getWalletsWithTransactionsAndCategories(): Flow<List<WalletWithTransactionsAndCategories>> =
-        walletDao.getWalletWithTransactionsAndCategoriesEntities().map { it.map(WalletWithTransactionsAndCategoriesEntity::asExternalModel) }
+        dao.getWalletWithTransactionsAndCategoriesEntities().map { it.map(WalletWithTransactionsAndCategoriesEntity::asExternalModel) }
 
     override suspend fun upsertWallet(wallet: Wallet) =
-        walletDao.upsertWallet(wallet.asEntity())
+        dao.upsertWallet(wallet.asEntity())
 
     override suspend fun deleteWalletWithTransactions(wallet: Wallet, transactions: List<Transaction>) =
-        walletDao.deleteWalletWithTransactions(wallet.asEntity(), transactions.map { it.asEntity() })
+        dao.deleteWalletWithTransactions(wallet.asEntity(), transactions.map { it.asEntity() })
 }

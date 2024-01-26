@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.domain.DeleteWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val walletsRepository: WalletsRepository
+    walletsRepository: WalletsRepository,
+    private val deleteWalletUseCase: DeleteWalletUseCase
 ) : ViewModel() {
 
     val walletsUiState: StateFlow<WalletsUiState> =
@@ -30,15 +32,9 @@ class HomeViewModel @Inject constructor(
                 initialValue = WalletsUiState.Loading
             )
 
-    fun upsertWallet(wallet: Wallet) {
+    fun deleteWallet(wallet: Wallet, transactions: List<Transaction>) {
         viewModelScope.launch {
-            walletsRepository.upsertWallet(wallet)
-        }
-    }
-
-    fun deleteWalletWithTransactions(wallet: Wallet, transactions: List<Transaction>) {
-        viewModelScope.launch {
-            walletsRepository.deleteWalletWithTransactions(wallet, transactions)
+            deleteWalletUseCase.invoke(wallet, transactions)
         }
     }
 }

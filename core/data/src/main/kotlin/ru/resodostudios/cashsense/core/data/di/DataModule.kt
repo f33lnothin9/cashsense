@@ -6,7 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
-import ru.resodostudios.cashsense.core.data.repository.TransactionRepository
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineCategoriesRepository
@@ -27,7 +27,7 @@ interface DataModule {
     @Binds
     fun bindTransactionsRepository(
         offlineTransactionsRepository: OfflineTransactionRepository
-    ): TransactionRepository
+    ): TransactionsRepository
 
     @Binds
     fun bindWalletsRepository(
