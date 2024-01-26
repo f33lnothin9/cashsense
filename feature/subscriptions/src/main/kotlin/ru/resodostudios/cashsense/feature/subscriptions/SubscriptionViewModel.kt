@@ -36,6 +36,7 @@ class SubscriptionViewModel @Inject constructor(
                     .onEach {
                         _subscriptionUiState.emit(
                             SubscriptionUiState(
+                                isEditing = true,
                                 title = it.title,
                                 amount = it.amount.toString(),
                                 paymentDate = it.paymentDate.toString(),
@@ -52,7 +53,9 @@ class SubscriptionViewModel @Inject constructor(
         when (subscriptionEvent) {
             SubscriptionEvent.Confirm -> {
                 val subscription = Subscription(
-                    subscriptionId = if (subscriptionId.isBlank()) UUID.randomUUID() else UUID.fromString(subscriptionId),
+                    subscriptionId = if (subscriptionId.isBlank()) UUID.randomUUID() else UUID.fromString(
+                        subscriptionId
+                    ),
                     title = _subscriptionUiState.value.title,
                     amount = _subscriptionUiState.value.amount.toBigDecimal(),
                     paymentDate = _subscriptionUiState.value.paymentDate.toInstant(),
@@ -96,5 +99,6 @@ data class SubscriptionUiState(
     val title: String = "",
     val amount: String = "",
     val paymentDate: String = "",
-    val currency: String = "USD"
+    val currency: String = "USD",
+    val isEditing: Boolean = false
 )

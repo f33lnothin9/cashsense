@@ -29,7 +29,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToAddSubscription
+import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscription
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -141,7 +141,7 @@ fun CsApp(
 
                     SUBSCRIPTIONS -> {
                         FloatingActionButton(
-                            onClick = { appState.navController.navigateToAddSubscription() }
+                            onClick = { appState.navController.navigateToSubscription(" ") }
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Add),

@@ -8,16 +8,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import ru.resodostudios.cashsense.feature.subscriptions.AddSubscriptionRoute
-import ru.resodostudios.cashsense.feature.subscriptions.EditSubscriptionRoute
+import ru.resodostudios.cashsense.feature.subscriptions.SubscriptionRoute
 import ru.resodostudios.cashsense.feature.subscriptions.SubscriptionsRoute
 
 internal const val SUBSCRIPTION_ID_ARG = "subscriptionId"
 
 private const val SUBSCRIPTIONS_GRAPH_ROUTE_PATTERN = "subscriptions_graph"
 const val SUBSCRIPTIONS_ROUTE = "subscriptions_route"
-const val ADD_SUBSCRIPTION_ROUTE = "add_subscription_route"
-const val EDIT_SUBSCRIPTION_ROUTE = "edit_subscription_route"
+const val SUBSCRIPTION_ROUTE = "subscription_route"
 
 internal class SubscriptionArgs(val subscriptionId: String) {
     constructor(savedStateHandle: SavedStateHandle) :
@@ -27,11 +25,7 @@ internal class SubscriptionArgs(val subscriptionId: String) {
 fun NavController.navigateToSubscriptionsGraph(navOptions: NavOptions? = null) =
     navigate(SUBSCRIPTIONS_GRAPH_ROUTE_PATTERN, navOptions)
 
-fun NavController.navigateToAddSubscription() = navigate(ADD_SUBSCRIPTION_ROUTE) {
-    launchSingleTop = true
-}
-
-fun NavController.navigateToEditSubscription(subscriptionId: String) = navigate("$EDIT_SUBSCRIPTION_ROUTE/$subscriptionId") {
+fun NavController.navigateToSubscription(subscriptionId: String) = navigate("$SUBSCRIPTION_ROUTE/$subscriptionId") {
     launchSingleTop = true
 }
 
@@ -54,28 +48,16 @@ fun NavGraphBuilder.subscriptionsGraph(
     }
 }
 
-fun NavGraphBuilder.addSubscriptionScreen(
+fun NavGraphBuilder.subscriptionScreen(
     onBackClick: () -> Unit
 ) {
     composable(
-        route = ADD_SUBSCRIPTION_ROUTE
-    ) {
-        AddSubscriptionRoute(
-            onBackClick = onBackClick
-        )
-    }
-}
-
-fun NavGraphBuilder.editSubscriptionScreen(
-    onBackClick: () -> Unit
-) {
-    composable(
-        route = "$EDIT_SUBSCRIPTION_ROUTE/{$SUBSCRIPTION_ID_ARG}",
+        route = "$SUBSCRIPTION_ROUTE/{$SUBSCRIPTION_ID_ARG}",
         arguments = listOf(
             navArgument(SUBSCRIPTION_ID_ARG) { type = NavType.StringType }
         )
     ) {
-        EditSubscriptionRoute(
+        SubscriptionRoute(
             onBackClick = onBackClick
         )
     }
