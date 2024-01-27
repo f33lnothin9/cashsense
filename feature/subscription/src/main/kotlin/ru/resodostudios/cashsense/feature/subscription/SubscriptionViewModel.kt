@@ -32,7 +32,7 @@ class SubscriptionViewModel @Inject constructor(
     init {
         if (subscriptionId != null) {
             viewModelScope.launch {
-                subscriptionsRepository.getSubscription(UUID.fromString(subscriptionId))
+                subscriptionsRepository.getSubscription(subscriptionId)
                     .onEach {
                         _subscriptionUiState.emit(
                             SubscriptionUiState(
@@ -53,9 +53,7 @@ class SubscriptionViewModel @Inject constructor(
         when (subscriptionEvent) {
             SubscriptionEvent.Confirm -> {
                 val subscription = Subscription(
-                    subscriptionId = if (subscriptionId == null) UUID.randomUUID() else UUID.fromString(
-                        subscriptionId
-                    ),
+                    id = subscriptionId ?: UUID.randomUUID().toString(),
                     title = _subscriptionUiState.value.title,
                     amount = _subscriptionUiState.value.amount.toBigDecimal(),
                     paymentDate = _subscriptionUiState.value.paymentDate.toInstant(),

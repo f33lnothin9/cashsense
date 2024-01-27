@@ -8,14 +8,13 @@ import ru.resodostudios.cashsense.core.database.dao.SubscriptionDao
 import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import java.util.UUID
 import javax.inject.Inject
 
 class OfflineSubscriptionsRepository @Inject constructor(
     private val subscriptionDao: SubscriptionDao
 ) : SubscriptionsRepository {
-    override fun getSubscription(subscriptionId: UUID): Flow<Subscription> =
-        subscriptionDao.getSubscriptionEntity(subscriptionId).map { it.asExternalModel() }
+    override fun getSubscription(id: String): Flow<Subscription> =
+        subscriptionDao.getSubscriptionEntity(id).map { it.asExternalModel() }
 
     override fun getSubscriptions(): Flow<List<Subscription>> =
         subscriptionDao.getSubscriptionEntities().map { it.map(SubscriptionEntity::asExternalModel) }

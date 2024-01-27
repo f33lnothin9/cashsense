@@ -6,14 +6,13 @@ import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
-import java.util.UUID
 
 @Dao
 interface SubscriptionDao {
-    @Query("SELECT * FROM subscriptions WHERE subscriptionId = :subscriptionId")
-    fun getSubscriptionEntity(subscriptionId: UUID): Flow<SubscriptionEntity>
+    @Query("SELECT * FROM subscriptions WHERE id = :id")
+    fun getSubscriptionEntity(id: String): Flow<SubscriptionEntity>
 
-    @Query("SELECT * FROM subscriptions ORDER BY paymentDate DESC")
+    @Query("SELECT * FROM subscriptions ORDER BY payment_date DESC")
     fun getSubscriptionEntities(): Flow<List<SubscriptionEntity>>
 
     @Upsert

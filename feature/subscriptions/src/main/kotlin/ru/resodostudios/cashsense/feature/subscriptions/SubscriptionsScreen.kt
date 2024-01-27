@@ -64,7 +64,7 @@ internal fun SubscriptionsScreen(
                             },
                             trailingContent = {
                                 EditAndDeleteDropdownMenu(
-                                    onEdit = { onEdit(subscription.subscriptionId.toString()) },
+                                    onEdit = { onEdit(subscription.id) },
                                     onDelete = { onDelete(subscription) }
                                 )
                             }

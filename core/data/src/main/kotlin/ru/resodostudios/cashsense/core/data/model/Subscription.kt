@@ -4,7 +4,7 @@ import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
 import ru.resodostudios.cashsense.core.model.data.Subscription
 
 fun Subscription.asEntity() = SubscriptionEntity(
-    subscriptionId = subscriptionId,
+    id = id,
     title = title,
     amount = amount,
     currency = currency,
