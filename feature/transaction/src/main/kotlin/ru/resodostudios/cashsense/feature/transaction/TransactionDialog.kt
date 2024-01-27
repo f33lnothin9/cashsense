@@ -37,7 +37,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.validateAmount
@@ -56,20 +55,13 @@ fun AddTransactionDialog(
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+
     AddTransactionDialog(
         categoriesState = categoriesState,
         walletId = walletId,
         onDismiss = onDismiss,
         onConfirm = {
             transactionViewModel.upsertTransaction(it)
-            if (it.categoryOwnerId != null) {
-                transactionViewModel.upsertTransactionCategoryCrossRef(
-                    TransactionCategoryCrossRef(
-                        transactionId = it.transactionId,
-                        categoryId = it.categoryOwnerId!!
-                    )
-                )
-            }
             onDismiss()
         }
     )
@@ -161,21 +153,13 @@ fun EditTransactionDialog(
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+
     EditTransactionDialog(
         categoriesState = categoriesState,
         transactionWithCategory = transactionWithCategory,
         onDismiss = onDismiss,
         onConfirm = {
             transactionViewModel.upsertTransaction(it)
-            if (it.categoryOwnerId != null) {
-                transactionViewModel.deleteTransactionCategoryCrossRef(it.transactionId)
-                transactionViewModel.upsertTransactionCategoryCrossRef(
-                    TransactionCategoryCrossRef(
-                        transactionId = it.transactionId,
-                        categoryId = it.categoryOwnerId!!
-                    )
-                )
-            }
             onDismiss()
         }
     )
