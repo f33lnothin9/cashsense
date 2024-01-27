@@ -144,7 +144,7 @@ fun EditCategoryDialog(
         onConfirm = {
             onConfirm(
                 Category(
-                    categoryId = category.categoryId,
+                    id = category.id,
                     title = title,
                     iconRes = iconId
                 )

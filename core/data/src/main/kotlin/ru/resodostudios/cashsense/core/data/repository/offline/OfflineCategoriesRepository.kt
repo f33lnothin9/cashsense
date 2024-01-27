@@ -14,17 +14,17 @@ class OfflineCategoriesRepository @Inject constructor(
     private val dao: CategoryDao
 ) : CategoriesRepository {
 
-    override fun getCategory(categoryId: Long): Flow<Category> =
-        dao.getCategoryEntity(categoryId).map { it.asExternalModel() }
+    override fun getCategory(id: String): Flow<Category> =
+        dao.getCategoryEntity(id).map { it.asExternalModel() }
 
     override fun getCategories(): Flow<List<Category>> =
         dao.getCategoryEntities().map { it.map(CategoryEntity::asExternalModel) }
 
     override suspend fun upsertCategory(category: Category) =
-        dao.upsertCategory(category.asEntity())
+        dao.upsertCategory(category.asEntity()!!)
 
     override suspend fun deleteCategory(category: Category) {
-        dao.deleteCategory(category.asEntity())
-        dao.deleteCategoryFromTransactions(category.categoryId!!)
+        category.asEntity()?.let { dao.deleteCategory(it) }
+        dao.deleteCategoryFromTransactions(category.id)
     }
 }

@@ -39,14 +39,14 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 fun WalletCard(
     wallet: Wallet,
     transactions: List<Transaction>,
-    onWalletClick: (Long) -> Unit,
-    onTransactionCreate: (Long) -> Unit,
+    onWalletClick: (String) -> Unit,
+    onTransactionCreate: (String) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
-        onClick = { onWalletClick(wallet.walletId) },
+        onClick = { onWalletClick(wallet.id) },
         shape = RoundedCornerShape(20.dp),
         modifier = modifier
     ) {
@@ -88,7 +88,7 @@ fun WalletCard(
                 .fillMaxWidth()
         ) {
             Button(
-                onClick = { onTransactionCreate(wallet.walletId) }
+                onClick = { onTransactionCreate(wallet.id) }
             ) {
                 Text(text = stringResource(transactionR.string.add_transaction))
             }
@@ -202,6 +202,7 @@ fun WalletCardPreview() {
         Surface {
             WalletCard(
                 wallet = Wallet(
+                    id = "",
                     title = "Wallet 1",
                     startBalance = 1500.85,
                     currency = Currency.USD

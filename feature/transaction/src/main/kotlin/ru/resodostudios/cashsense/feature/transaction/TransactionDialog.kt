@@ -50,7 +50,7 @@ import ru.resodostudios.cashsense.feature.categories.R as categoriesR
 @Composable
 fun AddTransactionDialog(
     onDismiss: () -> Unit,
-    walletId: Long = 0,
+    walletId: String,
     transactionViewModel: TransactionViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel()
 ) {
@@ -71,7 +71,7 @@ fun AddTransactionDialog(
 @Composable
 fun AddTransactionDialog(
     categoriesState: CategoriesUiState,
-    walletId: Long = 0,
+    walletId: String,
     onDismiss: () -> Unit,
     onConfirm: (Transaction) -> Unit
 ) {
@@ -91,9 +91,9 @@ fun AddTransactionDialog(
             onConfirm = {
                 onConfirm(
                     Transaction(
-                        transactionId = UUID.randomUUID(),
+                        id = UUID.randomUUID().toString(),
                         walletOwnerId = walletId,
-                        categoryOwnerId = category.categoryId,
+                        categoryId = category.id,
                         description = description,
                         amount = amount.toDouble(),
                         date = Clock.System.now()
@@ -186,9 +186,9 @@ fun EditTransactionDialog(
             onConfirm = {
                 onConfirm(
                     Transaction(
-                        transactionId = transactionWithCategory.transaction.transactionId,
+                        id = transactionWithCategory.transaction.id,
                         walletOwnerId = transactionWithCategory.transaction.walletOwnerId,
-                        categoryOwnerId = category?.categoryId,
+                        categoryId = category?.id,
                         description = description,
                         amount = amount.toDouble(),
                         date = transactionWithCategory.transaction.date

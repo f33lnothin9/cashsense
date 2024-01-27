@@ -11,8 +11,8 @@ data class WalletWithTransactionsAndCategoriesEntity(
     val wallet: WalletEntity,
     @Relation(
         entity = TransactionEntity::class,
-        parentColumn = "walletId",
-        entityColumn = "walletOwnerId"
+        parentColumn = "id",
+        entityColumn = "wallet_owner_id"
     )
     val transactions: List<TransactionWithCategoryEntity>
 )

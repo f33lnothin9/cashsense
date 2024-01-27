@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -30,7 +29,7 @@ import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
 internal fun HomeRoute(
-    onWalletClick: (Long) -> Unit,
+    onWalletClick: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
@@ -45,16 +44,17 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    onWalletClick: (Long) -> Unit,
+    onWalletClick: (String) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
 
-    var walletId by rememberSaveable { mutableLongStateOf(0L) }
+    var walletId by rememberSaveable { mutableStateOf("") }
     var walletState by rememberSaveable {
         mutableStateOf(
             Wallet(
+                id = "",
                 title = "",
                 startBalance = 0.0,
                 currency = Currency.USD
@@ -109,14 +109,14 @@ internal fun HomeScreen(
 
 private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
-    onWalletClick: (Long) -> Unit,
-    onTransactionCreate: (Long) -> Unit,
+    onWalletClick: (String) -> Unit,
+    onTransactionCreate: (String) -> Unit,
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
     items(
         items = walletsWithTransactionsAndCategories,
-        key = { it.wallet.walletId },
+        key = { it.wallet.id },
         contentType = { "walletItem" }
     ) { walletWithTransactionsAndCategories ->
         WalletCard(

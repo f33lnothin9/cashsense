@@ -1,13 +1,20 @@
 package ru.resodostudios.cashsense.core.database.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
-import java.util.UUID
+import androidx.room.Index
 
 @Entity(
-    tableName = "transaction_category_cross_ref",
-    primaryKeys = ["transactionId", "categoryId"]
+    tableName = "transactions_categories",
+    primaryKeys = ["transaction_id", "category_id"],
+    indices = [
+        Index(value = ["transaction_id"]),
+        Index(value = ["category_id"])
+    ]
 )
 data class TransactionCategoryCrossRefEntity(
-    val transactionId: UUID,
-    val categoryId: Long
+    @ColumnInfo(name = "transaction_id")
+    val transactionId: String,
+    @ColumnInfo(name = "category_id")
+    val categoryId: String
 )

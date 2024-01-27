@@ -3,10 +3,9 @@ package ru.resodostudios.cashsense.core.data.repository
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
-import java.util.UUID
 
 interface TransactionsRepository {
-    fun getTransaction(transactionId: String): Flow<Transaction>
+    fun getTransaction(id: String): Flow<Transaction>
 
     suspend fun upsertTransaction(transaction: Transaction)
 
@@ -14,5 +13,5 @@ interface TransactionsRepository {
 
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef)
 
-    suspend fun deleteTransactionCategoryCrossRef(transactionId: UUID)
+    suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
 }

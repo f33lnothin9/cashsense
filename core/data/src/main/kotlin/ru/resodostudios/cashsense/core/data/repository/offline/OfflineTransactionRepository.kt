@@ -8,14 +8,13 @@ import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
-import java.util.UUID
 import javax.inject.Inject
 
 class OfflineTransactionRepository @Inject constructor(
     private val dao: TransactionDao
 ) : TransactionsRepository {
-    override fun getTransaction(transactionId: String): Flow<Transaction> =
-        dao.getTransactionEntity(transactionId).map { it.asExternalModel() }
+    override fun getTransaction(id: String): Flow<Transaction> =
+        dao.getTransactionEntity(id).map { it.asExternalModel() }
 
     override suspend fun upsertTransaction(transaction: Transaction) =
         dao.upsertTransaction(transaction.asEntity())
@@ -26,6 +25,6 @@ class OfflineTransactionRepository @Inject constructor(
     override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) =
         dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())
 
-    override suspend fun deleteTransactionCategoryCrossRef(transactionId: UUID) =
+    override suspend fun deleteTransactionCategoryCrossRef(transactionId: String) =
         dao.deleteTransactionCategoryCrossRef(transactionId)
 }

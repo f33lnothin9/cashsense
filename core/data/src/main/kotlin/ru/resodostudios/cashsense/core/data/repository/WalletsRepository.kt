@@ -7,7 +7,7 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 
 interface WalletsRepository {
 
-    fun getWalletWithTransactions(walletId: Long): Flow<WalletWithTransactionsAndCategories>
+    fun getWalletWithTransactions(id: String): Flow<WalletWithTransactionsAndCategories>
 
     fun getWalletsWithTransactionsAndCategories(): Flow<List<WalletWithTransactionsAndCategories>>
 

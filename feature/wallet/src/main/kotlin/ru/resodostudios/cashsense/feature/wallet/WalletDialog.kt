@@ -30,6 +30,7 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
 import ru.resodostudios.cashsense.core.ui.validateAmount
+import java.util.UUID
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -66,6 +67,7 @@ fun AddWalletDialog(
         onConfirm = {
             onConfirm(
                 Wallet(
+                    id = UUID.randomUUID().toString(),
                     title = title,
                     startBalance = startBalance.toDouble(),
                     currency = currency
@@ -151,7 +153,7 @@ fun EditWalletDialog(
         onConfirm = {
             onConfirm(
                 Wallet(
-                    walletId = wallet.walletId,
+                    id = wallet.id,
                     title = title,
                     startBalance = startBalance.toDouble(),
                     currency = currency

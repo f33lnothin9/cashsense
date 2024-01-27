@@ -17,12 +17,12 @@ class TransactionViewModel @Inject constructor(
     fun upsertTransaction(transaction: Transaction) {
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(transaction)
-            if (transaction.categoryOwnerId != null) {
-                transactionsRepository.deleteTransactionCategoryCrossRef(transaction.transactionId)
+            if (transaction.categoryId != null) {
+                transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
                 transactionsRepository.upsertTransactionCategoryCrossRef(
                     TransactionCategoryCrossRef(
-                        transactionId = transaction.transactionId,
-                        categoryId = transaction.categoryOwnerId!!
+                        transactionId = transaction.id,
+                        categoryId = transaction.categoryId!!
                     )
                 )
             }
@@ -32,7 +32,7 @@ class TransactionViewModel @Inject constructor(
     fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
             transactionsRepository.deleteTransaction(transaction)
-            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.transactionId)
+            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
         }
     }
 }

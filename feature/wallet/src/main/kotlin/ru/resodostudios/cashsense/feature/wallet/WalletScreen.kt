@@ -74,8 +74,8 @@ internal fun WalletScreen(
         mutableStateOf(
             TransactionWithCategory(
                 transaction = Transaction(
-                    transactionId = UUID.randomUUID(),
-                    walletOwnerId = 0L,
+                    id = UUID.randomUUID().toString(),
+                    walletOwnerId = "",
                     amount = 0.0,
                     description = null,
                     date = Clock.System.now()
@@ -163,7 +163,7 @@ internal fun WalletScreen(
 
                     if (showAddTransactionDialog) {
                         AddTransactionDialog(
-                            walletId = wallet.walletId,
+                            walletId = wallet.id,
                             onDismiss = { showAddTransactionDialog = false }
                         )
                     }

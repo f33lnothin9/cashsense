@@ -5,7 +5,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 
 interface CategoriesRepository {
 
-    fun getCategory(categoryId: Long): Flow<Category>
+    fun getCategory(id: String): Flow<Category>
 
     fun getCategories(): Flow<List<Category>>
 

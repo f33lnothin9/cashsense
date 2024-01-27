@@ -13,8 +13,8 @@ import ru.resodostudios.cashsense.core.database.model.WalletWithTransactionsAndC
 @Dao
 interface WalletDao {
     @Transaction
-    @Query("SELECT * FROM wallets WHERE walletId = :walletId")
-    fun getWalletWithTransactionsEntity(walletId: Long): Flow<WalletWithTransactionsAndCategoriesEntity>
+    @Query("SELECT * FROM wallets WHERE id = :walletId")
+    fun getWalletWithTransactionsEntity(walletId: String): Flow<WalletWithTransactionsAndCategoriesEntity>
 
     @Transaction
     @Query("SELECT * FROM wallets")

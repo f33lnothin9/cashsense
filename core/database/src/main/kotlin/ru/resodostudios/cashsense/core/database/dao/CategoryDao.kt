@@ -10,10 +10,10 @@ import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 @Dao
 interface CategoryDao {
 
-    @Query("SELECT * FROM categories WHERE categoryId = :categoryId")
-    fun getCategoryEntity(categoryId: Long): Flow<CategoryEntity>
+    @Query("SELECT * FROM categories WHERE id = :id")
+    fun getCategoryEntity(id: String): Flow<CategoryEntity>
 
-    @Query("SELECT * FROM categories ORDER BY categoryId DESC")
+    @Query("SELECT * FROM categories ORDER BY id DESC")
     fun getCategoryEntities(): Flow<List<CategoryEntity>>
 
     @Upsert
@@ -22,11 +22,6 @@ interface CategoryDao {
     @Delete
     suspend fun deleteCategory(category: CategoryEntity)
 
-    @Query(
-        value = """
-            DELETE FROM transaction_category_cross_ref
-            WHERE categoryId = :categoryId
-        """
-    )
-    suspend fun deleteCategoryFromTransactions(categoryId: Long)
+    @Query("DELETE FROM transactions_categories WHERE category_id = :categoryId")
+    suspend fun deleteCategoryFromTransactions(categoryId: String)
 }

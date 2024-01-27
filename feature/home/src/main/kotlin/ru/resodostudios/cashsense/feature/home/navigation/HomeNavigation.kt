@@ -13,7 +13,7 @@ const val HOME_ROUTE = "home_route"
 fun NavController.navigateToHomeGraph(navOptions: NavOptions? = null) = navigate(HOME_GRAPH_ROUTE_PATTERN, navOptions)
 
 fun NavGraphBuilder.homeGraph(
-    onWalletClick: (Long) -> Unit,
+    onWalletClick: (String) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(

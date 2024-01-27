@@ -25,6 +25,7 @@ internal fun SubscriptionsRoute(
     viewModel: SubscriptionsViewModel = hiltViewModel()
 ) {
     val subscriptionsState by viewModel.subscriptionsUiState.collectAsStateWithLifecycle()
+
     SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
         onEdit = onEdit,

@@ -9,12 +9,11 @@ import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEntity
-import java.util.UUID
 
 @Dao
 interface TransactionDao {
-    @Query("SELECT * FROM transactions WHERE transactionId = :transactionId")
-    fun getTransactionEntity(transactionId: String): Flow<TransactionEntity>
+    @Query("SELECT * FROM transactions WHERE id = :id")
+    fun getTransactionEntity(id: String): Flow<TransactionEntity>
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getTransactionEntities(): Flow<List<TransactionEntity>>
@@ -32,11 +31,6 @@ interface TransactionDao {
     @Upsert
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRefEntity)
 
-    @Query(
-        value = """
-            DELETE FROM transaction_category_cross_ref
-            WHERE transactionId = :transactionId
-        """
-    )
-    suspend fun deleteTransactionCategoryCrossRef(transactionId: UUID)
+    @Query("DELETE FROM transactions_categories WHERE transaction_id = :transactionId")
+    suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
 }

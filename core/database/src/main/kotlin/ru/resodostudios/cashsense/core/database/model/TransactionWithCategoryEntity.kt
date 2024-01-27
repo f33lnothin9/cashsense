@@ -8,9 +8,13 @@ data class TransactionWithCategoryEntity(
     @Embedded
     val transaction: TransactionEntity,
     @Relation(
-        parentColumn = "transactionId",
-        entityColumn = "categoryId",
-        associateBy = Junction(TransactionCategoryCrossRefEntity::class)
+        parentColumn = "id",
+        entityColumn = "id",
+        associateBy = Junction(
+            value = TransactionCategoryCrossRefEntity::class,
+            parentColumn = "transaction_id",
+            entityColumn = "category_id"
+        )
     )
     val category: CategoryEntity?
 )
