@@ -12,12 +12,12 @@ internal const val SUBSCRIPTION_ID_ARG = "subscriptionId"
 
 const val SUBSCRIPTION_ROUTE = "subscription_route"
 
-internal class SubscriptionArgs(val subscriptionId: String) {
+internal class SubscriptionArgs(val subscriptionId: String?) {
     constructor(savedStateHandle: SavedStateHandle) :
-            this(savedStateHandle.get<String>(SUBSCRIPTION_ID_ARG) ?: "")
+            this(savedStateHandle.get<String>(SUBSCRIPTION_ID_ARG))
 }
 
-fun NavController.navigateToSubscription(subscriptionId: String) = navigate("$SUBSCRIPTION_ROUTE/$subscriptionId") {
+fun NavController.navigateToSubscription(subscriptionId: String? = null) = navigate("$SUBSCRIPTION_ROUTE/$subscriptionId") {
     launchSingleTop = true
 }
 
@@ -27,7 +27,10 @@ fun NavGraphBuilder.subscriptionScreen(
     composable(
         route = "$SUBSCRIPTION_ROUTE/{$SUBSCRIPTION_ID_ARG}",
         arguments = listOf(
-            navArgument(SUBSCRIPTION_ID_ARG) { type = NavType.StringType }
+            navArgument(SUBSCRIPTION_ID_ARG) {
+                type = NavType.StringType
+                nullable = true
+            }
         )
     ) {
         SubscriptionRoute(

@@ -24,13 +24,13 @@ class SubscriptionViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val subscriptionArgs: SubscriptionArgs = SubscriptionArgs(savedStateHandle)
-    private val subscriptionId: String = subscriptionArgs.subscriptionId
+    private val subscriptionId: String? = subscriptionArgs.subscriptionId
 
     private val _subscriptionUiState = MutableStateFlow(SubscriptionUiState())
     val subscriptionUiState = _subscriptionUiState.asStateFlow()
 
     init {
-        if (subscriptionId.isNotBlank()) {
+        if (subscriptionId != null) {
             viewModelScope.launch {
                 subscriptionsRepository.getSubscription(UUID.fromString(subscriptionId))
                     .onEach {
@@ -53,7 +53,7 @@ class SubscriptionViewModel @Inject constructor(
         when (subscriptionEvent) {
             SubscriptionEvent.Confirm -> {
                 val subscription = Subscription(
-                    subscriptionId = if (subscriptionId.isBlank()) UUID.randomUUID() else UUID.fromString(
+                    subscriptionId = if (subscriptionId == null) UUID.randomUUID() else UUID.fromString(
                         subscriptionId
                     ),
                     title = _subscriptionUiState.value.title,

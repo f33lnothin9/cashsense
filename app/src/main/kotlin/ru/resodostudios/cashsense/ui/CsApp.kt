@@ -147,7 +147,7 @@ fun CsApp(
 
                     SUBSCRIPTIONS -> {
                         FloatingActionButton(
-                            onClick = { appState.navController.navigateToSubscription(" ") },
+                            onClick = { appState.navController.navigateToSubscription() },
                             modifier = Modifier.then(
                                 if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
                             )
