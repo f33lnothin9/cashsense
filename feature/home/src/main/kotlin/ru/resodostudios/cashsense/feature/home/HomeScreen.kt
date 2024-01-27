@@ -114,7 +114,11 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     onEdit: (Wallet) -> Unit,
     onDelete: (Wallet, List<Transaction>) -> Unit
 ) {
-    items(walletsWithTransactionsAndCategories) { walletWithTransactionsAndCategories ->
+    items(
+        items = walletsWithTransactionsAndCategories,
+        key = { it.wallet.walletId },
+        contentType = { "walletItem" }
+    ) { walletWithTransactionsAndCategories ->
         WalletCard(
             wallet = walletWithTransactionsAndCategories.wallet,
             transactions = walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction },
