@@ -33,6 +33,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formattedDate
@@ -55,10 +56,7 @@ internal fun WalletRoute(
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
-        onDelete = {
-            transactionViewModel.deleteTransactionCategoryCrossRef(it.transactionId)
-            transactionViewModel.deleteTransaction(it)
-        }
+        onTransactionDelete = transactionViewModel::deleteTransaction
     )
 }
 
@@ -67,7 +65,7 @@ internal fun WalletRoute(
 internal fun WalletScreen(
     walletState: WalletUiState,
     onBackClick: () -> Unit,
-    onDelete: (Transaction) -> Unit
+    onTransactionDelete: (Transaction) -> Unit
 ) {
     var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditTransactionDialog by rememberSaveable { mutableStateOf(false) }
@@ -90,14 +88,19 @@ internal fun WalletScreen(
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
+            val wallet = walletState.walletWithTransactionsAndCategories.wallet
+            val transactions =
+                walletState.walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction }
+
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     TopAppBar(
                         title = {
                             Text(
-                                text = walletState.walletWithTransactionsAndCategories.wallet.title,
+                                text = wallet.title,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -117,16 +120,22 @@ internal fun WalletScreen(
                                     contentDescription = stringResource(R.string.add_transaction_icon_description)
                                 )
                             }
+                            EditAndDeleteDropdownMenu(
+                                onEdit = { TODO() },
+                                onDelete = { TODO() }
+                            )
                         }
                     )
                 },
                 contentWindowInsets = WindowInsets.waterfall,
                 content = { paddingValues ->
-                    if (walletState.walletWithTransactionsAndCategories.transactionsWithCategories.isNotEmpty()) {
-                        val sortedTransactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
-                            .sortedByDescending { it.transaction.date }
-                            .groupBy { formattedDate(it.transaction.date) }
-                            .toSortedMap(compareByDescending { it })
+                    if (transactions.isNotEmpty()) {
+                        val sortedTransactionsAndCategories =
+                            walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+                                .sortedByDescending { it.transaction.date }
+                                .groupBy { formattedDate(it.transaction.date) }
+                                .toSortedMap(compareByDescending { it })
+
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(300.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -137,12 +146,12 @@ internal fun WalletScreen(
                         ) {
                             transactions(
                                 transactionsWithCategories = sortedTransactionsAndCategories,
-                                currency = walletState.walletWithTransactionsAndCategories.wallet.currency,
+                                currency = wallet.currency,
                                 onEdit = {
                                     transactionWithCategoryState = it
                                     showEditTransactionDialog = true
                                 },
-                                onDelete = onDelete
+                                onDelete = onTransactionDelete
                             )
                         }
                     } else {
@@ -154,7 +163,7 @@ internal fun WalletScreen(
 
                     if (showAddTransactionDialog) {
                         AddTransactionDialog(
-                            walletId = walletState.walletWithTransactionsAndCategories.wallet.walletId,
+                            walletId = wallet.walletId,
                             onDismiss = { showAddTransactionDialog = false }
                         )
                     }
