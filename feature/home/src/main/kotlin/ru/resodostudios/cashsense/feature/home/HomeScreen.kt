@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.model.data.Currency
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -45,7 +44,7 @@ internal fun HomeRoute(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String) -> Unit,
-    onDelete: (Wallet, List<Transaction>) -> Unit
+    onDelete: (String) -> Unit
 ) {
     var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
@@ -112,7 +111,7 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onEdit: (Wallet) -> Unit,
-    onDelete: (Wallet, List<Transaction>) -> Unit
+    onDelete: (String) -> Unit
 ) {
     items(
         items = walletsWithTransactionsAndCategories,

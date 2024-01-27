@@ -42,7 +42,7 @@ fun WalletCard(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onEdit: (Wallet) -> Unit,
-    onDelete: (Wallet, List<Transaction>) -> Unit,
+    onDelete: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -94,7 +94,7 @@ fun WalletCard(
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet) },
-                onDelete = { onDelete(wallet, transactions) }
+                onDelete = { onDelete(wallet.id) }
             )
         }
     }
@@ -211,9 +211,7 @@ fun WalletCardPreview() {
                 onWalletClick = { },
                 onTransactionCreate = { },
                 onEdit = { },
-                onDelete = { _, _ ->
-
-                },
+                onDelete = { },
                 modifier = Modifier.padding(16.dp)
             )
         }

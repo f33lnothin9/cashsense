@@ -8,8 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.domain)
-
     implementation(projects.feature.transaction)
     implementation(projects.feature.wallet)
     implementation(projects.feature.categories)

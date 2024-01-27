@@ -18,7 +18,6 @@ class TransactionViewModel @Inject constructor(
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(transaction)
             if (transaction.categoryId != null) {
-                transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
                 transactionsRepository.upsertTransactionCategoryCrossRef(
                     TransactionCategoryCrossRef(
                         transactionId = transaction.id,

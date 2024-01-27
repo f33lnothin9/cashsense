@@ -12,6 +12,4 @@ interface TransactionsRepository {
     suspend fun deleteTransaction(transaction: Transaction)
 
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef)
-
-    suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
 }

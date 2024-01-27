@@ -25,6 +25,5 @@ class OfflineCategoriesRepository @Inject constructor(
 
     override suspend fun deleteCategory(category: Category) {
         category.asEntity()?.let { dao.deleteCategory(it) }
-        dao.deleteCategoryFromTransactions(category.id)
     }
 }
