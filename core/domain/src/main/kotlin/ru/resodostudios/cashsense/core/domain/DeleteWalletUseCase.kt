@@ -12,8 +12,5 @@ class DeleteWalletUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(wallet: Wallet, transactions: List<Transaction>) {
         walletsRepository.deleteWalletWithTransactions(wallet, transactions)
-        transactions.forEach {
-            transactionsRepository.deleteTransactionCategoryCrossRef(it.id)
-        }
     }
 }

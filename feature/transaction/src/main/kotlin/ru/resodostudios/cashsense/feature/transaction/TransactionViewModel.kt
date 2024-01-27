@@ -32,7 +32,6 @@ class TransactionViewModel @Inject constructor(
     fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
             transactionsRepository.deleteTransaction(transaction)
-            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
         }
     }
 }

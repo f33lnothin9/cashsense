@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "46b6aea0a1294e7d8ed5fc6212d35c8d",
+    "identityHash": "b81e8f46d541bf25f18d53a44ab400da",
     "entities": [
       {
         "tableName": "transactions",
@@ -182,7 +182,7 @@
       },
       {
         "tableName": "transactions_categories",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `category_id` TEXT NOT NULL, PRIMARY KEY(`transaction_id`, `category_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `category_id` TEXT NOT NULL, PRIMARY KEY(`transaction_id`, `category_id`), FOREIGN KEY(`transaction_id`) REFERENCES `transactions`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "transactionId",
@@ -224,13 +224,36 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_categories_category_id` ON `${TABLE_NAME}` (`category_id`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "transactions",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "transaction_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "categories",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "category_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '46b6aea0a1294e7d8ed5fc6212d35c8d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b81e8f46d541bf25f18d53a44ab400da')"
     ]
   }
 }
