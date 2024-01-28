@@ -30,6 +30,7 @@ include(":core:ui")
 
 include(":feature:home")
 include(":feature:categories")
+include(":feature:category")
 include(":feature:subscriptions")
 include(":feature:subscription")
 include(":feature:transaction")
