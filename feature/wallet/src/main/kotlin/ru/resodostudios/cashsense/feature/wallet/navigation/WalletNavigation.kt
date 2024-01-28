@@ -8,14 +8,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ru.resodostudios.cashsense.feature.wallet.WalletRoute
 
-internal const val walletIdArg = "walletId"
+internal const val WALLET_ID_ARG = "walletId"
+
+internal const val WALLET_ROUTE = "wallet_route"
 
 internal class WalletArgs(val walletId: String) {
     constructor(savedStateHandle: SavedStateHandle) :
-            this(savedStateHandle.get<String>(walletIdArg).toString())
+            this(savedStateHandle.get<String>(WALLET_ID_ARG).toString())
 }
 
-fun NavController.navigateToWallet(walletId: String) = navigate("wallet_route/$walletId") {
+fun NavController.navigateToWallet(walletId: String) = navigate("$WALLET_ROUTE/$walletId") {
     launchSingleTop = true
 }
 
@@ -23,9 +25,9 @@ fun NavGraphBuilder.walletScreen(
     onBackClick: () -> Unit
 ) {
     composable(
-        route = "wallet_route/{$walletIdArg}",
+        route = "$WALLET_ROUTE/{$WALLET_ID_ARG}",
         arguments = listOf(
-            navArgument(walletIdArg) { type = NavType.StringType }
+            navArgument(WALLET_ID_ARG) { type = NavType.StringType }
         )
     ) {
         WalletRoute(
