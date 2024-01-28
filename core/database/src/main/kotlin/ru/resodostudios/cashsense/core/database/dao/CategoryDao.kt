@@ -9,7 +9,6 @@ import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 
 @Dao
 interface CategoryDao {
-
     @Query("SELECT * FROM categories WHERE id = :id")
     fun getCategoryEntity(id: String): Flow<CategoryEntity>
 
@@ -21,7 +20,4 @@ interface CategoryDao {
 
     @Delete
     suspend fun deleteCategory(category: CategoryEntity)
-
-    @Query("DELETE FROM transactions_categories WHERE category_id = :categoryId")
-    suspend fun deleteCategoryFromTransactions(categoryId: String)
 }
