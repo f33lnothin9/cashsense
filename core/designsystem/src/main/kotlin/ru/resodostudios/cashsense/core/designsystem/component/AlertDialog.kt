@@ -23,10 +23,10 @@ fun CsAlertDialog(
     onConfirm: () -> Unit,
     isConfirmEnabled: Boolean,
     onDismiss: () -> Unit,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {},
         icon = {
             Icon(
                 imageVector = ImageVector.vectorResource(iconRes),
