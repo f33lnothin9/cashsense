@@ -33,7 +33,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formattedDate
@@ -120,10 +119,6 @@ internal fun WalletScreen(
                                     contentDescription = stringResource(R.string.add_transaction_icon_description)
                                 )
                             }
-                            EditAndDeleteDropdownMenu(
-                                onEdit = { TODO() },
-                                onDelete = { TODO() }
-                            )
                         }
                     )
                 },
