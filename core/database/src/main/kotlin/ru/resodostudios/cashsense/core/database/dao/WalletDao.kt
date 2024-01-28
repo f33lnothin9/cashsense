@@ -16,7 +16,7 @@ interface WalletDao {
 
     @Transaction
     @Query("SELECT * FROM wallets")
-    fun getWalletWithTransactionsAndCategoriesEntities(): Flow<List<WalletWithTransactionsAndCategoriesEntity>>
+    fun getWalletWithTransactionsEntities(): Flow<List<WalletWithTransactionsAndCategoriesEntity>>
 
     @Upsert
     suspend fun upsertWallet(wallet: WalletEntity)

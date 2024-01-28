@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val walletsUiState: StateFlow<WalletsUiState> =
-        walletsRepository.getWalletsWithTransactionsAndCategories()
+        walletsRepository.getWalletsWithTransactions()
             .map<List<WalletWithTransactionsAndCategories>, WalletsUiState>(WalletsUiState::Success)
             .onStart { emit(WalletsUiState.Loading) }
             .stateIn(
