@@ -10,7 +10,7 @@ import ru.resodostudios.cashsense.feature.subscription.SubscriptionRoute
 
 internal const val SUBSCRIPTION_ID_ARG = "subscriptionId"
 
-const val SUBSCRIPTION_ROUTE = "subscription_route"
+internal const val SUBSCRIPTION_ROUTE = "subscription_route"
 
 internal class SubscriptionArgs(val subscriptionId: String?) {
     constructor(savedStateHandle: SavedStateHandle) :
