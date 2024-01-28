@@ -3,8 +3,6 @@ package ru.resodostudios.cashsense.ui
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,10 +19,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.R
+import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
@@ -33,11 +31,6 @@ import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubs
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
-import ru.resodostudios.cashsense.feature.subscription.R as subscriptionsR
-import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
@@ -112,54 +105,21 @@ fun CsApp(
                 }
             },
             floatingActionButton = {
-                when (destination) {
-                    HOME -> {
-                        ExtendedFloatingActionButton(
-                            onClick = { showAddWalletDialog = true },
-                            modifier = Modifier.then(
-                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
-                            )
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Wallet),
-                                contentDescription = null
-                            )
-                            Text(
-                                text = stringResource(walletR.string.feature_wallet_new_wallet),
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
+                if (destination != null) {
+                    CsFloatingActionButton(
+                        titleRes = destination.fabTitle,
+                        iconRes = destination.fabIcon,
+                        modifier = Modifier.then(
+                            if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
+                        ),
+                        onClick = {
+                            when (destination) {
+                                TopLevelDestination.HOME -> { showAddWalletDialog = true }
+                                TopLevelDestination.CATEGORIES -> { showAddCategoryDialog = true }
+                                TopLevelDestination.SUBSCRIPTIONS -> { appState.navController.navigateToSubscription() }
+                            }
                         }
-                    }
-
-                    CATEGORIES -> {
-                        FloatingActionButton(
-                            onClick = { showAddCategoryDialog = true },
-                            modifier = Modifier.then(
-                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
-                            )
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                contentDescription = stringResource(ru.resodostudios.cashsense.feature.categories.R.string.add_category_icon_description)
-                            )
-                        }
-                    }
-
-                    SUBSCRIPTIONS -> {
-                        FloatingActionButton(
-                            onClick = { appState.navController.navigateToSubscription() },
-                            modifier = Modifier.then(
-                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
-                            )
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                contentDescription = stringResource(subscriptionsR.string.feature_subscription_add_subscription_icon_description)
-                            )
-                        }
-                    }
-
-                    null -> {}
+                    )
                 }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
