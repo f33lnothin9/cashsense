@@ -77,13 +77,7 @@ fun CategoryDialog(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
-                label = {
-                    Text(
-                        text = stringResource(uiR.string.core_ui_icon) + " & " + stringResource(
-                            uiR.string.title
-                        )
-                    )
-                },
+                label = { Text(text = stringResource(uiR.string.core_ui_icon_and_title)) },
                 placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
                 supportingText = { Text(text = stringResource(uiR.string.required)) },
                 maxLines = 1,
