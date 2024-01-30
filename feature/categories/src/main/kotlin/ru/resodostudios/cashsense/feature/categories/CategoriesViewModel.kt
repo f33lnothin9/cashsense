@@ -28,12 +28,6 @@ class CategoriesViewModel @Inject constructor(
                 initialValue = CategoriesUiState.Loading,
             )
 
-    fun upsertCategory(category: Category) {
-        viewModelScope.launch {
-            categoriesRepository.upsertCategory(category)
-        }
-    }
-
     fun deleteCategory(category: Category) {
         viewModelScope.launch {
             categoriesRepository.deleteCategory(category)
