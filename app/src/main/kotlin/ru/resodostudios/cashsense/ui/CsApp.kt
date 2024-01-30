@@ -43,7 +43,7 @@ fun CsApp(
     var showSettingsBottomSheet by rememberSaveable {
         mutableStateOf(false)
     }
-    var showAddCategoryDialog by rememberSaveable {
+    var showCategoryDialog by rememberSaveable {
         mutableStateOf(false)
     }
     var showAddWalletDialog by rememberSaveable {
@@ -55,9 +55,9 @@ fun CsApp(
             onDismiss = { showSettingsBottomSheet = false }
         )
     }
-    if (showAddCategoryDialog) {
+    if (showCategoryDialog) {
         CategoryDialog(
-            onDismiss = { showAddCategoryDialog = false }
+            onDismiss = { showCategoryDialog = false }
         )
     }
     if (showAddWalletDialog) {
@@ -115,7 +115,7 @@ fun CsApp(
                         onClick = {
                             when (destination) {
                                 TopLevelDestination.HOME -> { showAddWalletDialog = true }
-                                TopLevelDestination.CATEGORIES -> { showAddCategoryDialog = true }
+                                TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
                                 TopLevelDestination.SUBSCRIPTIONS -> { appState.navController.navigateToSubscription() }
                             }
                         }
