@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import java.util.UUID
 import javax.inject.Inject
@@ -32,6 +33,14 @@ class CategoryViewModel @Inject constructor(
                 )
                 viewModelScope.launch {
                     categoriesRepository.upsertCategory(category)
+                }
+                _categoryUiState.update {
+                    it.copy(
+                        id = "",
+                        title = "",
+                        iconRes = CsIcons.Category,
+                        isEditing = false
+                    )
                 }
             }
             is CategoryEvent.UpdateId -> {
