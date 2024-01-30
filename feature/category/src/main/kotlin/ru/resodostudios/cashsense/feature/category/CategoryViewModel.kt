@@ -43,17 +43,20 @@ class CategoryViewModel @Inject constructor(
                     )
                 }
             }
+
             is CategoryEvent.UpdateId -> {
                 _categoryUiState.update {
                     it.copy(id = event.id)
                 }
                 loadCategory()
             }
+
             is CategoryEvent.UpdateTitle -> {
                 _categoryUiState.update {
                     it.copy(title = event.title)
                 }
             }
+
             is CategoryEvent.UpdateIcon -> {
                 _categoryUiState.update {
                     it.copy(iconRes = event.iconRes)
