@@ -33,4 +33,7 @@ interface TransactionDao {
 
     @Upsert
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRefEntity)
+
+    @Query("DELETE FROM transactions_categories WHERE transaction_id = :transactionId")
+    suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
 }
