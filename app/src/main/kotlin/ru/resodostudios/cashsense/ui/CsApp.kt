@@ -25,7 +25,7 @@ import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.feature.categories.AddCategoryDialog
+import ru.resodostudios.cashsense.feature.category.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
 import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
@@ -56,7 +56,7 @@ fun CsApp(
         )
     }
     if (showAddCategoryDialog) {
-        AddCategoryDialog(
+        CategoryDialog(
             onDismiss = { showAddCategoryDialog = false }
         )
     }

@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.navigation
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.categories.R as categoriesR
+import ru.resodostudios.cashsense.feature.category.R as categoryR
 import ru.resodostudios.cashsense.feature.home.R as homeR
 import ru.resodostudios.cashsense.feature.subscription.R as subscriptionR
 import ru.resodostudios.cashsense.feature.subscriptions.R as subscriptionsR
@@ -30,7 +31,7 @@ enum class TopLevelDestination(
         iconTextId = categoriesR.string.categories,
         titleTextId = categoriesR.string.categories,
         fabIcon = CsIcons.Add,
-        fabTitle = categoriesR.string.new_category
+        fabTitle = categoryR.string.feature_category_new_category
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.SubscriptionsFilled,

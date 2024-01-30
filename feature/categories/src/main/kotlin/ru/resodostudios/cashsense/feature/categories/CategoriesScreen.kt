@@ -14,7 +14,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,27 +25,31 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
+import ru.resodostudios.cashsense.feature.category.CategoryDialog
+import ru.resodostudios.cashsense.feature.category.CategoryEvent
+import ru.resodostudios.cashsense.feature.category.CategoryViewModel
 
 @Composable
 internal fun CategoryRoute(
-    viewModel: CategoriesViewModel = hiltViewModel()
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
+    categoryViewModel: CategoryViewModel = hiltViewModel()
 ) {
-    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     CategoriesScreen(
         categoriesState = categoriesState,
-        onDelete = viewModel::deleteCategory
+        onCategoryEvent = categoryViewModel::onCategoryEvent,
+        onDelete = categoriesViewModel::deleteCategory
     )
 }
 
 @Composable
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
+    onCategoryEvent: (CategoryEvent) -> Unit,
     onDelete: (Category) -> Unit
 ) {
-    var showEditCategoryDialog by rememberSaveable { mutableStateOf(false) }
-
-    var categoryState by rememberSaveable { mutableStateOf(Category()) }
+    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
     when (categoriesState) {
         Loading -> LoadingState()
@@ -56,16 +61,15 @@ internal fun CategoriesScreen(
                 categories(
                     categoriesState = categoriesState,
                     onEdit = {
-                        categoryState = it
-                        showEditCategoryDialog = true
+                        onCategoryEvent(CategoryEvent.UpdateId(it))
+                        showCategoryDialog = true
                     },
                     onDelete = onDelete
                 )
             }
-            if (showEditCategoryDialog) {
-                EditCategoryDialog(
-                    category = categoryState,
-                    onDismiss = { showEditCategoryDialog = false }
+            if (showCategoryDialog) {
+                CategoryDialog(
+                    onDismiss = { showCategoryDialog = false }
                 )
             }
         } else {
@@ -79,7 +83,7 @@ internal fun CategoriesScreen(
 
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
-    onEdit: (Category) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (Category) -> Unit
 ) {
     when (categoriesState) {
@@ -90,14 +94,14 @@ private fun LazyGridScope.categories(
                     headlineContent = { Text(text = category.title.toString()) },
                     trailingContent = {
                         EditAndDeleteDropdownMenu(
-                            onEdit = { onEdit(category) },
+                            onEdit = { onEdit(category.id) },
                             onDelete = { onDelete(category) }
                         )
                     },
                     leadingContent = {
-                        category.iconRes?.let { painterResource(it) }?.let {
-                            Icon(painter = it, contentDescription = null)
-                        }
+                        category.iconRes
+                            ?.let { ImageVector.vectorResource(it) }
+                            ?.let { Icon(imageVector = it, contentDescription = null) }
                     }
                 )
             }

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="feature_category_new_category">New category</string>
+    <string name="feature_category_edit_category">Edit category</string>
 </resources>
