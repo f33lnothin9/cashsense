@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.database.model
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 
 data class TransactionWithCategoryEntity(
     @Embedded
@@ -17,4 +18,9 @@ data class TransactionWithCategoryEntity(
         )
     )
     val category: CategoryEntity?
+)
+
+fun TransactionWithCategoryEntity.asExternalModel() = TransactionWithCategory(
+    transaction = transaction.asExternalModel(),
+    category = category?.asExternalModel()
 )

@@ -19,8 +19,8 @@ interface TransactionDao {
     fun getTransactionEntities(): Flow<List<TransactionEntity>>
 
     @Transaction
-    @Query("SELECT * FROM transactions ORDER BY date DESC")
-    fun getTransactionWithCategoryEntities(): List<TransactionWithCategoryEntity>
+    @Query("SELECT * FROM transactions WHERE id = :transactionId")
+    fun getTransactionWithCategoryEntity(transactionId: String): Flow<TransactionWithCategoryEntity>
 
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)
