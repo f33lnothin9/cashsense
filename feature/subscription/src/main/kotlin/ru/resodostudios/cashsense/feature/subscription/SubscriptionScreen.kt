@@ -144,7 +144,7 @@ internal fun SubscriptionScreen(
                     label = { Text(text = stringResource(R.string.feature_subscription_payment_date)) },
                     placeholder = { Text(text = "${stringResource(R.string.feature_subscription_payment_date)}*") },
                     supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                    trailingIcon = {
+                    leadingIcon = {
                         IconButton(onClick = { openDialog = true }) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Calendar),
