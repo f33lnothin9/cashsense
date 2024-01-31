@@ -32,7 +32,7 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
-import kotlin.math.abs
+import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -111,9 +111,9 @@ private fun WalletFinancesSection(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        val positiveTransactions = transactions.filter { it.amount > 0 }
+        val positiveTransactions = transactions.filter { it.amount > 0.toBigDecimal() }
         val walletIncome = positiveTransactions.sumOf { it.amount }
-        if (walletIncome != 0.0) {
+        if (walletIncome != 0.toBigDecimal()) {
             Surface(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(24.dp)
@@ -135,7 +135,7 @@ private fun WalletFinancesSection(
                     )
                     Text(
                         text = getFormattedAmountAndCurrency(
-                            amount = abs(walletIncome),
+                            amount = walletIncome.abs(),
                             currencyName = currencyName
                         ),
                         maxLines = 1,
@@ -146,9 +146,9 @@ private fun WalletFinancesSection(
             }
         }
 
-        val negativeTransactions = transactions.filter { it.amount < 0 }
+        val negativeTransactions = transactions.filter { it.amount < 0.toBigDecimal() }
         val walletExpenses = negativeTransactions.sumOf { it.amount }
-        if (walletExpenses != 0.0) {
+        if (walletExpenses != 0.toBigDecimal()) {
             Surface(
                 color = MaterialTheme.colorScheme.errorContainer,
                 shape = RoundedCornerShape(24.dp)
@@ -170,7 +170,7 @@ private fun WalletFinancesSection(
                     )
                     Text(
                         text = getFormattedAmountAndCurrency(
-                            amount = abs(walletExpenses),
+                            amount = walletExpenses.abs(),
                             currencyName = currencyName
                         ),
                         maxLines = 1,
@@ -183,7 +183,7 @@ private fun WalletFinancesSection(
     }
 }
 
-private fun getCurrentBalance(startBalance: Double, transactions: List<Transaction>): Double {
+private fun getCurrentBalance(startBalance: BigDecimal, transactions: List<Transaction>): BigDecimal {
     var currentBalance = startBalance
     transactions.forEach {
         currentBalance += it.amount
@@ -204,7 +204,7 @@ fun WalletCardPreview() {
                 wallet = Wallet(
                     id = "",
                     title = "Wallet 1",
-                    startBalance = 1500.85,
+                    startBalance = 1500.85.toBigDecimal(),
                     currency = Currency.USD
                 ),
                 transactions = emptyList(),

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b81e8f46d541bf25f18d53a44ab400da",
+    "identityHash": "1f8b068db384ecccb5cdcd63fa03ac27",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `wallet_owner_id` TEXT NOT NULL, `category_id` TEXT, `description` TEXT, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `wallet_owner_id` TEXT NOT NULL, `category_id` TEXT, `description` TEXT, `amount` TEXT NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -35,7 +35,7 @@
           {
             "fieldPath": "amount",
             "columnName": "amount",
-            "affinity": "REAL",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -88,7 +88,7 @@
       },
       {
         "tableName": "wallets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `start_balance` REAL NOT NULL, `currency` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `start_balance` TEXT NOT NULL, `currency` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -105,7 +105,7 @@
           {
             "fieldPath": "startBalance",
             "columnName": "start_balance",
-            "affinity": "REAL",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -253,7 +253,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b81e8f46d541bf25f18d53a44ab400da')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1f8b068db384ecccb5cdcd63fa03ac27')"
     ]
   }
 }

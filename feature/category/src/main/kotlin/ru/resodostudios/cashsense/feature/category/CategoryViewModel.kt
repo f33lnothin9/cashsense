@@ -72,7 +72,7 @@ class CategoryViewModel @Inject constructor(
                     _categoryUiState.emit(
                         CategoryUiState(
                             isEditing = true,
-                            id = it.id,
+                            id = it.id.toString(),
                             title = it.title.toString(),
                             iconRes = it.iconRes!!
                         )

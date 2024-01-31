@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import java.math.BigDecimal
 
 @Entity(
     tableName = "wallets"
@@ -14,7 +15,7 @@ data class WalletEntity(
     val id: String,
     val title: String,
     @ColumnInfo(name = "start_balance")
-    val startBalance: Double,
+    val startBalance: BigDecimal,
     val currency: Currency
 )
 

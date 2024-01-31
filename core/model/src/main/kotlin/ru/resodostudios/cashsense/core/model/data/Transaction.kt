@@ -4,6 +4,7 @@ import android.os.Parcelable
 import kotlinx.datetime.Instant
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
+import java.math.BigDecimal
 
 @Parcelize
 data class Transaction(
@@ -11,6 +12,6 @@ data class Transaction(
     val walletOwnerId: String,
     val categoryId: String? = null,
     val description: String?,
-    val amount: Double,
+    val amount: BigDecimal,
     val date: @RawValue Instant
 ) : Parcelable

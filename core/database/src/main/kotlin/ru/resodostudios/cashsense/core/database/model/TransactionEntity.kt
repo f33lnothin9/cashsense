@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import java.math.BigDecimal
 
 @Entity(
     tableName = "transactions"
@@ -17,7 +18,7 @@ data class TransactionEntity(
     @ColumnInfo(name = "category_id")
     val categoryId: String?,
     val description: String?,
-    val amount: Double,
+    val amount: BigDecimal,
     val date: Instant
 )
 

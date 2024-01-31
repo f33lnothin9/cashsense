@@ -55,7 +55,7 @@ internal fun HomeScreen(
             Wallet(
                 id = "",
                 title = "",
-                startBalance = 0.0,
+                startBalance = 0.toBigDecimal(),
                 currency = Currency.USD
             )
         )

@@ -55,7 +55,7 @@ internal fun SubscriptionsScreen(
                             supportingContent = {
                                 Text(
                                     text = getFormattedAmountAndCurrency(
-                                        amount = subscription.amount.toDouble(),
+                                        amount = subscription.amount,
                                         currencyName = subscription.currency
                                     )
                                 )

@@ -69,7 +69,7 @@ fun AddWalletDialog(
                 Wallet(
                     id = UUID.randomUUID().toString(),
                     title = title,
-                    startBalance = startBalance.toDouble(),
+                    startBalance = startBalance.toBigDecimal(),
                     currency = currency
                 )
             )
@@ -155,7 +155,7 @@ fun EditWalletDialog(
                 Wallet(
                     id = wallet.id,
                     title = title,
-                    startBalance = startBalance.toDouble(),
+                    startBalance = startBalance.toBigDecimal(),
                     currency = currency
                 )
             )

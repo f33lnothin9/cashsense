@@ -94,7 +94,7 @@ private fun LazyGridScope.categories(
                     headlineContent = { Text(text = category.title.toString()) },
                     trailingContent = {
                         EditAndDeleteDropdownMenu(
-                            onEdit = { onEdit(category.id) },
+                            onEdit = { onEdit(category.id.toString()) },
                             onDelete = { onDelete(category) }
                         )
                     },

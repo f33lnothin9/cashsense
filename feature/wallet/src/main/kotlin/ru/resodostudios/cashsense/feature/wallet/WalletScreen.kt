@@ -75,7 +75,7 @@ internal fun WalletScreen(
                 transaction = Transaction(
                     id = UUID.randomUUID().toString(),
                     walletOwnerId = "",
-                    amount = 0.0,
+                    amount = 0.toBigDecimal(),
                     description = null,
                     date = Clock.System.now()
                 ),
