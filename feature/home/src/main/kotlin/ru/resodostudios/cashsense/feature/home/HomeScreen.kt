@@ -29,6 +29,7 @@ import ru.resodostudios.cashsense.feature.wallet.R as walletR
 @Composable
 internal fun HomeRoute(
     onWalletClick: (String) -> Unit,
+    onTransactionCreate: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
@@ -36,6 +37,7 @@ internal fun HomeRoute(
     HomeScreen(
         walletsState = walletsState,
         onWalletClick = onWalletClick,
+        onTransactionCreate = onTransactionCreate,
         onDelete = viewModel::deleteWallet
     )
 }
@@ -44,6 +46,7 @@ internal fun HomeRoute(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String) -> Unit,
+    onTransactionCreate: (String) -> Unit,
     onDelete: (String) -> Unit
 ) {
     var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
@@ -74,10 +77,7 @@ internal fun HomeScreen(
                 walletsWithTransactionsAndCategories(
                     walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                     onWalletClick = onWalletClick,
-                    onTransactionCreate = {
-                        walletId = it
-                        showAddTransactionDialog = true
-                    },
+                    onTransactionCreate = onTransactionCreate,
                     onEdit = {
                         walletState = it
                         showEditWalletDialog = true
