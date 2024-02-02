@@ -55,7 +55,7 @@ internal fun HomeScreen(
             Wallet(
                 id = "",
                 title = "",
-                startBalance = 0.toBigDecimal(),
+                initialBalance = 0.toBigDecimal(),
                 currency = Currency.USD.name
             )
         )
@@ -90,7 +90,7 @@ internal fun HomeScreen(
             }
         } else {
             EmptyState(
-                messageRes = walletR.string.wallets_empty,
+                messageRes = walletR.string.feature_wallet_wallets_empty,
                 animationRes = walletR.raw.anim_wallet_empty
             )
         }

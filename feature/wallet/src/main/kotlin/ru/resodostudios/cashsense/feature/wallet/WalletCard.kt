@@ -66,7 +66,7 @@ fun WalletCard(
             Text(
                 text = getFormattedAmountAndCurrency(
                     amount = getCurrentBalance(
-                        wallet.startBalance,
+                        wallet.initialBalance,
                         transactions
                     ),
                     currencyName = wallet.currency
@@ -204,7 +204,7 @@ fun WalletCardPreview() {
                 wallet = Wallet(
                     id = "",
                     title = "Wallet 1",
-                    startBalance = 1500.85.toBigDecimal(),
+                    initialBalance = 1500.85.toBigDecimal(),
                     currency = Currency.USD.name
                 ),
                 transactions = emptyList(),

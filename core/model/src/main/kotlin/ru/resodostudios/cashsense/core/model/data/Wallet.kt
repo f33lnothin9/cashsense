@@ -8,6 +8,6 @@ import java.math.BigDecimal
 data class Wallet(
     val id: String,
     val title: String,
-    val startBalance: BigDecimal,
+    val initialBalance: BigDecimal,
     val currency: String
 ) : Parcelable

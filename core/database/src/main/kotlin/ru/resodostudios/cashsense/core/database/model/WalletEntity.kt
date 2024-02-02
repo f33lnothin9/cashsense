@@ -13,14 +13,14 @@ data class WalletEntity(
     @PrimaryKey
     val id: String,
     val title: String,
-    @ColumnInfo(name = "start_balance")
-    val startBalance: BigDecimal,
+    @ColumnInfo(name = "initial_balance")
+    val initialBalance: BigDecimal,
     val currency: String
 )
 
 fun WalletEntity.asExternalModel() = Wallet(
     id = id,
     title = title,
-    startBalance = startBalance,
+    initialBalance = initialBalance,
     currency = currency
 )

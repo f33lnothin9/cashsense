@@ -6,6 +6,6 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 fun Wallet.asEntity() = WalletEntity(
     id = id,
     title = title,
-    startBalance = startBalance,
+    initialBalance = initialBalance,
     currency = currency
 )

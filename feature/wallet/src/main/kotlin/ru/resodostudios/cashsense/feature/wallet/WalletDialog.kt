@@ -69,7 +69,7 @@ fun AddWalletDialog(
                 Wallet(
                     id = UUID.randomUUID().toString(),
                     title = title,
-                    startBalance = startBalance.toBigDecimal(),
+                    initialBalance = startBalance.toBigDecimal(),
                     currency = currency.name
                 )
             )
@@ -100,7 +100,7 @@ fun AddWalletDialog(
                     value = startBalance,
                     onValueChange = { startBalance = it.validateAmount().first },
                     placeholder = { Text(text = "100") },
-                    label = { Text(text = stringResource(R.string.start_balance)) },
+                    label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
@@ -142,11 +142,11 @@ fun EditWalletDialog(
     wallet: Wallet
 ) {
     var title by rememberSaveable { mutableStateOf(wallet.title) }
-    var startBalance by rememberSaveable { mutableStateOf(wallet.startBalance.toString()) }
+    var startBalance by rememberSaveable { mutableStateOf(wallet.initialBalance.toString()) }
     var currency by rememberSaveable { mutableStateOf(wallet.currency) }
 
     CsAlertDialog(
-        titleRes = R.string.edit_wallet,
+        titleRes = R.string.feature_wallet_edit_wallet,
         confirmButtonTextRes = uiR.string.save,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Wallet,
@@ -155,7 +155,7 @@ fun EditWalletDialog(
                 Wallet(
                     id = wallet.id,
                     title = title,
-                    startBalance = startBalance.toBigDecimal(),
+                    initialBalance = startBalance.toBigDecimal(),
                     currency = currency
                 )
             )
@@ -181,7 +181,7 @@ fun EditWalletDialog(
                 value = startBalance,
                 onValueChange = { startBalance = it.validateAmount().first },
                 placeholder = { Text(text = "100") },
-                label = { Text(text = stringResource(R.string.start_balance)) },
+                label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal
                 ),
