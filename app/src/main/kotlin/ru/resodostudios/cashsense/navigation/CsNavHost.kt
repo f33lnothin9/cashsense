@@ -19,21 +19,22 @@ import ru.resodostudios.cashsense.ui.CsAppState
 fun CsNavHost(
     appState: CsAppState,
     modifier: Modifier = Modifier,
-    startDestination: String = HOME_GRAPH_ROUTE_PATTERN,
+    startDestination: String = HOME_GRAPH_ROUTE_PATTERN
 ) {
     val navController = appState.navController
 
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier,
+        modifier = modifier
     ) {
         homeGraph(
             onWalletClick = navController::navigateToWallet,
             onTransactionCreate = { navController.navigateToTransaction(walletId = it) },
             nestedGraphs = {
                 walletScreen(
-                    onBackClick = navController::popBackStack
+                    onBackClick = navController::popBackStack,
+                    onTransactionCreate = { navController.navigateToTransaction(walletId = it) }
                 )
                 transactionScreen(
                     onBackClick = navController::popBackStack

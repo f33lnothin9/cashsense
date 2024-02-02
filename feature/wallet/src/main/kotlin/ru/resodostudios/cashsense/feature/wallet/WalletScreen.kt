@@ -46,15 +46,17 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletRoute(
+    onBackClick: () -> Unit,
+    onTransactionCreate: (String) -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),
-    transactionViewModel: TransactionViewModel = hiltViewModel(),
-    onBackClick: () -> Unit
+    transactionViewModel: TransactionViewModel = hiltViewModel()
 ) {
     val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
 
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
+        onTransactionCreate = onTransactionCreate,
         onTransactionDelete = transactionViewModel::deleteTransaction
     )
 }
@@ -64,6 +66,7 @@ internal fun WalletRoute(
 internal fun WalletScreen(
     walletState: WalletUiState,
     onBackClick: () -> Unit,
+    onTransactionCreate: (String) -> Unit,
     onTransactionDelete: (Transaction) -> Unit
 ) {
     var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
@@ -113,7 +116,7 @@ internal fun WalletScreen(
                             }
                         },
                         actions = {
-                            IconButton(onClick = { showAddTransactionDialog = true }) {
+                            IconButton(onClick = { onTransactionCreate(wallet.id) }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                                     contentDescription = stringResource(R.string.add_transaction_icon_description)
