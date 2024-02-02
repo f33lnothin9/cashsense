@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.categories)
+    implementation(projects.feature.category)
 
     implementation(libs.kotlinx.datetime)
 }

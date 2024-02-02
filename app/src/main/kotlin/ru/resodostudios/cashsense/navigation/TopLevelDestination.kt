@@ -28,8 +28,8 @@ enum class TopLevelDestination(
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
         unselectedIcon = CsIcons.Category,
-        iconTextId = categoriesR.string.categories,
-        titleTextId = categoriesR.string.categories,
+        iconTextId = categoriesR.string.feature_categories_title,
+        titleTextId = categoriesR.string.feature_categories_title,
         fabIcon = CsIcons.Add,
         fabTitle = categoryR.string.feature_category_new_category
     ),

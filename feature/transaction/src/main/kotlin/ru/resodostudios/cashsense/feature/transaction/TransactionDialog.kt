@@ -45,7 +45,7 @@ import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import java.util.UUID
 import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
-import ru.resodostudios.cashsense.feature.categories.R as categoriesR
+import ru.resodostudios.cashsense.feature.category.R as categoryR
 
 @Composable
 fun AddTransactionDialog(
@@ -256,7 +256,7 @@ private fun CategoryExposedDropdownMenuBox(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text
             ),
-            label = { Text(text = stringResource(categoriesR.string.category)) },
+            label = { Text(text = stringResource(categoryR.string.feature_category_title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             placeholder = { Text(text = stringResource(uiR.string.none)) },
             leadingIcon = {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="add_category_icon_description">Add category</string>
-    <string name="categories">Categories</string>
-    <string name="category">Category</string>
-    <string name="categories_empty">Nothing in Categories</string>
+    <string name="feature_categories_title">Categories</string>
+    <string name="feature_categories_add_category_icon_description">Add category</string>
+    <string name="feature_categories_categories_empty">Nothing in Categories</string>
 </resources>
