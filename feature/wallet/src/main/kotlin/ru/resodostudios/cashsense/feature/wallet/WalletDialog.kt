@@ -70,7 +70,7 @@ fun AddWalletDialog(
                     id = UUID.randomUUID().toString(),
                     title = title,
                     startBalance = startBalance.toBigDecimal(),
-                    currency = currency
+                    currency = currency.name
                 )
             )
         },
@@ -188,8 +188,8 @@ fun EditWalletDialog(
                 maxLines = 1
             )
             CurrencyExposedDropdownMenuBox(
-                currencyName = currency.name,
-                onCurrencyClick = { currency = it }
+                currencyName = currency,
+                onCurrencyClick = { currency = it.name }
             )
         }
     }

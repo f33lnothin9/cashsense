@@ -15,7 +15,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
@@ -25,7 +24,7 @@ import java.util.SortedMap
 
 fun LazyGridScope.transactions(
     transactionsWithCategories: SortedMap<String, List<TransactionWithCategory>>,
-    currency: Currency,
+    currency: String,
     onEdit: (String) -> Unit,
     onDelete: (Transaction) -> Unit
 ) {
@@ -52,7 +51,7 @@ fun LazyGridScope.transactions(
                     Text(
                         text = getFormattedAmountAndCurrency(
                             amount = transactionWithCategory.transaction.amount,
-                            currencyName = currency.name
+                            currencyName = currency
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis

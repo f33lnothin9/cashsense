@@ -69,7 +69,7 @@ fun WalletCard(
                         wallet.startBalance,
                         transactions
                     ),
-                    currencyName = wallet.currency.name
+                    currencyName = wallet.currency
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -77,7 +77,7 @@ fun WalletCard(
             )
             WalletFinancesSection(
                 transactions = transactions,
-                currencyName = wallet.currency.name
+                currencyName = wallet.currency
             )
         }
         Row(
@@ -205,7 +205,7 @@ fun WalletCardPreview() {
                     id = "",
                     title = "Wallet 1",
                     startBalance = 1500.85.toBigDecimal(),
-                    currency = Currency.USD
+                    currency = Currency.USD.name
                 ),
                 transactions = emptyList(),
                 onWalletClick = { },

@@ -9,5 +9,5 @@ data class Wallet(
     val id: String,
     val title: String,
     val startBalance: BigDecimal,
-    val currency: Currency
+    val currency: String
 ) : Parcelable

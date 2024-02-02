@@ -21,6 +21,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
@@ -55,7 +56,7 @@ internal fun HomeScreen(
                 id = "",
                 title = "",
                 startBalance = 0.toBigDecimal(),
-                currency = Currency.USD
+                currency = Currency.USD.name
             )
         )
     }
@@ -79,6 +80,12 @@ internal fun HomeScreen(
                         showEditWalletDialog = true
                     },
                     onDelete = onDelete
+                )
+            }
+            if (showEditWalletDialog) {
+                EditWalletDialog(
+                    onDismiss = { showEditWalletDialog = false },
+                    wallet = walletState
                 )
             }
         } else {
