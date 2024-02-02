@@ -21,8 +21,6 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.feature.transaction.AddTransactionDialog
-import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
@@ -49,10 +47,8 @@ internal fun HomeScreen(
     onTransactionCreate: (String) -> Unit,
     onDelete: (String) -> Unit
 ) {
-    var showAddTransactionDialog by rememberSaveable { mutableStateOf(false) }
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
 
-    var walletId by rememberSaveable { mutableStateOf("") }
     var walletState by rememberSaveable {
         mutableStateOf(
             Wallet(
@@ -83,18 +79,6 @@ internal fun HomeScreen(
                         showEditWalletDialog = true
                     },
                     onDelete = onDelete
-                )
-            }
-            if (showEditWalletDialog) {
-                EditWalletDialog(
-                    onDismiss = { showEditWalletDialog = false },
-                    wallet = walletState
-                )
-            }
-            if (showAddTransactionDialog) {
-                AddTransactionDialog(
-                    onDismiss = { showAddTransactionDialog = false },
-                    walletId = walletId
                 )
             }
         } else {
