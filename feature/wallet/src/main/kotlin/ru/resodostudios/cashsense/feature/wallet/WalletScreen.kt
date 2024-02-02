@@ -94,7 +94,7 @@ internal fun WalletScreen(
                             IconButton(onClick = { onTransactionCreate(wallet.id) }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                    contentDescription = stringResource(R.string.add_transaction_icon_description)
+                                    contentDescription = stringResource(R.string.feature_transaction_add_transaction_icon_description)
                                 )
                             }
                         }
@@ -126,7 +126,7 @@ internal fun WalletScreen(
                         }
                     } else {
                         EmptyState(
-                            messageRes = transactionR.string.transactions_empty,
+                            messageRes = transactionR.string.feature_transaction_transactions_empty,
                             animationRes = transactionR.raw.anim_transactions_empty
                         )
                     }

@@ -84,7 +84,7 @@ fun AddTransactionDialog(
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
         is CategoriesUiState.Success -> CsAlertDialog(
-            titleRes = R.string.new_transaction,
+            titleRes = R.string.feature_transaction_new_transaction,
             confirmButtonTextRes = uiR.string.add,
             dismissButtonTextRes = uiR.string.core_ui_cancel,
             iconRes = CsIcons.Transaction,
@@ -179,7 +179,7 @@ fun EditTransactionDialog(
     when (categoriesState) {
         CategoriesUiState.Loading -> LoadingState()
         is CategoriesUiState.Success -> CsAlertDialog(
-            titleRes = R.string.edit_transaction,
+            titleRes = R.string.feature_transaction_edit_transaction,
             confirmButtonTextRes = uiR.string.save,
             dismissButtonTextRes = uiR.string.core_ui_cancel,
             iconRes = CsIcons.Transaction,

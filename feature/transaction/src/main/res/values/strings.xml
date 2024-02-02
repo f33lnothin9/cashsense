@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="transactions_empty">Nothing in Transactions</string>
-    <string name="add_transaction">Add transaction</string>
-    <string name="edit_transaction">Edit transaction</string>
-    <string name="new_transaction">New transaction</string>
-    <string name="add_transaction_icon_description">Add transaction</string>
+    <string name="feature_transaction_transactions_empty">Nothing in Transactions</string>
+    <string name="feature_transaction_add_transaction">Add transaction</string>
+    <string name="feature_transaction_edit_transaction">Edit transaction</string>
+    <string name="feature_transaction_new_transaction">New transaction</string>
+    <string name="feature_transaction_add_transaction_icon_description">Add transaction</string>
 </resources>

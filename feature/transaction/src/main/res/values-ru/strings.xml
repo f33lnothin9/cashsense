@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="transactions_empty">В Транзакциях пусто</string>
-    <string name="add_transaction">Добавить транзакцию</string>
-    <string name="edit_transaction">Изменение транзакции</string>
-    <string name="new_transaction">Новая транзакция</string>
-    <string name="amount">Сумма</string>
-    <string name="add_transaction_icon_description">Добавить транзакцию</string>
+    <string name="feature_transaction_transactions_empty">В Транзакциях пусто</string>
+    <string name="feature_transaction_add_transaction">Добавить транзакцию</string>
+    <string name="feature_transaction_edit_transaction">Изменение транзакции</string>
+    <string name="feature_transaction_new_transaction">Новая транзакция</string>
+    <string name="feature_transaction_add_transaction_icon_description">Добавить транзакцию</string>
 </resources>

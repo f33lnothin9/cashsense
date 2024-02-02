@@ -90,7 +90,7 @@ fun WalletCard(
             Button(
                 onClick = { onTransactionCreate(wallet.id) }
             ) {
-                Text(text = stringResource(transactionR.string.add_transaction))
+                Text(text = stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet) },
