@@ -20,7 +20,7 @@ enum class TopLevelDestination(
     HOME(
         selectedIcon = CsIcons.HomeFilled,
         unselectedIcon = CsIcons.Home,
-        iconTextId = homeR.string.home,
+        iconTextId = homeR.string.feature_home_title,
         titleTextId = R.string.app_name,
         fabIcon = CsIcons.Wallet,
         fabTitle = walletR.string.feature_wallet_new_wallet
