@@ -34,7 +34,8 @@ fun CsNavHost(
             nestedGraphs = {
                 walletScreen(
                     onBackClick = navController::popBackStack,
-                    onTransactionCreate = { navController.navigateToTransaction(walletId = it) }
+                    onTransactionCreate = { navController.navigateToTransaction(walletId = it) },
+                    onTransactionEdit = navController::navigateToTransaction
                 )
                 transactionScreen(
                     onBackClick = navController::popBackStack

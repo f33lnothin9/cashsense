@@ -26,7 +26,7 @@ import java.util.SortedMap
 fun LazyGridScope.transactions(
     transactionsWithCategories: SortedMap<String, List<TransactionWithCategory>>,
     currency: Currency,
-    onEdit: (TransactionWithCategory) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (Transaction) -> Unit
 ) {
     val groupedTransactionsAndCategories = transactionsWithCategories.map {
@@ -60,13 +60,13 @@ fun LazyGridScope.transactions(
                 },
                 trailingContent = {
                     EditAndDeleteDropdownMenu(
-                        onEdit = { onEdit(transactionWithCategory) },
+                        onEdit = { onEdit(transactionWithCategory.transaction.id) },
                         onDelete = { onDelete(transactionWithCategory.transaction) }
                     )
                 },
                 supportingContent = {
                     Text(
-                        text = transactionWithCategory.category?.title ?: stringResource(R.string.none),
+                        text = category?.title ?: stringResource(R.string.none),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

@@ -23,7 +23,8 @@ fun NavController.navigateToWallet(walletId: String) = navigate("$WALLET_ROUTE/$
 
 fun NavGraphBuilder.walletScreen(
     onBackClick: () -> Unit,
-    onTransactionCreate: (String) -> Unit
+    onTransactionCreate: (String) -> Unit,
+    onTransactionEdit: (String, String) -> Unit
 ) {
     composable(
         route = "$WALLET_ROUTE/{$WALLET_ID_ARG}",
@@ -33,7 +34,8 @@ fun NavGraphBuilder.walletScreen(
     ) {
         WalletRoute(
             onBackClick = onBackClick,
-            onTransactionCreate = onTransactionCreate
+            onTransactionCreate = onTransactionCreate,
+            onTransactionEdit = onTransactionEdit
         )
     }
 }
