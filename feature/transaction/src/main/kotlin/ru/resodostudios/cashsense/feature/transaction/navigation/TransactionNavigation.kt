@@ -13,7 +13,7 @@ internal const val WALLET_ID_ARG = "walletId"
 
 internal const val TRANSACTION_ROUTE = "transaction_route"
 
-internal class TransactionArgs(private val transactionId: String?, private val walletId: String) {
+internal class TransactionArgs(val transactionId: String?, val walletId: String) {
     constructor(savedStateHandle: SavedStateHandle) : this(
         transactionId = savedStateHandle.get<String>(TRANSACTION_ID_ARG),
         walletId = savedStateHandle.get<String>(WALLET_ID_ARG) ?: ""

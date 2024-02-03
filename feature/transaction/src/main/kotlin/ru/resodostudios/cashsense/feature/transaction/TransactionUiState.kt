@@ -8,5 +8,6 @@ data class TransactionUiState(
     val amount: String = "",
     val date: String = "",
     val time: String = "",
-    val category: Category = Category()
+    val category: Category = Category(),
+    val isEditing: Boolean = false,
 )
