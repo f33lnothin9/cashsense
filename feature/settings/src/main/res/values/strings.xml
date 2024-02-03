@@ -9,4 +9,5 @@
     <string name="feature_settings_dark">Dark</string>
     <string name="feature_settings_privacy_policy">Privacy Policy</string>
     <string name="feature_settings_licenses">Licenses</string>
+    <string name="feature_settings_version">Version</string>
 </resources>

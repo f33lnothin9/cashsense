@@ -71,6 +71,7 @@ fun SettingsBottomSheet(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = sheetState,
@@ -195,6 +196,17 @@ private fun ColumnScope.SettingsPanel(
             )
         },
         modifier = Modifier.clickable { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) }
+    )
+    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    ListItem(
+        headlineContent = { Text(text = stringResource(R.string.feature_settings_version)) },
+        supportingContent = { Text(text = packageInfo.versionName) },
+        leadingContent = {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.Payments),
+                contentDescription = null
+            )
+        },
     )
 }
 
