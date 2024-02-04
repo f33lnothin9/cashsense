@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
@@ -25,8 +25,8 @@ class TransactionViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val transactionArgs: TransactionArgs = TransactionArgs(savedStateHandle)
-    private val transactionId: String? = transactionArgs.transactionId
-    private val walletId: String = transactionArgs.walletId
+    private val transactionId = transactionArgs.transactionId
+    private val walletId = transactionArgs.walletId
 
     private val _transactionUiState = MutableStateFlow(TransactionUiState())
     val transactionUiState = _transactionUiState.asStateFlow()
@@ -43,19 +43,21 @@ class TransactionViewModel @Inject constructor(
                     walletOwnerId = walletId,
                     description = _transactionUiState.value.description,
                     amount = _transactionUiState.value.amount.toBigDecimal(),
-                    date = Clock.System.now(),
+                    date = _transactionUiState.value.date.toInstant(),
                 )
                 viewModelScope.launch {
                     transactionsRepository.upsertTransaction(transaction)
-                    if (_transactionUiState.value.category?.id != null) {
-                        transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
-                        transactionsRepository.upsertTransactionCategoryCrossRef(
-                            TransactionCategoryCrossRef(
-                                transactionId = transaction.id,
-                                categoryId = _transactionUiState.value.category?.id.toString()
-                            )
+                }
+                viewModelScope.launch {
+                    transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
+                }
+                viewModelScope.launch {
+                    transactionsRepository.upsertTransactionCategoryCrossRef(
+                        TransactionCategoryCrossRef(
+                            transactionId = transaction.id,
+                            categoryId = _transactionUiState.value.category?.id.toString()
                         )
-                    }
+                    )
                 }
             }
             is TransactionEvent.UpdateAmount -> {
@@ -83,8 +85,8 @@ class TransactionViewModel @Inject constructor(
     }
 
     private fun loadTransaction() {
-        if (transactionId != null) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (transactionId != null) {
                 transactionsRepository.getTransactionWithCategory(transactionId)
                     .onEach {
                         _transactionUiState.emit(
@@ -92,6 +94,7 @@ class TransactionViewModel @Inject constructor(
                                 walletOwnerId = walletId,
                                 description = it.transaction.description.toString(),
                                 amount = it.transaction.amount.toString(),
+                                date = it.transaction.date.toString(),
                                 category = it.category,
                                 isEditing = true,
                             )
