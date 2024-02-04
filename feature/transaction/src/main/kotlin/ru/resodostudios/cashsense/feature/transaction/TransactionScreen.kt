@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
@@ -116,7 +117,7 @@ internal fun TransactionScreen(
                     onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
                 )
             }
-            item {
+            item(span = { GridItemSpan(2) }) {
                 OutlinedTextField(
                     value = transactionState.description,
                     onValueChange = { onTransactionEvent(TransactionEvent.UpdateDescription(it)) },
@@ -125,6 +126,7 @@ internal fun TransactionScreen(
                     ),
                     label = { Text(text = stringResource(uiR.string.description)) },
                     maxLines = 1,
+                    singleLine = true,
                 )
             }
         }
@@ -151,9 +153,6 @@ private fun CategoryExposedDropdownMenuBox(
             readOnly = true,
             value = title,
             onValueChange = {},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text
-            ),
             label = { Text(text = stringResource(ru.resodostudios.cashsense.feature.category.R.string.feature_category_title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             placeholder = { Text(text = stringResource(uiR.string.none)) },
