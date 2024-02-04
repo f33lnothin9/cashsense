@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -26,6 +28,10 @@ class TransactionViewModel @Inject constructor(
     private val _transactionUiState = MutableStateFlow(TransactionUiState())
     val transactionUiState = _transactionUiState.asStateFlow()
 
+    init {
+        loadTransaction()
+    }
+
     fun upsertTransaction(transaction: Transaction) {
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(transaction)
@@ -44,6 +50,27 @@ class TransactionViewModel @Inject constructor(
     fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
             transactionsRepository.deleteTransaction(transaction)
+        }
+    }
+
+    private fun loadTransaction() {
+        if (transactionId != null) {
+            viewModelScope.launch {
+                transactionsRepository.getTransactionWithCategory(transactionId)
+                    .onEach {
+                        _transactionUiState.emit(
+                            TransactionUiState(
+                                walletOwnerId = walletId,
+                                description = it.transaction.description.toString(),
+                                amount = it.transaction.amount.toString(),
+                                date = it.transaction.date.toString(),
+                                category = it.category,
+                                isEditing = true,
+                            )
+                        )
+                    }
+                    .collect()
+            }
         }
     }
 }
