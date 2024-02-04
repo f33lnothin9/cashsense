@@ -14,11 +14,14 @@ import javax.inject.Inject
 
 class OfflineWalletsRepository @Inject constructor(
     private val walletDao: WalletDao,
-    private val transactionDao: TransactionDao
+    private val transactionDao: TransactionDao,
 ) : WalletsRepository {
 
-    override fun getWalletWithTransactions(id: String): Flow<WalletWithTransactionsAndCategories> =
-        walletDao.getWalletWithTransactionsEntity(id).map { it.asExternalModel() }
+    override fun getWallet(id: String): Flow<Wallet> =
+        walletDao.getWalletEntity(id).map { it.asExternalModel() }
+
+    override fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactionsAndCategories> =
+        walletDao.getWalletWithTransactionsEntity(walletId).map { it.asExternalModel() }
 
     override fun getWalletsWithTransactions(): Flow<List<WalletWithTransactionsAndCategories>> =
         walletDao.getWalletWithTransactionsEntities().map { it.map(WalletWithTransactionsAndCategoriesEntity::asExternalModel) }
