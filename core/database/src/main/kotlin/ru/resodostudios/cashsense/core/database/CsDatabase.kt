@@ -21,16 +21,17 @@ import ru.resodostudios.cashsense.core.database.util.InstantConverter
         CategoryEntity::class,
         WalletEntity::class,
         SubscriptionEntity::class,
-        TransactionCategoryCrossRefEntity::class
+        TransactionCategoryCrossRefEntity::class,
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(
     InstantConverter::class,
-    BigDecimalConverter::class
+    BigDecimalConverter::class,
 )
 abstract class CsDatabase : RoomDatabase() {
+
     abstract fun transactionDao(): TransactionDao
 
     abstract fun categoryDao(): CategoryDao

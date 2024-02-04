@@ -15,18 +15,15 @@ data class TransactionEntity(
     val id: String,
     @ColumnInfo(name = "wallet_owner_id")
     val walletOwnerId: String,
-    @ColumnInfo(name = "category_id")
-    val categoryId: String?,
     val description: String?,
     val amount: BigDecimal,
-    val date: Instant
+    val date: Instant,
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(
     id = id,
     walletOwnerId = walletOwnerId,
-    categoryId = categoryId,
     description = description,
     amount = amount,
-    date = date
+    date = date,
 )

@@ -9,6 +9,7 @@ import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 
 @Dao
 interface CategoryDao {
+
     @Query("SELECT * FROM categories WHERE id = :id")
     fun getCategoryEntity(id: String): Flow<CategoryEntity>
 

@@ -12,6 +12,7 @@ import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEnt
 
 @Dao
 interface TransactionDao {
+
     @Transaction
     @Query("SELECT * FROM transactions WHERE id = :transactionId")
     fun getTransactionWithCategoryEntity(transactionId: String): Flow<TransactionWithCategoryEntity>

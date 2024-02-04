@@ -13,6 +13,7 @@ import javax.inject.Inject
 class OfflineCategoriesRepository @Inject constructor(
     private val dao: CategoryDao
 ) : CategoriesRepository {
+
     override fun getCategory(id: String): Flow<Category> =
         dao.getCategoryEntity(id).map { it.asExternalModel() }
 

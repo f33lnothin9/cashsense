@@ -6,8 +6,7 @@ import java.math.BigDecimal
 data class Transaction(
     val id: String,
     val walletOwnerId: String,
-    val categoryId: String? = null,
     val description: String?,
     val amount: BigDecimal,
-    val date: Instant
+    val date: Instant,
 )

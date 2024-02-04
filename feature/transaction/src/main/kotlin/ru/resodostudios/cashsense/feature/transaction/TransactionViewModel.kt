@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionArgs
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,18 +34,34 @@ class TransactionViewModel @Inject constructor(
         loadTransaction()
     }
 
-    fun upsertTransaction(transaction: Transaction) {
-        viewModelScope.launch {
-            transactionsRepository.upsertTransaction(transaction)
-            if (transaction.categoryId != null) {
-                transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
-                transactionsRepository.upsertTransactionCategoryCrossRef(
-                    TransactionCategoryCrossRef(
-                        transactionId = transaction.id,
-                        categoryId = transaction.categoryId!!
-                    )
+    fun onTransactionEvent(event: TransactionEvent) {
+        when (event) {
+            TransactionEvent.Confirm -> {
+                val transaction = Transaction(
+                    id = transactionId ?: UUID.randomUUID().toString(),
+                    walletOwnerId = walletId,
+                    description = _transactionUiState.value.description,
+                    amount = _transactionUiState.value.amount.toBigDecimal(),
+                    date = _transactionUiState.value.date.toInstant()
                 )
+                viewModelScope.launch {
+                    transactionsRepository.upsertTransaction(transaction)
+                    if (_transactionUiState.value.category?.id != null) {
+                        transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
+                        transactionsRepository.upsertTransactionCategoryCrossRef(
+                            TransactionCategoryCrossRef(
+                                transactionId = transaction.id,
+                                categoryId = _transactionUiState.value.category?.id.toString()
+                            )
+                        )
+                    }
+                }
             }
+            is TransactionEvent.UpdateAmount -> TODO()
+            is TransactionEvent.UpdateCategory -> TODO()
+            is TransactionEvent.UpdateDate -> TODO()
+            is TransactionEvent.UpdateDescription -> TODO()
+            is TransactionEvent.UpdateTime -> TODO()
         }
     }
 

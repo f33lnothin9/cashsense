@@ -9,6 +9,7 @@ import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
 
 @Dao
 interface SubscriptionDao {
+
     @Query("SELECT * FROM subscriptions WHERE id = :id")
     fun getSubscriptionEntity(id: String): Flow<SubscriptionEntity>
 

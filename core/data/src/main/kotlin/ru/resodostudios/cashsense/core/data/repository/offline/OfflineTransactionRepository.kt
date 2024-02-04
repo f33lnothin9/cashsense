@@ -14,6 +14,7 @@ import javax.inject.Inject
 class OfflineTransactionRepository @Inject constructor(
     private val dao: TransactionDao
 ) : TransactionsRepository {
+
     override fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory> =
         dao.getTransactionWithCategoryEntity(transactionId).map { it.asExternalModel() }
 

@@ -6,6 +6,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 
 interface TransactionsRepository {
+
     fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory>
 
     suspend fun upsertTransaction(transaction: Transaction)

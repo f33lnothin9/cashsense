@@ -13,6 +13,7 @@ import javax.inject.Inject
 class OfflineSubscriptionsRepository @Inject constructor(
     private val subscriptionDao: SubscriptionDao
 ) : SubscriptionsRepository {
+
     override fun getSubscription(id: String): Flow<Subscription> =
         subscriptionDao.getSubscriptionEntity(id).map { it.asExternalModel() }
 

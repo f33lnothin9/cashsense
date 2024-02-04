@@ -15,7 +15,10 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 @Composable
-fun formattedDate(date: Instant): String {
+fun formattedDate(
+    date: Instant,
+    onlyTime: Boolean = false,
+): String {
     var zoneId by remember { mutableStateOf(ZoneId.systemDefault()) }
 
     val context = LocalContext.current
@@ -30,9 +33,17 @@ fun formattedDate(date: Instant): String {
         }
     }
 
-    return DateTimeFormatter
-        .ofLocalizedDate(FormatStyle.MEDIUM)
-        .withLocale(Locale.getDefault())
-        .withZone(zoneId)
-        .format(date.toJavaInstant())
+    return if (onlyTime) {
+        DateTimeFormatter
+            .ofLocalizedTime(FormatStyle.MEDIUM)
+            .withLocale(Locale.getDefault())
+            .withZone(zoneId)
+            .format(date.toJavaInstant())
+    } else {
+        DateTimeFormatter
+            .ofLocalizedDate(FormatStyle.MEDIUM)
+            .withLocale(Locale.getDefault())
+            .withZone(zoneId)
+            .format(date.toJavaInstant())
+    }
 }

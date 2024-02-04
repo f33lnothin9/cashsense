@@ -61,8 +61,7 @@ fun AddTransactionDialog(
         walletId = walletId,
         onDismiss = onDismiss,
         onConfirm = {
-            transactionViewModel.upsertTransaction(it)
-            onDismiss()
+
         }
     )
 }
@@ -93,7 +92,6 @@ fun AddTransactionDialog(
                     Transaction(
                         id = UUID.randomUUID().toString(),
                         walletOwnerId = walletId,
-                        categoryId = category.id,
                         description = description,
                         amount = amount.toBigDecimal(),
                         date = Clock.System.now()
@@ -159,7 +157,7 @@ fun EditTransactionDialog(
         transactionWithCategory = transactionWithCategory,
         onDismiss = onDismiss,
         onConfirm = {
-            transactionViewModel.upsertTransaction(it)
+
             onDismiss()
         }
     )
@@ -188,7 +186,6 @@ fun EditTransactionDialog(
                     Transaction(
                         id = transactionWithCategory.transaction.id,
                         walletOwnerId = transactionWithCategory.transaction.walletOwnerId,
-                        categoryId = category?.id,
                         description = description,
                         amount = amount.toBigDecimal(),
                         date = transactionWithCategory.transaction.date

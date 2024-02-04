@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.model.data.Category
 
 interface CategoriesRepository {
+
     fun getCategory(id: String): Flow<Category>
 
     fun getCategories(): Flow<List<Category>>
