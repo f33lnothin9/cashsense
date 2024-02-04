@@ -60,16 +60,19 @@ class TransactionViewModel @Inject constructor(
                     )
                 }
             }
+
             is TransactionEvent.UpdateAmount -> {
                 _transactionUiState.update {
                     it.copy(amount = event.amount)
                 }
             }
+
             is TransactionEvent.UpdateCategory -> {
                 _transactionUiState.update {
                     it.copy(category = event.category)
                 }
             }
+
             is TransactionEvent.UpdateDescription -> {
                 _transactionUiState.update {
                     it.copy(description = event.description)
