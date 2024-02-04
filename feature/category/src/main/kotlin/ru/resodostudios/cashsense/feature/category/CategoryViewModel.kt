@@ -71,10 +71,10 @@ class CategoryViewModel @Inject constructor(
                 .onEach {
                     _categoryUiState.emit(
                         CategoryUiState(
-                            isEditing = true,
                             id = it.id.toString(),
                             title = it.title.toString(),
-                            iconRes = it.iconRes!!
+                            iconRes = it.iconRes!!,
+                            isEditing = true,
                         )
                     )
                 }
