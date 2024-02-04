@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
@@ -42,7 +43,7 @@ class TransactionViewModel @Inject constructor(
                     walletOwnerId = walletId,
                     description = _transactionUiState.value.description,
                     amount = _transactionUiState.value.amount.toBigDecimal(),
-                    date = _transactionUiState.value.date.toInstant()
+                    date = Clock.System.now(),
                 )
                 viewModelScope.launch {
                     transactionsRepository.upsertTransaction(transaction)
@@ -57,11 +58,21 @@ class TransactionViewModel @Inject constructor(
                     }
                 }
             }
-            is TransactionEvent.UpdateAmount -> TODO()
-            is TransactionEvent.UpdateCategory -> TODO()
-            is TransactionEvent.UpdateDate -> TODO()
-            is TransactionEvent.UpdateDescription -> TODO()
-            is TransactionEvent.UpdateTime -> TODO()
+            is TransactionEvent.UpdateAmount -> {
+                _transactionUiState.update {
+                    it.copy(amount = event.amount)
+                }
+            }
+            is TransactionEvent.UpdateCategory -> {
+                _transactionUiState.update {
+                    it.copy(category = event.category)
+                }
+            }
+            is TransactionEvent.UpdateDescription -> {
+                _transactionUiState.update {
+                    it.copy(description = event.description)
+                }
+            }
         }
     }
 
@@ -81,7 +92,6 @@ class TransactionViewModel @Inject constructor(
                                 walletOwnerId = walletId,
                                 description = it.transaction.description.toString(),
                                 amount = it.transaction.amount.toString(),
-                                date = it.transaction.date.toString(),
                                 category = it.category,
                                 isEditing = true,
                             )
