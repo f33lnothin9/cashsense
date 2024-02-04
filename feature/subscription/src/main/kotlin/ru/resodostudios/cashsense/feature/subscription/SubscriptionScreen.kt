@@ -43,28 +43,27 @@ import ru.resodostudios.cashsense.core.ui.validateAmount
 @Composable
 internal fun SubscriptionRoute(
     onBackClick: () -> Unit,
-    viewModel: SubscriptionViewModel = hiltViewModel()
+    viewModel: SubscriptionViewModel = hiltViewModel(),
 ) {
-    val subscriptionUiState by viewModel.subscriptionUiState.collectAsStateWithLifecycle()
+    val subscriptionState by viewModel.subscriptionUiState.collectAsStateWithLifecycle()
 
     SubscriptionScreen(
-        subscriptionUiState = subscriptionUiState,
+        subscriptionState = subscriptionState,
         onSubscriptionEvent = viewModel::onSubscriptionEvent,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SubscriptionScreen(
-    subscriptionUiState: SubscriptionUiState,
+    subscriptionState: SubscriptionUiState,
     onSubscriptionEvent: (SubscriptionEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
-            val titleRes =
-                if (subscriptionUiState.isEditing) R.string.feature_subscription_edit_subscription else R.string.feature_subscription_new_subscription
+            val titleRes = if (subscriptionState.isEditing) R.string.feature_subscription_edit_subscription else R.string.feature_subscription_new_subscription
 
             TopAppBar(
                 title = { Text(text = stringResource(titleRes)) },
@@ -82,9 +81,9 @@ internal fun SubscriptionScreen(
                             onSubscriptionEvent(SubscriptionEvent.Confirm)
                             onBackClick()
                         },
-                        enabled = subscriptionUiState.title.isNotBlank() &&
-                                subscriptionUiState.amount.validateAmount().second &&
-                                subscriptionUiState.paymentDate.isNotBlank()
+                        enabled = subscriptionState.title.isNotBlank() &&
+                                subscriptionState.amount.validateAmount().second &&
+                                subscriptionState.paymentDate.isNotBlank()
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Confirm),
@@ -104,7 +103,7 @@ internal fun SubscriptionScreen(
         ) {
             item(span = { GridItemSpan(2) }) {
                 OutlinedTextField(
-                    value = subscriptionUiState.title,
+                    value = subscriptionState.title,
                     onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateTitle(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -118,7 +117,7 @@ internal fun SubscriptionScreen(
             }
             item {
                 OutlinedTextField(
-                    value = subscriptionUiState.amount,
+                    value = subscriptionState.amount,
                     onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateAmount(it.validateAmount().first)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
@@ -134,8 +133,8 @@ internal fun SubscriptionScreen(
                 var openDialog by remember { mutableStateOf(false) }
 
                 OutlinedTextField(
-                    value = if (subscriptionUiState.paymentDate.isNotEmpty()) {
-                        formattedDate(subscriptionUiState.paymentDate.toInstant())
+                    value = if (subscriptionState.paymentDate.isNotEmpty()) {
+                        formattedDate(subscriptionState.paymentDate.toInstant())
                     } else {
                         stringResource(ru.resodostudios.cashsense.core.ui.R.string.none)
                     },
@@ -191,7 +190,7 @@ internal fun SubscriptionScreen(
             }
             item {
                 CurrencyExposedDropdownMenuBox(
-                    currencyName = subscriptionUiState.currency,
+                    currencyName = subscriptionState.currency,
                     onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) }
                 )
             }
