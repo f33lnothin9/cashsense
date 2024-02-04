@@ -33,20 +33,26 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.validateAmount
+import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
+import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 internal fun TransactionRoute(
     onBackClick: () -> Unit,
-    viewModel: TransactionViewModel = hiltViewModel(),
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
 ) {
-    val transactionState by viewModel.transactionUiState.collectAsStateWithLifecycle()
+    val transactionState by transactionViewModel.transactionUiState.collectAsStateWithLifecycle()
+    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     TransactionScreen(
         transactionState = transactionState,
-        onTransactionEvent = viewModel::onTransactionEvent,
+        categoriesState = categoriesState,
+        onTransactionEvent = transactionViewModel::onTransactionEvent,
         onBackClick = onBackClick,
     )
 }
@@ -55,79 +61,84 @@ internal fun TransactionRoute(
 @Composable
 internal fun TransactionScreen(
     transactionState: TransactionUiState,
+    categoriesState: CategoriesUiState,
     onTransactionEvent: (TransactionEvent) -> Unit,
     onBackClick: () -> Unit,
 ) {
-    Scaffold(
-        topBar = {
-            val titleRes = if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
+    when (categoriesState) {
+        CategoriesUiState.Loading -> LoadingState()
+        is CategoriesUiState.Success -> {
+            Scaffold(
+                topBar = {
+                    val titleRes = if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
 
-            TopAppBar(
-                title = { Text(text = stringResource(titleRes)) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
-                            contentDescription = null
+                    TopAppBar(
+                        title = { Text(text = stringResource(titleRes)) },
+                        navigationIcon = {
+                            IconButton(onClick = onBackClick) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(
+                                onClick = {
+                                    onTransactionEvent(TransactionEvent.Confirm)
+                                    onBackClick()
+                                },
+                                enabled = transactionState.amount.validateAmount().second,
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(CsIcons.Confirm),
+                                    contentDescription = stringResource(R.string.feature_transaction_add_transaction_icon_description)
+                                )
+                            }
+                        }
+                    )
+                }
+            ) { paddingValues ->
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(150.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = paddingValues,
+                    modifier = Modifier.padding(16.dp),
+                ) {
+                    item {
+                        OutlinedTextField(
+                            value = transactionState.amount,
+                            onValueChange = { onTransactionEvent(TransactionEvent.UpdateAmount(it.validateAmount().first)) },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                            ),
+                            label = { Text(text = stringResource(uiR.string.amount)) },
+                            placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
+                            supportingText = { Text(text = stringResource(uiR.string.required)) },
+                            maxLines = 1,
                         )
                     }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            onTransactionEvent(TransactionEvent.Confirm)
-                            onBackClick()
-                        },
-                        enabled = transactionState.amount.validateAmount().second,
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Confirm),
-                            contentDescription = stringResource(R.string.feature_transaction_add_transaction_icon_description)
+                    item {
+                        CategoryExposedDropdownMenuBox(
+                            currentCategory = transactionState.category,
+                            categories = categoriesState.categories,
+                            onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
+                        )
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        OutlinedTextField(
+                            value = transactionState.description,
+                            onValueChange = { onTransactionEvent(TransactionEvent.UpdateDescription(it)) },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text
+                            ),
+                            label = { Text(text = stringResource(uiR.string.description)) },
+                            maxLines = 1,
+                            singleLine = true,
                         )
                     }
                 }
-            )
-        }
-    ) { paddingValues ->
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(150.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = paddingValues,
-            modifier = Modifier.padding(16.dp),
-        ) {
-            item {
-                OutlinedTextField(
-                    value = transactionState.amount,
-                    onValueChange = { onTransactionEvent(TransactionEvent.UpdateAmount(it.validateAmount().first)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                    ),
-                    label = { Text(text = stringResource(uiR.string.amount)) },
-                    placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
-                    supportingText = { Text(text = stringResource(uiR.string.required)) },
-                    maxLines = 1,
-                )
-            }
-            item {
-                CategoryExposedDropdownMenuBox(
-                    title = transactionState.category?.title ?: stringResource(uiR.string.none),
-                    icon = designsystemR.drawable.ic_outlined_category,
-                    categories = emptyList(),
-                    onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
-                )
-            }
-            item(span = { GridItemSpan(2) }) {
-                OutlinedTextField(
-                    value = transactionState.description,
-                    onValueChange = { onTransactionEvent(TransactionEvent.UpdateDescription(it)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text
-                    ),
-                    label = { Text(text = stringResource(uiR.string.description)) },
-                    maxLines = 1,
-                    singleLine = true,
-                )
             }
         }
     }
@@ -136,13 +147,12 @@ internal fun TransactionScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryExposedDropdownMenuBox(
-    title: String,
-    icon: Int,
+    currentCategory: Category?,
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var iconId by rememberSaveable { mutableIntStateOf(icon) }
+    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconRes ?: designsystemR.drawable.ic_outlined_category) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -151,11 +161,10 @@ private fun CategoryExposedDropdownMenuBox(
         OutlinedTextField(
             modifier = Modifier.menuAnchor(),
             readOnly = true,
-            value = title,
+            value = currentCategory?.title ?: stringResource(uiR.string.none),
             onValueChange = {},
             label = { Text(text = stringResource(ru.resodostudios.cashsense.feature.category.R.string.feature_category_title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            placeholder = { Text(text = stringResource(uiR.string.none)) },
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(iconId),
