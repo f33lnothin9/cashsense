@@ -30,23 +30,7 @@ class SubscriptionViewModel @Inject constructor(
     val subscriptionUiState = _subscriptionUiState.asStateFlow()
 
     init {
-        if (subscriptionId != null) {
-            viewModelScope.launch {
-                subscriptionsRepository.getSubscription(subscriptionId)
-                    .onEach {
-                        _subscriptionUiState.emit(
-                            SubscriptionUiState(
-                                isEditing = true,
-                                title = it.title,
-                                amount = it.amount.toString(),
-                                paymentDate = it.paymentDate.toString(),
-                                currency = it.currency
-                            )
-                        )
-                    }
-                    .collect()
-            }
-        }
+        loadSubscription()
     }
 
     fun onSubscriptionEvent(subscriptionEvent: SubscriptionEvent) {
@@ -88,6 +72,26 @@ class SubscriptionViewModel @Inject constructor(
                 _subscriptionUiState.update {
                     it.copy(title = subscriptionEvent.title)
                 }
+            }
+        }
+    }
+
+    private fun loadSubscription() {
+        if (subscriptionId != null) {
+            viewModelScope.launch {
+                subscriptionsRepository.getSubscription(subscriptionId)
+                    .onEach {
+                        _subscriptionUiState.emit(
+                            SubscriptionUiState(
+                                title = it.title,
+                                amount = it.amount.toString(),
+                                paymentDate = it.paymentDate.toString(),
+                                currency = it.currency,
+                                isEditing = true,
+                            )
+                        )
+                    }
+                    .collect()
             }
         }
     }
