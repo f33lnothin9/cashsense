@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -152,7 +153,9 @@ private fun CategoryExposedDropdownMenuBox(
     onCategoryClick: (Category) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconRes ?: designsystemR.drawable.ic_outlined_category) }
+    var iconId by rememberSaveable {
+        mutableIntStateOf(currentCategory?.iconRes ?: designsystemR.drawable.ic_outlined_category)
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -170,7 +173,9 @@ private fun CategoryExposedDropdownMenuBox(
                     imageVector = ImageVector.vectorResource(iconId),
                     contentDescription = null
                 )
-            }
+            },
+            maxLines = 1,
+            singleLine = true,
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -178,7 +183,13 @@ private fun CategoryExposedDropdownMenuBox(
         ) {
             categories.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text(category.title.toString()) },
+                    text = {
+                        Text(
+                            text = category.title.toString(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
                     onClick = {
                         onCategoryClick(category)
                         iconId = category.iconRes!!
@@ -190,7 +201,7 @@ private fun CategoryExposedDropdownMenuBox(
                             imageVector = ImageVector.vectorResource(category.iconRes!!),
                             contentDescription = null
                         )
-                    }
+                    },
                 )
             }
         }
