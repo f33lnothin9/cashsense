@@ -28,16 +28,14 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
         }
     }
     testOptions {
