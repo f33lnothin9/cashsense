@@ -28,7 +28,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
-import ru.resodostudios.cashsense.feature.wallet.AddWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 
@@ -46,7 +46,7 @@ fun CsApp(
     var showCategoryDialog by rememberSaveable {
         mutableStateOf(false)
     }
-    var showAddWalletDialog by rememberSaveable {
+    var showWalletDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -60,9 +60,9 @@ fun CsApp(
             onDismiss = { showCategoryDialog = false }
         )
     }
-    if (showAddWalletDialog) {
-        AddWalletDialog(
-            onDismiss = { showAddWalletDialog = false }
+    if (showWalletDialog) {
+        WalletDialog(
+            onDismiss = { showWalletDialog = false }
         )
     }
 
@@ -114,7 +114,7 @@ fun CsApp(
                         ),
                         onClick = {
                             when (destination) {
-                                TopLevelDestination.HOME -> { showAddWalletDialog = true }
+                                TopLevelDestination.HOME -> { showWalletDialog = true }
                                 TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
                                 TopLevelDestination.SUBSCRIPTIONS -> { appState.navController.navigateToSubscription() }
                             }

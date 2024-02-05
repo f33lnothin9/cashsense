@@ -21,21 +21,24 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.WalletItemEvent
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
 internal fun HomeRoute(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
 ) {
-    val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        onWalletItemEvent = viewModel::onWalletItemEvent,
+        onWalletItemEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
+        onWalletDelete = homeViewModel::deleteWallet,
         onTransactionCreate = onTransactionCreate
     )
 }
@@ -43,11 +46,12 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    onWalletItemEvent: (WalletItemEvent) -> Unit,
+    onWalletItemEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String) -> Unit,
+    onWalletDelete: (String) -> Unit,
     onTransactionCreate: (String) -> Unit
 ) {
-    var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
+    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
@@ -64,15 +68,15 @@ internal fun HomeScreen(
                     onWalletClick = onWalletClick,
                     onTransactionCreate = onTransactionCreate,
                     onEdit = {
-                        onWalletItemEvent(WalletItemEvent.UpdateId(it))
-                        showEditWalletDialog = true
+                        onWalletItemEvent(WalletDialogEvent.UpdateId(it))
+                        showWalletDialog = true
                     },
-                    onDelete = { onWalletItemEvent(WalletItemEvent.Delete(it)) }
+                    onDelete = onWalletDelete
                 )
             }
-            if (showEditWalletDialog) {
+            if (showWalletDialog) {
                 WalletDialog(
-                    onDismiss = { showEditWalletDialog = false }
+                    onDismiss = { showWalletDialog = false }
                 )
             }
         } else {
