@@ -1,9 +1,11 @@
 package ru.resodostudios.cashsense.feature.wallet
 
-data class WalletDialogUiState(
+import ru.resodostudios.cashsense.core.model.data.Currency
+
+data class WalletItemUiState(
     val id: String = "",
     val title: String = "",
     val initialBalance: String = "",
-    val currency: String = "USD",
+    val currency: String = Currency.USD.name,
     val isEditing: Boolean = false,
 )
