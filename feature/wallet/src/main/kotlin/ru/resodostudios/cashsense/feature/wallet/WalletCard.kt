@@ -41,7 +41,7 @@ fun WalletCard(
     transactions: List<Transaction>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onEdit: (Wallet) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -93,7 +93,7 @@ fun WalletCard(
                 Text(text = stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             EditAndDeleteDropdownMenu(
-                onEdit = { onEdit(wallet) },
+                onEdit = { onEdit(wallet.id) },
                 onDelete = { onDelete(wallet.id) }
             )
         }

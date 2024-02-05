@@ -16,13 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.model.data.Currency
-import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.feature.wallet.EditWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
+import ru.resodostudios.cashsense.feature.wallet.WalletDialog
+import ru.resodostudios.cashsense.feature.wallet.WalletItemEvent
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
@@ -35,31 +34,20 @@ internal fun HomeRoute(
 
     HomeScreen(
         walletsState = walletsState,
+        onWalletItemEvent = viewModel::onWalletItemEvent,
         onWalletClick = onWalletClick,
-        onTransactionCreate = onTransactionCreate,
-        onDelete = viewModel::deleteWallet
+        onTransactionCreate = onTransactionCreate
     )
 }
 
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
+    onWalletItemEvent: (WalletItemEvent) -> Unit,
     onWalletClick: (String) -> Unit,
-    onTransactionCreate: (String) -> Unit,
-    onDelete: (String) -> Unit
+    onTransactionCreate: (String) -> Unit
 ) {
     var showEditWalletDialog by rememberSaveable { mutableStateOf(false) }
-
-    var walletState by rememberSaveable {
-        mutableStateOf(
-            Wallet(
-                id = "",
-                title = "",
-                initialBalance = 0.toBigDecimal(),
-                currency = Currency.USD.name
-            )
-        )
-    }
 
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
@@ -76,16 +64,15 @@ internal fun HomeScreen(
                     onWalletClick = onWalletClick,
                     onTransactionCreate = onTransactionCreate,
                     onEdit = {
-                        walletState = it
+                        onWalletItemEvent(WalletItemEvent.UpdateId(it))
                         showEditWalletDialog = true
                     },
-                    onDelete = onDelete
+                    onDelete = { onWalletItemEvent(WalletItemEvent.Delete(it)) }
                 )
             }
             if (showEditWalletDialog) {
-                EditWalletDialog(
-                    onDismiss = { showEditWalletDialog = false },
-                    wallet = walletState
+                WalletDialog(
+                    onDismiss = { showEditWalletDialog = false }
                 )
             }
         } else {
@@ -101,7 +88,7 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onEdit: (Wallet) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit
 ) {
     items(

@@ -34,11 +34,11 @@ import java.util.UUID
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
-fun AddWalletDialog(
+fun WalletDialog(
     onDismiss: () -> Unit,
     viewModel: WalletViewModel = hiltViewModel()
 ) {
-    AddWalletDialog(
+    WalletDialog(
         onDismiss = onDismiss,
         onConfirm = {
             viewModel.upsertWallet(it)
@@ -49,7 +49,7 @@ fun AddWalletDialog(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AddWalletDialog(
+fun WalletDialog(
     onDismiss: () -> Unit,
     onConfirm: (Wallet) -> Unit
 ) {
