@@ -41,9 +41,12 @@ fun WalletDialog(
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val dialogTitle = if (walletDialogState.isEditing) R.string.feature_wallet_edit_wallet else R.string.feature_wallet_new_wallet
+    val dialogConfirmText = if (walletDialogState.isEditing) uiR.string.save else uiR.string.add
+
     CsAlertDialog(
-        titleRes = R.string.feature_wallet_new_wallet,
-        confirmButtonTextRes = uiR.string.add,
+        titleRes = dialogTitle,
+        confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
