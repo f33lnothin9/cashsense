@@ -4,16 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.waterfall
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -69,12 +69,12 @@ internal fun WalletScreen(
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
             val transactions = walletState.walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction }
 
-            val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
-                    TopAppBar(
+                    LargeTopAppBar(
                         title = {
                             Text(
                                 text = wallet.title,
@@ -97,10 +97,11 @@ internal fun WalletScreen(
                                     contentDescription = stringResource(R.string.feature_transaction_add_transaction_icon_description)
                                 )
                             }
-                        }
+                        },
+                        scrollBehavior = scrollBehavior
                     )
                 },
-                contentWindowInsets = WindowInsets.waterfall,
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 content = { paddingValues ->
                     if (transactions.isNotEmpty()) {
                         val sortedTransactionsAndCategories =
