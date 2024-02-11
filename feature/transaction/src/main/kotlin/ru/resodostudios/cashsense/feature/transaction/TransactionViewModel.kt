@@ -52,12 +52,15 @@ class TransactionViewModel @Inject constructor(
                     transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
                 }
                 viewModelScope.launch {
-                    transactionsRepository.upsertTransactionCategoryCrossRef(
+                    val transactionCategoryCrossRef = _transactionUiState.value.category?.id?.let {
                         TransactionCategoryCrossRef(
                             transactionId = transaction.id,
-                            categoryId = _transactionUiState.value.category?.id.toString()
+                            categoryId = it
                         )
-                    )
+                    }
+                    if (transactionCategoryCrossRef != null) {
+                        transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
+                    }
                 }
             }
 
