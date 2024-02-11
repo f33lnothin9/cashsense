@@ -1,39 +1,47 @@
 package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
+import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.feature.transaction.R
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
-import ru.resodostudios.cashsense.feature.transaction.transactions
-import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -68,8 +76,7 @@ internal fun WalletScreen(
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
-            val transactions =
-                walletState.walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction }
+            val transactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
 
             val scrollBehavior =
                 TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -106,13 +113,7 @@ internal fun WalletScreen(
                 },
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 content = { paddingValues ->
-                    if (transactions.isNotEmpty()) {
-                        val sortedTransactionsAndCategories =
-                            walletState.walletWithTransactionsAndCategories.transactionsWithCategories
-                                .sortedByDescending { it.transaction.date }
-                                .groupBy { it.transaction.date.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
-                                .toSortedMap(compareByDescending { it })
-
+                    if (transactionsAndCategories.isNotEmpty()) {
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(300.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -121,8 +122,19 @@ internal fun WalletScreen(
                                 .fillMaxSize()
                                 .padding(paddingValues)
                         ) {
+                            item(
+                                span = { GridItemSpan(maxLineSpan) }
+                            ) {
+                                FinanceSection(
+                                    transactionsWithCategories = transactionsAndCategories,
+                                    currency = wallet.currency,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                )
+                            }
                             transactions(
-                                transactionsWithCategories = sortedTransactionsAndCategories,
+                                transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
                                 onEdit = { onTransactionEdit(it, wallet.id) },
                                 onDelete = onTransactionDelete
@@ -135,6 +147,62 @@ internal fun WalletScreen(
                         )
                     }
                 }
+            )
+        }
+    }
+}
+
+@Composable
+private fun FinanceSection(
+    transactionsWithCategories: List<TransactionWithCategory>,
+    currency: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier
+    ) {
+        Card(
+            modifier = Modifier.weight(1f),
+            enabled = true,
+            onClick = {},
+            shape = RoundedCornerShape(20.dp),
+        ) {
+            val walletExpenses = transactionsWithCategories
+                .asSequence()
+                .filter { it.transaction.amount < 0.toBigDecimal() }
+                .sumOf { it.transaction.amount }.abs()
+            Text(
+                text = getFormattedAmountAndCurrency(walletExpenses, currency),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = "Расходы",
+                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+        Card(
+            modifier = Modifier.weight(1f),
+            enabled = true,
+            onClick = {},
+            shape = RoundedCornerShape(20.dp),
+        ) {
+            val walletIncome = transactionsWithCategories
+                .asSequence()
+                .filter { it.transaction.amount > 0.toBigDecimal() }
+                .sumOf { it.transaction.amount }
+            Text(
+                text = getFormattedAmountAndCurrency(walletIncome, currency),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = "Доходы",
+                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }

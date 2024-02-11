@@ -98,7 +98,7 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     items(
         items = walletsWithTransactionsAndCategories,
         key = { it.wallet.id },
-        contentType = { "walletItem" }
+        contentType = { "wallet" }
     ) { walletWithTransactionsAndCategories ->
         WalletCard(
             wallet = walletWithTransactionsAndCategories.wallet,

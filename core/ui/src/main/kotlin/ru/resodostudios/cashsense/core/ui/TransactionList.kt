@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction
+package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -14,24 +14,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
-import ru.resodostudios.cashsense.core.ui.R
-import ru.resodostudios.cashsense.core.ui.formattedDate
-import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
-import java.time.Instant
-import java.util.SortedMap
+import java.time.temporal.ChronoUnit
 
 fun LazyGridScope.transactions(
-    transactionsWithCategories: SortedMap<Instant, List<TransactionWithCategory>>,
+    transactionsWithCategories: List<TransactionWithCategory>,
     currency: String,
     onEdit: (String) -> Unit,
-    onDelete: (Transaction) -> Unit
+    onDelete: (Transaction) -> Unit,
 ) {
-    val groupedTransactionsAndCategories = transactionsWithCategories.map {
+    val sortedTransactionsAndCategories =
+        transactionsWithCategories
+            .sortedByDescending { it.transaction.date }
+            .groupBy { it.transaction.date.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
+            .toSortedMap(compareByDescending { it })
+    val groupedTransactionsAndCategories = sortedTransactionsAndCategories.map {
         Pair(
             it.key,
             it.value
@@ -47,7 +48,11 @@ fun LazyGridScope.transactions(
                 modifier = Modifier.padding(16.dp)
             )
         }
-        items(group.second) { transactionWithCategory ->
+        items(
+            items = group.second,
+            key = { it.transaction.id },
+            contentType = { "transactionWithCategory" }
+        ) { transactionWithCategory ->
             val category = transactionWithCategory.category
             ListItem(
                 headlineContent = {
@@ -75,7 +80,9 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(category?.iconRes ?: CsIcons.Transaction),
+                        imageVector = ImageVector.vectorResource(
+                            category?.iconRes ?: CsIcons.Transaction
+                        ),
                         contentDescription = null
                     )
                 }
