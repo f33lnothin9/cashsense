@@ -48,6 +48,7 @@ import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.time.temporal.ChronoUnit
+import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -84,8 +85,7 @@ internal fun WalletScreen(
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
             val transactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
 
-            val scrollBehavior =
-                TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -95,14 +95,14 @@ internal fun WalletScreen(
                             Text(
                                 text = wallet.title,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
-                                    contentDescription = null
+                                    contentDescription = null,
                                 )
                             }
                         },
@@ -110,11 +110,11 @@ internal fun WalletScreen(
                             IconButton(onClick = { onTransactionCreate(wallet.id) }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                    contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description)
+                                    contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
                                 )
                             }
                         },
-                        scrollBehavior = scrollBehavior
+                        scrollBehavior = scrollBehavior,
                     )
                 },
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -126,7 +126,7 @@ internal fun WalletScreen(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(paddingValues)
+                                .padding(paddingValues),
                         ) {
                             item(
                                 span = { GridItemSpan(maxLineSpan) }
@@ -136,20 +136,20 @@ internal fun WalletScreen(
                                     currency = wallet.currency,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(16.dp)
+                                        .padding(16.dp),
                                 )
                             }
                             transactions(
                                 transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
                                 onEdit = { onTransactionEdit(it, wallet.id) },
-                                onDelete = onTransactionDelete
+                                onDelete = onTransactionDelete,
                             )
                         }
                     } else {
                         EmptyState(
                             messageRes = transactionR.string.feature_transaction_transactions_empty,
-                            animationRes = transactionR.raw.anim_transactions_empty
+                            animationRes = transactionR.raw.anim_transactions_empty,
                         )
                     }
                 }
@@ -167,7 +167,7 @@ private fun FinanceSection(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Card(
             modifier = Modifier.weight(1f),
@@ -179,6 +179,7 @@ private fun FinanceSection(
                 .asSequence()
                 .filter { it.transaction.amount < 0.toBigDecimal() }
                 .sumOf { it.transaction.amount }.abs()
+
             Text(
                 text = getFormattedAmountAndCurrency(walletExpenses, currency),
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
@@ -201,6 +202,7 @@ private fun FinanceSection(
                 .asSequence()
                 .filter { it.transaction.amount > 0.toBigDecimal() }
                 .sumOf { it.transaction.amount }
+
             Text(
                 text = getFormattedAmountAndCurrency(walletIncome, currency),
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
@@ -227,12 +229,8 @@ fun LazyGridScope.transactions(
             .sortedByDescending { it.transaction.date }
             .groupBy { it.transaction.date.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
             .toSortedMap(compareByDescending { it })
-    val groupedTransactionsAndCategories = sortedTransactionsAndCategories.map {
-        Pair(
-            it.key,
-            it.value
-        )
-    }
+    val groupedTransactionsAndCategories = sortedTransactionsAndCategories.map { Pair(it.key, it.value) }
+
     groupedTransactionsAndCategories.forEach { group ->
         item(
             span = { GridItemSpan(maxLineSpan) }
@@ -240,15 +238,16 @@ fun LazyGridScope.transactions(
             Text(
                 text = formattedDate(group.first.toKotlinInstant()),
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
         items(
             items = group.second,
             key = { it.transaction.id },
-            contentType = { "transactionWithCategory" }
+            contentType = { "transactionWithCategory" },
         ) { transactionWithCategory ->
             val category = transactionWithCategory.category
+
             ListItem(
                 headlineContent = {
                     Text(
@@ -257,28 +256,26 @@ fun LazyGridScope.transactions(
                             currencyName = currency
                         ),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 trailingContent = {
                     EditAndDeleteDropdownMenu(
                         onEdit = { onEdit(transactionWithCategory.transaction.id) },
-                        onDelete = { onDelete(transactionWithCategory.transaction) }
+                        onDelete = { onDelete(transactionWithCategory.transaction) },
                     )
                 },
                 supportingContent = {
                     Text(
-                        text = category?.title ?: stringResource(ru.resodostudios.cashsense.core.ui.R.string.none),
+                        text = category?.title ?: stringResource(uiR.string.none),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(
-                            category?.iconRes ?: CsIcons.Transaction
-                        ),
-                        contentDescription = null
+                        imageVector = ImageVector.vectorResource(category?.iconRes ?: CsIcons.Transaction),
+                        contentDescription = null,
                     )
                 }
             )
