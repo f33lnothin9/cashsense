@@ -25,14 +25,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.toJavaInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.feature.transaction.R
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.transaction.transactions
+import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -67,9 +68,11 @@ internal fun WalletScreen(
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
-            val transactions = walletState.walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction }
+            val transactions =
+                walletState.walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction }
 
-            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+            val scrollBehavior =
+                TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -107,7 +110,7 @@ internal fun WalletScreen(
                         val sortedTransactionsAndCategories =
                             walletState.walletWithTransactionsAndCategories.transactionsWithCategories
                                 .sortedByDescending { it.transaction.date }
-                                .groupBy { formattedDate(it.transaction.date) }
+                                .groupBy { it.transaction.date.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
                                 .toSortedMap(compareByDescending { it })
 
                         LazyVerticalGrid(

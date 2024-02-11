@@ -28,9 +28,7 @@ fun formattedDate(
             onTimeZoneChanged = { zoneId = ZoneId.systemDefault() },
         )
         receiver.register(context)
-        onDispose {
-            receiver.unregister(context)
-        }
+        onDispose { receiver.unregister(context) }
     }
 
     return if (onlyTime) {

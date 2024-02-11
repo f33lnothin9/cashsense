@@ -14,16 +14,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.R
+import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
+import java.time.Instant
 import java.util.SortedMap
 
 fun LazyGridScope.transactions(
-    transactionsWithCategories: SortedMap<String, List<TransactionWithCategory>>,
+    transactionsWithCategories: SortedMap<Instant, List<TransactionWithCategory>>,
     currency: String,
     onEdit: (String) -> Unit,
     onDelete: (Transaction) -> Unit
@@ -39,7 +42,7 @@ fun LazyGridScope.transactions(
             span = { GridItemSpan(maxLineSpan) }
         ) {
             Text(
-                text = group.first,
+                text = formattedDate(group.first.toKotlinInstant()),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(16.dp)
             )
