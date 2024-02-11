@@ -18,8 +18,10 @@ It's a mobile app designed to help users manage their finances effectively. Whet
 # UI
 
 * [Material 3][1]
-* [Jetpack Compose][2]
-* [Lottie][3]
+* [Material 3 Adaptive][2]
+* [Material 3 Adaptive Navigation][3]
+* [Jetpack Compose][4]
+* [Lottie][5]
 
 # Contributing
 
@@ -31,5 +33,7 @@ Contributions are welcome! If you have any improvements or bug fixes in mind, fe
 [license](LICENSE) for more information.
 
 [1]: https://m3.material.io/
-[2]: https://developer.android.com/jetpack/compose
-[3]: https://github.com/airbnb/lottie/blob/master/android-compose.md
+[2]: https://developer.android.com/reference/kotlin/androidx/compose/material3/adaptive/package-summary
+[3]: https://developer.android.com/reference/kotlin/androidx/compose/material3/adaptive/navigation/suite/package-summary
+[4]: https://developer.android.com/jetpack/compose
+[5]: https://github.com/airbnb/lottie/blob/master/android-compose.md
