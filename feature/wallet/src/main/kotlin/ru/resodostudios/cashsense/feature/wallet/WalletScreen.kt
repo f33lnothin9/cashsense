@@ -40,7 +40,6 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import ru.resodostudios.cashsense.core.ui.transactions
-import ru.resodostudios.cashsense.feature.transaction.R
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -104,7 +103,7 @@ internal fun WalletScreen(
                             IconButton(onClick = { onTransactionCreate(wallet.id) }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Add),
-                                    contentDescription = stringResource(R.string.feature_transaction_add_transaction_icon_description)
+                                    contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description)
                                 )
                             }
                         },
@@ -177,9 +176,10 @@ private fun FinanceSection(
                 text = getFormattedAmountAndCurrency(walletExpenses, currency),
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
             )
             Text(
-                text = "Расходы",
+                text = stringResource(R.string.feature_wallet_expenses),
                 modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -198,9 +198,10 @@ private fun FinanceSection(
                 text = getFormattedAmountAndCurrency(walletIncome, currency),
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
             )
             Text(
-                text = "Доходы",
+                text = stringResource(R.string.feature_wallet_income),
                 modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
             )

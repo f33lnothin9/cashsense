@@ -3,5 +3,7 @@
     <string name="feature_wallet_new_wallet">New wallet</string>
     <string name="feature_wallet_edit_wallet">Edit wallet</string>
     <string name="feature_wallet_initial_balance">Initial balance</string>
+    <string name="feature_wallet_income">Income</string>
+    <string name="feature_wallet_expenses">Expenses</string>
     <string name="feature_wallet_wallets_empty">Nothing in Wallets</string>
 </resources>
