@@ -75,9 +75,9 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
             )
-            WalletFinancesSection(
+            FinanceIndicators(
                 transactions = transactions,
-                currencyName = wallet.currency
+                currency = wallet.currency
             )
         }
         Row(
@@ -102,9 +102,9 @@ fun WalletCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun WalletFinancesSection(
+private fun FinanceIndicators(
     transactions: List<Transaction>,
-    currencyName: String
+    currency: String,
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -136,7 +136,7 @@ private fun WalletFinancesSection(
                     Text(
                         text = getFormattedAmountAndCurrency(
                             amount = walletIncome.abs(),
-                            currencyName = currencyName
+                            currencyName = currency
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -171,7 +171,7 @@ private fun WalletFinancesSection(
                     Text(
                         text = getFormattedAmountAndCurrency(
                             amount = walletExpenses.abs(),
-                            currencyName = currencyName
+                            currencyName = currency
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
