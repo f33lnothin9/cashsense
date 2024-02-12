@@ -118,6 +118,7 @@ internal fun TransactionScreen(
                             placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
                             supportingText = { Text(text = stringResource(uiR.string.required)) },
                             maxLines = 1,
+                            singleLine = true,
                         )
                     }
                     item {
@@ -127,7 +128,9 @@ internal fun TransactionScreen(
                             onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
                         )
                     }
-                    item(span = { GridItemSpan(2) }) {
+                    item(
+                        span = { GridItemSpan(2) }
+                    ) {
                         OutlinedTextField(
                             value = transactionState.description,
                             onValueChange = { onTransactionEvent(TransactionEvent.UpdateDescription(it)) },

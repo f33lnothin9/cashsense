@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,17 +71,22 @@ fun WalletDialog(
                 label = { Text(text = stringResource(uiR.string.title)) },
                 maxLines = 1,
                 placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(text = stringResource(uiR.string.required)) }
+                supportingText = { Text(text = stringResource(uiR.string.required)) },
+                singleLine = true,
             )
             OutlinedTextField(
-                value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.validateAmount().first)) },
+                value = TextFieldValue(
+                    text = walletDialogState.initialBalance,
+                    selection = TextRange(walletDialogState.initialBalance.length)
+                ),
+                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.text.validateAmount().first)) },
                 placeholder = { Text(text = "100") },
                 label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                 ),
                 maxLines = 1,
+                singleLine = true,
             )
             CurrencyExposedDropdownMenuBox(
                 currencyName = walletDialogState.currency,

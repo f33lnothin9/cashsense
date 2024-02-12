@@ -86,7 +86,8 @@ fun CategoryDialog(
                         currentIconId = categoryState.iconRes,
                         onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) }
                     )
-                }
+                },
+                singleLine = true,
             )
         }
     }
