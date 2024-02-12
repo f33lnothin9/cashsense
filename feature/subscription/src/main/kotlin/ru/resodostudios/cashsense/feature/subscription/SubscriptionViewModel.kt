@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.feature.subscription
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,8 +40,8 @@ class SubscriptionViewModel @Inject constructor(
             SubscriptionEvent.Confirm -> {
                 val subscription = Subscription(
                     id = subscriptionId ?: UUID.randomUUID().toString(),
-                    title = _subscriptionUiState.value.title,
-                    amount = _subscriptionUiState.value.amount.toBigDecimal(),
+                    title = _subscriptionUiState.value.title.text,
+                    amount = _subscriptionUiState.value.amount.text.toBigDecimal(),
                     paymentDate = _subscriptionUiState.value.paymentDate.toInstant(),
                     currency = _subscriptionUiState.value.currency,
                     notificationDate = null,
@@ -83,8 +85,14 @@ class SubscriptionViewModel @Inject constructor(
                     .onEach {
                         _subscriptionUiState.emit(
                             SubscriptionUiState(
-                                title = it.title,
-                                amount = it.amount.toString(),
+                                title = TextFieldValue(
+                                    text = it.title,
+                                    selection = TextRange(it.title.length)
+                                ),
+                                amount = TextFieldValue(
+                                    text = it.amount.toString(),
+                                    selection = TextRange(it.amount.toString().length)
+                                ),
                                 paymentDate = it.paymentDate.toString(),
                                 currency = it.currency,
                                 isEditing = true,

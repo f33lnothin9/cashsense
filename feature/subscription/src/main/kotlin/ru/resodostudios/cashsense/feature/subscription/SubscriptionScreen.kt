@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,8 +82,8 @@ internal fun SubscriptionScreen(
                             onSubscriptionEvent(SubscriptionEvent.Confirm)
                             onBackClick()
                         },
-                        enabled = subscriptionState.title.isNotBlank() &&
-                                subscriptionState.amount.validateAmount().second &&
+                        enabled = subscriptionState.title.text.isNotBlank() &&
+                                subscriptionState.amount.text.validateAmount().second &&
                                 subscriptionState.paymentDate.isNotBlank()
                     ) {
                         Icon(
@@ -118,7 +119,16 @@ internal fun SubscriptionScreen(
             item {
                 OutlinedTextField(
                     value = subscriptionState.amount,
-                    onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateAmount(it.validateAmount().first)) },
+                    onValueChange = {
+                        onSubscriptionEvent(
+                            SubscriptionEvent.UpdateAmount(
+                                TextFieldValue(
+                                    text = it.text.validateAmount().first,
+                                    selection = it.selection
+                                )
+                            )
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal
                     ),
@@ -166,8 +176,7 @@ internal fun SubscriptionScreen(
                                     openDialog = false
                                     onSubscriptionEvent(
                                         SubscriptionEvent.UpdatePaymentDate(
-                                            Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
-                                                .toString()
+                                            Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!).toString()
                                         )
                                     )
                                 },
