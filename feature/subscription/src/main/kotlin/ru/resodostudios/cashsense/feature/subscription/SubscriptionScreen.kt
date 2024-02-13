@@ -19,12 +19,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -55,7 +60,10 @@ internal fun SubscriptionRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 internal fun SubscriptionScreen(
     subscriptionState: SubscriptionUiState,
@@ -95,6 +103,8 @@ internal fun SubscriptionScreen(
             )
         }
     ) { paddingValues ->
+        val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
+
         LazyVerticalGrid(
             columns = GridCells.Adaptive(150.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -102,7 +112,9 @@ internal fun SubscriptionScreen(
             contentPadding = paddingValues,
             modifier = Modifier.padding(16.dp)
         ) {
-            item(span = { GridItemSpan(2) }) {
+            item(
+                span = { GridItemSpan(2) }
+            ) {
                 OutlinedTextField(
                     value = subscriptionState.title,
                     onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateTitle(it)) },
@@ -113,7 +125,10 @@ internal fun SubscriptionScreen(
                     label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title)) },
                     placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title) + "*") },
                     supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                    maxLines = 1
+                    maxLines = 1,
+                    modifier = Modifier
+                        .focusRequester(titleTextField)
+                        .focusProperties { next = amountTextField }
                 )
             }
             item {
@@ -130,12 +145,14 @@ internal fun SubscriptionScreen(
                         )
                     },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done
                     ),
                     label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount)) },
                     placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount) + "*") },
                     supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
-                    maxLines = 1
+                    maxLines = 1,
+                    modifier = Modifier.focusRequester(amountTextField)
                 )
             }
             item {
@@ -203,6 +220,9 @@ internal fun SubscriptionScreen(
                     onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) }
                 )
             }
+        }
+        LaunchedEffect(Unit) {
+            titleTextField.requestFocus()
         }
     }
 }
