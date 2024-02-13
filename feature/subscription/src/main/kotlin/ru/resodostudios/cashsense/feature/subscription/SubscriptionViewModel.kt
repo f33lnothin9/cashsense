@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
+import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.navigation.SubscriptionArgs
 import java.util.UUID
@@ -104,3 +105,11 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 }
+
+data class SubscriptionUiState(
+    val title: TextFieldValue = TextFieldValue(""),
+    val amount: TextFieldValue = TextFieldValue(""),
+    val paymentDate: String = "",
+    val currency: String = Currency.USD.name,
+    val isEditing: Boolean = false
+)
