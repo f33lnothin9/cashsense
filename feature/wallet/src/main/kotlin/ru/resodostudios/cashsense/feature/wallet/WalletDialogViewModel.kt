@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,8 +30,8 @@ class WalletDialogViewModel @Inject constructor(
             WalletDialogEvent.Confirm -> {
                 val wallet = Wallet(
                     id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _walletDialogUiState.value.title,
-                    initialBalance = _walletDialogUiState.value.initialBalance.toBigDecimal(),
+                    title = _walletDialogUiState.value.title.text,
+                    initialBalance = _walletDialogUiState.value.initialBalance.text.toBigDecimal(),
                     currency = _walletDialogUiState.value.currency
                 )
                 viewModelScope.launch {
@@ -38,8 +40,8 @@ class WalletDialogViewModel @Inject constructor(
                 _walletDialogUiState.update {
                     it.copy(
                         id = "",
-                        title = "",
-                        initialBalance = "",
+                        title = TextFieldValue(""),
+                        initialBalance = TextFieldValue(""),
                         currency = Currency.USD.name,
                         isEditing = false
                     )
@@ -80,8 +82,14 @@ class WalletDialogViewModel @Inject constructor(
                     _walletDialogUiState.emit(
                         WalletDialogUiState(
                             id = it.id,
-                            title = it.title,
-                            initialBalance = it.initialBalance.toString(),
+                            title = TextFieldValue(
+                                text = it.title,
+                                selection = TextRange(it.title.length)
+                            ),
+                            initialBalance = TextFieldValue(
+                                text = it.initialBalance.toString(),
+                                selection = TextRange(it.initialBalance.toString().length)
+                            ),
                             currency = it.currency,
                             isEditing = true,
                         )
@@ -94,8 +102,8 @@ class WalletDialogViewModel @Inject constructor(
 
 data class WalletDialogUiState(
     val id: String = "",
-    val title: String = "",
-    val initialBalance: String = "",
+    val title: TextFieldValue = TextFieldValue(""),
+    val initialBalance: TextFieldValue = TextFieldValue(""),
     val currency: String = Currency.USD.name,
     val isEditing: Boolean = false,
 )

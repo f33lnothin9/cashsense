@@ -17,7 +17,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -63,7 +62,7 @@ fun WalletDialog(
             onWalletDialogEvent(WalletDialogEvent.Confirm)
             onDismiss()
         },
-        isConfirmEnabled = walletDialogState.title.isNotBlank() && walletDialogState.initialBalance.validateAmount().second,
+        isConfirmEnabled = walletDialogState.title.text.isNotBlank() && walletDialogState.initialBalance.text.validateAmount().second,
         onDismiss = onDismiss,
     ) {
         val (titleTextField, initialBalanceTextField) = remember { FocusRequester.createRefs() }
@@ -88,11 +87,17 @@ fun WalletDialog(
                     .focusProperties { next = initialBalanceTextField }
             )
             OutlinedTextField(
-                value = TextFieldValue(
-                    text = walletDialogState.initialBalance,
-                    selection = TextRange(walletDialogState.initialBalance.length)
-                ),
-                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.text.validateAmount().first)) },
+                value = walletDialogState.initialBalance,
+                onValueChange = {
+                    onWalletDialogEvent(
+                        WalletDialogEvent.UpdateInitialBalance(
+                            TextFieldValue(
+                                text = it.text.validateAmount().first,
+                                selection = it.selection
+                            )
+                        )
+                    )
+                },
                 placeholder = { Text(text = "100") },
                 label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
                 keyboardOptions = KeyboardOptions(
