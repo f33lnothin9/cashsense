@@ -45,6 +45,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 internal fun SubscriptionRoute(
@@ -122,9 +123,9 @@ internal fun SubscriptionScreen(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
                     ),
-                    label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title)) },
-                    placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.title) + "*") },
-                    supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
+                    label = { Text(text = stringResource(uiR.string.title)) },
+                    placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
                     maxLines = 1,
                     modifier = Modifier
                         .focusRequester(titleTextField)
@@ -148,9 +149,9 @@ internal fun SubscriptionScreen(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
                     ),
-                    label = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount)) },
-                    placeholder = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.amount) + "*") },
-                    supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
+                    label = { Text(text = stringResource(uiR.string.amount)) },
+                    placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
                     maxLines = 1,
                     modifier = Modifier.focusRequester(amountTextField)
                 )
@@ -163,13 +164,13 @@ internal fun SubscriptionScreen(
                     value = if (subscriptionState.paymentDate.isNotEmpty()) {
                         formattedDate(subscriptionState.paymentDate.toInstant())
                     } else {
-                        stringResource(ru.resodostudios.cashsense.core.ui.R.string.none)
+                        stringResource(uiR.string.none)
                     },
                     onValueChange = { },
                     readOnly = true,
                     label = { Text(text = stringResource(R.string.feature_subscription_payment_date)) },
                     placeholder = { Text(text = "${stringResource(R.string.feature_subscription_payment_date)}*") },
-                    supportingText = { Text(text = stringResource(ru.resodostudios.cashsense.core.ui.R.string.required)) },
+                    supportingText = { Text(text = stringResource(uiR.string.required)) },
                     leadingIcon = {
                         IconButton(onClick = { openDialog = true }) {
                             Icon(
@@ -199,14 +200,14 @@ internal fun SubscriptionScreen(
                                 },
                                 enabled = confirmEnabled.value
                             ) {
-                                Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.core_ui_ok))
+                                Text(stringResource(uiR.string.core_ui_ok))
                             }
                         },
                         dismissButton = {
                             TextButton(
                                 onClick = { openDialog = false }
                             ) {
-                                Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.core_ui_cancel))
+                                Text(stringResource(uiR.string.core_ui_cancel))
                             }
                         }
                     ) {
