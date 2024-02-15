@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.category
 
+import androidx.annotation.DrawableRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -82,3 +83,11 @@ class CategoryViewModel @Inject constructor(
         }
     }
 }
+
+data class CategoryUiState(
+    val id: String = "",
+    val title: String = "",
+    @DrawableRes
+    val iconRes: Int = CsIcons.Category,
+    val isEditing: Boolean = false
+)
