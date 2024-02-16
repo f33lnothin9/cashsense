@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.feature.category
 
 import androidx.annotation.DrawableRes
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +31,7 @@ class CategoryViewModel @Inject constructor(
             CategoryEvent.Confirm -> {
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _categoryUiState.value.title,
+                    title = _categoryUiState.value.title.text,
                     iconRes = _categoryUiState.value.iconRes
                 )
                 viewModelScope.launch {
@@ -38,7 +40,7 @@ class CategoryViewModel @Inject constructor(
                 _categoryUiState.update {
                     it.copy(
                         id = "",
-                        title = "",
+                        title = TextFieldValue(""),
                         iconRes = CsIcons.Category,
                         isEditing = false
                     )
@@ -73,7 +75,10 @@ class CategoryViewModel @Inject constructor(
                     _categoryUiState.emit(
                         CategoryUiState(
                             id = it.id.toString(),
-                            title = it.title.toString(),
+                            title = TextFieldValue(
+                                text = it.title ?: "",
+                                selection = TextRange(it.title?.length ?: 0),
+                            ),
                             iconRes = it.iconRes!!,
                             isEditing = true,
                         )
@@ -86,7 +91,7 @@ class CategoryViewModel @Inject constructor(
 
 data class CategoryUiState(
     val id: String = "",
-    val title: String = "",
+    val title: TextFieldValue = TextFieldValue(""),
     @DrawableRes
     val iconRes: Int = CsIcons.Category,
     val isEditing: Boolean = false

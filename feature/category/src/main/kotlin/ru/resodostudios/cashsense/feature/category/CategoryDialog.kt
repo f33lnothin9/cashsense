@@ -64,7 +64,7 @@ fun CategoryDialog(
             onCategoryEvent(CategoryEvent.Confirm)
             onDismiss()
         },
-        isConfirmEnabled = categoryState.title.isNotBlank(),
+        isConfirmEnabled = categoryState.title.text.isNotBlank(),
         onDismiss = onDismiss
     ) {
         Column(
