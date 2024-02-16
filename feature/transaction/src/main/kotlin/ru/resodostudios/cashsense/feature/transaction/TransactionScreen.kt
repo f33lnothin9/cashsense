@@ -45,8 +45,10 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
+import ru.resodostudios.cashsense.feature.category.CategoryDialog
 import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.feature.category.R as categoryR
 
 @Composable
 internal fun TransactionRoute(
@@ -112,6 +114,8 @@ internal fun TransactionScreen(
             ) { paddingValues ->
                 val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
+                var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(150.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -150,6 +154,7 @@ internal fun TransactionScreen(
                             currentCategory = transactionState.category,
                             categories = categoriesState.categories,
                             onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
+                            onNewCategoryClick = { showCategoryDialog = true }
                         )
                     }
                     item(
@@ -168,6 +173,11 @@ internal fun TransactionScreen(
                         )
                     }
                 }
+                if (showCategoryDialog) {
+                    CategoryDialog(
+                        onDismiss = { showCategoryDialog = false }
+                    )
+                }
                 LaunchedEffect(Unit) {
                     amountTextField.requestFocus()
                 }
@@ -181,7 +191,8 @@ internal fun TransactionScreen(
 private fun CategoryExposedDropdownMenuBox(
     currentCategory: Category?,
     categories: List<Category>,
-    onCategoryClick: (Category) -> Unit
+    onCategoryClick: (Category) -> Unit,
+    onNewCategoryClick: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var iconId by rememberSaveable {
@@ -212,6 +223,26 @@ private fun CategoryExposedDropdownMenuBox(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(categoryR.string.feature_category_new_category),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                onClick = {
+                    onNewCategoryClick()
+                    expanded = false
+                },
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Add),
+                        contentDescription = null
+                    )
+                },
+            )
             categories.forEach { category ->
                 DropdownMenuItem(
                     text = {
