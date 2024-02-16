@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionArgs
@@ -111,3 +113,12 @@ class TransactionViewModel @Inject constructor(
         }
     }
 }
+
+data class TransactionUiState(
+    val walletOwnerId: String = "",
+    val description: String = "",
+    val amount: String = "",
+    val date: String = Clock.System.now().toString(),
+    val category: Category? = Category(),
+    val isEditing: Boolean = false,
+)
