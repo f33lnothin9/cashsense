@@ -15,15 +15,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,14 +39,14 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 @Composable
 fun CategoryDialog(
     onDismiss: () -> Unit,
-    viewModel: CategoryViewModel = hiltViewModel()
+    viewModel: CategoryViewModel = hiltViewModel(),
 ) {
     val categoryState by viewModel.categoryUiState.collectAsStateWithLifecycle()
 
     CategoryDialog(
         categoryState = categoryState,
         onCategoryEvent = viewModel::onCategoryEvent,
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
     )
 }
 
@@ -50,7 +54,7 @@ fun CategoryDialog(
 fun CategoryDialog(
     categoryState: CategoryUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val dialogTitle = if (categoryState.isEditing) R.string.feature_category_edit_category else R.string.feature_category_new_category
     val dialogConfirmText = if (categoryState.isEditing) uiR.string.save else uiR.string.add
@@ -65,8 +69,10 @@ fun CategoryDialog(
             onDismiss()
         },
         isConfirmEnabled = categoryState.title.text.isNotBlank(),
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
     ) {
+        val titleTextField = remember { FocusRequester() }
+
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.verticalScroll(rememberScrollState())
@@ -75,7 +81,8 @@ fun CategoryDialog(
                 value = categoryState.title,
                 onValueChange = { onCategoryEvent(CategoryEvent.UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done,
                 ),
                 label = { Text(text = stringResource(uiR.string.core_ui_icon_and_title)) },
                 placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
@@ -87,8 +94,11 @@ fun CategoryDialog(
                         onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) }
                     )
                 },
-                singleLine = true,
+                modifier = Modifier.focusRequester(titleTextField)
             )
+        }
+        LaunchedEffect(Unit) {
+            titleTextField.requestFocus()
         }
     }
 }
