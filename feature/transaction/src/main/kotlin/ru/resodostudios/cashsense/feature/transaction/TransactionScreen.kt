@@ -17,16 +17,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,7 +65,10 @@ internal fun TransactionRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class,
+)
 @Composable
 internal fun TransactionScreen(
     transactionState: TransactionUiState,
@@ -75,7 +84,7 @@ internal fun TransactionScreen(
                     val titleRes = if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
 
                     TopAppBar(
-                        title = { Text(text = stringResource(titleRes)) },
+                        title = { Text(stringResource(titleRes)) },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(
@@ -101,6 +110,8 @@ internal fun TransactionScreen(
                     )
                 }
             ) { paddingValues ->
+                val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
+
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(150.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -123,12 +134,15 @@ internal fun TransactionScreen(
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next,
                             ),
-                            label = { Text(text = stringResource(uiR.string.amount)) },
-                            placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
-                            supportingText = { Text(text = stringResource(uiR.string.required)) },
+                            label = { Text(stringResource(uiR.string.amount)) },
+                            placeholder = { Text(stringResource(uiR.string.amount) + "*") },
+                            supportingText = { Text(stringResource(uiR.string.required)) },
                             maxLines = 1,
-                            singleLine = true,
+                            modifier = Modifier
+                                .focusRequester(amountTextField)
+                                .focusProperties { next = descTextField },
                         )
                     }
                     item {
@@ -145,13 +159,17 @@ internal fun TransactionScreen(
                             value = transactionState.description,
                             onValueChange = { onTransactionEvent(TransactionEvent.UpdateDescription(it)) },
                             keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done,
                             ),
-                            label = { Text(text = stringResource(uiR.string.description)) },
+                            label = { Text(stringResource(uiR.string.description)) },
                             maxLines = 1,
-                            singleLine = true,
+                            modifier = Modifier.focusRequester(descTextField),
                         )
                     }
+                }
+                LaunchedEffect(Unit) {
+                    amountTextField.requestFocus()
                 }
             }
         }
