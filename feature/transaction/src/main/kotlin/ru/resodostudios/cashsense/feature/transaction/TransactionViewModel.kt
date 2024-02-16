@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.feature.transaction
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,8 +45,8 @@ class TransactionViewModel @Inject constructor(
                 val transaction = Transaction(
                     id = transactionId ?: UUID.randomUUID().toString(),
                     walletOwnerId = walletId,
-                    description = _transactionUiState.value.description,
-                    amount = _transactionUiState.value.amount.toBigDecimal(),
+                    description = _transactionUiState.value.description.text,
+                    amount = _transactionUiState.value.amount.text.toBigDecimal(),
                     date = _transactionUiState.value.date.toInstant(),
                 )
                 viewModelScope.launch {
@@ -61,7 +63,9 @@ class TransactionViewModel @Inject constructor(
                         )
                     }
                     if (transactionCategoryCrossRef != null) {
-                        transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
+                        transactionsRepository.upsertTransactionCategoryCrossRef(
+                            transactionCategoryCrossRef
+                        )
                     }
                 }
             }
@@ -100,8 +104,14 @@ class TransactionViewModel @Inject constructor(
                         _transactionUiState.emit(
                             TransactionUiState(
                                 walletOwnerId = walletId,
-                                description = it.transaction.description.toString(),
-                                amount = it.transaction.amount.toString(),
+                                description = TextFieldValue(
+                                    text = it.transaction.description ?: "",
+                                    selection = TextRange(it.transaction.description?.length ?: 0)
+                                ),
+                                amount = TextFieldValue(
+                                    text = it.transaction.amount.toString(),
+                                    selection = TextRange(it.transaction.amount.toString().length)
+                                ),
                                 date = it.transaction.date.toString(),
                                 category = it.category,
                                 isEditing = true,
@@ -116,8 +126,8 @@ class TransactionViewModel @Inject constructor(
 
 data class TransactionUiState(
     val walletOwnerId: String = "",
-    val description: String = "",
-    val amount: String = "",
+    val description: TextFieldValue = TextFieldValue(""),
+    val amount: TextFieldValue = TextFieldValue(""),
     val date: String = Clock.System.now().toString(),
     val category: Category? = Category(),
     val isEditing: Boolean = false,
