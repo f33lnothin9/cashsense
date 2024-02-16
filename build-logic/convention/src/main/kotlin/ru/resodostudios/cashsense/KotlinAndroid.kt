@@ -28,7 +28,7 @@ internal fun Project.configureKotlinAndroid(
             targetCompatibility = JavaVersion.VERSION_17
             isCoreLibraryDesugaringEnabled = true
         }
-        buildToolsVersion = "34.0.0"
+        buildToolsVersion = "35.0.0-rc1"
     }
 
     configureKotlin()
