@@ -47,4 +47,5 @@ object CsIcons {
     val SmokingRooms = R.drawable.ic_outlined_smoking_rooms
     val SportsEsports = R.drawable.ic_outlined_sports_esports
     val Travel = R.drawable.ic_outlined_travel
+    val Info = R.drawable.ic_outlined_info
 }

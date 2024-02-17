@@ -203,7 +203,7 @@ private fun ColumnScope.SettingsPanel(
         supportingContent = { Text(text = packageInfo.versionName) },
         leadingContent = {
             Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.Payments),
+                imageVector = ImageVector.vectorResource(CsIcons.Info),
                 contentDescription = null
             )
         },
