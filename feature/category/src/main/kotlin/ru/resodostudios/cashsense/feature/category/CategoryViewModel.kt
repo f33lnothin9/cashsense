@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.category
 
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import java.util.UUID
 import javax.inject.Inject
@@ -32,7 +30,7 @@ class CategoryViewModel @Inject constructor(
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _categoryUiState.value.title.text,
-                    iconRes = _categoryUiState.value.iconRes
+                    icon = _categoryUiState.value.icon
                 )
                 viewModelScope.launch {
                     categoriesRepository.upsertCategory(category)
@@ -41,7 +39,7 @@ class CategoryViewModel @Inject constructor(
                     it.copy(
                         id = "",
                         title = TextFieldValue(""),
-                        iconRes = CsIcons.Category,
+                        icon = "",
                         isEditing = false
                     )
                 }
@@ -62,7 +60,7 @@ class CategoryViewModel @Inject constructor(
 
             is CategoryEvent.UpdateIcon -> {
                 _categoryUiState.update {
-                    it.copy(iconRes = event.iconRes)
+                    it.copy(icon = event.icon)
                 }
             }
         }
@@ -79,7 +77,7 @@ class CategoryViewModel @Inject constructor(
                                 text = it.title ?: "",
                                 selection = TextRange(it.title?.length ?: 0),
                             ),
-                            iconRes = it.iconRes!!,
+                            icon = it.icon.toString(),
                             isEditing = true,
                         )
                     )
@@ -92,7 +90,6 @@ class CategoryViewModel @Inject constructor(
 data class CategoryUiState(
     val id: String = "",
     val title: TextFieldValue = TextFieldValue(""),
-    @DrawableRes
-    val iconRes: Int = CsIcons.Category,
+    val icon: String = "",
     val isEditing: Boolean = false
 )

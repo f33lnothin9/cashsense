@@ -15,14 +15,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
 import ru.resodostudios.cashsense.feature.category.CategoryDialog
@@ -64,7 +67,7 @@ internal fun CategoriesScreen(
                         onCategoryEvent(CategoryEvent.UpdateId(it))
                         showCategoryDialog = true
                     },
-                    onDelete = onDelete
+                    onDelete = onDelete,
                 )
             }
             if (showCategoryDialog) {
@@ -84,24 +87,27 @@ internal fun CategoriesScreen(
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
     onEdit: (String) -> Unit,
-    onDelete: (Category) -> Unit
+    onDelete: (Category) -> Unit,
 ) {
     when (categoriesState) {
         Loading -> Unit
         is Success -> {
             items(categoriesState.categories) { category ->
+                val context = LocalContext.current
+
                 ListItem(
-                    headlineContent = { Text(text = category.title.toString()) },
+                    headlineContent = { Text(category.title.toString()) },
                     trailingContent = {
                         EditAndDeleteDropdownMenu(
                             onEdit = { onEdit(category.id.toString()) },
-                            onDelete = { onDelete(category) }
+                            onDelete = { onDelete(category) },
                         )
                     },
                     leadingContent = {
-                        category.iconRes
-                            ?.let { ImageVector.vectorResource(it) }
-                            ?.let { Icon(imageVector = it, contentDescription = null) }
+                        Icon(
+                            imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
+                            contentDescription = null,
+                        )
                     }
                 )
             }

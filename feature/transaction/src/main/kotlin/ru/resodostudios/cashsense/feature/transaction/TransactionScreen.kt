@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -42,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
@@ -195,8 +197,11 @@ private fun CategoryExposedDropdownMenuBox(
     onNewCategoryClick: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
     var iconId by rememberSaveable {
-        mutableIntStateOf(currentCategory?.iconRes ?: designsystemR.drawable.ic_outlined_category)
+        mutableIntStateOf(currentCategory?.icon?.getIconId(context) ?: designsystemR.drawable.ic_outlined_category)
     }
 
     ExposedDropdownMenuBox(
@@ -254,13 +259,13 @@ private fun CategoryExposedDropdownMenuBox(
                     },
                     onClick = {
                         onCategoryClick(category)
-                        iconId = category.iconRes!!
+                        iconId = category.icon?.getIconId(context) ?: 0
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(category.iconRes!!),
+                            imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: 0),
                             contentDescription = null
                         )
                     },

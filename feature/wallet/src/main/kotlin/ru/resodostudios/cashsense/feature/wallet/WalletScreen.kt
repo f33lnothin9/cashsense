@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +47,7 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
+import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -247,6 +249,7 @@ fun LazyGridScope.transactions(
             contentType = { "transactionWithCategory" },
         ) { transactionWithCategory ->
             val category = transactionWithCategory.category
+            val context = LocalContext.current
 
             ListItem(
                 headlineContent = {
@@ -274,7 +277,7 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(category?.iconRes ?: CsIcons.Transaction),
+                        imageVector = ImageVector.vectorResource(category?.icon?.getIconId(context) ?: CsIcons.Transaction),
                         contentDescription = null,
                     )
                 }

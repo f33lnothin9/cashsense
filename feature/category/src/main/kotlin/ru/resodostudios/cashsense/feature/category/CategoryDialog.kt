@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.category
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -34,6 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.getIconId
+import ru.resodostudios.cashsense.core.ui.getIconName
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -73,6 +77,8 @@ fun CategoryDialog(
     ) {
         val titleTextField = remember { FocusRequester() }
 
+        val context = LocalContext.current
+
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.verticalScroll(rememberScrollState())
@@ -90,7 +96,8 @@ fun CategoryDialog(
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(
-                        currentIconId = categoryState.iconRes,
+                        context = context,
+                        currentIcon = categoryState.icon.ifBlank { CsIcons.Category.getIconName(context) },
                         onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) }
                     )
                 },
@@ -106,8 +113,9 @@ fun CategoryDialog(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IconPickerDropdownMenu(
-    currentIconId: Int,
-    onIconClick: (Int) -> Unit
+    context: Context,
+    currentIcon: String,
+    onIconClick: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -144,7 +152,7 @@ private fun IconPickerDropdownMenu(
     ) {
         IconButton(onClick = { expanded = true }) {
             Icon(
-                imageVector = ImageVector.vectorResource(currentIconId),
+                imageVector = ImageVector.vectorResource(currentIcon.getIconId(context)),
                 contentDescription = null
             )
         }
@@ -158,7 +166,7 @@ private fun IconPickerDropdownMenu(
                 icons.forEach { icon ->
                     IconButton(
                         onClick = {
-                            onIconClick(icon)
+                            onIconClick(icon.getIconName(context))
                             expanded = false
                         }
                     ) {
