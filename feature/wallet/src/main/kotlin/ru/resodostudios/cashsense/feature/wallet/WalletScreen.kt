@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -166,6 +167,19 @@ private fun FinanceSection(
     currency: String,
     modifier: Modifier = Modifier,
 ) {
+    val walletTransactions = transactionsWithCategories.sumOf { it.transaction.amount.abs() }
+
+    val walletExpenses = transactionsWithCategories
+        .asSequence()
+        .filter { it.transaction.amount < 0.toBigDecimal() }
+        .sumOf { it.transaction.amount.abs() }
+    val walletIncome = transactionsWithCategories
+        .asSequence()
+        .filter { it.transaction.amount > 0.toBigDecimal() }
+        .sumOf { it.transaction.amount }
+
+    val expensesProgress = (walletExpenses / walletTransactions).toFloat()
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -177,21 +191,20 @@ private fun FinanceSection(
             onClick = {},
             shape = RoundedCornerShape(20.dp),
         ) {
-            val walletExpenses = transactionsWithCategories
-                .asSequence()
-                .filter { it.transaction.amount < 0.toBigDecimal() }
-                .sumOf { it.transaction.amount }.abs()
-
             Text(
                 text = getFormattedAmountAndCurrency(walletExpenses, currency),
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
             )
             Text(
                 text = stringResource(R.string.feature_wallet_expenses),
-                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
-                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            LinearProgressIndicator(
+                progress = { expensesProgress },
+                modifier = Modifier.padding(16.dp),
             )
         }
         Card(
@@ -200,21 +213,20 @@ private fun FinanceSection(
             onClick = {},
             shape = RoundedCornerShape(20.dp),
         ) {
-            val walletIncome = transactionsWithCategories
-                .asSequence()
-                .filter { it.transaction.amount > 0.toBigDecimal() }
-                .sumOf { it.transaction.amount }
-
             Text(
                 text = getFormattedAmountAndCurrency(walletIncome, currency),
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 12.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
             )
             Text(
                 text = stringResource(R.string.feature_wallet_income),
-                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
-                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            LinearProgressIndicator(
+                progress = { 1.0f - expensesProgress },
+                modifier = Modifier.padding(16.dp),
             )
         }
     }
