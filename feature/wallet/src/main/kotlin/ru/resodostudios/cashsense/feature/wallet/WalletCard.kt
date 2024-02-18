@@ -64,7 +64,7 @@ fun WalletCard(
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = getCurrentBalance(wallet.initialBalance, transactions).formatAmountWithCurrency(wallet.currency),
+                text = (wallet.initialBalance + transactions.sumOf { it.amount }).formatAmountWithCurrency(wallet.currency),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
@@ -178,9 +178,6 @@ private fun FinanceIndicators(
         }
     }
 }
-
-private fun getCurrentBalance(startBalance: BigDecimal, transactions: List<Transaction>): BigDecimal =
-    startBalance + transactions.sumOf { it.amount }
 
 @Preview(
     name = "Wallet Card",
