@@ -204,7 +204,9 @@ private fun FinanceSection(
             )
             LinearProgressIndicator(
                 progress = { expensesProgress },
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
         }
         Card(
@@ -226,7 +228,9 @@ private fun FinanceSection(
             )
             LinearProgressIndicator(
                 progress = { 1.0f - expensesProgress },
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
         }
     }
