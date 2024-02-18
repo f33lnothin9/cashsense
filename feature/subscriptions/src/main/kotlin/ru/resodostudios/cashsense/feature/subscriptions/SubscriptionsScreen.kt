@@ -16,8 +16,8 @@ import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formattedDate
-import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 
 @Composable
 internal fun SubscriptionsRoute(
@@ -49,20 +49,9 @@ internal fun SubscriptionsScreen(
                 ) {
                     items(subscriptionsState.subscriptions) { subscription ->
                         ListItem(
-                            headlineContent = {
-                                Text(text = subscription.title)
-                            },
-                            supportingContent = {
-                                Text(
-                                    text = getFormattedAmountAndCurrency(
-                                        amount = subscription.amount,
-                                        currencyName = subscription.currency
-                                    )
-                                )
-                            },
-                            overlineContent = {
-                                Text(text = formattedDate(date = subscription.paymentDate))
-                            },
+                            headlineContent = { Text(subscription.title) },
+                            supportingContent = { Text(subscription.amount.formatAmountWithCurrency(subscription.currency)) },
+                            overlineContent = { Text(formattedDate(subscription.paymentDate)) },
                             trailingContent = {
                                 EditAndDeleteDropdownMenu(
                                     onEdit = { onEdit(subscription.id) },

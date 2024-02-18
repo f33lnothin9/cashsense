@@ -5,10 +5,14 @@ import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
 
-fun getFormattedAmountAndCurrency(amount: BigDecimal, currencyName: String): String {
+fun BigDecimal.formatAmountWithCurrency(currency: String, withPlus: Boolean = false): String {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
-    val customCurrency = Currency.getInstance(currencyName)
+    val customCurrency = Currency.getInstance(currency)
     currencyFormat.currency = customCurrency
 
-    return currencyFormat.format(amount)
+    return if (withPlus) {
+        "${if (this > BigDecimal(0)) "+" else ""}${currencyFormat.format(this)}"
+    } else {
+        currencyFormat.format(this)
+    }
 }

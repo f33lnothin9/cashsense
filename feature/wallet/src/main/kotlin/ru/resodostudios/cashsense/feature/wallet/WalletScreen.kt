@@ -46,8 +46,8 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formattedDate
-import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
 import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.time.temporal.ChronoUnit
@@ -192,7 +192,7 @@ private fun FinanceSection(
             shape = RoundedCornerShape(20.dp),
         ) {
             Text(
-                text = getFormattedAmountAndCurrency(walletExpenses, currency),
+                text = walletExpenses.formatAmountWithCurrency(currency),
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
@@ -214,7 +214,7 @@ private fun FinanceSection(
             shape = RoundedCornerShape(20.dp),
         ) {
             Text(
-                text = getFormattedAmountAndCurrency(walletIncome, currency),
+                text = walletIncome.formatAmountWithCurrency(currency),
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
@@ -266,9 +266,9 @@ fun LazyGridScope.transactions(
             ListItem(
                 headlineContent = {
                     Text(
-                        text = getFormattedAmountAndCurrency(
-                            amount = transactionWithCategory.transaction.amount,
-                            currencyName = currency
+                        text = transactionWithCategory.transaction.amount.formatAmountWithCurrency(
+                            currency = currency,
+                            withPlus = true,
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

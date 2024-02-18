@@ -31,7 +31,7 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
-import ru.resodostudios.cashsense.core.ui.getFormattedAmountAndCurrency
+import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -64,13 +64,7 @@ fun WalletCard(
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = getFormattedAmountAndCurrency(
-                    amount = getCurrentBalance(
-                        wallet.initialBalance,
-                        transactions
-                    ),
-                    currencyName = wallet.currency
-                ),
+                text = getCurrentBalance(wallet.initialBalance, transactions).formatAmountWithCurrency(wallet.currency),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
@@ -134,10 +128,9 @@ private fun FinanceIndicators(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        text = getFormattedAmountAndCurrency(
-                            amount = walletIncome.abs(),
-                            currencyName = currency
-                        ),
+                        text = walletIncome
+                            .abs()
+                            .formatAmountWithCurrency(currency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelLarge
@@ -169,10 +162,9 @@ private fun FinanceIndicators(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        text = getFormattedAmountAndCurrency(
-                            amount = walletExpenses.abs(),
-                            currencyName = currency
-                        ),
+                        text = walletExpenses
+                            .abs()
+                            .formatAmountWithCurrency(currency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelLarge
