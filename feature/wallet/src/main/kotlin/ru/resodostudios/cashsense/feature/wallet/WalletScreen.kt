@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +20,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -201,10 +201,8 @@ private fun FinanceSection(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier,
     ) {
-        Card(
+        OutlinedCard(
             modifier = Modifier.weight(1f),
-            enabled = true,
-            onClick = {},
             shape = RoundedCornerShape(20.dp),
         ) {
             Text(
@@ -225,10 +223,8 @@ private fun FinanceSection(
                     .padding(16.dp),
             )
         }
-        Card(
+        OutlinedCard(
             modifier = Modifier.weight(1f),
-            enabled = true,
-            onClick = {},
             shape = RoundedCornerShape(20.dp),
         ) {
             Text(
