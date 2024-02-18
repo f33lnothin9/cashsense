@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,8 @@ import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formattedDate
 import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
+import java.math.BigDecimal
+import java.math.MathContext
 import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -95,11 +98,24 @@ internal fun WalletScreen(
                 topBar = {
                     LargeTopAppBar(
                         title = {
-                            Text(
-                                text = wallet.title,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(
+                                    text = wallet.title,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Text(
+                                    text = (wallet.initialBalance + transactionsAndCategories
+                                        .map { it.transaction }
+                                        .sumOf { it.amount })
+                                        .formatAmountWithCurrency(wallet.currency),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
                         },
                         navigationIcon = {
                             IconButton(onClick = onBackClick) {
@@ -171,14 +187,14 @@ private fun FinanceSection(
 
     val walletExpenses = transactionsWithCategories
         .asSequence()
-        .filter { it.transaction.amount < 0.toBigDecimal() }
+        .filter { it.transaction.amount < BigDecimal(0) }
         .sumOf { it.transaction.amount.abs() }
     val walletIncome = transactionsWithCategories
         .asSequence()
-        .filter { it.transaction.amount > 0.toBigDecimal() }
+        .filter { it.transaction.amount > BigDecimal(0) }
         .sumOf { it.transaction.amount }
 
-    val expensesProgress = (walletExpenses / walletTransactions).toFloat()
+    val expensesProgress = (walletExpenses.divide(walletTransactions, MathContext.DECIMAL32)).toFloat()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -247,7 +263,8 @@ fun LazyGridScope.transactions(
             .sortedByDescending { it.transaction.date }
             .groupBy { it.transaction.date.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
             .toSortedMap(compareByDescending { it })
-    val groupedTransactionsAndCategories = sortedTransactionsAndCategories.map { Pair(it.key, it.value) }
+    val groupedTransactionsAndCategories =
+        sortedTransactionsAndCategories.map { Pair(it.key, it.value) }
 
     groupedTransactionsAndCategories.forEach { group ->
         item(
@@ -293,7 +310,9 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(category?.icon?.getIconId(context) ?: CsIcons.Transaction),
+                        imageVector = ImageVector.vectorResource(
+                            category?.icon?.getIconId(context) ?: CsIcons.Transaction
+                        ),
                         contentDescription = null,
                     )
                 }
