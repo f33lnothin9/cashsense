@@ -105,9 +105,11 @@ private fun FinanceIndicators(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        val positiveTransactions = transactions.filter { it.amount > 0.toBigDecimal() }
-        val walletIncome = positiveTransactions.sumOf { it.amount }
-        if (walletIncome != 0.toBigDecimal()) {
+        val walletIncome = transactions
+            .asSequence()
+            .filter { it.amount > BigDecimal(0) }
+            .sumOf { it.amount }
+        if (walletIncome != BigDecimal(0)) {
             Surface(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(24.dp)
@@ -139,9 +141,11 @@ private fun FinanceIndicators(
             }
         }
 
-        val negativeTransactions = transactions.filter { it.amount < 0.toBigDecimal() }
-        val walletExpenses = negativeTransactions.sumOf { it.amount }
-        if (walletExpenses != 0.toBigDecimal()) {
+        val walletExpenses = transactions
+            .asSequence()
+            .filter { it.amount < BigDecimal(0) }
+            .sumOf { it.amount }
+        if (walletExpenses != BigDecimal(0)) {
             Surface(
                 color = MaterialTheme.colorScheme.errorContainer,
                 shape = RoundedCornerShape(24.dp)
@@ -175,13 +179,8 @@ private fun FinanceIndicators(
     }
 }
 
-private fun getCurrentBalance(startBalance: BigDecimal, transactions: List<Transaction>): BigDecimal {
-    var currentBalance = startBalance
-    transactions.forEach {
-        currentBalance += it.amount
-    }
-    return currentBalance
-}
+private fun getCurrentBalance(startBalance: BigDecimal, transactions: List<Transaction>): BigDecimal =
+    startBalance + transactions.sumOf { it.amount }
 
 @Preview(
     name = "Wallet Card",
