@@ -17,7 +17,7 @@ internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     commonExtension.apply {
-        compileSdk = 34
+        compileSdkPreview = "VanillaIceCream"
 
         defaultConfig {
             minSdk = 24
