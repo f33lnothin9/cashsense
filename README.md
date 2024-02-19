@@ -1,3 +1,6 @@
+
+<a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense"><img src="images/logo-color-dark.png" height="63"></a>
+
 Cash Sense
 ==================
 
