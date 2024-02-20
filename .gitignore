@@ -1,6 +1,5 @@
 *.iml
 .gradle
-/local.properties
 /.idea
 .DS_Store
 /build
@@ -8,6 +7,8 @@
 .externalNativeBuild
 .cxx
 local.properties
-app/google-services.json
-app/release
-/.idea/
+
+# built application files
+*.apk
+*.ap_
+*.aab
