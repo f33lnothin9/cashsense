@@ -17,7 +17,7 @@ internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     commonExtension.apply {
-        compileSdkPreview = "VanillaIceCream"
+        compileSdk = 34
 
         defaultConfig {
             minSdk = 24
@@ -28,7 +28,7 @@ internal fun Project.configureKotlinAndroid(
             targetCompatibility = JavaVersion.VERSION_17
             isCoreLibraryDesugaringEnabled = true
         }
-        buildToolsVersion = "35.0.0-rc1"
+        buildToolsVersion = "34.0.0"
     }
 
     configureKotlin()
