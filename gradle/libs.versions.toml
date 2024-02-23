@@ -36,7 +36,7 @@ kotlinxSerializationJson = "1.6.3"
 ksp = "1.9.22-1.0.17"
 lint = "31.2.2"
 lottie = "6.3.0"
-protobuf = "3.25.0"
+protobuf = "3.25.2"
 protobufPlugin = "0.9.4"
 room = "2.6.1"
 
