@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.categories
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -22,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.SwipeToDeleteContainer
@@ -36,14 +36,14 @@ import ru.resodostudios.cashsense.feature.category.CategoryViewModel
 @Composable
 internal fun CategoryRoute(
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
-    categoryViewModel: CategoryViewModel = hiltViewModel()
+    categoryViewModel: CategoryViewModel = hiltViewModel(),
 ) {
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     CategoriesScreen(
         categoriesState = categoriesState,
         onCategoryEvent = categoryViewModel::onCategoryEvent,
-        onDelete = categoriesViewModel::deleteCategory
+        onDelete = categoriesViewModel::deleteCategory,
     )
 }
 
@@ -51,7 +51,7 @@ internal fun CategoryRoute(
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
-    onDelete: (Category) -> Unit
+    onDelete: (Category) -> Unit,
 ) {
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -60,7 +60,7 @@ internal fun CategoriesScreen(
         is Success -> if (categoriesState.categories.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 categories(
                     categoriesState = categoriesState,
@@ -73,13 +73,13 @@ internal fun CategoriesScreen(
             }
             if (showCategoryDialog) {
                 CategoryDialog(
-                    onDismiss = { showCategoryDialog = false }
+                    onDismiss = { showCategoryDialog = false },
                 )
             }
         } else {
             EmptyState(
                 messageRes = R.string.feature_categories_categories_empty,
-                animationRes = R.raw.anim_empty_categories
+                animationRes = R.raw.anim_empty_categories,
             )
         }
     }
@@ -108,17 +108,14 @@ private fun LazyGridScope.categories(
                         headlineContent = {
                             Text(category.title.toString())
                         },
-                        trailingContent = {
-                            EditAndDeleteDropdownMenu(
-                                onEdit = { onEdit(category.id.toString()) },
-                                onDelete = { onDelete(category) },
-                            )
-                        },
                         leadingContent = {
                             Icon(
                                 imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
                                 contentDescription = null,
                             )
+                        },
+                        modifier = Modifier.clickable {
+                            onEdit(category.id.toString())
                         }
                     )
                 }
