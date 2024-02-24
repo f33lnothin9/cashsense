@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.SwipeToDeleteContainer
 import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
@@ -92,24 +93,35 @@ private fun LazyGridScope.categories(
     when (categoriesState) {
         Loading -> Unit
         is Success -> {
-            items(categoriesState.categories) { category ->
-                val context = LocalContext.current
+            items(
+                items = categoriesState.categories,
+                key = { it.id!! },
+                contentType = { "category" },
+            ) { category ->
+                SwipeToDeleteContainer(
+                    item = category,
+                    onDelete = { onDelete(category) },
+                ) {
+                    val context = LocalContext.current
 
-                ListItem(
-                    headlineContent = { Text(category.title.toString()) },
-                    trailingContent = {
-                        EditAndDeleteDropdownMenu(
-                            onEdit = { onEdit(category.id.toString()) },
-                            onDelete = { onDelete(category) },
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
-                            contentDescription = null,
-                        )
-                    }
-                )
+                    ListItem(
+                        headlineContent = {
+                            Text(category.title.toString())
+                        },
+                        trailingContent = {
+                            EditAndDeleteDropdownMenu(
+                                onEdit = { onEdit(category.id.toString()) },
+                                onDelete = { onDelete(category) },
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
+                                contentDescription = null,
+                            )
+                        }
+                    )
+                }
             }
         }
     }
