@@ -5,10 +5,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
@@ -26,7 +26,7 @@ class CategoryViewModel @Inject constructor(
 
     fun onCategoryEvent(event: CategoryEvent) {
         when (event) {
-            CategoryEvent.Confirm -> {
+            CategoryEvent.Save -> {
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _categoryUiState.value.title.text,
@@ -42,6 +42,19 @@ class CategoryViewModel @Inject constructor(
                         icon = "",
                         isEditing = false
                     )
+                }
+            }
+
+            CategoryEvent.Delete -> {
+                val category = Category(
+                    id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+                    title = _categoryUiState.value.title.text,
+                    icon = _categoryUiState.value.icon
+                )
+
+                viewModelScope.launch {
+                    delay(500L)
+                    categoriesRepository.deleteCategory(category)
                 }
             }
 
@@ -69,20 +82,18 @@ class CategoryViewModel @Inject constructor(
     private fun loadCategory() {
         viewModelScope.launch {
             categoriesRepository.getCategory(_categoryUiState.value.id)
-                .onEach {
-                    _categoryUiState.emit(
-                        CategoryUiState(
-                            id = it.id.toString(),
-                            title = TextFieldValue(
-                                text = it.title ?: "",
-                                selection = TextRange(it.title?.length ?: 0),
-                            ),
-                            icon = it.icon.toString(),
-                            isEditing = true,
-                        )
+                .catch { _categoryUiState.value = CategoryUiState() }
+                .collect {
+                    _categoryUiState.value = CategoryUiState(
+                        id = it.id.toString(),
+                        title = TextFieldValue(
+                            text = it.title ?: "",
+                            selection = TextRange(it.title?.length ?: 0),
+                        ),
+                        icon = it.icon.toString(),
+                        isEditing = true,
                     )
                 }
-                .collect()
         }
     }
 }

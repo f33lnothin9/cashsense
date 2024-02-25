@@ -22,14 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.SwipeToDeleteContainer
 import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
-import ru.resodostudios.cashsense.feature.category.CategoryDialog
+import ru.resodostudios.cashsense.feature.category.CategoryBottomSheet
 import ru.resodostudios.cashsense.feature.category.CategoryEvent
 import ru.resodostudios.cashsense.feature.category.CategoryViewModel
 
@@ -43,7 +41,6 @@ internal fun CategoryRoute(
     CategoriesScreen(
         categoriesState = categoriesState,
         onCategoryEvent = categoryViewModel::onCategoryEvent,
-        onDelete = categoriesViewModel::deleteCategory,
     )
 }
 
@@ -51,9 +48,8 @@ internal fun CategoryRoute(
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
-    onDelete: (Category) -> Unit,
 ) {
-    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     when (categoriesState) {
         Loading -> LoadingState()
@@ -66,14 +62,13 @@ internal fun CategoriesScreen(
                     categoriesState = categoriesState,
                     onEdit = {
                         onCategoryEvent(CategoryEvent.UpdateId(it))
-                        showCategoryDialog = true
+                        showCategoryBottomSheet = true
                     },
-                    onDelete = onDelete,
                 )
             }
-            if (showCategoryDialog) {
-                CategoryDialog(
-                    onDismiss = { showCategoryDialog = false },
+            if (showCategoryBottomSheet) {
+                CategoryBottomSheet(
+                    onDismiss = { showCategoryBottomSheet = false },
                 )
             }
         } else {
@@ -88,7 +83,6 @@ internal fun CategoriesScreen(
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
     onEdit: (String) -> Unit,
-    onDelete: (Category) -> Unit,
 ) {
     when (categoriesState) {
         Loading -> Unit
@@ -98,27 +92,22 @@ private fun LazyGridScope.categories(
                 key = { it.id!! },
                 contentType = { "category" },
             ) { category ->
-                SwipeToDeleteContainer(
-                    item = category,
-                    onDelete = { onDelete(category) },
-                ) {
-                    val context = LocalContext.current
+                val context = LocalContext.current
 
-                    ListItem(
-                        headlineContent = {
-                            Text(category.title.toString())
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
-                                contentDescription = null,
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            onEdit(category.id.toString())
-                        }
-                    )
-                }
+                ListItem(
+                    headlineContent = {
+                        Text(category.title.toString())
+                    },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onEdit(category.id.toString())
+                    }
+                )
             }
         }
     }

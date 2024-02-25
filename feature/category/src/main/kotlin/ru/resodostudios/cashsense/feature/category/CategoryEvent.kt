@@ -10,5 +10,7 @@ sealed interface CategoryEvent {
 
     data class UpdateIcon(val icon: String) : CategoryEvent
 
-    data object Confirm : CategoryEvent
+    data object Save : CategoryEvent
+
+    data object Delete : CategoryEvent
 }

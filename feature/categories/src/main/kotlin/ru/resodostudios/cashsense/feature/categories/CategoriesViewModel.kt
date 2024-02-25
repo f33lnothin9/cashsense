@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    private val categoriesRepository: CategoriesRepository
+    categoriesRepository: CategoriesRepository
 ) : ViewModel() {
 
     val categoriesUiState: StateFlow<CategoriesUiState> =
@@ -27,12 +26,6 @@ class CategoriesViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = CategoriesUiState.Loading,
             )
-
-    fun deleteCategory(category: Category) {
-        viewModelScope.launch {
-            categoriesRepository.deleteCategory(category)
-        }
-    }
 }
 
 sealed interface CategoriesUiState {

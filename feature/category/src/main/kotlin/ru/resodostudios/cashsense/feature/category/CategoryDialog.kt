@@ -69,7 +69,7 @@ fun CategoryDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Category,
         onConfirm = {
-            onCategoryEvent(CategoryEvent.Confirm)
+            onCategoryEvent(CategoryEvent.Save)
             onDismiss()
         },
         isConfirmEnabled = categoryState.title.text.isNotBlank(),
@@ -113,7 +113,7 @@ fun CategoryDialog(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun IconPickerDropdownMenu(
+fun IconPickerDropdownMenu(
     context: Context,
     currentIcon: String,
     onIconClick: (String) -> Unit,
