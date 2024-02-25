@@ -105,6 +105,7 @@ fun CategoryDialog(
             )
         }
         LaunchedEffect(Unit) {
+            onCategoryEvent(CategoryEvent.UpdateIcon(CsIcons.Category.getIconName(context)))
             titleTextField.requestFocus()
         }
     }
