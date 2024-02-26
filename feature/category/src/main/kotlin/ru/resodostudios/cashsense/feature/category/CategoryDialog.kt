@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.feature.category
 
-import android.content.Context
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,16 +96,17 @@ fun CategoryDialog(
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(
-                        context = context,
-                        currentIcon = categoryState.icon.ifBlank { CsIcons.Category.getIconName(context) },
-                        onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) }
+                        currentIconId = if (categoryState.icon.isBlank()) CsIcons.Category else categoryState.icon.getIconId(context),
+                        onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it.getIconName(context))) }
                     )
                 },
                 modifier = Modifier.focusRequester(titleTextField)
             )
         }
         LaunchedEffect(Unit) {
-            onCategoryEvent(CategoryEvent.UpdateIcon(CsIcons.Category.getIconName(context)))
+            if (categoryState.icon.isBlank()) {
+                onCategoryEvent(CategoryEvent.UpdateIcon(CsIcons.Category.getIconName(context)))
+            }
             titleTextField.requestFocus()
         }
     }
@@ -113,10 +114,10 @@ fun CategoryDialog(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun IconPickerDropdownMenu(
-    context: Context,
-    currentIcon: String,
-    onIconClick: (String) -> Unit,
+private fun IconPickerDropdownMenu(
+    @DrawableRes
+    currentIconId: Int,
+    onIconClick: (Int) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -145,7 +146,7 @@ fun IconPickerDropdownMenu(
         CsIcons.SimCard,
         CsIcons.SmokingRooms,
         CsIcons.SportsEsports,
-        CsIcons.Travel
+        CsIcons.Travel,
     )
 
     Box(
@@ -153,7 +154,7 @@ fun IconPickerDropdownMenu(
     ) {
         IconButton(onClick = { expanded = true }) {
             Icon(
-                imageVector = ImageVector.vectorResource(currentIcon.getIconId(context)),
+                imageVector = ImageVector.vectorResource(currentIconId),
                 contentDescription = null
             )
         }
@@ -167,7 +168,7 @@ fun IconPickerDropdownMenu(
                 icons.forEach { icon ->
                     IconButton(
                         onClick = {
-                            onIconClick(icon.getIconName(context))
+                            onIconClick(icon)
                             expanded = false
                         }
                     ) {

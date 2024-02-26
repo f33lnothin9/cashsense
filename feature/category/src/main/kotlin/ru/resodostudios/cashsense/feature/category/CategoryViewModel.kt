@@ -5,7 +5,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -40,7 +39,7 @@ class CategoryViewModel @Inject constructor(
                         id = "",
                         title = TextFieldValue(""),
                         icon = "",
-                        isEditing = false
+                        isEditing = false,
                     )
                 }
             }
@@ -49,11 +48,10 @@ class CategoryViewModel @Inject constructor(
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _categoryUiState.value.title.text,
-                    icon = _categoryUiState.value.icon
+                    icon = _categoryUiState.value.icon,
                 )
 
                 viewModelScope.launch {
-                    delay(500L)
                     categoriesRepository.deleteCategory(category)
                 }
             }

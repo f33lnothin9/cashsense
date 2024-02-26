@@ -75,10 +75,7 @@ internal fun CategoriesScreen(
             if (showCategoryBottomSheet) {
                 CategoryBottomSheet(
                     onDismiss = { showCategoryBottomSheet = false },
-                    onEdit = {
-                        onCategoryEvent(CategoryEvent.UpdateId(it))
-                        showCategoryDialog = true
-                    }
+                    onEdit = { showCategoryDialog = true }
                 )
             }
             if (showCategoryDialog) {
