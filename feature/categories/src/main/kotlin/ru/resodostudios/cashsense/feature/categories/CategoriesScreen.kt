@@ -28,6 +28,7 @@ import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
 import ru.resodostudios.cashsense.feature.category.CategoryBottomSheet
+import ru.resodostudios.cashsense.feature.category.CategoryDialog
 import ru.resodostudios.cashsense.feature.category.CategoryEvent
 import ru.resodostudios.cashsense.feature.category.CategoryViewModel
 
@@ -49,7 +50,12 @@ internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
 ) {
-    var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var showCategoryBottomSheet by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showCategoryDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     when (categoriesState) {
         Loading -> LoadingState()
@@ -69,6 +75,15 @@ internal fun CategoriesScreen(
             if (showCategoryBottomSheet) {
                 CategoryBottomSheet(
                     onDismiss = { showCategoryBottomSheet = false },
+                    onEdit = {
+                        onCategoryEvent(CategoryEvent.UpdateId(it))
+                        showCategoryDialog = true
+                    }
+                )
+            }
+            if (showCategoryDialog) {
+                CategoryDialog(
+                    onDismiss = { showCategoryDialog = false },
                 )
             }
         } else {

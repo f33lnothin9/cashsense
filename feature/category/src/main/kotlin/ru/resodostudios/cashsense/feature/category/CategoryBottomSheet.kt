@@ -31,6 +31,7 @@ import ru.resodostudios.cashsense.core.ui.getIconId
 @Composable
 fun CategoryBottomSheet(
     onDismiss: () -> Unit,
+    onEdit: (String) -> Unit,
     viewModel: CategoryViewModel = hiltViewModel(),
 ) {
     val categoryState by viewModel.categoryUiState.collectAsStateWithLifecycle()
@@ -39,6 +40,7 @@ fun CategoryBottomSheet(
         categoryState = categoryState,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
+        onEdit = onEdit
     )
 }
 
@@ -48,6 +50,7 @@ fun CategoryBottomSheet(
     categoryState: CategoryUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
     onDismiss: () -> Unit,
+    onEdit: (String) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -85,6 +88,10 @@ fun CategoryBottomSheet(
                         contentDescription = null
                     )
                 },
+                modifier = Modifier.clickable {
+                    onDismiss()
+                    onEdit(categoryState.id)
+                },
             )
             ListItem(
                 headlineContent = { Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.delete)) },
@@ -97,7 +104,7 @@ fun CategoryBottomSheet(
                 modifier = Modifier.clickable {
                     onDismiss()
                     onCategoryEvent(CategoryEvent.Delete)
-                }
+                },
             )
         }
     }
