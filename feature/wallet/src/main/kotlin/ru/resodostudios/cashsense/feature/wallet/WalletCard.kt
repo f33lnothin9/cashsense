@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -8,10 +7,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -19,12 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Currency
@@ -110,35 +106,12 @@ private fun FinanceIndicators(
             .filter { it.amount > BigDecimal(0) }
             .sumOf { it.amount }
         if (walletIncome != BigDecimal(0)) {
-            Surface(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(
-                        start = 8.dp,
-                        top = 3.dp,
-                        end = 8.dp,
-                        bottom = 3.dp
-                    )
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.TrendingUp),
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text(
-                        text = walletIncome
-                            .abs()
-                            .formatAmountWithCurrency(currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-            }
+            CsTag(
+                text = walletIncome
+                    .abs()
+                    .formatAmountWithCurrency(currency),
+                iconId = CsIcons.TrendingUp,
+            )
         }
 
         val walletExpenses = transactions
@@ -146,44 +119,18 @@ private fun FinanceIndicators(
             .filter { it.amount < BigDecimal(0) }
             .sumOf { it.amount }
         if (walletExpenses != BigDecimal(0)) {
-            Surface(
+            CsTag(
+                text = walletExpenses
+                    .abs()
+                    .formatAmountWithCurrency(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(
-                        start = 8.dp,
-                        top = 3.dp,
-                        end = 8.dp,
-                        bottom = 3.dp
-                    )
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.TrendingDown),
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text(
-                        text = walletExpenses
-                            .abs()
-                            .formatAmountWithCurrency(currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-            }
+                iconId = CsIcons.TrendingDown,
+            )
         }
     }
 }
 
-@Preview(
-    name = "Wallet Card",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
+@PreviewLightDark
 @Composable
 fun WalletCardPreview() {
     CsTheme {
@@ -196,10 +143,10 @@ fun WalletCardPreview() {
                     currency = Currency.USD.name
                 ),
                 transactions = emptyList(),
-                onWalletClick = { },
-                onTransactionCreate = { },
-                onEdit = { },
-                onDelete = { },
+                onWalletClick = {},
+                onTransactionCreate = {},
+                onEdit = {},
+                onDelete = {},
                 modifier = Modifier.padding(16.dp)
             )
         }
