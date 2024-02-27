@@ -51,7 +51,7 @@ fun WalletCard(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
         ) {
             Text(
                 text = wallet.title,
@@ -76,13 +76,13 @@ fun WalletCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 8.dp)
+                .padding(start = 16.dp, end = 8.dp, bottom = 16.dp)
                 .fillMaxWidth(),
         ) {
             Button(
                 onClick = { onTransactionCreate(wallet.id) },
             ) {
-                Text(text = stringResource(transactionR.string.feature_transaction_add_transaction))
+                Text(stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet.id) },
@@ -97,11 +97,12 @@ fun WalletCard(
 private fun FinanceIndicators(
     transactions: List<Transaction>,
     currency: String,
+    modifier: Modifier = Modifier,
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
     ) {
         val walletIncome = transactions
             .asSequence()
