@@ -87,7 +87,9 @@ fun CategoryDialog(
             )
         }
         LaunchedEffect(Unit) {
-            titleTextField.requestFocus()
+            if (!categoryState.isEditing) {
+                titleTextField.requestFocus()
+            }
         }
     }
 }
