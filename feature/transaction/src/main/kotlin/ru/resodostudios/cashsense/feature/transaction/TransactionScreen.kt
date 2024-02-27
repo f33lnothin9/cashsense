@@ -131,7 +131,7 @@ internal fun TransactionScreen(
                                     TransactionEvent.UpdateAmount(
                                         TextFieldValue(
                                             text = it.text.validateAmount().first,
-                                            selection = it.selection
+                                            selection = it.selection,
                                         )
                                     )
                                 )
@@ -179,7 +179,9 @@ internal fun TransactionScreen(
                     )
                 }
                 LaunchedEffect(Unit) {
-                    amountTextField.requestFocus()
+                    if (!transactionState.isEditing) {
+                        amountTextField.requestFocus()
+                    }
                 }
             }
         }
