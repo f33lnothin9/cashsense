@@ -11,7 +11,7 @@ data class CategoryEntity(
     @PrimaryKey
     val id: String,
     val title: String,
-    val icon: String,
+    val icon: Int,
 )
 
 fun CategoryEntity.asExternalModel() = Category(

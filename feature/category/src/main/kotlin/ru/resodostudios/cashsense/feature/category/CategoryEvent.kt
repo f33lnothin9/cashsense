@@ -8,7 +8,7 @@ sealed interface CategoryEvent {
 
     data class UpdateTitle(val title: TextFieldValue) : CategoryEvent
 
-    data class UpdateIcon(val icon: String) : CategoryEvent
+    data class UpdateIcon(val icon: Int) : CategoryEvent
 
     data object Save : CategoryEvent
 

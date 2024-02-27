@@ -16,15 +16,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.getIconId
+import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState.Success
 import ru.resodostudios.cashsense.feature.category.CategoryBottomSheet
@@ -104,15 +102,13 @@ private fun LazyGridScope.categories(
                 key = { it.id!! },
                 contentType = { "category" },
             ) { category ->
-                val context = LocalContext.current
-
                 ListItem(
                     headlineContent = {
                         Text(category.title.toString())
                     },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: CsIcons.Category),
+                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.icon ?: StoredIcon.CATEGORY.storedId)),
                             contentDescription = null,
                         )
                     },

@@ -38,7 +38,7 @@ class CategoryViewModel @Inject constructor(
                     it.copy(
                         id = "",
                         title = TextFieldValue(""),
-                        icon = "",
+                        icon = 0,
                         isEditing = false,
                     )
                 }
@@ -88,7 +88,7 @@ class CategoryViewModel @Inject constructor(
                             text = it.title ?: "",
                             selection = TextRange(it.title?.length ?: 0),
                         ),
-                        icon = it.icon.toString(),
+                        icon = it.icon ?: 0,
                         isEditing = true,
                     )
                 }
@@ -99,6 +99,6 @@ class CategoryViewModel @Inject constructor(
 data class CategoryUiState(
     val id: String = "",
     val title: TextFieldValue = TextFieldValue(""),
-    val icon: String = "",
+    val icon: Int = 0,
     val isEditing: Boolean = false
 )

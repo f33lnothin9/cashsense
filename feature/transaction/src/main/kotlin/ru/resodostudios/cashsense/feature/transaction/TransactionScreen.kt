@@ -30,7 +30,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,12 +42,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.getIconId
+import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
 import ru.resodostudios.cashsense.feature.category.CategoryDialog
-import ru.resodostudios.cashsense.core.designsystem.R as designsystemR
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.category.R as categoryR
 
@@ -198,10 +196,8 @@ private fun CategoryExposedDropdownMenuBox(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-
     var iconId by rememberSaveable {
-        mutableIntStateOf(currentCategory?.icon?.getIconId(context) ?: designsystemR.drawable.ic_outlined_category)
+        mutableIntStateOf(currentCategory?.icon ?: 0)
     }
 
     ExposedDropdownMenuBox(
@@ -213,11 +209,11 @@ private fun CategoryExposedDropdownMenuBox(
             readOnly = true,
             value = currentCategory?.title ?: stringResource(uiR.string.none),
             onValueChange = {},
-            label = { Text(text = stringResource(ru.resodostudios.cashsense.feature.category.R.string.feature_category_title)) },
+            label = { Text(stringResource(ru.resodostudios.cashsense.feature.category.R.string.feature_category_title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             leadingIcon = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(iconId),
+                    imageVector = ImageVector.vectorResource(StoredIcon.asRes(iconId)),
                     contentDescription = null
                 )
             },
@@ -259,14 +255,14 @@ private fun CategoryExposedDropdownMenuBox(
                     },
                     onClick = {
                         onCategoryClick(category)
-                        iconId = category.icon?.getIconId(context) ?: 0
+                        iconId = category.icon ?: 0
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(category.icon?.getIconId(context) ?: 0),
-                            contentDescription = null
+                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.icon ?: 0)),
+                            contentDescription = null,
                         )
                     },
                 )

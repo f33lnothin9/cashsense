@@ -19,14 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.getIconId
+import ru.resodostudios.cashsense.core.ui.StoredIcon
 
 @Composable
 fun CategoryBottomSheet(
@@ -40,7 +39,7 @@ fun CategoryBottomSheet(
         categoryState = categoryState,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
-        onEdit = onEdit
+        onEdit = onEdit,
     )
 }
 
@@ -59,10 +58,8 @@ fun CategoryBottomSheet(
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = sheetState,
-        windowInsets = WindowInsets(0, 0, 0, 0)
+        windowInsets = WindowInsets(0, 0, 0, 0),
     ) {
-        val context = LocalContext.current
-
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -74,8 +71,8 @@ fun CategoryBottomSheet(
                 headlineContent = { Text(categoryState.title.text) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(categoryState.icon.getIconId(context)),
-                        contentDescription = null
+                        imageVector = ImageVector.vectorResource(StoredIcon.asRes(categoryState.icon)),
+                        contentDescription = null,
                     )
                 },
             )
@@ -85,7 +82,7 @@ fun CategoryBottomSheet(
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 },
                 modifier = Modifier.clickable {
@@ -98,7 +95,7 @@ fun CategoryBottomSheet(
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 },
                 modifier = Modifier.clickable {

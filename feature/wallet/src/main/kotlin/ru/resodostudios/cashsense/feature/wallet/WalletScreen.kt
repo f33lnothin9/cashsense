@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,9 +46,9 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formattedDate
-import ru.resodostudios.cashsense.core.ui.getIconId
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.math.BigDecimal
 import java.math.MathContext
@@ -278,7 +277,6 @@ fun LazyGridScope.transactions(
             contentType = { "transactionWithCategory" },
         ) { transactionWithCategory ->
             val category = transactionWithCategory.category
-            val context = LocalContext.current
 
             ListItem(
                 headlineContent = {
@@ -306,9 +304,7 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(
-                            category?.icon?.getIconId(context) ?: CsIcons.Transaction
-                        ),
+                        imageVector = ImageVector.vectorResource(StoredIcon.asRes(category?.icon ?: StoredIcon.TRANSACTION.storedId)),
                         contentDescription = null,
                     )
                 }
