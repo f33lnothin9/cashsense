@@ -69,7 +69,7 @@ fun WalletDialog(
 
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState())
+            modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
             OutlinedTextField(
                 value = walletDialogState.title,
@@ -84,7 +84,7 @@ fun WalletDialog(
                 supportingText = { Text(text = stringResource(uiR.string.required)) },
                 modifier = Modifier
                     .focusRequester(titleTextField)
-                    .focusProperties { next = initialBalanceTextField }
+                    .focusProperties { next = initialBalanceTextField },
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
@@ -93,7 +93,7 @@ fun WalletDialog(
                         WalletDialogEvent.UpdateInitialBalance(
                             TextFieldValue(
                                 text = it.text.validateAmount().first,
-                                selection = it.selection
+                                selection = it.selection,
                             )
                         )
                     )
@@ -105,15 +105,17 @@ fun WalletDialog(
                     imeAction = ImeAction.Done,
                 ),
                 maxLines = 1,
-                modifier = Modifier.focusRequester(initialBalanceTextField)
+                modifier = Modifier.focusRequester(initialBalanceTextField),
             )
             CurrencyExposedDropdownMenuBox(
                 currencyName = walletDialogState.currency,
-                onCurrencyClick = { onWalletDialogEvent(WalletDialogEvent.UpdateCurrency(it.name)) }
+                onCurrencyClick = { onWalletDialogEvent(WalletDialogEvent.UpdateCurrency(it.name)) },
             )
         }
         LaunchedEffect(Unit) {
-            titleTextField.requestFocus()
+            if (!walletDialogState.isEditing) {
+                titleTextField.requestFocus()
+            }
         }
     }
 }
