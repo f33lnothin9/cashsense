@@ -39,52 +39,54 @@ fun WalletCard(
     onTransactionCreate: (String) -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier
+        shape = RoundedCornerShape(24.dp),
+        modifier = modifier,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
         ) {
             Text(
                 text = wallet.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                text = (wallet.initialBalance + transactions.sumOf { it.amount }).formatAmountWithCurrency(wallet.currency),
+                text = wallet.initialBalance
+                    .plus(transactions.sumOf { it.amount })
+                    .formatAmountWithCurrency(wallet.currency),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
             FinanceIndicators(
                 transactions = transactions,
-                currency = wallet.currency
+                currency = wallet.currency,
             )
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 14.dp, end = 6.dp, bottom = 12.dp, top = 8.dp)
-                .fillMaxWidth()
+                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 8.dp)
+                .fillMaxWidth(),
         ) {
             Button(
-                onClick = { onTransactionCreate(wallet.id) }
+                onClick = { onTransactionCreate(wallet.id) },
             ) {
                 Text(text = stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             EditAndDeleteDropdownMenu(
                 onEdit = { onEdit(wallet.id) },
-                onDelete = { onDelete(wallet.id) }
+                onDelete = { onDelete(wallet.id) },
             )
         }
     }
@@ -99,7 +101,7 @@ private fun FinanceIndicators(
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         val walletIncome = transactions
             .asSequence()
@@ -147,7 +149,7 @@ fun WalletCardPreview() {
                 onTransactionCreate = {},
                 onEdit = {},
                 onDelete = {},
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
     }
