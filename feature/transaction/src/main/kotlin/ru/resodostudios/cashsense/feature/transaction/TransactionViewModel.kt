@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -97,28 +97,27 @@ class TransactionViewModel @Inject constructor(
     }
 
     private fun loadTransaction() {
-        viewModelScope.launch {
-            if (transactionId != null) {
+        if (transactionId != null) {
+            viewModelScope.launch {
                 transactionsRepository.getTransactionWithCategory(transactionId)
-                    .onEach {
-                        _transactionUiState.emit(
-                            TransactionUiState(
-                                walletOwnerId = walletId,
-                                description = TextFieldValue(
-                                    text = it.transaction.description ?: "",
-                                    selection = TextRange(it.transaction.description?.length ?: 0)
-                                ),
-                                amount = TextFieldValue(
-                                    text = it.transaction.amount.toString(),
-                                    selection = TextRange(it.transaction.amount.toString().length)
-                                ),
-                                date = it.transaction.date.toString(),
-                                category = it.category,
-                                isEditing = true,
-                            )
+                    .onStart { _transactionUiState.value = TransactionUiState(isEditing = true) }
+                    .catch { _transactionUiState.value = TransactionUiState() }
+                    .collect {
+                        _transactionUiState.value = TransactionUiState(
+                            walletOwnerId = walletId,
+                            description = TextFieldValue(
+                                text = it.transaction.description ?: "",
+                                selection = TextRange(it.transaction.description?.length ?: 0)
+                            ),
+                            amount = TextFieldValue(
+                                text = it.transaction.amount.toString(),
+                                selection = TextRange(it.transaction.amount.toString().length)
+                            ),
+                            date = it.transaction.date.toString(),
+                            category = it.category,
+                            isEditing = true,
                         )
                     }
-                    .collect()
             }
         }
     }

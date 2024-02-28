@@ -86,20 +86,18 @@ class SubscriptionViewModel @Inject constructor(
                     .onStart { _subscriptionUiState.value = SubscriptionUiState(isEditing = true) }
                     .catch { _subscriptionUiState.value = SubscriptionUiState() }
                     .collect {
-                        _subscriptionUiState.value = (
-                            SubscriptionUiState(
-                                title = TextFieldValue(
-                                    text = it.title,
-                                    selection = TextRange(it.title.length)
-                                ),
-                                amount = TextFieldValue(
-                                    text = it.amount.toString(),
-                                    selection = TextRange(it.amount.toString().length)
-                                ),
-                                paymentDate = it.paymentDate.toString(),
-                                currency = it.currency,
-                                isEditing = true,
-                            )
+                        _subscriptionUiState.value = SubscriptionUiState(
+                            title = TextFieldValue(
+                                text = it.title,
+                                selection = TextRange(it.title.length)
+                            ),
+                            amount = TextFieldValue(
+                                text = it.amount.toString(),
+                                selection = TextRange(it.amount.toString().length)
+                            ),
+                            paymentDate = it.paymentDate.toString(),
+                            currency = it.currency,
+                            isEditing = true,
                         )
                     }
             }
