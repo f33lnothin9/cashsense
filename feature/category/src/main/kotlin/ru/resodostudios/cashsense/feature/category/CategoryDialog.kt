@@ -57,7 +57,7 @@ fun CategoryDialog(
             onCategoryEvent(CategoryEvent.Save)
             onDismiss()
         },
-        isConfirmEnabled = categoryState.title.text.isNotBlank(),
+        isConfirmEnabled = categoryState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
         val titleTextField = remember { FocusRequester() }

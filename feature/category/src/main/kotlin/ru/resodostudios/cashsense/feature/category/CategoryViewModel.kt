@@ -1,7 +1,5 @@
 package ru.resodostudios.cashsense.feature.category
 
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +27,7 @@ class CategoryViewModel @Inject constructor(
             CategoryEvent.Save -> {
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _categoryUiState.value.title.text,
+                    title = _categoryUiState.value.title,
                     icon = _categoryUiState.value.icon
                 )
                 viewModelScope.launch {
@@ -38,7 +36,7 @@ class CategoryViewModel @Inject constructor(
                 _categoryUiState.update {
                     it.copy(
                         id = "",
-                        title = TextFieldValue(""),
+                        title = "",
                         icon = 0,
                         isEditing = false,
                     )
@@ -80,10 +78,7 @@ class CategoryViewModel @Inject constructor(
                 .collect {
                     _categoryUiState.value = CategoryUiState(
                         id = it.id.toString(),
-                        title = TextFieldValue(
-                            text = it.title ?: "",
-                            selection = TextRange(it.title?.length ?: 0),
-                        ),
+                        title = it.title.toString(),
                         icon = it.icon ?: 0,
                         isEditing = true,
                     )
@@ -94,7 +89,7 @@ class CategoryViewModel @Inject constructor(
 
 data class CategoryUiState(
     val id: String = "",
-    val title: TextFieldValue = TextFieldValue(""),
+    val title: String = "",
     val icon: Int = 0,
     val isEditing: Boolean = false,
 )

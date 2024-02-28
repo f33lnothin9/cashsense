@@ -68,7 +68,7 @@ fun CategoryBottomSheet(
                 )
         ) {
             ListItem(
-                headlineContent = { Text(categoryState.title.text) },
+                headlineContent = { Text(categoryState.title) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(StoredIcon.asRes(categoryState.icon)),
