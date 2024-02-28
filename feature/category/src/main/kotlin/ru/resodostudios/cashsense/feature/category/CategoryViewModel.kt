@@ -46,14 +46,8 @@ class CategoryViewModel @Inject constructor(
             }
 
             CategoryEvent.Delete -> {
-                val category = Category(
-                    id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _categoryUiState.value.title.text,
-                    icon = _categoryUiState.value.icon,
-                )
-
                 viewModelScope.launch {
-                    categoriesRepository.deleteCategory(category)
+                    categoriesRepository.deleteCategory(_categoryUiState.value.id)
                 }
             }
 
