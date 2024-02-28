@@ -25,9 +25,9 @@ class WalletDialogViewModel @Inject constructor(
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
     val walletDialogUiState = _walletDialogUiState.asStateFlow()
 
-    fun onWalletDialogEvent(event: WalletDialogEvent) {
+    fun onWalletDialogEvent(event: WalletEvent) {
         when (event) {
-            WalletDialogEvent.Confirm -> {
+            WalletEvent.Confirm -> {
                 val wallet = Wallet(
                     id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _walletDialogUiState.value.title.text,
@@ -48,26 +48,26 @@ class WalletDialogViewModel @Inject constructor(
                 }
             }
 
-            is WalletDialogEvent.UpdateId -> {
+            is WalletEvent.UpdateId -> {
                 _walletDialogUiState.update {
                     it.copy(id = event.id)
                 }
                 loadWallet()
             }
 
-            is WalletDialogEvent.UpdateTitle -> {
+            is WalletEvent.UpdateTitle -> {
                 _walletDialogUiState.update {
                     it.copy(title = event.title)
                 }
             }
 
-            is WalletDialogEvent.UpdateInitialBalance -> {
+            is WalletEvent.UpdateInitialBalance -> {
                 _walletDialogUiState.update {
                     it.copy(initialBalance = event.initialBalance)
                 }
             }
 
-            is WalletDialogEvent.UpdateCurrency -> {
+            is WalletEvent.UpdateCurrency -> {
                 _walletDialogUiState.update {
                     it.copy(currency = event.currency)
                 }
