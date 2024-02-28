@@ -59,7 +59,7 @@ fun WalletDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
-            onWalletDialogEvent(WalletEvent.Confirm)
+            onWalletDialogEvent(WalletEvent.Save)
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.text.isNotBlank() && walletDialogState.initialBalance.text.validateAmount().second,

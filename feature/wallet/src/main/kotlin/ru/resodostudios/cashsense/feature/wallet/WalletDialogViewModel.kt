@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
-    private val walletsRepository: WalletsRepository
+    private val walletsRepository: WalletsRepository,
 ) : ViewModel() {
 
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
@@ -27,12 +27,12 @@ class WalletDialogViewModel @Inject constructor(
 
     fun onWalletDialogEvent(event: WalletEvent) {
         when (event) {
-            WalletEvent.Confirm -> {
+            WalletEvent.Save -> {
                 val wallet = Wallet(
                     id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _walletDialogUiState.value.title.text,
                     initialBalance = _walletDialogUiState.value.initialBalance.text.toBigDecimal(),
-                    currency = _walletDialogUiState.value.currency
+                    currency = _walletDialogUiState.value.currency,
                 )
                 viewModelScope.launch {
                     walletsRepository.upsertWallet(wallet)
@@ -43,8 +43,14 @@ class WalletDialogViewModel @Inject constructor(
                         title = TextFieldValue(""),
                         initialBalance = TextFieldValue(""),
                         currency = Currency.USD.name,
-                        isEditing = false
+                        isEditing = false,
                     )
+                }
+            }
+
+            WalletEvent.Delete -> {
+                viewModelScope.launch {
+                    walletsRepository.deleteWallet(_walletDialogUiState.value.id)
                 }
             }
 
@@ -85,11 +91,11 @@ class WalletDialogViewModel @Inject constructor(
                         id = it.id,
                         title = TextFieldValue(
                             text = it.title,
-                            selection = TextRange(it.title.length)
+                            selection = TextRange(it.title.length),
                         ),
                         initialBalance = TextFieldValue(
                             text = it.initialBalance.toString(),
-                            selection = TextRange(it.initialBalance.toString().length)
+                            selection = TextRange(it.initialBalance.toString().length),
                         ),
                         currency = it.currency,
                         isEditing = true,

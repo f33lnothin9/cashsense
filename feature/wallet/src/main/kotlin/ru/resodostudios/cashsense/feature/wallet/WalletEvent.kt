@@ -12,5 +12,7 @@ sealed interface WalletEvent {
 
     data class UpdateCurrency(val currency: String) : WalletEvent
 
-    data object Confirm : WalletEvent
+    data object Save : WalletEvent
+
+    data object Delete : WalletEvent
 }
