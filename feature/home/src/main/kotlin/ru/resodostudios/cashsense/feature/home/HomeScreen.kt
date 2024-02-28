@@ -21,8 +21,8 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.WalletEvent
 import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
+import ru.resodostudios.cashsense.feature.wallet.WalletEvent
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
@@ -38,7 +38,6 @@ internal fun HomeRoute(
         walletsState = walletsState,
         onWalletItemEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
-        onWalletDelete = homeViewModel::deleteWallet,
         onTransactionCreate = onTransactionCreate
     )
 }
@@ -48,7 +47,6 @@ internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletItemEvent: (WalletEvent) -> Unit,
     onWalletClick: (String) -> Unit,
-    onWalletDelete: (String) -> Unit,
     onTransactionCreate: (String) -> Unit
 ) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
@@ -67,11 +65,10 @@ internal fun HomeScreen(
                     walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                     onWalletClick = onWalletClick,
                     onTransactionCreate = onTransactionCreate,
-                    onEdit = {
+                    onWalletMenuClick = {
                         onWalletItemEvent(WalletEvent.UpdateId(it))
                         showWalletDialog = true
                     },
-                    onDelete = onWalletDelete
                 )
             }
             if (showWalletDialog) {
@@ -92,21 +89,19 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onEdit: (String) -> Unit,
-    onDelete: (String) -> Unit
+    onWalletMenuClick: (String) -> Unit,
 ) {
     items(
         items = walletsWithTransactionsAndCategories,
         key = { it.wallet.id },
-        contentType = { "wallet" }
+        contentType = { "wallet" },
     ) { walletWithTransactionsAndCategories ->
         WalletCard(
             wallet = walletWithTransactionsAndCategories.wallet,
             transactions = walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction },
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
-            onEdit = onEdit,
-            onDelete = onDelete
+            onWalletMenuClick = onWalletMenuClick,
         )
     }
 }
