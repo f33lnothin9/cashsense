@@ -76,7 +76,7 @@ fun WalletCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp, bottom = 16.dp)
+                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp)
                 .fillMaxWidth(),
         ) {
             Button(
