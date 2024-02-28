@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toInstant
@@ -83,8 +83,10 @@ class SubscriptionViewModel @Inject constructor(
         if (subscriptionId != null) {
             viewModelScope.launch {
                 subscriptionsRepository.getSubscription(subscriptionId)
-                    .onEach {
-                        _subscriptionUiState.emit(
+                    .onStart { _subscriptionUiState.value = SubscriptionUiState(isEditing = true) }
+                    .catch { _subscriptionUiState.value = SubscriptionUiState() }
+                    .collect {
+                        _subscriptionUiState.value = (
                             SubscriptionUiState(
                                 title = TextFieldValue(
                                     text = it.title,
@@ -100,7 +102,6 @@ class SubscriptionViewModel @Inject constructor(
                             )
                         )
                     }
-                    .collect()
             }
         }
     }
@@ -111,5 +112,5 @@ data class SubscriptionUiState(
     val amount: TextFieldValue = TextFieldValue(""),
     val paymentDate: String = "",
     val currency: String = Currency.USD.name,
-    val isEditing: Boolean = false
+    val isEditing: Boolean = false,
 )

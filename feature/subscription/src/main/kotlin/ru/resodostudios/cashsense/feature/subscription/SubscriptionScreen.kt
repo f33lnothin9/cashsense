@@ -63,7 +63,7 @@ internal fun SubscriptionRoute(
 
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalComposeUiApi::class
+    ExperimentalComposeUiApi::class,
 )
 @Composable
 internal fun SubscriptionScreen(
@@ -81,7 +81,7 @@ internal fun SubscriptionScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 },
@@ -93,11 +93,11 @@ internal fun SubscriptionScreen(
                         },
                         enabled = subscriptionState.title.text.isNotBlank() &&
                                 subscriptionState.amount.text.validateAmount().second &&
-                                subscriptionState.paymentDate.isNotBlank()
+                                subscriptionState.paymentDate.isNotBlank(),
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Confirm),
-                            contentDescription = stringResource(R.string.feature_subscription_add_subscription_icon_description)
+                            contentDescription = stringResource(R.string.feature_subscription_add_subscription_icon_description),
                         )
                     }
                 }
@@ -111,7 +111,7 @@ internal fun SubscriptionScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = paddingValues,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             item(
                 span = { GridItemSpan(2) }
@@ -121,7 +121,7 @@ internal fun SubscriptionScreen(
                     onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateTitle(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Next,
                     ),
                     label = { Text(text = stringResource(uiR.string.title)) },
                     placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
@@ -129,7 +129,7 @@ internal fun SubscriptionScreen(
                     maxLines = 1,
                     modifier = Modifier
                         .focusRequester(titleTextField)
-                        .focusProperties { next = amountTextField }
+                        .focusProperties { next = amountTextField },
                 )
             }
             item {
@@ -147,13 +147,13 @@ internal fun SubscriptionScreen(
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Done,
                     ),
                     label = { Text(text = stringResource(uiR.string.amount)) },
                     placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
                     supportingText = { Text(text = stringResource(uiR.string.required)) },
                     maxLines = 1,
-                    modifier = Modifier.focusRequester(amountTextField)
+                    modifier = Modifier.focusRequester(amountTextField),
                 )
             }
             item {
@@ -175,12 +175,12 @@ internal fun SubscriptionScreen(
                         IconButton(onClick = { openDialog = true }) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Calendar),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         }
                     },
                     maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 if (openDialog) {
                     val confirmEnabled = remember {
@@ -198,7 +198,7 @@ internal fun SubscriptionScreen(
                                         )
                                     )
                                 },
-                                enabled = confirmEnabled.value
+                                enabled = confirmEnabled.value,
                             ) {
                                 Text(stringResource(uiR.string.core_ui_ok))
                             }
@@ -209,7 +209,7 @@ internal fun SubscriptionScreen(
                             ) {
                                 Text(stringResource(uiR.string.core_ui_cancel))
                             }
-                        }
+                        },
                     ) {
                         DatePicker(state = paymentDatePickerState)
                     }
@@ -218,12 +218,14 @@ internal fun SubscriptionScreen(
             item {
                 CurrencyExposedDropdownMenuBox(
                     currencyName = subscriptionState.currency,
-                    onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) }
+                    onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) },
                 )
             }
         }
         LaunchedEffect(Unit) {
-            titleTextField.requestFocus()
+            if (!subscriptionState.isEditing) {
+                titleTextField.requestFocus()
+            }
         }
     }
 }
