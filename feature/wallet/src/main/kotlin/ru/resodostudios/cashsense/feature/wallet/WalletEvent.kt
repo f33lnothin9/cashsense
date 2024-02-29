@@ -8,6 +8,8 @@ sealed interface WalletEvent {
 
     data class UpdateInitialBalance(val initialBalance: String) : WalletEvent
 
+    data class UpdateCurrentBalance(val currentBalance: String) : WalletEvent
+
     data class UpdateCurrency(val currency: String) : WalletEvent
 
     data object Save : WalletEvent

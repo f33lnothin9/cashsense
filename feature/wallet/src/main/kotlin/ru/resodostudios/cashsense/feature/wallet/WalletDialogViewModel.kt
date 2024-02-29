@@ -71,6 +71,12 @@ class WalletDialogViewModel @Inject constructor(
                 }
             }
 
+            is WalletEvent.UpdateCurrentBalance -> {
+                _walletDialogUiState.update {
+                    it.copy(currentBalance = event.currentBalance)
+                }
+            }
+
             is WalletEvent.UpdateCurrency -> {
                 _walletDialogUiState.update {
                     it.copy(currency = event.currency)
@@ -85,7 +91,7 @@ class WalletDialogViewModel @Inject constructor(
                 .onStart { _walletDialogUiState.value = WalletDialogUiState(isEditing = true) }
                 .catch { _walletDialogUiState.value = WalletDialogUiState() }
                 .collect {
-                    _walletDialogUiState.value = WalletDialogUiState(
+                    _walletDialogUiState.value = _walletDialogUiState.value.copy(
                         id = it.id,
                         title = it.title,
                         initialBalance = it.initialBalance.toString(),
@@ -101,6 +107,7 @@ data class WalletDialogUiState(
     val id: String = "",
     val title: String = "",
     val initialBalance: String = "",
+    val currentBalance: String = "",
     val currency: String = Currency.USD.name,
     val isEditing: Boolean = false,
 )

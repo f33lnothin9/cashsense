@@ -40,9 +40,13 @@ fun WalletCard(
     transactions: List<Transaction>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String) -> Unit,
+    onWalletMenuClick: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currentWalletBalance = wallet.initialBalance
+        .plus(transactions.sumOf { it.amount })
+        .formatAmountWithCurrency(wallet.currency)
+
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
         shape = RoundedCornerShape(24.dp),
@@ -62,9 +66,7 @@ fun WalletCard(
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                text = wallet.initialBalance
-                    .plus(transactions.sumOf { it.amount })
-                    .formatAmountWithCurrency(wallet.currency),
+                text = currentWalletBalance,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,
@@ -87,7 +89,7 @@ fun WalletCard(
                 Text(stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             IconButton(
-                onClick = { onWalletMenuClick(wallet.id) },
+                onClick = { onWalletMenuClick(wallet.id, currentWalletBalance) },
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
@@ -154,7 +156,7 @@ fun WalletCardPreview() {
                 transactions = emptyList(),
                 onWalletClick = {},
                 onTransactionCreate = {},
-                onWalletMenuClick = {},
+                onWalletMenuClick = { _, _ ->},
                 modifier = Modifier.padding(16.dp),
             )
         }

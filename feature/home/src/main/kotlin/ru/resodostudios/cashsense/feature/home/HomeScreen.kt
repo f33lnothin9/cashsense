@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
@@ -49,7 +50,12 @@ internal fun HomeScreen(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit
 ) {
-    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
+    var showWalletBottomSheet by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showWalletDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
@@ -65,10 +71,17 @@ internal fun HomeScreen(
                     walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                     onWalletClick = onWalletClick,
                     onTransactionCreate = onTransactionCreate,
-                    onWalletMenuClick = {
-                        onWalletItemEvent(WalletEvent.UpdateId(it))
-                        showWalletDialog = true
+                    onWalletMenuClick = { walletId, currentWalletBalance ->
+                        onWalletItemEvent(WalletEvent.UpdateId(walletId))
+                        onWalletItemEvent(WalletEvent.UpdateCurrentBalance(currentWalletBalance))
+                        showWalletBottomSheet = true
                     },
+                )
+            }
+            if (showWalletBottomSheet) {
+                WalletBottomSheet(
+                    onDismiss = { showWalletBottomSheet = false },
+                    onEdit = { showWalletDialog = true },
                 )
             }
             if (showWalletDialog) {
@@ -79,7 +92,7 @@ internal fun HomeScreen(
         } else {
             EmptyState(
                 messageRes = walletR.string.feature_wallet_wallets_empty,
-                animationRes = walletR.raw.anim_wallet_empty
+                animationRes = walletR.raw.anim_wallet_empty,
             )
         }
     }
@@ -89,7 +102,7 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String) -> Unit,
+    onWalletMenuClick: (String, String) -> Unit,
 ) {
     items(
         items = walletsWithTransactionsAndCategories,
