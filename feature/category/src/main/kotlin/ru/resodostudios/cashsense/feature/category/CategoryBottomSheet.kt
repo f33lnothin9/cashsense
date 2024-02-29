@@ -25,10 +25,10 @@ fun CategoryBottomSheet(
     onEdit: (String) -> Unit,
     viewModel: CategoryViewModel = hiltViewModel(),
 ) {
-    val categoryState by viewModel.categoryUiState.collectAsStateWithLifecycle()
+    val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
 
     CategoryBottomSheet(
-        categoryState = categoryState,
+        categoryDialogState = categoryDialogState,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
         onEdit = onEdit,
@@ -37,7 +37,7 @@ fun CategoryBottomSheet(
 
 @Composable
 fun CategoryBottomSheet(
-    categoryState: CategoryUiState,
+    categoryDialogState: CategoryDialogUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
@@ -46,10 +46,10 @@ fun CategoryBottomSheet(
         onDismiss = onDismiss
     ) {
         ListItem(
-            headlineContent = { Text(categoryState.title) },
+            headlineContent = { Text(categoryDialogState.title) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(StoredIcon.asRes(categoryState.icon)),
+                    imageVector = ImageVector.vectorResource(StoredIcon.asRes(categoryDialogState.icon)),
                     contentDescription = null,
                 )
             },
@@ -65,7 +65,7 @@ fun CategoryBottomSheet(
             },
             modifier = Modifier.clickable {
                 onDismiss()
-                onEdit(categoryState.id)
+                onEdit(categoryDialogState.id)
             },
         )
         ListItem(

@@ -30,10 +30,10 @@ fun CategoryDialog(
     onDismiss: () -> Unit,
     viewModel: CategoryViewModel = hiltViewModel(),
 ) {
-    val categoryState by viewModel.categoryUiState.collectAsStateWithLifecycle()
+    val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
 
     CategoryDialog(
-        categoryState = categoryState,
+        categoryDialogState = categoryDialogState,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
     )
@@ -41,12 +41,12 @@ fun CategoryDialog(
 
 @Composable
 fun CategoryDialog(
-    categoryState: CategoryUiState,
+    categoryDialogState: CategoryDialogUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (categoryState.isEditing) R.string.feature_category_edit_category else R.string.feature_category_new_category
-    val dialogConfirmText = if (categoryState.isEditing) uiR.string.save else uiR.string.add
+    val dialogTitle = if (categoryDialogState.isEditing) R.string.feature_category_edit_category else R.string.feature_category_new_category
+    val dialogConfirmText = if (categoryDialogState.isEditing) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -57,7 +57,7 @@ fun CategoryDialog(
             onCategoryEvent(CategoryEvent.Save)
             onDismiss()
         },
-        isConfirmEnabled = categoryState.title.isNotBlank(),
+        isConfirmEnabled = categoryDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
         val titleTextField = remember { FocusRequester() }
@@ -67,7 +67,7 @@ fun CategoryDialog(
             modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
             OutlinedTextField(
-                value = categoryState.title,
+                value = categoryDialogState.title,
                 onValueChange = { onCategoryEvent(CategoryEvent.UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -79,7 +79,7 @@ fun CategoryDialog(
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(
-                        currentIconId = categoryState.icon,
+                        currentIconId = categoryDialogState.icon,
                         onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) },
                     )
                 },
@@ -87,7 +87,7 @@ fun CategoryDialog(
             )
         }
         LaunchedEffect(Unit) {
-            if (!categoryState.isEditing) {
+            if (!categoryDialogState.isEditing) {
                 titleTextField.requestFocus()
             }
         }

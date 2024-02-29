@@ -19,21 +19,21 @@ class CategoryViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository
 ) : ViewModel() {
 
-    private val _categoryUiState = MutableStateFlow(CategoryUiState())
-    val categoryUiState = _categoryUiState.asStateFlow()
+    private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
+    val categoryDialogUiState = _categoryDialogUiState.asStateFlow()
 
     fun onCategoryEvent(event: CategoryEvent) {
         when (event) {
             CategoryEvent.Save -> {
                 val category = Category(
-                    id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _categoryUiState.value.title,
-                    icon = _categoryUiState.value.icon
+                    id = _categoryDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+                    title = _categoryDialogUiState.value.title,
+                    icon = _categoryDialogUiState.value.icon
                 )
                 viewModelScope.launch {
                     categoriesRepository.upsertCategory(category)
                 }
-                _categoryUiState.update {
+                _categoryDialogUiState.update {
                     it.copy(
                         id = "",
                         title = "",
@@ -45,25 +45,25 @@ class CategoryViewModel @Inject constructor(
 
             CategoryEvent.Delete -> {
                 viewModelScope.launch {
-                    categoriesRepository.deleteCategory(_categoryUiState.value.id)
+                    categoriesRepository.deleteCategory(_categoryDialogUiState.value.id)
                 }
             }
 
             is CategoryEvent.UpdateId -> {
-                _categoryUiState.update {
+                _categoryDialogUiState.update {
                     it.copy(id = event.id)
                 }
                 loadCategory()
             }
 
             is CategoryEvent.UpdateTitle -> {
-                _categoryUiState.update {
+                _categoryDialogUiState.update {
                     it.copy(title = event.title)
                 }
             }
 
             is CategoryEvent.UpdateIcon -> {
-                _categoryUiState.update {
+                _categoryDialogUiState.update {
                     it.copy(icon = event.icon)
                 }
             }
@@ -72,11 +72,11 @@ class CategoryViewModel @Inject constructor(
 
     private fun loadCategory() {
         viewModelScope.launch {
-            categoriesRepository.getCategory(_categoryUiState.value.id)
-                .onStart { _categoryUiState.value = CategoryUiState(isEditing = true) }
-                .catch { _categoryUiState.value = CategoryUiState() }
+            categoriesRepository.getCategory(_categoryDialogUiState.value.id)
+                .onStart { _categoryDialogUiState.value = CategoryDialogUiState(isEditing = true) }
+                .catch { _categoryDialogUiState.value = CategoryDialogUiState() }
                 .collect {
-                    _categoryUiState.value = CategoryUiState(
+                    _categoryDialogUiState.value = CategoryDialogUiState(
                         id = it.id.toString(),
                         title = it.title.toString(),
                         icon = it.icon ?: 0,
@@ -87,7 +87,7 @@ class CategoryViewModel @Inject constructor(
     }
 }
 
-data class CategoryUiState(
+data class CategoryDialogUiState(
     val id: String = "",
     val title: String = "",
     val icon: Int = 0,
