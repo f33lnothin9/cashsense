@@ -19,7 +19,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,7 +61,8 @@ fun WalletDialog(
             onWalletDialogEvent(WalletEvent.Save)
             onDismiss()
         },
-        isConfirmEnabled = walletDialogState.title.text.isNotBlank() && walletDialogState.initialBalance.text.validateAmount().second,
+        isConfirmEnabled = walletDialogState.title.isNotBlank() &&
+                walletDialogState.initialBalance.validateAmount().second,
         onDismiss = onDismiss,
     ) {
         val (titleTextField, initialBalanceTextField) = remember { FocusRequester.createRefs() }
@@ -88,16 +88,7 @@ fun WalletDialog(
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
-                onValueChange = {
-                    onWalletDialogEvent(
-                        WalletEvent.UpdateInitialBalance(
-                            TextFieldValue(
-                                text = it.text.validateAmount().first,
-                                selection = it.selection,
-                            )
-                        )
-                    )
-                },
+                onValueChange = { onWalletDialogEvent(WalletEvent.UpdateInitialBalance(it)) },
                 placeholder = { Text(text = "100") },
                 label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
                 keyboardOptions = KeyboardOptions(
