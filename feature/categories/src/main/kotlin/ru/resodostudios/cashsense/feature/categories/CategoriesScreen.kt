@@ -64,7 +64,7 @@ internal fun CategoriesScreen(
             ) {
                 categories(
                     categoriesState = categoriesState,
-                    onEdit = {
+                    onCategoryClick = {
                         onCategoryEvent(CategoryEvent.UpdateId(it))
                         showCategoryBottomSheet = true
                     },
@@ -92,7 +92,7 @@ internal fun CategoriesScreen(
 
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
-    onEdit: (String) -> Unit,
+    onCategoryClick: (String) -> Unit,
 ) {
     when (categoriesState) {
         Loading -> Unit
@@ -113,7 +113,7 @@ private fun LazyGridScope.categories(
                         )
                     },
                     modifier = Modifier.clickable {
-                        onEdit(category.id.toString())
+                        onCategoryClick(category.id.toString())
                     }
                 )
             }
