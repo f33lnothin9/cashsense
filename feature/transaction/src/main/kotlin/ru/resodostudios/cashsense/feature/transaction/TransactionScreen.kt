@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -101,7 +100,7 @@ internal fun TransactionScreen(
                                     onTransactionEvent(TransactionEvent.Confirm)
                                     onBackClick()
                                 },
-                                enabled = transactionState.amount.text.validateAmount().second,
+                                enabled = transactionState.amount.validateAmount().second,
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Confirm),
@@ -126,16 +125,7 @@ internal fun TransactionScreen(
                     item {
                         OutlinedTextField(
                             value = transactionState.amount,
-                            onValueChange = {
-                                onTransactionEvent(
-                                    TransactionEvent.UpdateAmount(
-                                        TextFieldValue(
-                                            text = it.text.validateAmount().first,
-                                            selection = it.selection,
-                                        )
-                                    )
-                                )
-                            },
+                            onValueChange = { onTransactionEvent(TransactionEvent.UpdateAmount(it.validateAmount().first)) },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
                                 imeAction = ImeAction.Next,
