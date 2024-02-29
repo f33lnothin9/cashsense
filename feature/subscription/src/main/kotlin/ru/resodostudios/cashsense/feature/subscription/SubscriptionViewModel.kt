@@ -1,7 +1,5 @@
 package ru.resodostudios.cashsense.feature.subscription
 
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,12 +39,12 @@ class SubscriptionViewModel @Inject constructor(
             SubscriptionEvent.Confirm -> {
                 val subscription = Subscription(
                     id = subscriptionId ?: UUID.randomUUID().toString(),
-                    title = _subscriptionUiState.value.title.text,
-                    amount = _subscriptionUiState.value.amount.text.toBigDecimal(),
+                    title = _subscriptionUiState.value.title,
+                    amount = _subscriptionUiState.value.amount.toBigDecimal(),
                     paymentDate = _subscriptionUiState.value.paymentDate.toInstant(),
                     currency = _subscriptionUiState.value.currency,
                     notificationDate = null,
-                    repeatingInterval = null
+                    repeatingInterval = null,
                 )
                 viewModelScope.launch {
                     subscriptionsRepository.upsertSubscription(subscription)
@@ -87,14 +85,8 @@ class SubscriptionViewModel @Inject constructor(
                     .catch { _subscriptionUiState.value = SubscriptionUiState() }
                     .collect {
                         _subscriptionUiState.value = SubscriptionUiState(
-                            title = TextFieldValue(
-                                text = it.title,
-                                selection = TextRange(it.title.length)
-                            ),
-                            amount = TextFieldValue(
-                                text = it.amount.toString(),
-                                selection = TextRange(it.amount.toString().length)
-                            ),
+                            title = it.title,
+                            amount = it.amount.toString(),
                             paymentDate = it.paymentDate.toString(),
                             currency = it.currency,
                             isEditing = true,
@@ -106,8 +98,8 @@ class SubscriptionViewModel @Inject constructor(
 }
 
 data class SubscriptionUiState(
-    val title: TextFieldValue = TextFieldValue(""),
-    val amount: TextFieldValue = TextFieldValue(""),
+    val title: String = "",
+    val amount: String = "",
     val paymentDate: String = "",
     val currency: String = Currency.USD.name,
     val isEditing: Boolean = false,
