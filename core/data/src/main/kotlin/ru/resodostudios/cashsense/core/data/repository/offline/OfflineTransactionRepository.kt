@@ -21,8 +21,8 @@ class OfflineTransactionRepository @Inject constructor(
     override suspend fun upsertTransaction(transaction: Transaction) =
         dao.upsertTransaction(transaction.asEntity())
 
-    override suspend fun deleteTransaction(transaction: Transaction) =
-        dao.deleteTransaction(transaction.asEntity())
+    override suspend fun deleteTransaction(id: String) =
+        dao.deleteTransaction(id)
 
     override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) =
         dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())

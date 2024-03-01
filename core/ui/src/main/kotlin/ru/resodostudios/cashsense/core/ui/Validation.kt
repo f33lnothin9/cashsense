@@ -16,5 +16,5 @@ fun String.validateAmount(): Pair<String, Boolean> {
     val regex = Regex("^-?\\d+(\\.\\d{1,2})?$")
     val isValid = regex.matches(cleanedInput)
 
-    return Pair(cleanedInput, isValid)
+    return cleanedInput to isValid
 }
