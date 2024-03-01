@@ -14,7 +14,6 @@ fun NavController.navigateToHomeGraph(navOptions: NavOptions? = null) = navigate
 
 fun NavGraphBuilder.homeGraph(
     onWalletClick: (String) -> Unit,
-    onTransactionCreate: (String) -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit
 ) {
     navigation(
@@ -24,7 +23,6 @@ fun NavGraphBuilder.homeGraph(
         composable(route = HOME_ROUTE) {
             HomeRoute(
                 onWalletClick = onWalletClick,
-                onTransactionCreate = onTransactionCreate
             )
         }
         nestedGraphs()

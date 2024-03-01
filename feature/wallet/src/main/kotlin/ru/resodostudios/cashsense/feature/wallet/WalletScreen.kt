@@ -41,7 +41,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -49,6 +48,7 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formattedDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.math.BigDecimal
 import java.math.MathContext
@@ -59,19 +59,15 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 @Composable
 internal fun WalletRoute(
     onBackClick: () -> Unit,
-    onTransactionCreate: (String) -> Unit,
-    onTransactionEdit: (String, String) -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),
-    transactionViewModel: TransactionViewModel = hiltViewModel()
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
 ) {
     val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
 
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
-        onTransactionCreate = onTransactionCreate,
-        onTransactionEdit = onTransactionEdit,
-        onTransactionDelete = transactionViewModel::deleteTransaction
+        onTransactionEvent = transactionViewModel::onTransactionEvent
     )
 }
 
@@ -80,9 +76,7 @@ internal fun WalletRoute(
 internal fun WalletScreen(
     walletState: WalletUiState,
     onBackClick: () -> Unit,
-    onTransactionCreate: (String) -> Unit,
-    onTransactionEdit: (String, String) -> Unit,
-    onTransactionDelete: (Transaction) -> Unit
+    onTransactionEvent: (TransactionEvent) -> Unit,
 ) {
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
@@ -125,7 +119,7 @@ internal fun WalletScreen(
                             }
                         },
                         actions = {
-                            IconButton(onClick = { onTransactionCreate(wallet.id) }) {
+                            IconButton(onClick = { onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id)) }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                                     contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
@@ -160,8 +154,8 @@ internal fun WalletScreen(
                             transactions(
                                 transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
-                                onEdit = { onTransactionEdit(it, wallet.id) },
-                                onDelete = onTransactionDelete,
+                                onEdit = { onTransactionEvent(TransactionEvent.UpdateId(it)) },
+                                onDelete = { onTransactionEvent(TransactionEvent.Delete) },
                             )
                         }
                     } else {
@@ -251,7 +245,7 @@ fun LazyGridScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
     currency: String,
     onEdit: (String) -> Unit,
-    onDelete: (Transaction) -> Unit,
+    onDelete: () -> Unit,
 ) {
     val sortedTransactionsAndCategories =
         transactionsWithCategories
@@ -292,7 +286,7 @@ fun LazyGridScope.transactions(
                 trailingContent = {
                     EditAndDeleteDropdownMenu(
                         onEdit = { onEdit(transactionWithCategory.transaction.id) },
-                        onDelete = { onDelete(transactionWithCategory.transaction) },
+                        onDelete = onDelete,
                     )
                 },
                 supportingContent = {

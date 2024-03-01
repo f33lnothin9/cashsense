@@ -9,8 +9,6 @@ import ru.resodostudios.cashsense.feature.home.navigation.homeGraph
 import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
 import ru.resodostudios.cashsense.feature.subscription.navigation.subscriptionScreen
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsGraph
-import ru.resodostudios.cashsense.feature.transaction.navigation.navigateToTransaction
-import ru.resodostudios.cashsense.feature.transaction.navigation.transactionScreen
 import ru.resodostudios.cashsense.feature.wallet.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.navigation.walletScreen
 import ru.resodostudios.cashsense.ui.CsAppState
@@ -30,15 +28,9 @@ fun CsNavHost(
     ) {
         homeGraph(
             onWalletClick = navController::navigateToWallet,
-            onTransactionCreate = { navController.navigateToTransaction(walletId = it) },
             nestedGraphs = {
                 walletScreen(
                     onBackClick = navController::popBackStack,
-                    onTransactionCreate = { navController.navigateToTransaction(walletId = it) },
-                    onTransactionEdit = navController::navigateToTransaction
-                )
-                transactionScreen(
-                    onBackClick = navController::popBackStack
                 )
             }
         )

@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,33 +15,23 @@ import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
-import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionArgs
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val transactionsRepository: TransactionsRepository,
 ) : ViewModel() {
 
-    private val transactionArgs: TransactionArgs = TransactionArgs(savedStateHandle)
-    private val transactionId = transactionArgs.transactionId
-    private val walletId = transactionArgs.walletId
-
     private val _transactionUiState = MutableStateFlow(TransactionUiState())
     val transactionUiState = _transactionUiState.asStateFlow()
-
-    init {
-        loadTransaction()
-    }
 
     fun onTransactionEvent(event: TransactionEvent) {
         when (event) {
             TransactionEvent.Save -> {
                 val transaction = Transaction(
-                    id = transactionId ?: UUID.randomUUID().toString(),
-                    walletOwnerId = walletId,
+                    id = _transactionUiState.value.transactionId.ifBlank { UUID.randomUUID().toString() },
+                    walletOwnerId = _transactionUiState.value.walletOwnerId,
                     description = _transactionUiState.value.description,
                     amount = _transactionUiState.value.amount.toBigDecimal(),
                     date = _transactionUiState.value.date.toInstant(),
@@ -68,6 +57,25 @@ class TransactionViewModel @Inject constructor(
                 }
             }
 
+            TransactionEvent.Delete -> {
+                viewModelScope.launch {
+                    transactionsRepository.deleteTransaction(_transactionUiState.value.transactionId)
+                }
+            }
+
+            is TransactionEvent.UpdateId -> {
+                _transactionUiState.update {
+                    it.copy(transactionId = event.id)
+                }
+                loadTransaction()
+            }
+
+            is TransactionEvent.UpdateWalletId -> {
+                _transactionUiState.update {
+                    it.copy(walletOwnerId = event.id)
+                }
+            }
+
             is TransactionEvent.UpdateAmount -> {
                 _transactionUiState.update {
                     it.copy(amount = event.amount)
@@ -88,34 +96,27 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
-    fun deleteTransaction(transaction: Transaction) {
-        viewModelScope.launch {
-            transactionsRepository.deleteTransaction(transaction)
-        }
-    }
-
     private fun loadTransaction() {
-        if (transactionId != null) {
-            viewModelScope.launch {
-                transactionsRepository.getTransactionWithCategory(transactionId)
-                    .onStart { _transactionUiState.value = TransactionUiState(isEditing = true) }
-                    .catch { _transactionUiState.value = TransactionUiState() }
-                    .collect {
-                        _transactionUiState.value = TransactionUiState(
-                            walletOwnerId = walletId,
-                            description = it.transaction.description.toString(),
-                            amount = it.transaction.amount.toString(),
-                            date = it.transaction.date.toString(),
-                            category = it.category,
-                            isEditing = true,
-                        )
-                    }
-            }
+        viewModelScope.launch {
+            transactionsRepository.getTransactionWithCategory(_transactionUiState.value.transactionId)
+                .onStart { _transactionUiState.value = TransactionUiState(isEditing = true) }
+                .catch { _transactionUiState.value = TransactionUiState() }
+                .collect {
+                    _transactionUiState.value = _transactionUiState.value.copy(
+                        walletOwnerId = it.transaction.walletOwnerId,
+                        description = it.transaction.description.toString(),
+                        amount = it.transaction.amount.toString(),
+                        date = it.transaction.date.toString(),
+                        category = it.category,
+                        isEditing = true,
+                    )
+                }
         }
     }
 }
 
 data class TransactionUiState(
+    val transactionId: String = "",
     val walletOwnerId: String = "",
     val description: String = "",
     val amount: String = "",

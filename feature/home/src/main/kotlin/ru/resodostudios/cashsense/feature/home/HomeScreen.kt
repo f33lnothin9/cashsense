@@ -19,6 +19,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
+import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.WalletDialog
@@ -29,9 +31,9 @@ import ru.resodostudios.cashsense.feature.wallet.R as walletR
 @Composable
 internal fun HomeRoute(
     onWalletClick: (String) -> Unit,
-    onTransactionCreate: (String) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
+    transactionViewModel: TransactionViewModel = hiltViewModel(),
 ) {
     val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
 
@@ -39,7 +41,7 @@ internal fun HomeRoute(
         walletsState = walletsState,
         onWalletItemEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
-        onTransactionCreate = onTransactionCreate
+        onTransactionEvent = transactionViewModel::onTransactionEvent,
     )
 }
 
@@ -48,7 +50,7 @@ internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletItemEvent: (WalletEvent) -> Unit,
     onWalletClick: (String) -> Unit,
-    onTransactionCreate: (String) -> Unit
+    onTransactionEvent: (TransactionEvent) -> Unit
 ) {
     var showWalletBottomSheet by rememberSaveable {
         mutableStateOf(false)
@@ -70,7 +72,7 @@ internal fun HomeScreen(
                 walletsWithTransactionsAndCategories(
                     walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                     onWalletClick = onWalletClick,
-                    onTransactionCreate = onTransactionCreate,
+                    onTransactionCreate = { onTransactionEvent(TransactionEvent.UpdateWalletId(it)) },
                     onWalletMenuClick = { walletId, currentWalletBalance ->
                         onWalletItemEvent(WalletEvent.UpdateId(walletId))
                         onWalletItemEvent(WalletEvent.UpdateCurrentBalance(currentWalletBalance))
