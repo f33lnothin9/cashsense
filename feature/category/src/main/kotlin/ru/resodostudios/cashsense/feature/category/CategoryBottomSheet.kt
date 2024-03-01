@@ -25,7 +25,7 @@ fun CategoryBottomSheet(
     onEdit: (String) -> Unit,
     viewModel: CategoryViewModel = hiltViewModel(),
 ) {
-    val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
+    val categoryDialogState by viewModel.categoryUiState.collectAsStateWithLifecycle()
 
     CategoryBottomSheet(
         categoryDialogState = categoryDialogState,
@@ -37,7 +37,7 @@ fun CategoryBottomSheet(
 
 @Composable
 fun CategoryBottomSheet(
-    categoryDialogState: CategoryDialogUiState,
+    categoryDialogState: CategoryUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
