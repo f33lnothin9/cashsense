@@ -39,7 +39,7 @@ class TransactionViewModel @Inject constructor(
 
     fun onTransactionEvent(event: TransactionEvent) {
         when (event) {
-            TransactionEvent.Confirm -> {
+            TransactionEvent.Save -> {
                 val transaction = Transaction(
                     id = transactionId ?: UUID.randomUUID().toString(),
                     walletOwnerId = walletId,

@@ -97,7 +97,7 @@ internal fun TransactionScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    onTransactionEvent(TransactionEvent.Confirm)
+                                    onTransactionEvent(TransactionEvent.Save)
                                     onBackClick()
                                 },
                                 enabled = transactionState.amount.validateAmount().second,
