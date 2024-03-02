@@ -43,7 +43,6 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
 import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
-import ru.resodostudios.cashsense.feature.category.CategoryDialog
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -91,8 +90,6 @@ fun TransactionDialog(
             is CategoriesUiState.Success -> {
                 val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
-                var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
-
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -116,7 +113,6 @@ fun TransactionDialog(
                         currentCategory = transactionState.category,
                         categories = categoriesState.categories,
                         onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
-                        onNewCategoryClick = { showCategoryDialog = true }
                     )
                     OutlinedTextField(
                         value = transactionState.description,
@@ -128,11 +124,6 @@ fun TransactionDialog(
                         label = { Text(stringResource(uiR.string.description)) },
                         maxLines = 1,
                         modifier = Modifier.focusRequester(descTextField),
-                    )
-                }
-                if (showCategoryDialog) {
-                    CategoryDialog(
-                        onDismiss = { showCategoryDialog = false }
                     )
                 }
                 LaunchedEffect(Unit) {
@@ -151,7 +142,6 @@ private fun CategoryExposedDropdownMenuBox(
     currentCategory: Category?,
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
-    onNewCategoryClick: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -186,19 +176,20 @@ private fun CategoryExposedDropdownMenuBox(
             DropdownMenuItem(
                 text = {
                     Text(
-                        text = stringResource(ru.resodostudios.cashsense.feature.category.R.string.feature_category_new_category),
+                        text = stringResource(uiR.string.none),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
                 onClick = {
-                    onNewCategoryClick()
+                    onCategoryClick(Category())
+                    iconId = 0
                     expanded = false
                 },
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Add),
+                        imageVector = ImageVector.vectorResource(CsIcons.Category),
                         contentDescription = null
                     )
                 },

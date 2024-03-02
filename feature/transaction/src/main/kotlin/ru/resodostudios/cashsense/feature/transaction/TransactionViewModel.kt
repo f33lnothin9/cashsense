@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -13,6 +12,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import java.util.UUID
@@ -30,7 +30,9 @@ class TransactionViewModel @Inject constructor(
         when (event) {
             TransactionEvent.Save -> {
                 val transaction = Transaction(
-                    id = _transactionUiState.value.transactionId.ifBlank { UUID.randomUUID().toString() },
+                    id = _transactionUiState.value.transactionId.ifEmpty {
+                        UUID.randomUUID().toString()
+                    },
                     walletOwnerId = _transactionUiState.value.walletOwnerId,
                     description = _transactionUiState.value.description,
                     amount = _transactionUiState.value.amount.toBigDecimal(),
@@ -72,7 +74,20 @@ class TransactionViewModel @Inject constructor(
                 _transactionUiState.update {
                     it.copy(transactionId = event.id)
                 }
-                loadTransaction()
+                if (_transactionUiState.value.transactionId.isEmpty()) {
+                    _transactionUiState.update {
+                        it.copy(
+                            transactionId = "",
+                            isEditing = false,
+                            description = "",
+                            amount = "",
+                            category = Category(),
+                            date = "",
+                        )
+                    }
+                } else {
+                    loadTransaction()
+                }
             }
 
             is TransactionEvent.UpdateWalletId -> {
@@ -113,16 +128,6 @@ class TransactionViewModel @Inject constructor(
                 .onStart {
                     _transactionUiState.value = _transactionUiState.value.copy(isEditing = true)
                 }
-                .catch {
-                    _transactionUiState.value = _transactionUiState.value.copy(
-                        transactionId = "",
-                        isEditing = false,
-                        description = "",
-                        amount = "",
-                        category = Category(),
-                        date = "",
-                    )
-                }
                 .collect {
                     _transactionUiState.value = _transactionUiState.value.copy(
                         transactionId = it.transaction.id,
@@ -142,7 +147,7 @@ data class TransactionUiState(
     val walletOwnerId: String = "",
     val description: String = "",
     val amount: String = "",
-    val currency: String = "USD",
+    val currency: String = Currency.USD.name,
     val date: String = "",
     val category: Category? = Category(),
     val isEditing: Boolean = false,

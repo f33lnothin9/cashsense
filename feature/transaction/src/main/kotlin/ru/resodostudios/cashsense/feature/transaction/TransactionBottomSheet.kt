@@ -48,7 +48,7 @@ fun TransactionBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
 ) {
-    val formattedAmount = if (transactionState.amount.isNotBlank()) {
+    val formattedAmount = if (transactionState.amount.isNotEmpty()) {
         transactionState.amount
             .toBigDecimal()
             .formatAmountWithCurrency(transactionState.currency, true)
