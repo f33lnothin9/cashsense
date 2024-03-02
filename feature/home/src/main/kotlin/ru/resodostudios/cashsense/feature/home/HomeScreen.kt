@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
@@ -59,6 +60,10 @@ internal fun HomeScreen(
         mutableStateOf(false)
     }
 
+    var showTransactionDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
         is WalletsUiState.Success -> if (walletsState.walletsWithTransactionsAndCategories.isNotEmpty()) {
@@ -67,12 +72,15 @@ internal fun HomeScreen(
                 verticalItemSpacing = 16.dp,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(16.dp),
             ) {
                 walletsWithTransactionsAndCategories(
                     walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                     onWalletClick = onWalletClick,
-                    onTransactionCreate = { onTransactionEvent(TransactionEvent.UpdateWalletId(it)) },
+                    onTransactionCreate = {
+                        onTransactionEvent(TransactionEvent.UpdateWalletId(it))
+                        showTransactionDialog = true
+                    },
                     onWalletMenuClick = { walletId, currentWalletBalance ->
                         onWalletItemEvent(WalletEvent.UpdateId(walletId))
                         onWalletItemEvent(WalletEvent.UpdateCurrentBalance(currentWalletBalance))
@@ -89,6 +97,11 @@ internal fun HomeScreen(
             if (showWalletDialog) {
                 WalletDialog(
                     onDismiss = { showWalletDialog = false }
+                )
+            }
+            if (showTransactionDialog) {
+                TransactionDialog(
+                    onDismiss = { showTransactionDialog = false },
                 )
             }
         } else {
