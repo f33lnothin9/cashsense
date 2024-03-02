@@ -108,7 +108,7 @@ private fun LazyGridScope.categories(
                     },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.icon ?: StoredIcon.CATEGORY.storedId)),
+                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)),
                             contentDescription = null,
                         )
                     },

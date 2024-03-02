@@ -28,7 +28,7 @@ class CategoryViewModel @Inject constructor(
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _categoryUiState.value.title,
-                    icon = _categoryUiState.value.icon
+                    iconId = _categoryUiState.value.icon
                 )
                 viewModelScope.launch {
                     categoriesRepository.upsertCategory(category)
@@ -79,7 +79,7 @@ class CategoryViewModel @Inject constructor(
                     _categoryUiState.value = CategoryUiState(
                         id = it.id.toString(),
                         title = it.title.toString(),
-                        icon = it.icon ?: 0,
+                        icon = it.iconId ?: 0,
                         isEditing = true,
                     )
                 }

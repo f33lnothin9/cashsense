@@ -155,7 +155,7 @@ private fun CategoryExposedDropdownMenuBox(
     var expanded by remember { mutableStateOf(false) }
 
     var iconId by rememberSaveable {
-        mutableIntStateOf(currentCategory?.icon ?: 0)
+        mutableIntStateOf(currentCategory?.iconId ?: 0)
     }
 
     ExposedDropdownMenuBox(
@@ -213,13 +213,13 @@ private fun CategoryExposedDropdownMenuBox(
                     },
                     onClick = {
                         onCategoryClick(category)
-                        iconId = category.icon ?: 0
+                        iconId = category.iconId ?: 0
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.icon ?: 0)),
+                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId ?: 0)),
                             contentDescription = null,
                         )
                     },

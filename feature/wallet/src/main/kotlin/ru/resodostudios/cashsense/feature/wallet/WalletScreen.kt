@@ -298,7 +298,7 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(StoredIcon.asRes(category?.icon ?: StoredIcon.TRANSACTION.storedId)),
+                        imageVector = ImageVector.vectorResource(StoredIcon.asRes(category?.iconId ?: StoredIcon.TRANSACTION.storedId)),
                         contentDescription = null,
                     )
                 }

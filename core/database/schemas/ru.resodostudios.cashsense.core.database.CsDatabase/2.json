@@ -2,29 +2,23 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "7e85bb6cd8b8c567eac2bb6a09830b63",
+    "identityHash": "8ba3e33190a731697aa3aee115e5b95c",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` BLOB NOT NULL, `walletOwnerId` INTEGER NOT NULL, `categoryOwnerId` INTEGER, `description` TEXT, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`transactionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `wallet_owner_id` TEXT NOT NULL, `description` TEXT, `amount` TEXT NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "transactionId",
-            "columnName": "transactionId",
-            "affinity": "BLOB",
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "walletOwnerId",
-            "columnName": "walletOwnerId",
-            "affinity": "INTEGER",
+            "columnName": "wallet_owner_id",
+            "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "categoryOwnerId",
-            "columnName": "categoryOwnerId",
-            "affinity": "INTEGER",
-            "notNull": false
           },
           {
             "fieldPath": "description",
@@ -35,7 +29,7 @@
           {
             "fieldPath": "amount",
             "columnName": "amount",
-            "affinity": "REAL",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -48,7 +42,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "transactionId"
+            "id"
           ]
         },
         "indices": [],
@@ -56,31 +50,32 @@
       },
       {
         "tableName": "categories",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `icon` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `iconId` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "categoryId",
-            "columnName": "categoryId",
-            "affinity": "INTEGER",
-            "notNull": false
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "title",
             "columnName": "title",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "icon",
-            "columnName": "icon",
+            "fieldPath": "iconId",
+            "columnName": "iconId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "categoryId"
+            "id"
           ]
         },
         "indices": [],
@@ -88,12 +83,12 @@
       },
       {
         "tableName": "wallets",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`walletId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `startBalance` REAL NOT NULL, `currency` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `initial_balance` TEXT NOT NULL, `currency` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "walletId",
-            "columnName": "walletId",
-            "affinity": "INTEGER",
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -103,9 +98,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "startBalance",
-            "columnName": "startBalance",
-            "affinity": "REAL",
+            "fieldPath": "initialBalance",
+            "columnName": "initial_balance",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -116,9 +111,9 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "walletId"
+            "id"
           ]
         },
         "indices": [],
@@ -126,12 +121,12 @@
       },
       {
         "tableName": "subscriptions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subscriptionId` BLOB NOT NULL, `title` TEXT NOT NULL, `amount` TEXT NOT NULL, `paymentDate` INTEGER NOT NULL, `notificationDate` INTEGER, PRIMARY KEY(`subscriptionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `amount` TEXT NOT NULL, `currency` TEXT NOT NULL, `payment_date` INTEGER NOT NULL, `notification_date` INTEGER, `repeating_interval` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "subscriptionId",
-            "columnName": "subscriptionId",
-            "affinity": "BLOB",
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -147,14 +142,26 @@
             "notNull": true
           },
           {
+            "fieldPath": "currency",
+            "columnName": "currency",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "paymentDate",
-            "columnName": "paymentDate",
+            "columnName": "payment_date",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "notificationDate",
-            "columnName": "notificationDate",
+            "columnName": "notification_date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "repeatingInterval",
+            "columnName": "repeating_interval",
             "affinity": "INTEGER",
             "notNull": false
           }
@@ -162,44 +169,86 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "subscriptionId"
+            "id"
           ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
-        "tableName": "transaction_category_cross_ref",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionId` BLOB NOT NULL, `categoryId` INTEGER NOT NULL, PRIMARY KEY(`transactionId`, `categoryId`))",
+        "tableName": "transactions_categories",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `category_id` TEXT NOT NULL, PRIMARY KEY(`transaction_id`, `category_id`), FOREIGN KEY(`transaction_id`) REFERENCES `transactions`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "transactionId",
-            "columnName": "transactionId",
-            "affinity": "BLOB",
+            "columnName": "transaction_id",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "categoryId",
-            "columnName": "categoryId",
-            "affinity": "INTEGER",
+            "columnName": "category_id",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "transactionId",
-            "categoryId"
+            "transaction_id",
+            "category_id"
           ]
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [
+          {
+            "name": "index_transactions_categories_transaction_id",
+            "unique": false,
+            "columnNames": [
+              "transaction_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_categories_transaction_id` ON `${TABLE_NAME}` (`transaction_id`)"
+          },
+          {
+            "name": "index_transactions_categories_category_id",
+            "unique": false,
+            "columnNames": [
+              "category_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_transactions_categories_category_id` ON `${TABLE_NAME}` (`category_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "transactions",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "transaction_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "categories",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "category_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e85bb6cd8b8c567eac2bb6a09830b63')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8ba3e33190a731697aa3aee115e5b95c')"
     ]
   }
 }
