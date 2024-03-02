@@ -78,16 +78,16 @@ enum class StoredIcon(
     PAYMENTS(CsIcons.Payments, 12),
     PETS(CsIcons.Pets, 13),
     PHISHING(CsIcons.Phishing, 14),
-    PILL(CsIcons.Pill, 14),
-    TRANSACTION(CsIcons.Transaction, 15),
-    RESTAURANT(CsIcons.Restaurant, 16),
-    SCHOOL(CsIcons.School, 17),
-    SELF_CARE(CsIcons.SelfCare, 18),
-    SHOPPING_CART(CsIcons.ShoppingCart, 19),
-    SIM_CARD(CsIcons.SimCard, 20),
-    SMOKING_ROOMS(CsIcons.SmokingRooms, 21),
-    SPORTS_ESPORTS(CsIcons.SportsEsports, 22),
-    TRAVEL(CsIcons.Travel, 23);
+    PILL(CsIcons.Pill, 15),
+    TRANSACTION(CsIcons.Transaction, 16),
+    RESTAURANT(CsIcons.Restaurant, 17),
+    SCHOOL(CsIcons.School, 18),
+    SELF_CARE(CsIcons.SelfCare, 19),
+    SHOPPING_CART(CsIcons.ShoppingCart, 20),
+    SIM_CARD(CsIcons.SimCard, 21),
+    SMOKING_ROOMS(CsIcons.SmokingRooms, 22),
+    SPORTS_ESPORTS(CsIcons.SportsEsports, 23),
+    TRAVEL(CsIcons.Travel, 24);
 
     companion object {
 
