@@ -55,6 +55,7 @@ class TransactionViewModel @Inject constructor(
                         )
                     }
                 }
+                _transactionUiState.value = TransactionUiState()
             }
 
             TransactionEvent.Delete -> {
@@ -102,7 +103,8 @@ class TransactionViewModel @Inject constructor(
                 .onStart { _transactionUiState.value = TransactionUiState(isEditing = true) }
                 .catch { _transactionUiState.value = TransactionUiState() }
                 .collect {
-                    _transactionUiState.value = _transactionUiState.value.copy(
+                    _transactionUiState.value = TransactionUiState(
+                        transactionId = it.transaction.id,
                         walletOwnerId = it.transaction.walletOwnerId,
                         description = it.transaction.description.toString(),
                         amount = it.transaction.amount.toString(),

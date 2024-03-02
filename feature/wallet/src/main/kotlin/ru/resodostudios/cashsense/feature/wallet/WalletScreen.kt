@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,12 +46,13 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formattedDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.math.BigDecimal
@@ -78,6 +83,13 @@ internal fun WalletScreen(
     onBackClick: () -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit,
 ) {
+    var showTransactionBottomSheet by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showTransactionDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
@@ -119,7 +131,12 @@ internal fun WalletScreen(
                             }
                         },
                         actions = {
-                            IconButton(onClick = { onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id)) }) {
+                            IconButton(
+                                onClick = {
+                                    onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
+                                    showTransactionDialog = true
+                                }
+                            ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                                     contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
@@ -154,8 +171,10 @@ internal fun WalletScreen(
                             transactions(
                                 transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
-                                onEdit = { onTransactionEvent(TransactionEvent.UpdateId(it)) },
-                                onDelete = { onTransactionEvent(TransactionEvent.Delete) },
+                                onTransactionClick = {
+                                    onTransactionEvent(TransactionEvent.UpdateId(it))
+                                    showTransactionBottomSheet = true
+                                },
                             )
                         }
                     } else {
@@ -167,6 +186,17 @@ internal fun WalletScreen(
                 }
             )
         }
+    }
+    if (showTransactionBottomSheet) {
+        TransactionBottomSheet(
+            onDismiss = { showTransactionBottomSheet = false },
+            onEdit = { showTransactionDialog = true },
+        )
+    }
+    if (showTransactionDialog) {
+        TransactionDialog(
+            onDismiss = { showTransactionDialog = false },
+        )
     }
 }
 
@@ -187,7 +217,8 @@ private fun FinanceSection(
         .filter { it.transaction.amount > BigDecimal(0) }
         .sumOf { it.transaction.amount }
 
-    val expensesProgress = (walletExpenses.divide(walletTransactions, MathContext.DECIMAL32)).toFloat()
+    val expensesProgress =
+        (walletExpenses.divide(walletTransactions, MathContext.DECIMAL32)).toFloat()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -241,11 +272,10 @@ private fun FinanceSection(
     }
 }
 
-fun LazyGridScope.transactions(
+private fun LazyGridScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
     currency: String,
-    onEdit: (String) -> Unit,
-    onDelete: () -> Unit,
+    onTransactionClick: (String) -> Unit,
 ) {
     val sortedTransactionsAndCategories =
         transactionsWithCategories
@@ -283,12 +313,6 @@ fun LazyGridScope.transactions(
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
-                trailingContent = {
-                    EditAndDeleteDropdownMenu(
-                        onEdit = { onEdit(transactionWithCategory.transaction.id) },
-                        onDelete = onDelete,
-                    )
-                },
                 supportingContent = {
                     Text(
                         text = category?.title ?: stringResource(uiR.string.none),
@@ -298,9 +322,16 @@ fun LazyGridScope.transactions(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(StoredIcon.asRes(category?.iconId ?: StoredIcon.TRANSACTION.storedId)),
+                        imageVector = ImageVector.vectorResource(
+                            StoredIcon.asRes(
+                                category?.iconId ?: StoredIcon.TRANSACTION.storedId
+                            )
+                        ),
                         contentDescription = null,
                     )
+                },
+                modifier = Modifier.clickable {
+                    onTransactionClick(transactionWithCategory.transaction.id)
                 }
             )
         }

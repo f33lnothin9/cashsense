@@ -22,7 +22,7 @@ import ru.resodostudios.cashsense.core.ui.R
 @Composable
 fun TransactionBottomSheet(
     onDismiss: () -> Unit,
-    onEdit: (String) -> Unit,
+    onEdit: () -> Unit,
     viewModel: TransactionViewModel = hiltViewModel(),
 ) {
     val transactionState by viewModel.transactionUiState.collectAsStateWithLifecycle()
@@ -40,7 +40,7 @@ fun TransactionBottomSheet(
     transactionState: TransactionUiState,
     onTransactionEvent: (TransactionEvent) -> Unit,
     onDismiss: () -> Unit,
-    onEdit: (String) -> Unit,
+    onEdit: () -> Unit,
 ) {
     CsModalBottomSheet(
         onDismiss = onDismiss
@@ -65,7 +65,7 @@ fun TransactionBottomSheet(
             },
             modifier = Modifier.clickable {
                 onDismiss()
-                onEdit(transactionState.transactionId)
+                onEdit()
             },
         )
         ListItem(
