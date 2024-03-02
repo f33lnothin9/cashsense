@@ -12,7 +12,7 @@ data class CategoryEntity(
     @PrimaryKey
     val id: String,
     val title: String,
-    @ColumnInfo(defaultValue = "0")
+    @ColumnInfo(name = "icon_id", defaultValue = "0")
     val iconId: Int,
 )
 

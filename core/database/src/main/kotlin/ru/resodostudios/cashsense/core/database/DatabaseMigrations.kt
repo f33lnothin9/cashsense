@@ -15,7 +15,7 @@ internal object DatabaseMigrations {
     @RenameColumn(
         tableName = "categories",
         fromColumnName = "icon",
-        toColumnName = "iconId",
+        toColumnName = "icon_id",
     )
     class Schema1to2 : AutoMigrationSpec
 }
