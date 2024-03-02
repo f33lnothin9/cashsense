@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -86,7 +87,7 @@ fun TransactionDialog(
         onDismiss = onDismiss,
     ) {
         when (categoriesState) {
-            CategoriesUiState.Loading -> LoadingState()
+            CategoriesUiState.Loading -> LoadingState(modifier = Modifier.fillMaxWidth())
             is CategoriesUiState.Success -> {
                 val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 

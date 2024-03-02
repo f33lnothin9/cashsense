@@ -25,10 +25,12 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
-fun LoadingState() {
+fun LoadingState(
+    modifier: Modifier = Modifier.fillMaxSize(),
+) {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }
