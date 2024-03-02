@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -16,8 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.R
+import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 
 @Composable
 fun TransactionBottomSheet(
@@ -35,6 +40,7 @@ fun TransactionBottomSheet(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TransactionBottomSheet(
     transactionState: TransactionUiState,
@@ -42,11 +48,17 @@ fun TransactionBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
 ) {
+    val formattedAmount = if (transactionState.amount.isNotBlank()) {
+        transactionState.amount
+            .toBigDecimal()
+            .formatAmountWithCurrency(transactionState.currency, true)
+    } else { "" }
+
     CsModalBottomSheet(
         onDismiss = onDismiss
     ) {
         ListItem(
-            headlineContent = { Text(transactionState.amount) },
+            headlineContent = { Text(formattedAmount) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Transaction),

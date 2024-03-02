@@ -77,6 +77,12 @@ class TransactionViewModel @Inject constructor(
                 }
             }
 
+            is TransactionEvent.UpdateCurrency -> {
+                _transactionUiState.update {
+                    it.copy(currency = event.currency)
+                }
+            }
+
             is TransactionEvent.UpdateAmount -> {
                 _transactionUiState.update {
                     it.copy(amount = event.amount)
@@ -103,7 +109,7 @@ class TransactionViewModel @Inject constructor(
                 .onStart { _transactionUiState.value = TransactionUiState(isEditing = true) }
                 .catch { _transactionUiState.value = TransactionUiState() }
                 .collect {
-                    _transactionUiState.value = TransactionUiState(
+                    _transactionUiState.value = _transactionUiState.value.copy(
                         transactionId = it.transaction.id,
                         walletOwnerId = it.transaction.walletOwnerId,
                         description = it.transaction.description.toString(),
@@ -122,6 +128,7 @@ data class TransactionUiState(
     val walletOwnerId: String = "",
     val description: String = "",
     val amount: String = "",
+    val currency: String = "USD",
     val date: String = Clock.System.now().toString(),
     val category: Category? = Category(),
     val isEditing: Boolean = false,

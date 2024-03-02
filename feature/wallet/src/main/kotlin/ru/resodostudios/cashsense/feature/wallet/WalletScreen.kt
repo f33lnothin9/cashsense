@@ -173,6 +173,7 @@ internal fun WalletScreen(
                                 currency = wallet.currency,
                                 onTransactionClick = {
                                     onTransactionEvent(TransactionEvent.UpdateId(it))
+                                    onTransactionEvent(TransactionEvent.UpdateCurrency(wallet.currency))
                                     showTransactionBottomSheet = true
                                 },
                             )

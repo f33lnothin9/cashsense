@@ -10,6 +10,8 @@ sealed interface TransactionEvent {
 
     data class UpdateAmount(val amount: String) : TransactionEvent
 
+    data class UpdateCurrency(val currency: String) : TransactionEvent
+
     data class UpdateDescription(val description: String) : TransactionEvent
 
     data class UpdateCategory(val category: Category) : TransactionEvent
