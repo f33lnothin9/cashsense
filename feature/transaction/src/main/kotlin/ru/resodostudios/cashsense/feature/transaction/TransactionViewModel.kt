@@ -34,7 +34,11 @@ class TransactionViewModel @Inject constructor(
                     walletOwnerId = _transactionUiState.value.walletOwnerId,
                     description = _transactionUiState.value.description,
                     amount = _transactionUiState.value.amount.toBigDecimal(),
-                    date = _transactionUiState.value.date.toInstant(),
+                    date = if (_transactionUiState.value.date.isBlank()) {
+                        Clock.System.now()
+                    } else {
+                        _transactionUiState.value.date.toInstant()
+                    },
                 )
                 viewModelScope.launch {
                     transactionsRepository.upsertTransaction(transaction)
@@ -106,12 +110,22 @@ class TransactionViewModel @Inject constructor(
     private fun loadTransaction() {
         viewModelScope.launch {
             transactionsRepository.getTransactionWithCategory(_transactionUiState.value.transactionId)
-                .onStart { _transactionUiState.value = TransactionUiState(isEditing = true) }
-                .catch { _transactionUiState.value = TransactionUiState() }
+                .onStart {
+                    _transactionUiState.value = _transactionUiState.value.copy(isEditing = true)
+                }
+                .catch {
+                    _transactionUiState.value = _transactionUiState.value.copy(
+                        transactionId = "",
+                        isEditing = false,
+                        description = "",
+                        amount = "",
+                        category = Category(),
+                        date = "",
+                    )
+                }
                 .collect {
                     _transactionUiState.value = _transactionUiState.value.copy(
                         transactionId = it.transaction.id,
-                        walletOwnerId = it.transaction.walletOwnerId,
                         description = it.transaction.description.toString(),
                         amount = it.transaction.amount.toString(),
                         date = it.transaction.date.toString(),
@@ -129,7 +143,7 @@ data class TransactionUiState(
     val description: String = "",
     val amount: String = "",
     val currency: String = "USD",
-    val date: String = Clock.System.now().toString(),
+    val date: String = "",
     val category: Category? = Category(),
     val isEditing: Boolean = false,
 )

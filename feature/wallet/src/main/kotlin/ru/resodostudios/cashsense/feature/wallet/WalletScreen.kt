@@ -134,6 +134,7 @@ internal fun WalletScreen(
                             IconButton(
                                 onClick = {
                                     onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
+                                    onTransactionEvent(TransactionEvent.UpdateId(""))
                                     showTransactionDialog = true
                                 }
                             ) {
@@ -172,6 +173,7 @@ internal fun WalletScreen(
                                 transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
                                 onTransactionClick = {
+                                    onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
                                     onTransactionEvent(TransactionEvent.UpdateId(it))
                                     onTransactionEvent(TransactionEvent.UpdateCurrency(wallet.currency))
                                     showTransactionBottomSheet = true
