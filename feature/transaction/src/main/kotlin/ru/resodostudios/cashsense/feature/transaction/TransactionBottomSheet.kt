@@ -66,6 +66,16 @@ fun TransactionBottomSheet(
                 )
             },
         )
+        FlowRow(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        ) {
+            if (transactionState.category != null) {
+                CsTag(
+                    text = transactionState.category.title.toString(),
+                    iconId = StoredIcon.asRes(transactionState.category.iconId ?: 0),
+                )
+            }
+        }
         HorizontalDivider(Modifier.padding(16.dp))
         ListItem(
             headlineContent = { Text(stringResource(R.string.edit)) },
