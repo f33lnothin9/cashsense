@@ -4,6 +4,7 @@ import org.gradle.kotlin.dsl.dependencies
 import ru.resodostudios.cashsense.libs
 
 class AndroidApplicationFirebaseConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {

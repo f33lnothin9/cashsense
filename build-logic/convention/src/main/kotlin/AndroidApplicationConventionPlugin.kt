@@ -7,6 +7,7 @@ import ru.resodostudios.cashsense.configureKotlinAndroid
 import ru.resodostudios.cashsense.configurePrintApksTask
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {

@@ -1,10 +1,10 @@
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import ru.resodostudios.cashsense.libs
 
 class AndroidHiltConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {

@@ -10,6 +10,7 @@ import ru.resodostudios.cashsense.configurePrintApksTask
 import ru.resodostudios.cashsense.disableUnnecessaryAndroidTests
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
