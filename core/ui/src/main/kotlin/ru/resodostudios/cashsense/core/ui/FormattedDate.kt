@@ -17,7 +17,7 @@ import java.util.Locale
 @Composable
 fun formattedDate(
     date: Instant,
-    onlyTime: Boolean = false,
+    withTime: Boolean = false,
 ): String {
     var zoneId by remember { mutableStateOf(ZoneId.systemDefault()) }
 
@@ -31,9 +31,9 @@ fun formattedDate(
         onDispose { receiver.unregister(context) }
     }
 
-    return if (onlyTime) {
+    return if (withTime) {
         DateTimeFormatter
-            .ofLocalizedTime(FormatStyle.MEDIUM)
+            .ofLocalizedDateTime(FormatStyle.SHORT)
             .withLocale(Locale.getDefault())
             .withZone(zoneId)
             .format(date.toJavaInstant())
