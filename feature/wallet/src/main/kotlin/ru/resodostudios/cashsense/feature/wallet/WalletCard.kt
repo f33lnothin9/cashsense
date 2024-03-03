@@ -57,7 +57,7 @@ fun WalletCard(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
         ) {
             Text(
                 text = wallet.title,
