@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
@@ -17,12 +18,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
+import ru.resodostudios.cashsense.core.ui.formattedDate
 
 @Composable
 fun TransactionBottomSheet(
@@ -51,6 +54,7 @@ fun TransactionBottomSheet(
     val formattedAmount = if (transactionState.amount.isNotEmpty()) {
         transactionState.amount
             .toBigDecimal()
+            .stripTrailingZeros()
             .formatAmountWithCurrency(transactionState.currency, true)
     } else { "" }
 
@@ -59,15 +63,10 @@ fun TransactionBottomSheet(
     ) {
         ListItem(
             headlineContent = { Text(formattedAmount) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Transaction),
-                    contentDescription = null,
-                )
-            },
         )
         FlowRow(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (transactionState.category != null) {
                 CsTag(
@@ -75,6 +74,15 @@ fun TransactionBottomSheet(
                     iconId = StoredIcon.asRes(transactionState.category.iconId ?: 0),
                 )
             }
+            CsTag(
+                text = if (transactionState.date.isNotEmpty()) {
+                    formattedDate(
+                        date = transactionState.date.toInstant(),
+                        withTime = true
+                    )
+                } else { "" },
+                iconId = CsIcons.Calendar,
+            )
         }
         HorizontalDivider(Modifier.padding(16.dp))
         ListItem(
