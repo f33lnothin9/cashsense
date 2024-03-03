@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -127,6 +128,16 @@ class TransactionViewModel @Inject constructor(
             transactionsRepository.getTransactionWithCategory(_transactionUiState.value.transactionId)
                 .onStart {
                     _transactionUiState.value = _transactionUiState.value.copy(isEditing = true)
+                }
+                .catch {
+                    _transactionUiState.value = _transactionUiState.value.copy(
+                        transactionId = "",
+                        isEditing = false,
+                        description = "",
+                        amount = "",
+                        category = Category(),
+                        date = "",
+                    )
                 }
                 .collect {
                     _transactionUiState.value = _transactionUiState.value.copy(
