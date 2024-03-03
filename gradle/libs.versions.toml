@@ -34,7 +34,6 @@ kotlinxCoroutines = "1.8.0"
 kotlinxDatetime = "0.5.0"
 kotlinxSerializationJson = "1.6.3"
 ksp = "1.9.22-1.0.17"
-lint = "31.3.0"
 lottie = "6.3.0"
 protobuf = "3.25.2"
 protobufPlugin = "0.9.4"
@@ -89,9 +88,6 @@ javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "lint" }
-lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "lint" }
-lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "lint" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 # Dependencies of the included build-logic
@@ -123,7 +119,6 @@ cashsense-android-feature = { id = "cashsense.android.feature", version = "unspe
 cashsense-android-hilt = { id = "cashsense.android.hilt", version = "unspecified" }
 cashsense-android-library = { id = "cashsense.android.library", version = "unspecified" }
 cashsense-android-library-compose = { id = "cashsense.android.library.compose", version = "unspecified" }
-cashsense-android-lint = { id = "cashsense.android.lint", version = "unspecified" }
 cashsense-android-room = { id = "cashsense.android.room", version = "unspecified" }
 cashsense-android-test = { id = "cashsense.android.test", version = "unspecified" }
 cashsense-jvm-library = { id = "cashsense.jvm.library", version = "unspecified" }

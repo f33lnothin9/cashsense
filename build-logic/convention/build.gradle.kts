@@ -70,10 +70,6 @@ gradlePlugin {
             id = "cashsense.android.application.firebase"
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"
         }
-        register("androidLint") {
-            id = "cashsense.android.lint"
-            implementationClass = "AndroidLintConventionPlugin"
-        }
         register("jvmLibrary") {
             id = "cashsense.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
