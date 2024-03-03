@@ -11,7 +11,4 @@ dependencies {
     implementation(projects.feature.transaction)
     implementation(projects.feature.wallet)
     implementation(projects.feature.categories)
-
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.androidx.activity.compose)
 }

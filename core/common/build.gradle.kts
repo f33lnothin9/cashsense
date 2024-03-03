@@ -6,7 +6,3 @@ plugins {
 android {
     namespace = "ru.resodostudios.cashsense.core.common"
 }
-
-dependencies {
-    implementation(libs.kotlinx.coroutines.android)
-}

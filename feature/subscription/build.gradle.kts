@@ -6,7 +6,3 @@ plugins {
 android {
     namespace = "ru.resodostudios.cashsense.feature.subscription"
 }
-
-dependencies {
-    implementation(libs.kotlinx.datetime)
-}
