@@ -12,15 +12,9 @@ fun BigDecimal.formatAmountWithCurrency(currency: String, withPlus: Boolean = fa
 
     val formattedAmount = currencyFormat.format(this)
 
-    val amountString = if (formattedAmount.contains('.')) {
-        formattedAmount.replace(Regex("\\.0+$"), "")
+    return if (withPlus) {
+        "${if (this > BigDecimal.ZERO) "+" else ""}$formattedAmount"
     } else {
         formattedAmount
-    }
-
-    return if (withPlus) {
-        "${if (this > BigDecimal.ZERO) "+" else ""}$amountString"
-    } else {
-        amountString
     }
 }
