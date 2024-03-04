@@ -14,5 +14,5 @@ sealed interface WalletEvent {
 
     data object Save : WalletEvent
 
-    data object Delete : WalletEvent
+    data class Delete(val id: String) : WalletEvent
 }

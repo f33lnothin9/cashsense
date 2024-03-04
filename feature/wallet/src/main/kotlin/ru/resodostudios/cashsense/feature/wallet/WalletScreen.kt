@@ -46,6 +46,7 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -65,6 +66,7 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 internal fun WalletRoute(
     onBackClick: () -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),
+    walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
     transactionViewModel: TransactionViewModel = hiltViewModel(),
 ) {
     val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
@@ -72,7 +74,8 @@ internal fun WalletRoute(
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
-        onTransactionEvent = transactionViewModel::onTransactionEvent
+        onWalletEvent = walletDialogViewModel::onWalletDialogEvent,
+        onTransactionEvent = transactionViewModel::onTransactionEvent,
     )
 }
 
@@ -81,8 +84,13 @@ internal fun WalletRoute(
 internal fun WalletScreen(
     walletState: WalletUiState,
     onBackClick: () -> Unit,
+    onWalletEvent: (WalletEvent) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit,
 ) {
+    var showWalletDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     var showTransactionBottomSheet by rememberSaveable {
         mutableStateOf(false)
     }
@@ -94,7 +102,16 @@ internal fun WalletScreen(
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
-            val transactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+            val transactionsAndCategories =
+                walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+
+            val currentWalletBalance = wallet.initialBalance
+                .plus(
+                    transactionsAndCategories
+                        .map { it.transaction }
+                        .sumOf { it.amount }
+                )
+                .formatAmountWithCurrency(wallet.currency)
 
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -112,10 +129,7 @@ internal fun WalletScreen(
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 Text(
-                                    text = (wallet.initialBalance + transactionsAndCategories
-                                        .map { it.transaction }
-                                        .sumOf { it.amount })
-                                        .formatAmountWithCurrency(wallet.currency),
+                                    text = currentWalletBalance,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.labelMedium,
@@ -143,63 +157,78 @@ internal fun WalletScreen(
                                     contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
                                 )
                             }
+                            EditAndDeleteDropdownMenu(
+                                onEdit = {
+                                    onWalletEvent(WalletEvent.UpdateId(wallet.id))
+                                    showWalletDialog = true
+                                },
+                                onDelete = {
+                                    onBackClick()
+                                    onWalletEvent(WalletEvent.Delete(wallet.id))
+                                },
+                            )
                         },
                         scrollBehavior = scrollBehavior,
                     )
                 },
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                content = { paddingValues ->
-                    if (transactionsAndCategories.isNotEmpty()) {
-                        LazyVerticalGrid(
-                            columns = GridCells.Adaptive(300.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(paddingValues),
+            ) { paddingValues ->
+                if (transactionsAndCategories.isNotEmpty()) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(300.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                    ) {
+                        item(
+                            span = { GridItemSpan(maxLineSpan) }
                         ) {
-                            item(
-                                span = { GridItemSpan(maxLineSpan) }
-                            ) {
-                                FinanceSection(
-                                    transactionsWithCategories = transactionsAndCategories,
-                                    currency = wallet.currency,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                )
-                            }
-                            transactions(
+                            FinanceSection(
                                 transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
-                                onTransactionClick = {
-                                    onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
-                                    onTransactionEvent(TransactionEvent.UpdateId(it))
-                                    onTransactionEvent(TransactionEvent.UpdateCurrency(wallet.currency))
-                                    showTransactionBottomSheet = true
-                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
                             )
                         }
-                    } else {
-                        EmptyState(
-                            messageRes = transactionR.string.feature_transaction_transactions_empty,
-                            animationRes = transactionR.raw.anim_transactions_empty,
+                        transactions(
+                            transactionsWithCategories = transactionsAndCategories,
+                            currency = wallet.currency,
+                            onTransactionClick = {
+                                onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
+                                onTransactionEvent(TransactionEvent.UpdateId(it))
+                                onTransactionEvent(TransactionEvent.UpdateCurrency(wallet.currency))
+                                showTransactionBottomSheet = true
+                            },
                         )
                     }
+                } else {
+                    EmptyState(
+                        messageRes = transactionR.string.feature_transaction_transactions_empty,
+                        animationRes = transactionR.raw.anim_transactions_empty,
+                    )
                 }
-            )
+            }
+            if (showWalletDialog) {
+                WalletDialog(
+                    onDismiss = { showWalletDialog = false },
+                )
+            }
+
+            if (showTransactionBottomSheet) {
+                TransactionBottomSheet(
+                    onDismiss = { showTransactionBottomSheet = false },
+                    onEdit = { showTransactionDialog = true },
+                )
+            }
+            if (showTransactionDialog) {
+                TransactionDialog(
+                    onDismiss = { showTransactionDialog = false },
+                )
+            }
         }
-    }
-    if (showTransactionBottomSheet) {
-        TransactionBottomSheet(
-            onDismiss = { showTransactionBottomSheet = false },
-            onEdit = { showTransactionDialog = true },
-        )
-    }
-    if (showTransactionDialog) {
-        TransactionDialog(
-            onDismiss = { showTransactionDialog = false },
-        )
     }
 }
 

@@ -89,7 +89,7 @@ fun WalletBottomSheet(
                 )
             },
             modifier = Modifier.clickable {
-                onWalletEvent(WalletEvent.Delete)
+                onWalletEvent(WalletEvent.Delete(walletDialogState.id))
                 onDismiss()
             },
         )
