@@ -11,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,12 +30,19 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
 import ru.resodostudios.cashsense.MainActivityUiState.Success
+import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.ui.CsApp
+import ru.resodostudios.cashsense.ui.rememberCsAppState
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var timeZoneMonitor: TimeZoneMonitor
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -67,23 +76,32 @@ class MainActivity : ComponentActivity() {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.auto(
                         Color.TRANSPARENT,
-                        Color.TRANSPARENT
+                        Color.TRANSPARENT,
                     ) { darkTheme },
                     navigationBarStyle = SystemBarStyle.auto(
                         lightScrim,
-                        darkScrim
+                        darkScrim,
                     ) { darkTheme }
                 )
                 onDispose {}
             }
 
-            CsTheme(
-                darkTheme = darkTheme,
-                disableDynamicTheming = shouldDisableDynamicTheming(uiState),
+            val appState = rememberCsAppState(
+                windowSize = currentWindowSize().toDpSize(),
+                timeZoneMonitor = timeZoneMonitor,
+            )
+
+            val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
+
+            CompositionLocalProvider(
+                LocalTimeZone provides currentTimeZone,
             ) {
-                CsApp(
-                    windowSize = currentWindowSize().toDpSize()
-                )
+                CsTheme(
+                    darkTheme = darkTheme,
+                    disableDynamicTheming = shouldDisableDynamicTheming(uiState),
+                ) {
+                    CsApp(appState)
+                }
             }
         }
     }

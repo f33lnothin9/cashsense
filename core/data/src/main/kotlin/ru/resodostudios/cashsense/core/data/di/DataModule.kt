@@ -14,33 +14,40 @@ import ru.resodostudios.cashsense.core.data.repository.offline.OfflineSubscripti
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineTransactionRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
+import ru.resodostudios.cashsense.core.data.util.TimeZoneBroadcastMonitor
+import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DataModule {
+abstract class DataModule {
 
     @Binds
-    fun bindCategoriesRepository(
-        offlineCategoriesRepository: OfflineCategoriesRepository
+    internal abstract fun bindsCategoriesRepository(
+        categoriesRepository: OfflineCategoriesRepository
     ): CategoriesRepository
 
     @Binds
-    fun bindTransactionsRepository(
-        offlineTransactionsRepository: OfflineTransactionRepository
+    internal abstract fun bindsTransactionsRepository(
+        transactionsRepository: OfflineTransactionRepository
     ): TransactionsRepository
 
     @Binds
-    fun bindWalletsRepository(
-        offlineWalletsRepository: OfflineWalletsRepository
+    internal abstract fun bindsWalletsRepository(
+        walletsRepository: OfflineWalletsRepository
     ): WalletsRepository
 
     @Binds
-    fun bindSubscriptionsRepository(
-        offlineSubscriptionsRepository: OfflineSubscriptionsRepository
+    internal abstract fun bindsSubscriptionsRepository(
+        subscriptionsRepository: OfflineSubscriptionsRepository
     ): SubscriptionsRepository
 
     @Binds
-    fun bindUserDataRepository(
-        offlineUserDataRepository: OfflineUserDataRepository
+    internal abstract fun bindsUserDataRepository(
+        userDataRepository: OfflineUserDataRepository
     ): UserDataRepository
+
+    @Binds
+    internal abstract fun bindsTimeZoneMonitor(
+        timeZoneMonitor: TimeZoneBroadcastMonitor
+    ): TimeZoneMonitor
 }

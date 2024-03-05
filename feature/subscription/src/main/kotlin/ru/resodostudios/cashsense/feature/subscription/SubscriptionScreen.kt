@@ -42,7 +42,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
-import ru.resodostudios.cashsense.core.ui.formattedDate
+import ru.resodostudios.cashsense.core.ui.dateFormatted
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -152,7 +152,7 @@ internal fun SubscriptionScreen(
 
                 OutlinedTextField(
                     value = if (subscriptionState.paymentDate.isNotEmpty()) {
-                        formattedDate(subscriptionState.paymentDate.toInstant())
+                        dateFormatted(subscriptionState.paymentDate.toInstant())
                     } else {
                         stringResource(uiR.string.none)
                     },

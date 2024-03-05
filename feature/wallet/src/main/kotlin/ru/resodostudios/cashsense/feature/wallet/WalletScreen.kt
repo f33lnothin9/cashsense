@@ -51,7 +51,7 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
-import ru.resodostudios.cashsense.core.ui.formattedDate
+import ru.resodostudios.cashsense.core.ui.dateFormatted
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
@@ -322,7 +322,7 @@ private fun LazyGridScope.transactions(
             span = { GridItemSpan(maxLineSpan) }
         ) {
             Text(
-                text = formattedDate(group.first.toKotlinInstant()),
+                text = dateFormatted(group.first.toKotlinInstant()),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(16.dp),
             )

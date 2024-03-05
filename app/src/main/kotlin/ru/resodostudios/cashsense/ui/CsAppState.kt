@@ -5,6 +5,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -13,6 +14,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.TimeZone
+import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.categories.navigation.CATEGORIES_ROUTE
 import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
@@ -27,16 +33,22 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 @Composable
 fun rememberCsAppState(
     windowSize: DpSize,
-    navController: NavHostController = rememberNavController()
+    timeZoneMonitor: TimeZoneMonitor,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    navController: NavHostController = rememberNavController(),
 ): CsAppState {
 
     return remember(
         windowSize,
-        navController
+        timeZoneMonitor,
+        coroutineScope,
+        navController,
     ) {
         CsAppState(
-            windowSize,
-            navController
+            windowSize = windowSize,
+            timeZoneMonitor = timeZoneMonitor,
+            coroutineScope = coroutineScope,
+            navController = navController,
         )
     }
 }
@@ -44,7 +56,9 @@ fun rememberCsAppState(
 @Stable
 class CsAppState(
     private val windowSize: DpSize,
-    val navController: NavHostController
+    timeZoneMonitor: TimeZoneMonitor,
+    coroutineScope: CoroutineScope,
+    val navController: NavHostController,
 ) {
     val currentDestination: NavDestination?
         @Composable get() = navController
@@ -71,6 +85,13 @@ class CsAppState(
                 NavigationSuiteType.NavigationBar
             }
         }
+
+    val currentTimeZone = timeZoneMonitor.currentTimeZone
+        .stateIn(
+            coroutineScope,
+            SharingStarted.WhileSubscribed(5_000),
+            TimeZone.currentSystemDefault(),
+        )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         val topLevelNavOptions = navOptions {

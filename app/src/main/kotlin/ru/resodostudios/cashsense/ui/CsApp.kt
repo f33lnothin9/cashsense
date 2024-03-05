@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.DpSize
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.R
@@ -34,21 +33,11 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination
 
 @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
-fun CsApp(
-    windowSize: DpSize,
-    appState: CsAppState = rememberCsAppState(
-        windowSize = windowSize
-    )
-) {
-    var showSettingsBottomSheet by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showCategoryDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showWalletDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+fun CsApp(appState: CsAppState) {
+
+    var showSettingsBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showSettingsBottomSheet) {
         SettingsBottomSheet(
