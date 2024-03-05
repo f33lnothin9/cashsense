@@ -17,12 +17,12 @@ import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
-import ru.resodostudios.cashsense.core.ui.dateFormatted
+import ru.resodostudios.cashsense.core.ui.formatDate
 
 @Composable
 internal fun SubscriptionsRoute(
     onEdit: (String) -> Unit,
-    viewModel: SubscriptionsViewModel = hiltViewModel()
+    viewModel: SubscriptionsViewModel = hiltViewModel(),
 ) {
     val subscriptionsState by viewModel.subscriptionsUiState.collectAsStateWithLifecycle()
 
@@ -51,7 +51,7 @@ internal fun SubscriptionsScreen(
                         ListItem(
                             headlineContent = { Text(subscription.title) },
                             supportingContent = { Text(subscription.amount.formatAmountWithCurrency(subscription.currency)) },
-                            overlineContent = { Text(dateFormatted(subscription.paymentDate)) },
+                            overlineContent = { Text(subscription.paymentDate.formatDate()) },
                             trailingContent = {
                                 EditAndDeleteDropdownMenu(
                                     onEdit = { onEdit(subscription.id) },

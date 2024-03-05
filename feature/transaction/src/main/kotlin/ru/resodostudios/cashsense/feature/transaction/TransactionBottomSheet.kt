@@ -25,7 +25,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
-import ru.resodostudios.cashsense.core.ui.dateFormatted
+import ru.resodostudios.cashsense.core.ui.formatDate
 
 @Composable
 fun TransactionBottomSheet(
@@ -76,10 +76,9 @@ fun TransactionBottomSheet(
             }
             CsTag(
                 text = if (transactionState.date.isNotEmpty()) {
-                    dateFormatted(
-                        date = transactionState.date.toInstant(),
-                        withTime = true
-                    )
+                    transactionState.date
+                        .toInstant()
+                        .formatDate(withTime = true)
                 } else { "" },
                 iconId = CsIcons.Calendar,
             )

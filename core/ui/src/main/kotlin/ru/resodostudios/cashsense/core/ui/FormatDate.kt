@@ -9,8 +9,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 @Composable
-fun dateFormatted(
-    date: Instant,
+fun Instant.formatDate(
     withTime: Boolean = false,
 ): String {
 
@@ -21,12 +20,12 @@ fun dateFormatted(
             .ofLocalizedDateTime(FormatStyle.SHORT)
             .withLocale(Locale.getDefault())
             .withZone(zoneId)
-            .format(date.toJavaInstant())
+            .format(this.toJavaInstant())
     } else {
         DateTimeFormatter
             .ofLocalizedDate(FormatStyle.MEDIUM)
             .withLocale(Locale.getDefault())
             .withZone(zoneId)
-            .format(date.toJavaInstant())
+            .format(this.toJavaInstant())
     }
 }
