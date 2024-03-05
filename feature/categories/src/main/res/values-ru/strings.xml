@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_categories_title">Категории</string>
-    <string name="feature_categories_categories_empty">В категориях пусто</string>
+    <string name="feature_categories_categories_empty">Здесь будут ваши категории</string>
 </resources>

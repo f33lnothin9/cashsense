@@ -84,7 +84,7 @@ internal fun CategoriesScreen(
         } else {
             EmptyState(
                 messageRes = R.string.feature_categories_categories_empty,
-                animationRes = R.raw.anim_empty_categories,
+                animationRes = R.raw.anim_categories_empty,
             )
         }
     }

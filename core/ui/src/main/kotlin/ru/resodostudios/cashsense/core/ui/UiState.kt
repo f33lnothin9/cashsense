@@ -39,33 +39,34 @@ fun LoadingState(
 @Composable
 fun EmptyState(
     @StringRes messageRes: Int,
-    @RawRes animationRes: Int
+    @RawRes animationRes: Int,
 ) {
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationRes))
     val progress by animateLottieCompositionAsState(
         composition = lottieComposition,
-        iterations = LottieConstants.IterateForever
+        iterations = LottieConstants.IterateForever,
     )
+
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             LottieAnimation(
                 modifier = Modifier.size(230.dp),
                 composition = lottieComposition,
-                progress = { progress }
+                progress = { progress },
             )
             Text(
                 text = stringResource(messageRes),
                 maxLines = 2,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_subscriptions_title">Подписки</string>
-    <string name="feature_subscriptions_empty_message">В подписках пусто</string>
+    <string name="feature_subscriptions_empty_message">Здесь будут ваши подписки</string>
 </resources>

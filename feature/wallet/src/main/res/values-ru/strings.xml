@@ -5,5 +5,5 @@
     <string name="feature_wallet_initial_balance">Первоначальный баланс</string>
     <string name="feature_wallet_income">Доходы</string>
     <string name="feature_wallet_expenses">Расходы</string>
-    <string name="feature_wallet_wallets_empty">В кошельках пусто</string>
+    <string name="feature_wallet_wallets_empty">Здесь будут ваши кошельки</string>
 </resources>

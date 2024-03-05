@@ -64,7 +64,7 @@ internal fun SubscriptionsScreen(
             } else {
                 EmptyState(
                     messageRes = R.string.feature_subscriptions_empty_message,
-                    animationRes = R.raw.anim_empty_state
+                    animationRes = R.raw.anim_subscriptions_empty
                 )
             }
         }

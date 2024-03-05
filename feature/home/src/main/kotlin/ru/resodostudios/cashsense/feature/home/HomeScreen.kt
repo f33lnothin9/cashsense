@@ -107,7 +107,7 @@ internal fun HomeScreen(
         } else {
             EmptyState(
                 messageRes = walletR.string.feature_wallet_wallets_empty,
-                animationRes = walletR.raw.anim_wallet_empty,
+                animationRes = walletR.raw.anim_wallets_empty,
             )
         }
     }
