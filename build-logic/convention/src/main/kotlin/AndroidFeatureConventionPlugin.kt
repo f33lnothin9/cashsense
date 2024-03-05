@@ -6,6 +6,7 @@ import org.gradle.kotlin.dsl.dependencies
 import ru.resodostudios.cashsense.libs
 
 class AndroidFeatureConventionPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply {
@@ -20,22 +21,12 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                add("implementation", project(":core:model"))
                 add("implementation", project(":core:ui"))
                 add("implementation", project(":core:designsystem"))
-                add("implementation", project(":core:data"))
-                add("implementation", project(":core:common"))
-
-                //add("testImplementation", kotlin("test"))
-                //("testImplementation", project(":core:testing"))
-                //add("androidTestImplementation", kotlin("test"))
-                //add("androidTestImplementation", project(":core:testing"))
 
                 add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
-
-                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
             }
         }
     }

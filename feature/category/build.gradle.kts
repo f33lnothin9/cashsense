@@ -6,3 +6,7 @@ plugins {
 android {
     namespace = "ru.resodostudios.cashsense.feature.category"
 }
+
+dependencies {
+    implementation(projects.core.data)
+}

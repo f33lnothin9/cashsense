@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.data)
+
     implementation(libs.androidx.appcompat)
     implementation(libs.google.oss.licenses)
 }
