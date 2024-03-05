@@ -93,7 +93,7 @@ fun WalletCard(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.feature_wallet_menu_icon_description),
                 )
             }
         }

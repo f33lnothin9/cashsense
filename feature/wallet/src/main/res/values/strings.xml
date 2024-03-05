@@ -6,4 +6,5 @@
     <string name="feature_wallet_income">Income</string>
     <string name="feature_wallet_expenses">Expenses</string>
     <string name="feature_wallet_wallets_empty">Nothing in Wallets</string>
+    <string name="feature_wallet_menu_icon_description">Wallet menu</string>
 </resources>
