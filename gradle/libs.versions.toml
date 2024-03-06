@@ -5,8 +5,8 @@ androidxActivityCompose = "1.8.2"
 androidxAppCompat = "1.6.1"
 androidxComposeCompiler = "1.5.10"
 androidxComposeMaterial3 = "1.3.0-alpha01"
-androidxComposeMaterial3Adaptive = "1.0.0-alpha06"
-androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha03"
+androidxComposeMaterial3Adaptive = "1.0.0-alpha08"
+androidxComposeMaterial3AdaptiveNavigationSuite = "1.0.0-alpha05"
 androidxCore = "1.12.0"
 androidxCoreSplashscreen = "1.1.0-alpha02"
 androidxDataStore = "1.0.0"
@@ -14,14 +14,14 @@ androidxEspresso = "3.5.1"
 androidxHiltNavigationCompose = "1.2.0"
 androidxLifecycle = "2.7.0"
 androidxMacroBenchmark = "1.2.3"
-androidxNavigation = "2.7.7"
+androidxNavigation = "2.8.0-alpha04"
 androidxProfileinstaller = "1.3.1"
 androidxTestCore = "1.5.0"
 androidxTestExt = "1.1.5"
 androidxTestRules = "1.5.0"
 androidxTestRunner = "1.5.2"
 androidxUiAutomator = "2.3.0"
-composeBom = "2024.02.01"
+composeBom = "2024.02.02"
 firebaseBom = "32.7.3"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
@@ -33,7 +33,7 @@ kotlin = "1.9.22"
 kotlinxCoroutines = "1.8.0"
 kotlinxDatetime = "0.5.0"
 kotlinxSerializationJson = "1.6.3"
-ksp = "1.9.22-1.0.17"
+ksp = "1.9.22-1.0.18"
 lottie = "6.4.0"
 protobuf = "3.25.2"
 protobufPlugin = "0.9.4"
@@ -46,7 +46,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
-androidx-compose-material3-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3AdaptiveNavigationSuite" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
