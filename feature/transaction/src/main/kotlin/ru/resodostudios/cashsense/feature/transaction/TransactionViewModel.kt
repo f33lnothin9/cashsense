@@ -101,23 +101,23 @@ class TransactionViewModel @Inject constructor(
                 _transactionUiState.value.date.toInstant()
             },
         )
-        viewModelScope.launch {
-            transactionsRepository.upsertTransaction(transaction)
+        val transactionCategoryCrossRef = _transactionUiState.value.category?.id?.let {
+            TransactionCategoryCrossRef(
+                transactionId = transaction.id,
+                categoryId = it,
+            )
         }
         viewModelScope.launch {
-            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
-        }
-        viewModelScope.launch {
-            val transactionCategoryCrossRef = _transactionUiState.value.category?.id?.let {
-                TransactionCategoryCrossRef(
-                    transactionId = transaction.id,
-                    categoryId = it,
-                )
-            }
+            viewModelScope.launch {
+                transactionsRepository.upsertTransaction(transaction)
+            }.join()
+            viewModelScope.launch {
+                transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
+            }.join()
             if (transactionCategoryCrossRef != null) {
-                transactionsRepository.upsertTransactionCategoryCrossRef(
-                    transactionCategoryCrossRef
-                )
+                viewModelScope.launch {
+                    transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
+                }
             }
         }
         _transactionUiState.value = TransactionUiState()
