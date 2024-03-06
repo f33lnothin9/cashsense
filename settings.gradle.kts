@@ -25,7 +25,6 @@ include(":core:datastore")
 include(":core:datastore-proto")
 include(":core:data")
 include(":core:designsystem")
-include(":core:domain")
 include(":core:model")
 include(":core:ui")
 
