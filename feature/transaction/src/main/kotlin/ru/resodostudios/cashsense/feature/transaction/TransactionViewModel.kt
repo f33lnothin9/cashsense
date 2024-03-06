@@ -29,41 +29,7 @@ class TransactionViewModel @Inject constructor(
 
     fun onTransactionEvent(event: TransactionEvent) {
         when (event) {
-            TransactionEvent.Save -> {
-                val transaction = Transaction(
-                    id = _transactionUiState.value.transactionId.ifEmpty {
-                        UUID.randomUUID().toString()
-                    },
-                    walletOwnerId = _transactionUiState.value.walletOwnerId,
-                    description = _transactionUiState.value.description,
-                    amount = _transactionUiState.value.amount.toBigDecimal(),
-                    date = if (_transactionUiState.value.date.isBlank()) {
-                        Clock.System.now()
-                    } else {
-                        _transactionUiState.value.date.toInstant()
-                    },
-                )
-                viewModelScope.launch {
-                    transactionsRepository.upsertTransaction(transaction)
-                }
-                viewModelScope.launch {
-                    transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
-                }
-                viewModelScope.launch {
-                    val transactionCategoryCrossRef = _transactionUiState.value.category?.id?.let {
-                        TransactionCategoryCrossRef(
-                            transactionId = transaction.id,
-                            categoryId = it,
-                        )
-                    }
-                    if (transactionCategoryCrossRef != null) {
-                        transactionsRepository.upsertTransactionCategoryCrossRef(
-                            transactionCategoryCrossRef
-                        )
-                    }
-                }
-                _transactionUiState.value = TransactionUiState()
-            }
+            TransactionEvent.Save -> saveTransaction()
 
             TransactionEvent.Delete -> {
                 viewModelScope.launch {
@@ -121,6 +87,40 @@ class TransactionViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun saveTransaction() {
+        val transaction = Transaction(
+            id = _transactionUiState.value.transactionId.ifEmpty { UUID.randomUUID().toString() },
+            walletOwnerId = _transactionUiState.value.walletOwnerId,
+            description = _transactionUiState.value.description,
+            amount = _transactionUiState.value.amount.toBigDecimal(),
+            date = if (_transactionUiState.value.date.isBlank()) {
+                Clock.System.now()
+            } else {
+                _transactionUiState.value.date.toInstant()
+            },
+        )
+        viewModelScope.launch {
+            transactionsRepository.upsertTransaction(transaction)
+        }
+        viewModelScope.launch {
+            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
+        }
+        viewModelScope.launch {
+            val transactionCategoryCrossRef = _transactionUiState.value.category?.id?.let {
+                TransactionCategoryCrossRef(
+                    transactionId = transaction.id,
+                    categoryId = it,
+                )
+            }
+            if (transactionCategoryCrossRef != null) {
+                transactionsRepository.upsertTransactionCategoryCrossRef(
+                    transactionCategoryCrossRef
+                )
+            }
+        }
+        _transactionUiState.value = TransactionUiState()
     }
 
     private fun loadTransaction() {
