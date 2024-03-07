@@ -309,18 +309,19 @@ private fun LazyGridScope.transactions(
     currency: String,
     onTransactionClick: (String) -> Unit,
 ) {
-    val sortedTransactionsAndCategories =
+    val groupedTransactionsAndCategories =
         transactionsWithCategories
             .sortedByDescending { it.transaction.date }
-            .groupBy { it.transaction.date.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
+            .groupBy {
+                it.transaction.date
+                    .toJavaInstant()
+                    .truncatedTo(ChronoUnit.DAYS)
+            }
             .toSortedMap(compareByDescending { it })
-    val groupedTransactionsAndCategories =
-        sortedTransactionsAndCategories.map { Pair(it.key, it.value) }
+            .map { it.key to it.value }
 
     groupedTransactionsAndCategories.forEach { group ->
-        item(
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
             Text(
                 text = group.first
                     .toKotlinInstant()
