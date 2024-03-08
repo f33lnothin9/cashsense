@@ -107,33 +107,31 @@ private fun FinanceIndicators(
     currency: String,
     modifier: Modifier = Modifier,
 ) {
+    val walletIncome = transactions
+        .asSequence()
+        .filter { it.amount > BigDecimal.ZERO }
+        .sumOf { it.amount }
+        .abs()
+    val walletExpenses = transactions
+        .asSequence()
+        .filter { it.amount < BigDecimal.ZERO }
+        .sumOf { it.amount }
+        .abs()
+
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
-        val walletIncome = transactions
-            .asSequence()
-            .filter { it.amount > BigDecimal(0) }
-            .sumOf { it.amount }
-        if (walletIncome != BigDecimal(0)) {
+        if (walletIncome != BigDecimal.ZERO) {
             CsTag(
-                text = walletIncome
-                    .abs()
-                    .formatAmountWithCurrency(currency),
+                text = walletIncome.formatAmountWithCurrency(currency),
                 iconId = CsIcons.TrendingUp,
             )
         }
-
-        val walletExpenses = transactions
-            .asSequence()
-            .filter { it.amount < BigDecimal(0) }
-            .sumOf { it.amount }
-        if (walletExpenses != BigDecimal(0)) {
+        if (walletExpenses != BigDecimal.ZERO) {
             CsTag(
-                text = walletExpenses
-                    .abs()
-                    .formatAmountWithCurrency(currency),
+                text = walletExpenses.formatAmountWithCurrency(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
@@ -149,9 +147,9 @@ fun WalletCardPreview() {
             WalletCard(
                 wallet = Wallet(
                     id = "",
-                    title = "Wallet 1",
-                    initialBalance = 1500.85.toBigDecimal(),
-                    currency = Currency.USD.name
+                    title = "Main",
+                    initialBalance = BigDecimal(1499.99),
+                    currency = Currency.USD.name,
                 ),
                 transactions = emptyList(),
                 onWalletClick = {},
