@@ -87,23 +87,16 @@ internal fun WalletScreen(
     onWalletEvent: (WalletEvent) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit,
 ) {
-    var showWalletDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
-    var showTransactionBottomSheet by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showTransactionDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
-            val transactionsAndCategories =
-                walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+            val transactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
 
             val currentWalletBalance = wallet.initialBalance
                 .plus(
@@ -120,9 +113,7 @@ internal fun WalletScreen(
                 topBar = {
                     LargeTopAppBar(
                         title = {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
                                     text = wallet.title,
                                     maxLines = 1,
@@ -182,9 +173,7 @@ internal fun WalletScreen(
                             .fillMaxSize()
                             .padding(paddingValues),
                     ) {
-                        item(
-                            span = { GridItemSpan(maxLineSpan) }
-                        ) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
                             FinanceSection(
                                 transactionsWithCategories = transactionsAndCategories,
                                 currency = wallet.currency,
@@ -242,15 +231,16 @@ private fun FinanceSection(
 
     val walletExpenses = transactionsWithCategories
         .asSequence()
-        .filter { it.transaction.amount < BigDecimal(0) }
+        .filter { it.transaction.amount < BigDecimal.ZERO }
         .sumOf { it.transaction.amount.abs() }
     val walletIncome = transactionsWithCategories
         .asSequence()
-        .filter { it.transaction.amount > BigDecimal(0) }
+        .filter { it.transaction.amount > BigDecimal.ZERO }
         .sumOf { it.transaction.amount }
 
-    val expensesProgress =
-        (walletExpenses.divide(walletTransactions, MathContext.DECIMAL32)).toFloat()
+    val expensesProgress = walletExpenses
+        .divide(walletTransactions, MathContext.DECIMAL32)
+        .toFloat()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -309,16 +299,15 @@ private fun LazyGridScope.transactions(
     currency: String,
     onTransactionClick: (String) -> Unit,
 ) {
-    val groupedTransactionsAndCategories =
-        transactionsWithCategories
-            .sortedByDescending { it.transaction.date }
-            .groupBy {
-                it.transaction.date
-                    .toJavaInstant()
-                    .truncatedTo(ChronoUnit.DAYS)
-            }
-            .toSortedMap(compareByDescending { it })
-            .map { it.key to it.value }
+    val groupedTransactionsAndCategories = transactionsWithCategories
+        .sortedByDescending { it.transaction.date }
+        .groupBy {
+            it.transaction.date
+                .toJavaInstant()
+                .truncatedTo(ChronoUnit.DAYS)
+        }
+        .toSortedMap(compareByDescending { it })
+        .map { it.key to it.value }
 
     groupedTransactionsAndCategories.forEach { group ->
         item(span = { GridItemSpan(maxLineSpan) }) {
