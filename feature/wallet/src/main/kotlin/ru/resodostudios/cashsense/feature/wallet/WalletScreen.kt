@@ -3,11 +3,14 @@ package ru.resodostudios.cashsense.feature.wallet
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -15,6 +18,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -45,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -76,6 +82,8 @@ internal fun WalletRoute(
         onBackClick = onBackClick,
         onWalletEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionViewModel::onTransactionEvent,
+        addToSelectedCategories = walletViewModel::addToSelectedCategories,
+        removeFromSelectedCategories = walletViewModel::removeFromSelectedCategories,
     )
 }
 
@@ -86,6 +94,8 @@ internal fun WalletScreen(
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit,
+    addToSelectedCategories: (Category) -> Unit,
+    removeFromSelectedCategories: (Category) -> Unit,
 ) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -97,14 +107,6 @@ internal fun WalletScreen(
         is WalletUiState.Success -> {
             val wallet = walletState.walletWithTransactionsAndCategories.wallet
             val transactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
-
-            val currentWalletBalance = wallet.initialBalance
-                .plus(
-                    transactionsAndCategories
-                        .map { it.transaction }
-                        .sumOf { it.amount }
-                )
-                .formatAmountWithCurrency(wallet.currency)
 
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -120,7 +122,7 @@ internal fun WalletScreen(
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 Text(
-                                    text = currentWalletBalance,
+                                    text = walletState.currentBalance.formatAmountWithCurrency(wallet.currency),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.labelMedium,
@@ -182,6 +184,14 @@ internal fun WalletScreen(
                                     .padding(16.dp),
                             )
                         }
+                        item {
+                            FilterSection(
+                                availableCategories = walletState.availableCategories,
+                                selectedCategories = walletState.selectedCategories,
+                                addToSelectedCategories = addToSelectedCategories,
+                                removeFromSelectedCategories = removeFromSelectedCategories,
+                            )
+                        }
                         transactions(
                             transactionsWithCategories = transactionsAndCategories,
                             currency = wallet.currency,
@@ -202,7 +212,7 @@ internal fun WalletScreen(
             }
             if (showWalletDialog) {
                 WalletDialog(
-                    onDismiss = { showWalletDialog = false },
+                    onDismiss = { showWalletDialog = false }
                 )
             }
 
@@ -289,6 +299,47 @@ private fun FinanceSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun FilterSection(
+    availableCategories: List<Category?>,
+    selectedCategories: List<Category>,
+    addToSelectedCategories: (Category) -> Unit,
+    removeFromSelectedCategories: (Category) -> Unit,
+) {
+    var selected by rememberSaveable { mutableStateOf(false) }
+
+    FlowRow(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        availableCategories.forEach { category ->
+            selected = selectedCategories.contains(category)
+            FilterChip(
+                selected = selected,
+                onClick = {
+                    when (selectedCategories.contains(category)) {
+                        true -> category?.let { removeFromSelectedCategories(it) }
+                        false -> category?.let { addToSelectedCategories(it) }
+                    }
+                },
+                label = { Text(text = category?.title.toString()) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = if (selected) {
+                            ImageVector.vectorResource(CsIcons.Confirm)
+                        } else {
+                            ImageVector.vectorResource(StoredIcon.asRes(category?.iconId ?: StoredIcon.CATEGORY.storedId))
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    )
+                }
             )
         }
     }

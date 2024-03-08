@@ -7,14 +7,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.feature.wallet.navigation.WalletArgs
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,30 +29,49 @@ class WalletViewModel @Inject constructor(
 
     private val selectedCategories = MutableStateFlow<List<Category>>(emptyList())
 
-    val walletUiState: StateFlow<WalletUiState> =
-        walletsRepository.getWalletWithTransactions(walletArgs.walletId)
-            .map<WalletWithTransactionsAndCategories, WalletUiState> { walletTransactionsCategories ->
-                val walletData = WalletWithTransactionsAndCategories(
-                    wallet = walletTransactionsCategories.wallet,
-                    transactionsWithCategories = if (selectedCategories.value.isNotEmpty()) {
-                        walletTransactionsCategories.transactionsWithCategories.filter { selectedCategories.value.contains(it.category) }
-                    } else {
-                        walletTransactionsCategories.transactionsWithCategories
-                    }
-                )
-
-                WalletUiState.Success(
-                    walletWithTransactionsAndCategories = walletData,
-                    selectedCategories = selectedCategories.value
-                )
+    val walletUiState: StateFlow<WalletUiState> = combine(
+        selectedCategories.asStateFlow(),
+        walletsRepository.getWalletWithTransactions(walletArgs.walletId),
+    ) { selectedCategories, walletTransactionsCategories ->
+        val currentBalance = walletTransactionsCategories.wallet.initialBalance
+            .plus(walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount })
+        val availableCategories = walletTransactionsCategories.transactionsWithCategories
+            .map { it.category }
+            .toSet()
+            .toList()
+        val walletData = WalletWithTransactionsAndCategories(
+            wallet = walletTransactionsCategories.wallet,
+            transactionsWithCategories = if (selectedCategories.isNotEmpty()) {
+                walletTransactionsCategories.transactionsWithCategories.filter {
+                    selectedCategories.contains(it.category)
+                }
+            } else {
+                walletTransactionsCategories.transactionsWithCategories
             }
-            .onStart { emit(WalletUiState.Loading) }
-            .catch { emit(WalletUiState.Loading) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = WalletUiState.Loading,
-            )
+        )
+
+        WalletUiState.Success(
+            currentBalance = currentBalance,
+            availableCategories = availableCategories,
+            walletWithTransactionsAndCategories = walletData,
+            selectedCategories = selectedCategories,
+        )
+    }
+        .catch { WalletUiState.Loading }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = WalletUiState.Loading,
+        )
+
+
+    fun addToSelectedCategories(category: Category) {
+        selectedCategories.update { it.plus(category) }
+    }
+
+    fun removeFromSelectedCategories(category: Category) {
+        selectedCategories.update { it.minus(category) }
+    }
 }
 
 sealed interface WalletUiState {
@@ -58,7 +79,9 @@ sealed interface WalletUiState {
     data object Loading : WalletUiState
 
     data class Success(
-        val walletWithTransactionsAndCategories: WalletWithTransactionsAndCategories,
+        val currentBalance: BigDecimal,
+        val availableCategories: List<Category?>,
         val selectedCategories: List<Category>,
+        val walletWithTransactionsAndCategories: WalletWithTransactionsAndCategories,
     ) : WalletUiState
 }
