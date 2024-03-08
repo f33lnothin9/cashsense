@@ -300,6 +300,7 @@ private fun LazyGridScope.transactions(
     onTransactionClick: (String) -> Unit,
 ) {
     val groupedTransactionsAndCategories = transactionsWithCategories
+        .asSequence()
         .sortedByDescending { it.transaction.date }
         .groupBy {
             it.transaction.date
@@ -308,6 +309,7 @@ private fun LazyGridScope.transactions(
         }
         .toSortedMap(compareByDescending { it })
         .map { it.key to it.value }
+        .toList()
 
     groupedTransactionsAndCategories.forEach { group ->
         item(span = { GridItemSpan(maxLineSpan) }) {
