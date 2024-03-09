@@ -27,10 +27,10 @@ class WalletViewModel @Inject constructor(
 
     private val walletArgs: WalletArgs = WalletArgs(savedStateHandle)
 
-    private val selectedCategories = MutableStateFlow<List<Category>>(emptyList())
+    private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        selectedCategories.asStateFlow(),
+        selectedCategoriesState.asStateFlow(),
         walletsRepository.getWalletWithTransactions(walletArgs.walletId),
     ) { selectedCategories, walletTransactionsCategories ->
         val currentBalance = walletTransactionsCategories.wallet.initialBalance
@@ -42,9 +42,9 @@ class WalletViewModel @Inject constructor(
         val walletData = WalletWithTransactionsAndCategories(
             wallet = walletTransactionsCategories.wallet,
             transactionsWithCategories = if (selectedCategories.isNotEmpty()) {
-                walletTransactionsCategories.transactionsWithCategories.filter {
-                    selectedCategories.contains(it.category)
-                }
+                walletTransactionsCategories.transactionsWithCategories
+                    .filter { selectedCategories.contains(it.category) }
+                    .apply { if (this.isEmpty()) selectedCategoriesState.value = emptyList() }
             } else {
                 walletTransactionsCategories.transactionsWithCategories
             }
@@ -66,11 +66,11 @@ class WalletViewModel @Inject constructor(
 
 
     fun addToSelectedCategories(category: Category) {
-        selectedCategories.update { it.plus(category) }
+        selectedCategoriesState.update { it.plus(category) }
     }
 
     fun removeFromSelectedCategories(category: Category) {
-        selectedCategories.update { it.minus(category) }
+        selectedCategoriesState.update { it.minus(category) }
     }
 }
 
