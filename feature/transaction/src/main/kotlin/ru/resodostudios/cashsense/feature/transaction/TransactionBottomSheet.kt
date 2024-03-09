@@ -54,15 +54,19 @@ fun TransactionBottomSheet(
     val formattedAmount = if (transactionState.amount.isNotEmpty()) {
         transactionState.amount
             .toBigDecimal()
-            .stripTrailingZeros()
             .formatAmountWithCurrency(transactionState.currency, true)
-    } else { "" }
+    } else {
+        ""
+    }
 
-    CsModalBottomSheet(
-        onDismiss = onDismiss
-    ) {
+    CsModalBottomSheet(onDismiss = onDismiss) {
         ListItem(
             headlineContent = { Text(formattedAmount) },
+            supportingContent = if (transactionState.description.isNotEmpty()) {
+                { Text(text = transactionState.description) }
+            } else {
+                null
+            }
         )
         FlowRow(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
@@ -79,7 +83,9 @@ fun TransactionBottomSheet(
                     transactionState.date
                         .toInstant()
                         .formatDate(withTime = true)
-                } else { "" },
+                } else {
+                    ""
+                },
                 iconId = CsIcons.Calendar,
             )
         }
