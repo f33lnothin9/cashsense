@@ -7,6 +7,8 @@ object CsIcons {
     val HomeFilled = R.drawable.ic_filled_home
     val Category = R.drawable.ic_outlined_category
     val CategoryFilled = R.drawable.ic_filled_category
+    val Close = R.drawable.ic_outlined_close
+    val CreditCard = R.drawable.ic_outlined_credit_card
     val Subscriptions = R.drawable.ic_outlined_subscriptions
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
     val Settings = R.drawable.ic_outlined_settings
@@ -21,6 +23,7 @@ object CsIcons {
     val Edit = R.drawable.ic_outlined_edit
     val MoreVert = R.drawable.ic_outlined_more_vert
     val ArrowBack = R.drawable.ic_outlined_arrow_back
+    val Attractions = R.drawable.ic_outlined_attractions
     val AccountBalance = R.drawable.ic_outlined_account_balance
     val Apparel = R.drawable.ic_outlined_apparel
     val Chair = R.drawable.ic_outlined_chair
@@ -34,6 +37,8 @@ object CsIcons {
     val LocalBar = R.drawable.ic_outlined_local_bar
     val LocalGasStation = R.drawable.ic_outlined_local_gas_station
     val Memory = R.drawable.ic_outlined_memory
+    val Monitoring = R.drawable.ic_outlined_monitoring
+    val MusicNote = R.drawable.ic_outlined_music_note
     val Payments = R.drawable.ic_outlined_payments
     val Pets = R.drawable.ic_outlined_pets
     val Phishing = R.drawable.ic_outlined_phishing
@@ -48,4 +53,5 @@ object CsIcons {
     val SportsEsports = R.drawable.ic_outlined_sports_esports
     val Travel = R.drawable.ic_outlined_travel
     val Info = R.drawable.ic_outlined_info
+    val Work = R.drawable.ic_outlined_work
 }

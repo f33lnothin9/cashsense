@@ -87,7 +87,12 @@ enum class StoredIcon(
     SIM_CARD(CsIcons.SimCard, 21),
     SMOKING_ROOMS(CsIcons.SmokingRooms, 22),
     SPORTS_ESPORTS(CsIcons.SportsEsports, 23),
-    TRAVEL(CsIcons.Travel, 24);
+    TRAVEL(CsIcons.Travel, 24),
+    ATTRACTIONS(CsIcons.Attractions, 25),
+    CREDIT_CARD(CsIcons.CreditCard, 26),
+    MONITORING(CsIcons.Monitoring, 27),
+    MUSIC_NOTE(CsIcons.MusicNote, 28),
+    WORK(CsIcons.Work, 29);
 
     companion object {
 
