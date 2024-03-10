@@ -105,8 +105,8 @@ internal fun WalletScreen(
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
-            val wallet = walletState.walletWithTransactionsAndCategories.wallet
-            val transactionsAndCategories = walletState.walletWithTransactionsAndCategories.transactionsWithCategories
+            val wallet = walletState.walletTransactionsCategories.wallet
+            val transactionsAndCategories = walletState.walletTransactionsCategories.transactionsWithCategories
 
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -351,8 +351,6 @@ private fun LazyGridScope.transactions(
     onTransactionClick: (String) -> Unit,
 ) {
     val groupedTransactionsAndCategories = transactionsWithCategories
-        .asSequence()
-        .sortedByDescending { it.transaction.date }
         .groupBy {
             it.transaction.date
                 .toJavaInstant()
@@ -360,7 +358,6 @@ private fun LazyGridScope.transactions(
         }
         .toSortedMap(compareByDescending { it })
         .map { it.key to it.value }
-        .toList()
 
     groupedTransactionsAndCategories.forEach { group ->
         item(span = { GridItemSpan(maxLineSpan) }) {

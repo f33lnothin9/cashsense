@@ -28,32 +28,65 @@ class WalletViewModel @Inject constructor(
     private val walletArgs: WalletArgs = WalletArgs(savedStateHandle)
 
     private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
+    private val financeState = MutableStateFlow(FinanceType.DEFAULT)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         selectedCategoriesState.asStateFlow(),
         walletsRepository.getWalletWithTransactions(walletArgs.walletId),
     ) { selectedCategories, walletTransactionsCategories ->
-        val currentBalance = walletTransactionsCategories.wallet.initialBalance
-            .plus(walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount })
-        val availableCategories = walletTransactionsCategories.transactionsWithCategories
+        val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
+            walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount }
+        )
+        val sortedTransactions = walletTransactionsCategories.transactionsWithCategories.sortedByDescending {
+            it.transaction.date
+        }
+        var availableCategories = sortedTransactions
             .map { it.category }
             .toSet()
             .toList()
+
+        val expenses = sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
+        val income = sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
+
+        val transactionsCategories = when (financeState.value) {
+            FinanceType.DEFAULT -> sortedTransactions
+            FinanceType.EXPENSES -> {
+                availableCategories = expenses
+                    .map { it.category }
+                    .toSet()
+                    .toList()
+                if (selectedCategories.isNotEmpty()) {
+                    expenses
+                        .filter { selectedCategories.contains(it.category) }
+                        .apply { if (this.isEmpty()) selectedCategoriesState.value = emptyList() }
+                } else {
+                    expenses
+                }
+            }
+
+            FinanceType.INCOME -> {
+                availableCategories = income
+                    .map { it.category }
+                    .toSet()
+                    .toList()
+                if (selectedCategories.isNotEmpty()) {
+                    income
+                        .filter { selectedCategories.contains(it.category) }
+                        .apply { if (this.isEmpty()) selectedCategoriesState.value = emptyList() }
+                } else {
+                    income
+                }
+            }
+        }
         val walletData = WalletWithTransactionsAndCategories(
             wallet = walletTransactionsCategories.wallet,
-            transactionsWithCategories = if (selectedCategories.isNotEmpty()) {
-                walletTransactionsCategories.transactionsWithCategories
-                    .filter { selectedCategories.contains(it.category) }
-                    .apply { if (this.isEmpty()) selectedCategoriesState.value = emptyList() }
-            } else {
-                walletTransactionsCategories.transactionsWithCategories
-            }
+            transactionsWithCategories = transactionsCategories
         )
 
         WalletUiState.Success(
             currentBalance = currentBalance,
             availableCategories = availableCategories,
-            walletWithTransactionsAndCategories = walletData,
+            walletTransactionsCategories = walletData,
             selectedCategories = selectedCategories,
         )
     }
@@ -74,6 +107,12 @@ class WalletViewModel @Inject constructor(
     }
 }
 
+enum class FinanceType {
+    DEFAULT,
+    EXPENSES,
+    INCOME,
+}
+
 sealed interface WalletUiState {
 
     data object Loading : WalletUiState
@@ -82,6 +121,6 @@ sealed interface WalletUiState {
         val currentBalance: BigDecimal,
         val availableCategories: List<Category?>,
         val selectedCategories: List<Category>,
-        val walletWithTransactionsAndCategories: WalletWithTransactionsAndCategories,
+        val walletTransactionsCategories: WalletWithTransactionsAndCategories,
     ) : WalletUiState
 }
