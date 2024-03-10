@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -176,16 +177,15 @@ internal fun WalletScreen(
                             .padding(paddingValues),
                     ) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            FinanceSection(
-                                transactionsWithCategories = transactionsAndCategories,
-                                currency = wallet.currency,
+                            FinancePanel(
+                                walletState = walletState,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
                             )
                         }
                         item {
-                            FilterSection(
+                            FilterPanel(
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
                                 addToSelectedCategories = addToSelectedCategories,
@@ -212,7 +212,7 @@ internal fun WalletScreen(
             }
             if (showWalletDialog) {
                 WalletDialog(
-                    onDismiss = { showWalletDialog = false }
+                    onDismiss = { showWalletDialog = false },
                 )
             }
 
@@ -232,90 +232,98 @@ internal fun WalletScreen(
 }
 
 @Composable
-private fun FinanceSection(
-    transactionsWithCategories: List<TransactionWithCategory>,
-    currency: String,
+private fun FinancePanel(
+    walletState: WalletUiState,
     modifier: Modifier = Modifier,
 ) {
-    val walletTransactions = transactionsWithCategories.sumOf { it.transaction.amount.abs() }
+    when (walletState) {
+        WalletUiState.Loading -> Unit
+        is WalletUiState.Success -> {
+            val transactionsCategories = walletState.walletTransactionsCategories.transactionsWithCategories
+            val sumOfTransactions = transactionsCategories.sumOf {
+                it.transaction.amount.abs()
+            }
 
-    val walletExpenses = transactionsWithCategories
-        .asSequence()
-        .filter { it.transaction.amount < BigDecimal.ZERO }
-        .sumOf { it.transaction.amount.abs() }
-    val walletIncome = transactionsWithCategories
-        .asSequence()
-        .filter { it.transaction.amount > BigDecimal.ZERO }
-        .sumOf { it.transaction.amount }
+            val walletExpenses = transactionsCategories
+                .asSequence()
+                .filter { it.transaction.amount < BigDecimal.ZERO }
+                .sumOf { it.transaction.amount.abs() }
+            val walletIncome = transactionsCategories
+                .asSequence()
+                .filter { it.transaction.amount > BigDecimal.ZERO }
+                .sumOf { it.transaction.amount }
 
-    val expensesProgress = walletExpenses
-        .divide(walletTransactions, MathContext.DECIMAL32)
-        .toFloat()
+            val expensesProgress = walletExpenses
+                .divide(sumOfTransactions, MathContext.DECIMAL32)
+                .toFloat()
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier,
+            ) {
+                FinanceCard(
+                    title = walletExpenses.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
+                    supportingTextId = R.string.feature_wallet_expenses,
+                    indicatorProgress = expensesProgress,
+                    modifier = Modifier.weight(1f),
+                )
+                FinanceCard(
+                    title = walletIncome.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
+                    supportingTextId = R.string.feature_wallet_income,
+                    indicatorProgress = 1.0f - expensesProgress,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FinanceCard(
+    title: String,
+    @StringRes
+    supportingTextId: Int,
+    indicatorProgress: Float,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedCard(
         modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
     ) {
-        OutlinedCard(
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(20.dp),
-        ) {
-            Text(
-                text = walletExpenses.formatAmountWithCurrency(currency),
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-            )
-            Text(
-                text = stringResource(R.string.feature_wallet_expenses),
-                modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.labelMedium,
-            )
-            LinearProgressIndicator(
-                progress = { expensesProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            )
-        }
-        OutlinedCard(
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(20.dp),
-        ) {
-            Text(
-                text = walletIncome.formatAmountWithCurrency(currency),
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-            )
-            Text(
-                text = stringResource(R.string.feature_wallet_income),
-                modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.labelMedium,
-            )
-            LinearProgressIndicator(
-                progress = { 1.0f - expensesProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            )
-        }
+        Text(
+            text = title,
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+        )
+        Text(
+            text = stringResource(supportingTextId),
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.labelMedium,
+        )
+        LinearProgressIndicator(
+            progress = { indicatorProgress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FilterSection(
+private fun FilterPanel(
     availableCategories: List<Category?>,
     selectedCategories: List<Category>,
     addToSelectedCategories: (Category) -> Unit,
     removeFromSelectedCategories: (Category) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var selected by rememberSaveable { mutableStateOf(false) }
 
     FlowRow(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         availableCategories.forEach { category ->
