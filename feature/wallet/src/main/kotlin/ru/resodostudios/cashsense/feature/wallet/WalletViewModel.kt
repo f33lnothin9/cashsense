@@ -87,7 +87,7 @@ class WalletViewModel @Inject constructor(
 
         WalletUiState.Success(
             currentBalance = currentBalance,
-            availableCategories = availableCategories,
+            availableCategories = availableCategories.minus(Category()),
             selectedCategories = selectedCategories,
             currentFinanceType = currentFinanceType,
             walletTransactionsCategories = walletData,
