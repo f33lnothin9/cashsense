@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -254,6 +255,7 @@ private fun FinancePanel(
             Crossfade(
                 targetState = walletState.currentFinanceType,
                 label = "financePanel",
+                modifier = Modifier.animateContentSize(),
             ) { financeType ->
                 when (financeType) {
                     FinanceType.DEFAULT -> {
