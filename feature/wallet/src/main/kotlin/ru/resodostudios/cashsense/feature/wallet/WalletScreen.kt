@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.wallet
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -439,6 +440,7 @@ private fun FilterPanel(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyGridScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
     currency: String,
@@ -466,7 +468,7 @@ private fun LazyGridScope.transactions(
         items(
             items = group.second,
             key = { it.transaction.id },
-            contentType = { "transactionWithCategory" },
+            contentType = { "transactionCategory" },
         ) { transactionWithCategory ->
             val category = transactionWithCategory.category
 
@@ -498,9 +500,11 @@ private fun LazyGridScope.transactions(
                         contentDescription = null,
                     )
                 },
-                modifier = Modifier.clickable {
-                    onTransactionClick(transactionWithCategory.transaction.id)
-                }
+                modifier = Modifier
+                    .animateItemPlacement()
+                    .clickable {
+                        onTransactionClick(transactionWithCategory.transaction.id)
+                    }
             )
         }
     }

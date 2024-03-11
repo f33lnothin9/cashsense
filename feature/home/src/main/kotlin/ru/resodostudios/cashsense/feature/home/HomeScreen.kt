@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,8 +26,8 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
@@ -53,16 +54,10 @@ internal fun HomeScreen(
     onWalletClick: (String) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit
 ) {
-    var showWalletBottomSheet by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showWalletDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
-    var showTransactionDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
@@ -113,6 +108,7 @@ internal fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
     walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
@@ -130,6 +126,7 @@ private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onWalletMenuClick = onWalletMenuClick,
+            modifier = Modifier.animateItemPlacement()
         )
     }
 }

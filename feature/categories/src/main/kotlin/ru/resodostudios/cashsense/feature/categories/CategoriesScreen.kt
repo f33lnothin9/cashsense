@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.categories
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -48,12 +49,8 @@ internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onCategoryEvent: (CategoryEvent) -> Unit,
 ) {
-    var showCategoryBottomSheet by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var showCategoryDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
     when (categoriesState) {
         Loading -> LoadingState()
@@ -73,7 +70,7 @@ internal fun CategoriesScreen(
             if (showCategoryBottomSheet) {
                 CategoryBottomSheet(
                     onDismiss = { showCategoryBottomSheet = false },
-                    onEdit = { showCategoryDialog = true }
+                    onEdit = { showCategoryDialog = true },
                 )
             }
             if (showCategoryDialog) {
@@ -90,6 +87,7 @@ internal fun CategoriesScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
     onCategoryClick: (String) -> Unit,
@@ -112,9 +110,11 @@ private fun LazyGridScope.categories(
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
-                        onCategoryClick(category.id.toString())
-                    }
+                    modifier = Modifier
+                        .animateItemPlacement()
+                        .clickable {
+                            onCategoryClick(category.id.toString())
+                        }
                 )
             }
         }
