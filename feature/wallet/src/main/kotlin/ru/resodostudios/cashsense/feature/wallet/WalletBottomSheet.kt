@@ -41,7 +41,7 @@ fun WalletBottomSheet(
 @Composable
 fun WalletBottomSheet(
     walletDialogState: WalletDialogUiState,
-    onWalletEvent: (WalletEvent) -> Unit,
+    onWalletEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
 ) {
@@ -89,7 +89,7 @@ fun WalletBottomSheet(
                 )
             },
             modifier = Modifier.clickable {
-                onWalletEvent(WalletEvent.Delete(walletDialogState.id))
+                onWalletEvent(WalletDialogEvent.Delete(walletDialogState.id))
                 onDismiss()
             },
         )

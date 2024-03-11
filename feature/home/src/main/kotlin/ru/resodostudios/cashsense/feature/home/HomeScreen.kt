@@ -26,7 +26,7 @@ import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
-import ru.resodostudios.cashsense.feature.wallet.WalletEvent
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent
 import ru.resodostudios.cashsense.feature.wallet.R as walletR
 
 @Composable
@@ -49,7 +49,7 @@ internal fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    onWalletItemEvent: (WalletEvent) -> Unit,
+    onWalletItemEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit
 ) {
@@ -82,8 +82,8 @@ internal fun HomeScreen(
                         showTransactionDialog = true
                     },
                     onWalletMenuClick = { walletId, currentWalletBalance ->
-                        onWalletItemEvent(WalletEvent.UpdateId(walletId))
-                        onWalletItemEvent(WalletEvent.UpdateCurrentBalance(currentWalletBalance))
+                        onWalletItemEvent(WalletDialogEvent.UpdateId(walletId))
+                        onWalletItemEvent(WalletDialogEvent.UpdateCurrentBalance(currentWalletBalance))
                         showWalletBottomSheet = true
                     },
                 )

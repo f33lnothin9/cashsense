@@ -28,18 +28,20 @@ class WalletViewModel @Inject constructor(
     private val walletArgs: WalletArgs = WalletArgs(savedStateHandle)
 
     private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
-    private val financeState = MutableStateFlow(FinanceType.DEFAULT)
+    private val currentFinanceTypeState = MutableStateFlow(FinanceType.DEFAULT)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         selectedCategoriesState.asStateFlow(),
+        currentFinanceTypeState.asStateFlow(),
         walletsRepository.getWalletWithTransactions(walletArgs.walletId),
-    ) { selectedCategories, walletTransactionsCategories ->
+    ) { selectedCategories, currentFinanceType, walletTransactionsCategories ->
         val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
             walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount }
         )
-        val sortedTransactions = walletTransactionsCategories.transactionsWithCategories.sortedByDescending {
-            it.transaction.date
-        }
+        val sortedTransactions =
+            walletTransactionsCategories.transactionsWithCategories.sortedByDescending {
+                it.transaction.date
+            }
         var availableCategories = sortedTransactions
             .map { it.category }
             .toSet()
@@ -48,7 +50,7 @@ class WalletViewModel @Inject constructor(
         val expenses = sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
         val income = sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
 
-        val transactionsCategories = when (financeState.value) {
+        val transactionsCategories = when (currentFinanceType) {
             FinanceType.DEFAULT -> sortedTransactions
             FinanceType.EXPENSES -> {
                 availableCategories = expenses
@@ -86,8 +88,9 @@ class WalletViewModel @Inject constructor(
         WalletUiState.Success(
             currentBalance = currentBalance,
             availableCategories = availableCategories,
-            walletTransactionsCategories = walletData,
             selectedCategories = selectedCategories,
+            currentFinanceType = currentFinanceType,
+            walletTransactionsCategories = walletData,
         )
     }
         .catch { WalletUiState.Loading }
@@ -97,13 +100,20 @@ class WalletViewModel @Inject constructor(
             initialValue = WalletUiState.Loading,
         )
 
+    fun onWalletEvent(event: WalletEvent) {
+        when (event) {
+            is WalletEvent.AddToSelectedCategories -> {
+                selectedCategoriesState.update { it.plus(event.category) }
+            }
 
-    fun addToSelectedCategories(category: Category) {
-        selectedCategoriesState.update { it.plus(category) }
-    }
+            is WalletEvent.RemoveFromSelectedCategories -> {
+                selectedCategoriesState.update { it.minus(event.category) }
+            }
 
-    fun removeFromSelectedCategories(category: Category) {
-        selectedCategoriesState.update { it.minus(category) }
+            is WalletEvent.UpdateFinanceType -> {
+                currentFinanceTypeState.update { event.financeType }
+            }
+        }
     }
 }
 
@@ -121,6 +131,7 @@ sealed interface WalletUiState {
         val currentBalance: BigDecimal,
         val availableCategories: List<Category?>,
         val selectedCategories: List<Category>,
+        val currentFinanceType: FinanceType,
         val walletTransactionsCategories: WalletWithTransactionsAndCategories,
     ) : WalletUiState
 }

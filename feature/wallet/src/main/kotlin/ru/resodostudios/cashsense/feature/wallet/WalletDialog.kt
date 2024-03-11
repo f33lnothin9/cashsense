@@ -46,7 +46,7 @@ fun WalletDialog(
 @Composable
 fun WalletDialog(
     walletDialogState: WalletDialogUiState,
-    onWalletDialogEvent: (WalletEvent) -> Unit,
+    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val dialogTitle = if (walletDialogState.isEditing) R.string.feature_wallet_edit_wallet else R.string.feature_wallet_new_wallet
@@ -58,7 +58,7 @@ fun WalletDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
-            onWalletDialogEvent(WalletEvent.Save)
+            onWalletDialogEvent(WalletDialogEvent.Save)
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank() &&
@@ -73,7 +73,7 @@ fun WalletDialog(
         ) {
             OutlinedTextField(
                 value = walletDialogState.title,
-                onValueChange = { onWalletDialogEvent(WalletEvent.UpdateTitle(it)) },
+                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
@@ -88,7 +88,7 @@ fun WalletDialog(
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(WalletEvent.UpdateInitialBalance(it)) },
+                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it)) },
                 placeholder = { Text(text = "100") },
                 label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
                 keyboardOptions = KeyboardOptions(
@@ -100,7 +100,7 @@ fun WalletDialog(
             )
             CurrencyExposedDropdownMenuBox(
                 currencyName = walletDialogState.currency,
-                onCurrencyClick = { onWalletDialogEvent(WalletEvent.UpdateCurrency(it.name)) },
+                onCurrencyClick = { onWalletDialogEvent(WalletDialogEvent.UpdateCurrency(it.name)) },
             )
         }
         LaunchedEffect(Unit) {

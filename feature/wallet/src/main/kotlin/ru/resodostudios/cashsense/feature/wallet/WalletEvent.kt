@@ -1,18 +1,13 @@
 package ru.resodostudios.cashsense.feature.wallet
 
+
+import ru.resodostudios.cashsense.core.model.data.Category
+
 sealed interface WalletEvent {
 
-    data class UpdateId(val id: String) : WalletEvent
+    data class AddToSelectedCategories(val category: Category) : WalletEvent
 
-    data class UpdateTitle(val title: String) : WalletEvent
+    data class RemoveFromSelectedCategories(val category: Category) : WalletEvent
 
-    data class UpdateInitialBalance(val initialBalance: String) : WalletEvent
-
-    data class UpdateCurrentBalance(val currentBalance: String) : WalletEvent
-
-    data class UpdateCurrency(val currency: String) : WalletEvent
-
-    data object Save : WalletEvent
-
-    data class Delete(val id: String) : WalletEvent
+    data class UpdateFinanceType(val financeType: FinanceType) : WalletEvent
 }

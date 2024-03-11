@@ -23,9 +23,9 @@ class WalletDialogViewModel @Inject constructor(
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
     val walletDialogUiState = _walletDialogUiState.asStateFlow()
 
-    fun onWalletDialogEvent(event: WalletEvent) {
+    fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
-            WalletEvent.Save -> {
+            WalletDialogEvent.Save -> {
                 val wallet = Wallet(
                     id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _walletDialogUiState.value.title,
@@ -46,38 +46,38 @@ class WalletDialogViewModel @Inject constructor(
                 }
             }
 
-            is WalletEvent.Delete -> {
+            is WalletDialogEvent.Delete -> {
                 viewModelScope.launch {
                     walletsRepository.deleteWallet(event.id)
                 }
             }
 
-            is WalletEvent.UpdateId -> {
+            is WalletDialogEvent.UpdateId -> {
                 _walletDialogUiState.update {
                     it.copy(id = event.id)
                 }
                 loadWallet()
             }
 
-            is WalletEvent.UpdateTitle -> {
+            is WalletDialogEvent.UpdateTitle -> {
                 _walletDialogUiState.update {
                     it.copy(title = event.title)
                 }
             }
 
-            is WalletEvent.UpdateInitialBalance -> {
+            is WalletDialogEvent.UpdateInitialBalance -> {
                 _walletDialogUiState.update {
                     it.copy(initialBalance = event.initialBalance)
                 }
             }
 
-            is WalletEvent.UpdateCurrentBalance -> {
+            is WalletDialogEvent.UpdateCurrentBalance -> {
                 _walletDialogUiState.update {
                     it.copy(currentBalance = event.currentBalance)
                 }
             }
 
-            is WalletEvent.UpdateCurrency -> {
+            is WalletDialogEvent.UpdateCurrency -> {
                 _walletDialogUiState.update {
                     it.copy(currency = event.currency)
                 }

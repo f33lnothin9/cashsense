@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -81,10 +82,9 @@ internal fun WalletRoute(
     WalletScreen(
         walletState = walletState,
         onBackClick = onBackClick,
-        onWalletEvent = walletDialogViewModel::onWalletDialogEvent,
+        onWalletEvent = walletViewModel::onWalletEvent,
+        onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionViewModel::onTransactionEvent,
-        addToSelectedCategories = walletViewModel::addToSelectedCategories,
-        removeFromSelectedCategories = walletViewModel::removeFromSelectedCategories,
     )
 }
 
@@ -94,10 +94,10 @@ internal fun WalletScreen(
     walletState: WalletUiState,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
+    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
-) {
+
+    ) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -153,12 +153,12 @@ internal fun WalletScreen(
                             }
                             EditAndDeleteDropdownMenu(
                                 onEdit = {
-                                    onWalletEvent(WalletEvent.UpdateId(wallet.id))
+                                    onWalletDialogEvent(WalletDialogEvent.UpdateId(wallet.id))
                                     showWalletDialog = true
                                 },
                                 onDelete = {
                                     onBackClick()
-                                    onWalletEvent(WalletEvent.Delete(wallet.id))
+                                    onWalletDialogEvent(WalletDialogEvent.Delete(wallet.id))
                                 },
                             )
                         },
@@ -179,17 +179,10 @@ internal fun WalletScreen(
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             FinancePanel(
                                 walletState = walletState,
+                                onWalletEvent = onWalletEvent,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
-                            )
-                        }
-                        item {
-                            FilterPanel(
-                                availableCategories = walletState.availableCategories,
-                                selectedCategories = walletState.selectedCategories,
-                                addToSelectedCategories = addToSelectedCategories,
-                                removeFromSelectedCategories = removeFromSelectedCategories,
                             )
                         }
                         transactions(
@@ -234,6 +227,7 @@ internal fun WalletScreen(
 @Composable
 private fun FinancePanel(
     walletState: WalletUiState,
+    onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (walletState) {
@@ -257,23 +251,64 @@ private fun FinancePanel(
                 .divide(sumOfTransactions, MathContext.DECIMAL32)
                 .toFloat()
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = modifier,
-            ) {
-                FinanceCard(
-                    title = walletExpenses.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
-                    supportingTextId = R.string.feature_wallet_expenses,
-                    indicatorProgress = expensesProgress,
-                    modifier = Modifier.weight(1f),
-                )
-                FinanceCard(
-                    title = walletIncome.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
-                    supportingTextId = R.string.feature_wallet_income,
-                    indicatorProgress = 1.0f - expensesProgress,
-                    modifier = Modifier.weight(1f),
-                )
+            Crossfade(
+                targetState = walletState.currentFinanceType,
+                label = "financePanel",
+            ) { financeType ->
+                when (financeType) {
+                    FinanceType.DEFAULT -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = modifier,
+                        ) {
+                            FinanceCard(
+                                title = walletExpenses.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
+                                supportingTextId = R.string.feature_wallet_expenses,
+                                indicatorProgress = expensesProgress,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.EXPENSES)) },
+                            )
+                            FinanceCard(
+                                title = walletIncome.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
+                                supportingTextId = R.string.feature_wallet_income,
+                                indicatorProgress = 1.0f - expensesProgress,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.INCOME)) },
+                            )
+                        }
+                    }
+                    FinanceType.EXPENSES -> {
+                        DetailedFinanceCard(
+                            title = walletExpenses.formatAmountWithCurrency(
+                                walletState.walletTransactionsCategories.wallet.currency
+                            ),
+                            supportingTextId = R.string.feature_wallet_expenses,
+                            availableCategories = walletState.availableCategories,
+                            selectedCategories = walletState.selectedCategories,
+                            onWalletEvent = onWalletEvent,
+                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.DEFAULT)) },
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                        )
+                    }
+                    FinanceType.INCOME -> {
+                        DetailedFinanceCard(
+                            title = walletIncome.formatAmountWithCurrency(
+                                walletState.walletTransactionsCategories.wallet.currency
+                            ),
+                            supportingTextId = R.string.feature_wallet_income,
+                            availableCategories = walletState.availableCategories,
+                            selectedCategories = walletState.selectedCategories,
+                            onWalletEvent = onWalletEvent,
+                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.DEFAULT)) },
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                        )
+                    }
+                }
             }
         }
     }
@@ -286,10 +321,12 @@ private fun FinanceCard(
     supportingTextId: Int,
     indicatorProgress: Float,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     OutlinedCard(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
+        onClick = onClick,
     ) {
         Text(
             text = title,
@@ -311,13 +348,60 @@ private fun FinanceCard(
     }
 }
 
+@Composable
+private fun DetailedFinanceCard(
+    title: String,
+    @StringRes
+    supportingTextId: Int,
+    availableCategories: List<Category?>,
+    selectedCategories: List<Category>,
+    onWalletEvent: (WalletEvent) -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedCard(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(start = 16.dp, bottom = 4.dp)
+                .fillMaxWidth(),
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+            )
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Close),
+                    contentDescription = null,
+                )
+            }
+        }
+        Text(
+            text = stringResource(supportingTextId),
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.labelLarge,
+        )
+        FilterPanel(
+            availableCategories = availableCategories,
+            selectedCategories = selectedCategories,
+            onWalletEvent = onWalletEvent,
+            modifier = Modifier.padding(start = 16.dp, bottom = 4.dp, end = 16.dp, top = 16.dp),
+        )
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FilterPanel(
     availableCategories: List<Category?>,
     selectedCategories: List<Category>,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
+    onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selected by rememberSaveable { mutableStateOf(false) }
@@ -332,8 +416,8 @@ private fun FilterPanel(
                 selected = selected,
                 onClick = {
                     when (selectedCategories.contains(category)) {
-                        true -> category?.let { removeFromSelectedCategories(it) }
-                        false -> category?.let { addToSelectedCategories(it) }
+                        true -> category?.let { onWalletEvent(WalletEvent.RemoveFromSelectedCategories(it)) }
+                        false -> category?.let { onWalletEvent(WalletEvent.AddToSelectedCategories(it)) }
                     }
                 },
                 label = { Text(text = category?.title.toString()) },
