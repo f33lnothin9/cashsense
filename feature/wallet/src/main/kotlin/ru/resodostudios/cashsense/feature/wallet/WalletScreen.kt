@@ -271,6 +271,7 @@ private fun FinancePanel(
                                 indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.EXPENSES)) },
+                                enabled = walletExpenses != BigDecimal.ZERO,
                             )
                             FinanceCard(
                                 title = walletIncome.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
@@ -278,6 +279,7 @@ private fun FinancePanel(
                                 indicatorProgress = 1.0f - expensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.INCOME)) },
+                                enabled = walletIncome != BigDecimal.ZERO,
                             )
                         }
                     }
@@ -325,11 +327,13 @@ private fun FinanceCard(
     indicatorProgress: Float,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    enabled: Boolean = true,
 ) {
     OutlinedCard(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         onClick = onClick,
+        enabled = enabled,
     ) {
         Text(
             text = title,
