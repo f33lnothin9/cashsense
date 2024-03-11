@@ -107,14 +107,14 @@ private fun FinanceIndicators(
     currency: String,
     modifier: Modifier = Modifier,
 ) {
-    val walletIncome = transactions
-        .asSequence()
-        .filter { it.amount > BigDecimal.ZERO }
-        .sumOf { it.amount }
-        .abs()
     val walletExpenses = transactions
         .asSequence()
         .filter { it.amount < BigDecimal.ZERO }
+        .sumOf { it.amount }
+        .abs()
+    val walletIncome = transactions
+        .asSequence()
+        .filter { it.amount > BigDecimal.ZERO }
         .sumOf { it.amount }
         .abs()
 
@@ -123,17 +123,17 @@ private fun FinanceIndicators(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
-        if (walletIncome != BigDecimal.ZERO) {
-            CsTag(
-                text = walletIncome.formatAmountWithCurrency(currency),
-                iconId = CsIcons.TrendingUp,
-            )
-        }
         if (walletExpenses != BigDecimal.ZERO) {
             CsTag(
                 text = walletExpenses.formatAmountWithCurrency(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
+            )
+        }
+        if (walletIncome != BigDecimal.ZERO) {
+            CsTag(
+                text = walletIncome.formatAmountWithCurrency(currency),
+                iconId = CsIcons.TrendingUp,
             )
         }
     }
