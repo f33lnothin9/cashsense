@@ -13,6 +13,10 @@ fun String.validateAmount(): Pair<String, Boolean> {
 
     cleanedInput = validInput.replace("^--".toRegex(), "-")
 
+    if (cleanedInput.toDoubleOrNull() == 0.0) {
+        return cleanedInput to false
+    }
+
     val regex = Regex("^-?\\d+(\\.\\d{1,2})?$")
     val isValid = regex.matches(cleanedInput)
 

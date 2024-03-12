@@ -82,7 +82,7 @@ class WalletViewModel @Inject constructor(
         }
         val walletData = WalletWithTransactionsAndCategories(
             wallet = walletTransactionsCategories.wallet,
-            transactionsWithCategories = transactionsCategories
+            transactionsWithCategories = transactionsCategories,
         )
 
         WalletUiState.Success(
