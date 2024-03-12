@@ -36,16 +36,15 @@ class WalletViewModel @Inject constructor(
         walletsRepository.getWalletWithTransactions(walletArgs.walletId),
     ) { selectedCategories, currentFinanceType, walletTransactionsCategories ->
         val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
-            walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount }
+            walletTransactionsCategories.transactionsWithCategories.sumOf {
+                it.transaction.amount
+            }
         )
         val sortedTransactions =
             walletTransactionsCategories.transactionsWithCategories.sortedByDescending {
                 it.transaction.date
             }
-        var availableCategories = sortedTransactions
-            .map { it.category }
-            .toSet()
-            .toList()
+        var availableCategories: List<Category?> = emptyList()
 
         val expenses = sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
         val income = sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
