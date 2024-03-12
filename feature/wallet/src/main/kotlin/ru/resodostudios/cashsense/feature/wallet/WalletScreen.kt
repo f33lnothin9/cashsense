@@ -466,7 +466,9 @@ private fun LazyGridScope.transactions(
                     .toKotlinInstant()
                     .formatDate(),
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .animateItemPlacement()
+                    .padding(16.dp),
             )
         }
         items(
