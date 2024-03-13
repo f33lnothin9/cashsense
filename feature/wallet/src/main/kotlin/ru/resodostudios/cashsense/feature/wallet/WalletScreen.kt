@@ -98,8 +98,7 @@ internal fun WalletScreen(
     onWalletEvent: (WalletEvent) -> Unit,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionEvent) -> Unit,
-
-    ) {
+) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -125,7 +124,9 @@ internal fun WalletScreen(
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 Text(
-                                    text = walletState.currentBalance.formatAmountWithCurrency(wallet.currency),
+                                    text = walletState.currentBalance.formatAmountWithCurrency(
+                                        wallet.currency
+                                    ),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.labelMedium,
@@ -283,6 +284,7 @@ private fun FinancePanel(
                             )
                         }
                     }
+
                     FinanceType.EXPENSES -> {
                         DetailedFinanceCard(
                             title = walletExpenses.formatAmountWithCurrency(
@@ -298,6 +300,7 @@ private fun FinancePanel(
                                 .fillMaxWidth(),
                         )
                     }
+
                     FinanceType.INCOME -> {
                         DetailedFinanceCard(
                             title = walletIncome.formatAmountWithCurrency(
@@ -423,8 +426,13 @@ private fun FilterPanel(
                 selected = selected,
                 onClick = {
                     when (selectedCategories.contains(category)) {
-                        true -> category?.let { onWalletEvent(WalletEvent.RemoveFromSelectedCategories(it)) }
-                        false -> category?.let { onWalletEvent(WalletEvent.AddToSelectedCategories(it)) }
+                        true -> category?.let {
+                            onWalletEvent(WalletEvent.RemoveFromSelectedCategories(it))
+                        }
+
+                        false -> category?.let {
+                            onWalletEvent(WalletEvent.AddToSelectedCategories(it))
+                        }
                     }
                 },
                 label = { Text(text = category?.title.toString()) },
@@ -433,7 +441,9 @@ private fun FilterPanel(
                         imageVector = if (selected) {
                             ImageVector.vectorResource(CsIcons.Confirm)
                         } else {
-                            ImageVector.vectorResource(StoredIcon.asRes(category?.iconId ?: StoredIcon.CATEGORY.storedId))
+                            ImageVector.vectorResource(
+                                StoredIcon.asRes(category?.iconId ?: StoredIcon.CATEGORY.storedId)
+                            )
                         },
                         contentDescription = null,
                         modifier = Modifier.size(FilterChipDefaults.IconSize),

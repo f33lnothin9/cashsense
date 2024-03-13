@@ -3,8 +3,10 @@ package ru.resodostudios.cashsense.core.data.util
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
+import androidx.core.os.trace
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +60,10 @@ internal class TimeZoneBroadcastMonitor @Inject constructor(
                     // If there isn't a zoneId in the intent, fallback to the systemDefault, which should also reflect the change
                     trySend(zoneIdFromIntent ?: TimeZone.currentSystemDefault())
                 }
+            }
+
+            trace("TimeZoneBroadcastReceiver.register") {
+                context.registerReceiver(receiver, IntentFilter(Intent.ACTION_TIMEZONE_CHANGED))
             }
 
             // Send here again, because registering the Broadcast Receiver can take up to several milliseconds.
