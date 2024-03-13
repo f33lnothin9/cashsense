@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,7 +46,8 @@ fun CategoryDialog(
     onCategoryEvent: (CategoryEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (categoryState.isEditing) R.string.feature_category_edit_category else R.string.feature_category_new_category
+    val dialogTitle =
+        if (categoryState.isEditing) R.string.feature_category_edit_category else R.string.feature_category_new_category
     val dialogConfirmText = if (categoryState.isEditing) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
@@ -60,6 +62,7 @@ fun CategoryDialog(
         isConfirmEnabled = categoryState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
+        val focusManager = LocalFocusManager.current
         val titleTextField = remember { FocusRequester() }
 
         Column(
@@ -80,7 +83,11 @@ fun CategoryDialog(
                 leadingIcon = {
                     IconPickerDropdownMenu(
                         currentIconId = categoryState.icon,
-                        onIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) },
+                        onSelectedIconClick = {
+                            focusManager.clearFocus()
+                            onCategoryEvent(CategoryEvent.UpdateIcon(it))
+                        },
+                        onClick = { focusManager.clearFocus() }
                     )
                 },
                 modifier = Modifier.focusRequester(titleTextField),

@@ -24,12 +24,18 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 fun IconPickerDropdownMenu(
     @DrawableRes
     currentIconId: Int,
-    onIconClick: (Int) -> Unit,
+    onSelectedIconClick: (Int) -> Unit,
+    onClick: () -> Unit = {},
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        IconButton(onClick = { expanded = true }) {
+        IconButton(
+            onClick = {
+                onClick()
+                expanded = true
+            }
+        ) {
             Icon(
                 imageVector = ImageVector.vectorResource(StoredIcon.asRes(currentIconId)),
                 contentDescription = null,
@@ -43,7 +49,7 @@ fun IconPickerDropdownMenu(
                 StoredIcon.entries.forEach { icon ->
                     IconButton(
                         onClick = {
-                            onIconClick(icon.storedId)
+                            onSelectedIconClick(icon.storedId)
                             expanded = false
                         }
                     ) {
