@@ -120,13 +120,13 @@ private fun ColumnScope.SettingsPanel(
                     text = stringResource(R.string.feature_settings_dynamic_color),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             },
             trailingContent = {
@@ -138,7 +138,7 @@ private fun ColumnScope.SettingsPanel(
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Confirm),
                                 contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize)
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
                             )
                         }
                     } else {
@@ -152,23 +152,23 @@ private fun ColumnScope.SettingsPanel(
     val options = listOf(
         stringResource(R.string.feature_settings_system),
         stringResource(R.string.feature_settings_light),
-        stringResource(R.string.feature_settings_dark)
+        stringResource(R.string.feature_settings_dark),
     )
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
         options.forEachIndexed { index, label ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
-                selected = settings.darkThemeConfig == DarkThemeConfig.entries[index]
+                selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
             ) {
                 Text(
                     text = label,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
@@ -181,10 +181,10 @@ private fun ColumnScope.SettingsPanel(
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.Policy),
-                contentDescription = null
+                contentDescription = null,
             )
         },
-        modifier = Modifier.clickable { uriHandler.openUri(PRIVACY_POLICY_URL) }
+        modifier = Modifier.clickable { uriHandler.openUri(PRIVACY_POLICY_URL) },
     )
     val context = LocalContext.current
     ListItem(
@@ -192,10 +192,10 @@ private fun ColumnScope.SettingsPanel(
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
-                contentDescription = null
+                contentDescription = null,
             )
         },
-        modifier = Modifier.clickable { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) }
+        modifier = Modifier.clickable { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) },
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     ListItem(
@@ -204,7 +204,7 @@ private fun ColumnScope.SettingsPanel(
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.Info),
-                contentDescription = null
+                contentDescription = null,
             )
         },
     )
@@ -216,7 +216,7 @@ private fun SettingsBottomSheetSectionTitle(text: String) {
         text = text,
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
 
