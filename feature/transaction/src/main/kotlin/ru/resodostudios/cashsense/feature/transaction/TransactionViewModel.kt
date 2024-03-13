@@ -16,6 +16,9 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
+import ru.resodostudios.cashsense.feature.transaction.FinancialType.EXPENSE
+import ru.resodostudios.cashsense.feature.transaction.FinancialType.INCOME
+import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
 
@@ -75,6 +78,12 @@ class TransactionViewModel @Inject constructor(
                 }
             }
 
+            is TransactionEvent.UpdateFinancialType -> {
+                _transactionUiState.update {
+                    it.copy(financialType = event.type)
+                }
+            }
+
             is TransactionEvent.UpdateCategory -> {
                 _transactionUiState.update {
                     it.copy(category = event.category)
@@ -94,7 +103,11 @@ class TransactionViewModel @Inject constructor(
             id = _transactionUiState.value.transactionId.ifEmpty { UUID.randomUUID().toString() },
             walletOwnerId = _transactionUiState.value.walletOwnerId,
             description = _transactionUiState.value.description,
-            amount = _transactionUiState.value.amount.toBigDecimal(),
+            amount = if (_transactionUiState.value.financialType == EXPENSE) {
+                _transactionUiState.value.amount.toBigDecimal().negate()
+            } else {
+                _transactionUiState.value.amount.toBigDecimal().abs()
+            },
             date = if (_transactionUiState.value.date.isBlank()) {
                 Clock.System.now()
             } else {
@@ -116,7 +129,9 @@ class TransactionViewModel @Inject constructor(
             }.join()
             if (transactionCategoryCrossRef != null) {
                 launch {
-                    transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
+                    transactionsRepository.upsertTransactionCategoryCrossRef(
+                        transactionCategoryCrossRef
+                    )
                 }
             }
         }
@@ -137,6 +152,7 @@ class TransactionViewModel @Inject constructor(
                         amount = "",
                         category = Category(),
                         date = "",
+                        financialType = EXPENSE,
                     )
                 }
                 .collect {
@@ -144,6 +160,7 @@ class TransactionViewModel @Inject constructor(
                         transactionId = it.transaction.id,
                         description = it.transaction.description.toString(),
                         amount = it.transaction.amount.toString(),
+                        financialType = if (it.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
                         date = it.transaction.date.toString(),
                         category = it.category,
                         isEditing = true,
@@ -151,6 +168,11 @@ class TransactionViewModel @Inject constructor(
                 }
         }
     }
+}
+
+enum class FinancialType {
+    EXPENSE,
+    INCOME,
 }
 
 data class TransactionUiState(
@@ -161,5 +183,6 @@ data class TransactionUiState(
     val currency: String = Currency.USD.name,
     val date: String = "",
     val category: Category? = Category(),
+    val financialType: FinancialType = EXPENSE,
     val isEditing: Boolean = false,
 )

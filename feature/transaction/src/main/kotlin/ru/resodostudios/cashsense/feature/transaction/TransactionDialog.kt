@@ -12,6 +12,9 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,7 +65,10 @@ fun TransactionDialog(
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalMaterial3Api::class,
+)
 @Composable
 fun TransactionDialog(
     transactionState: TransactionUiState,
@@ -109,6 +115,30 @@ fun TransactionDialog(
                             .focusRequester(amountTextField)
                             .focusProperties { next = descTextField },
                     )
+                    val financialTypes = listOf(
+                        stringResource(R.string.feature_transaction_expense),
+                        stringResource(R.string.feature_transaction_income),
+                    )
+                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                        financialTypes.forEachIndexed { index, label ->
+                            SegmentedButton(
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = financialTypes.size,
+                                ),
+                                onClick = {
+                                    onTransactionEvent(TransactionEvent.UpdateFinancialType(FinancialType.entries[index]))
+                                },
+                                selected = transactionState.financialType == FinancialType.entries[index],
+                            ) {
+                                Text(
+                                    text = label,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
                     CategoryExposedDropdownMenuBox(
                         currentCategory = transactionState.category,
                         categories = categoriesState.categories,
@@ -145,9 +175,7 @@ private fun CategoryExposedDropdownMenuBox(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    var iconId by rememberSaveable {
-        mutableIntStateOf(currentCategory?.iconId ?: 0)
-    }
+    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -211,7 +239,11 @@ private fun CategoryExposedDropdownMenuBox(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId ?: 0)),
+                            imageVector = ImageVector.vectorResource(
+                                StoredIcon.asRes(
+                                    category.iconId ?: 0
+                                )
+                            ),
                             contentDescription = null,
                         )
                     },
