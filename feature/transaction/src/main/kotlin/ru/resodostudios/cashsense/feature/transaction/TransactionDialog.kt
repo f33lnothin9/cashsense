@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -24,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -65,10 +65,7 @@ fun TransactionDialog(
     )
 }
 
-@OptIn(
-    ExperimentalComposeUiApi::class,
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDialog(
     transactionState: TransactionUiState,
@@ -119,6 +116,10 @@ fun TransactionDialog(
                         stringResource(R.string.feature_transaction_expense),
                         stringResource(R.string.feature_transaction_income),
                     )
+                    val financialIcons = listOf(
+                        CsIcons.TrendingDown,
+                        CsIcons.TrendingUp,
+                    )
                     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                         financialTypes.forEachIndexed { index, label ->
                             SegmentedButton(
@@ -130,6 +131,15 @@ fun TransactionDialog(
                                     onTransactionEvent(TransactionEvent.UpdateFinancialType(FinancialType.entries[index]))
                                 },
                                 selected = transactionState.financialType == FinancialType.entries[index],
+                                icon = {
+                                    SegmentedButtonDefaults.Icon(active = transactionState.financialType == FinancialType.entries[index]) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(financialIcons[index]),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
+                                        )
+                                    }
+                                }
                             ) {
                                 Text(
                                     text = label,
