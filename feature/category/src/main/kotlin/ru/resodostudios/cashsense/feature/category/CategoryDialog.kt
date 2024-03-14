@@ -83,11 +83,8 @@ fun CategoryDialog(
                 leadingIcon = {
                     IconPickerDropdownMenu(
                         currentIconId = categoryState.icon,
-                        onSelectedIconClick = {
-                            focusManager.clearFocus()
-                            onCategoryEvent(CategoryEvent.UpdateIcon(it))
-                        },
-                        onClick = { focusManager.clearFocus() }
+                        onSelectedIconClick = { onCategoryEvent(CategoryEvent.UpdateIcon(it)) },
+                        onClick = { focusManager.clearFocus() },
                     )
                 },
                 modifier = Modifier.focusRequester(titleTextField),
