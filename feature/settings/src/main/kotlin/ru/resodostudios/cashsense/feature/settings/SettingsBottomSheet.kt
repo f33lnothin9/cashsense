@@ -66,7 +66,7 @@ fun SettingsBottomSheet(
     settingsUiState: SettingsUiState,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit
+    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -112,7 +112,7 @@ private fun ColumnScope.SettingsPanel(
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    SettingsBottomSheetSectionTitle(text = stringResource(R.string.feature_settings_theme))
+    SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_theme))
     AnimatedVisibility(visible = supportDynamicColor) {
         ListItem(
             headlineContent = {
@@ -154,6 +154,11 @@ private fun ColumnScope.SettingsPanel(
         stringResource(R.string.feature_settings_light),
         stringResource(R.string.feature_settings_dark),
     )
+    val optionIcons = listOf(
+        CsIcons.Android,
+        CsIcons.LightMode,
+        CsIcons.DarkMode,
+    )
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
@@ -164,6 +169,15 @@ private fun ColumnScope.SettingsPanel(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
                 selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
+                icon = {
+                    SegmentedButtonDefaults.Icon(active = settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(optionIcons[index]),
+                            contentDescription = null,
+                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
+                        )
+                    }
+                }
             ) {
                 Text(
                     text = label,

@@ -20,6 +20,7 @@ object CsIcons {
     val TrendingDown = R.drawable.ic_outlined_trending_down
     val Wallet = R.drawable.ic_outlined_wallet
     val Add = R.drawable.ic_outlined_add
+    val Android = R.drawable.ic_outlined_android
     val Edit = R.drawable.ic_outlined_edit
     val MoreVert = R.drawable.ic_outlined_more_vert
     val ArrowBack = R.drawable.ic_outlined_arrow_back
@@ -27,6 +28,7 @@ object CsIcons {
     val AccountBalance = R.drawable.ic_outlined_account_balance
     val Apparel = R.drawable.ic_outlined_apparel
     val Chair = R.drawable.ic_outlined_chair
+    val DarkMode = R.drawable.ic_outlined_dark_mode
     val DirectionsBus = R.drawable.ic_outlined_directions_bus
     val Exercise = R.drawable.ic_outlined_exercise
     val Fastfood = R.drawable.ic_outlined_fastfood
@@ -34,6 +36,7 @@ object CsIcons {
     val Handyman = R.drawable.ic_outlined_handyman
     val HistoryEdu = R.drawable.ic_outlined_history_edu
     val Language = R.drawable.ic_outlined_language
+    val LightMode = R.drawable.ic_outlined_light_mode
     val LocalBar = R.drawable.ic_outlined_local_bar
     val LocalGasStation = R.drawable.ic_outlined_local_gas_station
     val Memory = R.drawable.ic_outlined_memory
