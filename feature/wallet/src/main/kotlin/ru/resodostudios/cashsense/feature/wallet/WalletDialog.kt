@@ -72,29 +72,29 @@ fun WalletDialog(
             OutlinedTextField(
                 value = walletDialogState.title,
                 onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateTitle(it)) },
+                modifier = Modifier
+                    .focusRequester(titleTextField)
+                    .focusProperties { next = initialBalanceTextField },
+                label = { Text(text = stringResource(uiR.string.title)) },
+                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
+                supportingText = { Text(text = stringResource(uiR.string.required)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
-                label = { Text(text = stringResource(uiR.string.title)) },
                 maxLines = 1,
-                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(text = stringResource(uiR.string.required)) },
-                modifier = Modifier
-                    .focusRequester(titleTextField)
-                    .focusProperties { next = initialBalanceTextField },
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it)) },
-                placeholder = { Text(text = "100") },
+                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.validateAmount().first)) },
+                modifier = Modifier.focusRequester(initialBalanceTextField),
                 label = { Text(text = stringResource(R.string.feature_wallet_initial_balance)) },
+                placeholder = { Text(text = "100") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
                 maxLines = 1,
-                modifier = Modifier.focusRequester(initialBalanceTextField),
             )
             CurrencyExposedDropdownMenuBox(
                 currencyName = walletDialogState.currency,
@@ -102,9 +102,7 @@ fun WalletDialog(
             )
         }
         LaunchedEffect(Unit) {
-            if (!walletDialogState.isEditing) {
-                titleTextField.requestFocus()
-            }
+            if (!walletDialogState.isEditing) titleTextField.requestFocus()
         }
     }
 }
