@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -53,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -171,15 +170,13 @@ internal fun WalletScreen(
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { paddingValues ->
                 if (transactionsAndCategories.isNotEmpty()) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(300.dp),
+                    LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues),
                     ) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
+                        item {
                             FinancePanel(
                                 walletState = walletState,
                                 onWalletEvent = onWalletEvent,
@@ -455,7 +452,7 @@ private fun FilterPanel(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private fun LazyGridScope.transactions(
+private fun LazyListScope.transactions(
     transactionsWithCategories: List<TransactionWithCategory>,
     currency: String,
     onTransactionClick: (String) -> Unit,
@@ -470,12 +467,11 @@ private fun LazyGridScope.transactions(
         .map { it.key to it.value }
 
     groupedTransactionsAndCategories.forEach { group ->
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            Text(
+        stickyHeader {
+            CsTag(
                 text = group.first
                     .toKotlinInstant()
                     .formatDate(),
-                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .animateItemPlacement()
                     .padding(16.dp),
