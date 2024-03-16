@@ -104,9 +104,7 @@ class TransactionViewModel @Inject constructor(
             walletOwnerId = _transactionUiState.value.walletOwnerId,
             description = _transactionUiState.value.description,
             amount = if (_transactionUiState.value.financialType == EXPENSE) {
-                _transactionUiState.value.amount.toBigDecimal().apply {
-                    if (this > BigDecimal.ZERO ) negate()
-                }
+                _transactionUiState.value.amount.toBigDecimal().negate()
             } else {
                 _transactionUiState.value.amount.toBigDecimal().abs()
             },
