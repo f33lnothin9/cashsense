@@ -12,7 +12,7 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 8
+        versionCode = 9
         versionName = "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -28,8 +28,8 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
+            applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
