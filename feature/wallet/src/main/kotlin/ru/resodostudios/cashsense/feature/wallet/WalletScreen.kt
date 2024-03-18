@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -170,19 +169,14 @@ internal fun WalletScreen(
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { paddingValues ->
                 if (transactionsAndCategories.isNotEmpty()) {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues),
-                    ) {
+                    LazyColumn(modifier = Modifier.padding(paddingValues)) {
                         item {
                             FinancePanel(
                                 walletState = walletState,
                                 onWalletEvent = onWalletEvent,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                                    .animateContentSize(),
                             )
                         }
                         transactions(
@@ -254,14 +248,13 @@ private fun FinancePanel(
             Crossfade(
                 targetState = walletState.currentFinanceType,
                 label = "financePanel",
-                modifier = Modifier.animateContentSize(),
+                modifier = modifier,
             ) { financeType ->
                 when (financeType) {
                     FinanceType.DEFAULT -> {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = modifier,
                         ) {
                             FinanceCard(
                                 title = walletExpenses.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
@@ -292,9 +285,7 @@ private fun FinancePanel(
                             selectedCategories = walletState.selectedCategories,
                             onWalletEvent = onWalletEvent,
                             onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.DEFAULT)) },
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
 
@@ -308,9 +299,7 @@ private fun FinancePanel(
                             selectedCategories = walletState.selectedCategories,
                             onWalletEvent = onWalletEvent,
                             onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.DEFAULT)) },
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 }
@@ -474,7 +463,7 @@ private fun LazyListScope.transactions(
                     .formatDate(),
                 modifier = Modifier
                     .animateItemPlacement()
-                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+                    .padding(16.dp),
             )
         }
         items(
