@@ -251,7 +251,7 @@ private fun FinancePanel(
                 modifier = modifier,
             ) { financeType ->
                 when (financeType) {
-                    FinanceType.DEFAULT -> {
+                    FinanceType.NONE -> {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -284,7 +284,7 @@ private fun FinancePanel(
                             availableCategories = walletState.availableCategories,
                             selectedCategories = walletState.selectedCategories,
                             onWalletEvent = onWalletEvent,
-                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.DEFAULT)) },
+                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.NONE)) },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -298,7 +298,7 @@ private fun FinancePanel(
                             availableCategories = walletState.availableCategories,
                             selectedCategories = walletState.selectedCategories,
                             onWalletEvent = onWalletEvent,
-                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.DEFAULT)) },
+                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.NONE)) },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -349,7 +349,7 @@ private fun DetailedFinanceCard(
     title: String,
     @StringRes
     supportingTextId: Int,
-    availableCategories: List<Category?>,
+    availableCategories: List<Category>,
     selectedCategories: List<Category>,
     onWalletEvent: (WalletEvent) -> Unit,
     onBackClick: () -> Unit,
@@ -395,7 +395,7 @@ private fun DetailedFinanceCard(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FilterPanel(
-    availableCategories: List<Category?>,
+    availableCategories: List<Category>,
     selectedCategories: List<Category>,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -412,24 +412,18 @@ private fun FilterPanel(
                 selected = selected,
                 onClick = {
                     when (selectedCategories.contains(category)) {
-                        true -> category?.let {
-                            onWalletEvent(WalletEvent.RemoveFromSelectedCategories(it))
-                        }
+                        true -> onWalletEvent(WalletEvent.RemoveFromSelectedCategories(category))
 
-                        false -> category?.let {
-                            onWalletEvent(WalletEvent.AddToSelectedCategories(it))
-                        }
+                        false -> onWalletEvent(WalletEvent.AddToSelectedCategories(category))
                     }
                 },
-                label = { Text(text = category?.title.toString()) },
+                label = { Text(text = category.title.toString()) },
                 leadingIcon = {
                     Icon(
                         imageVector = if (selected) {
                             ImageVector.vectorResource(CsIcons.Confirm)
                         } else {
-                            ImageVector.vectorResource(
-                                StoredIcon.asRes(category?.iconId ?: StoredIcon.CATEGORY.storedId)
-                            )
+                            ImageVector.vectorResource(StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId))
                         },
                         contentDescription = null,
                         modifier = Modifier.size(FilterChipDefaults.IconSize),

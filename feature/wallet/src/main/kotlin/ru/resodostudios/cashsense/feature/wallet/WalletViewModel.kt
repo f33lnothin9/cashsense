@@ -16,6 +16,10 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
+import ru.resodostudios.cashsense.feature.wallet.DateType.MONTH
+import ru.resodostudios.cashsense.feature.wallet.DateType.NONE
+import ru.resodostudios.cashsense.feature.wallet.DateType.WEEK
+import ru.resodostudios.cashsense.feature.wallet.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.navigation.WalletArgs
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -29,15 +33,17 @@ class WalletViewModel @Inject constructor(
     private val walletArgs: WalletArgs = WalletArgs(savedStateHandle)
 
     private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
-    private val availableCategoriesState = MutableStateFlow<List<Category?>>(emptyList())
-    private val currentFinanceTypeState = MutableStateFlow(FinanceType.DEFAULT)
+    private val availableCategoriesState = MutableStateFlow<List<Category>>(emptyList())
+    private val currentFinanceTypeState = MutableStateFlow(FinanceType.NONE)
+    private val currentDateTypeState = MutableStateFlow(NONE)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         selectedCategoriesState.asStateFlow(),
         availableCategoriesState.asStateFlow(),
         currentFinanceTypeState.asStateFlow(),
+        currentDateTypeState.asStateFlow(),
         walletsRepository.getWalletWithTransactions(walletArgs.walletId),
-    ) { selectedCategories, availableCategories, currentFinanceType, walletTransactionsCategories ->
+    ) { selectedCategories, availableCategories, currentFinanceType, currentDateType, walletTransactionsCategories ->
         val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
             walletTransactionsCategories.transactionsWithCategories.sumOf {
                 it.transaction.amount
@@ -52,10 +58,17 @@ class WalletViewModel @Inject constructor(
         val income = sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
 
         val transactionsCategories = when (currentFinanceType) {
-            FinanceType.DEFAULT -> sortedTransactions
+            FinanceType.NONE -> sortedTransactions
             FinanceType.EXPENSES -> calculateTransactionsCategories(expenses)
             FinanceType.INCOME -> calculateTransactionsCategories(income)
         }
+        when (currentDateType) {
+            NONE -> {}
+            WEEK -> {}
+            MONTH -> {}
+            YEAR -> {}
+        }
+
         val walletData = WalletWithTransactionsAndCategories(
             wallet = walletTransactionsCategories.wallet,
             transactionsWithCategories = transactionsCategories,
@@ -97,7 +110,7 @@ class WalletViewModel @Inject constructor(
             .map { it.category }
             .toSet()
             .toList()
-            .also { availableCategoriesState.value = it }
+            .also { availableCategoriesState.value = it.filterNotNull() }
         return if (selectedCategoriesState.value.isNotEmpty()) {
             transactionsCategories
                 .filter { selectedCategoriesState.value.contains(it.category) }
@@ -109,9 +122,16 @@ class WalletViewModel @Inject constructor(
 }
 
 enum class FinanceType {
-    DEFAULT,
+    NONE,
     EXPENSES,
     INCOME,
+}
+
+enum class DateType {
+    NONE,
+    WEEK,
+    MONTH,
+    YEAR,
 }
 
 sealed interface WalletUiState {
@@ -120,7 +140,7 @@ sealed interface WalletUiState {
 
     data class Success(
         val currentBalance: BigDecimal,
-        val availableCategories: List<Category?>,
+        val availableCategories: List<Category>,
         val selectedCategories: List<Category>,
         val currentFinanceType: FinanceType,
         val walletTransactionsCategories: WalletWithTransactionsAndCategories,
