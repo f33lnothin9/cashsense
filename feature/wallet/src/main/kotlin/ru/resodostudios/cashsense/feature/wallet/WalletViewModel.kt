@@ -12,14 +12,19 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
+import ru.resodostudios.cashsense.feature.wallet.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.DateType.MONTH
-import ru.resodostudios.cashsense.feature.wallet.DateType.NONE
-import ru.resodostudios.cashsense.feature.wallet.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.DateType.YEAR
+import ru.resodostudios.cashsense.feature.wallet.FinanceType.EXPENSES
+import ru.resodostudios.cashsense.feature.wallet.FinanceType.INCOME
+import ru.resodostudios.cashsense.feature.wallet.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.navigation.WalletArgs
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -34,8 +39,8 @@ class WalletViewModel @Inject constructor(
 
     private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
     private val availableCategoriesState = MutableStateFlow<List<Category>>(emptyList())
-    private val currentFinanceTypeState = MutableStateFlow(FinanceType.NONE)
-    private val currentDateTypeState = MutableStateFlow(NONE)
+    private val currentFinanceTypeState = MutableStateFlow(NONE)
+    private val currentDateTypeState = MutableStateFlow(ALL)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         selectedCategoriesState.asStateFlow(),
@@ -53,22 +58,29 @@ class WalletViewModel @Inject constructor(
             walletTransactionsCategories.transactionsWithCategories.sortedByDescending {
                 it.transaction.date
             }
-
-        val expenses = sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
-        val income = sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
-
         val transactionsCategories = when (currentFinanceType) {
-            FinanceType.NONE -> sortedTransactions
-            FinanceType.EXPENSES -> calculateTransactionsCategories(expenses)
-            FinanceType.INCOME -> calculateTransactionsCategories(income)
-        }
-        when (currentDateType) {
-            NONE -> {}
-            WEEK -> {}
-            MONTH -> {}
-            YEAR -> {}
-        }
+            NONE -> sortedTransactions
+            EXPENSES -> calculateTransactionsCategories(
+                sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
+            )
 
+            INCOME -> calculateTransactionsCategories(
+                sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
+            )
+        }.run {
+            when (currentDateType) {
+                ALL -> this
+                MONTH -> filter {
+                    it.transaction.date.toLocalDateTime(TimeZone.currentSystemDefault()).month ==
+                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).month
+                }
+
+                YEAR -> filter {
+                    it.transaction.date.toLocalDateTime(TimeZone.currentSystemDefault()).year ==
+                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
+                }
+            }
+        }
         val walletData = WalletWithTransactionsAndCategories(
             wallet = walletTransactionsCategories.wallet,
             transactionsWithCategories = transactionsCategories,
@@ -128,8 +140,7 @@ enum class FinanceType {
 }
 
 enum class DateType {
-    NONE,
-    WEEK,
+    ALL,
     MONTH,
     YEAR,
 }
