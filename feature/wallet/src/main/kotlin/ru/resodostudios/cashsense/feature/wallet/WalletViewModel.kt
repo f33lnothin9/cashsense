@@ -12,13 +12,12 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
+import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
+import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.DateType.YEAR
@@ -70,15 +69,8 @@ class WalletViewModel @Inject constructor(
         }.run {
             when (currentDateType) {
                 ALL -> this
-                MONTH -> filter {
-                    it.transaction.date.toLocalDateTime(TimeZone.currentSystemDefault()).month ==
-                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).month
-                }
-
-                YEAR -> filter {
-                    it.transaction.date.toLocalDateTime(TimeZone.currentSystemDefault()).year ==
-                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
-                }
+                MONTH -> filter { it.transaction.date.getZonedDateTime().month == getCurrentZonedDateTime().month }
+                YEAR -> filter { it.transaction.date.getZonedDateTime().year == getCurrentZonedDateTime().year }
             }
         }
         val walletData = WalletWithTransactionsAndCategories(
