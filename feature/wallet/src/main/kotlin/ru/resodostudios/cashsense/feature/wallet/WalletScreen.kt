@@ -308,11 +308,7 @@ private fun FinancePanel(
                     stringResource(R.string.feature_wallet_month),
                     stringResource(R.string.feature_wallet_year),
                 )
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier
-                        .animateContentSize()
-                        .fillMaxWidth(),
-                ) {
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     dateTypes.forEachIndexed { index, label ->
                         SegmentedButton(
                             shape = SegmentedButtonDefaults.itemShape(index = index, count = dateTypes.size),
@@ -408,7 +404,7 @@ private fun DetailedFinanceCard(
             modifier = Modifier.padding(start = 16.dp),
             style = MaterialTheme.typography.labelLarge,
         )
-        FilterPanel(
+        CategoryFilterPanel(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
             onWalletEvent = onWalletEvent,
@@ -419,7 +415,7 @@ private fun DetailedFinanceCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun FilterPanel(
+private fun CategoryFilterPanel(
     availableCategories: List<Category>,
     selectedCategories: List<Category>,
     onWalletEvent: (WalletEvent) -> Unit,
