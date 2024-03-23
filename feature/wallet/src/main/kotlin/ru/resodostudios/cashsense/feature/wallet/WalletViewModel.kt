@@ -20,12 +20,14 @@ import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.DateType.MONTH
+import ru.resodostudios.cashsense.feature.wallet.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.navigation.WalletArgs
 import java.math.BigDecimal
+import java.time.temporal.WeekFields
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,6 +71,13 @@ class WalletViewModel @Inject constructor(
         }.run {
             when (currentDateType) {
                 ALL -> this
+                WEEK -> filter {
+                    it.transaction.date
+                        .getZonedDateTime()
+                        .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
+                            getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
+                }
+
                 MONTH -> filter { it.transaction.date.getZonedDateTime().month == getCurrentZonedDateTime().month }
                 YEAR -> filter { it.transaction.date.getZonedDateTime().year == getCurrentZonedDateTime().year }
             }
@@ -133,6 +142,7 @@ enum class FinanceType {
 
 enum class DateType {
     ALL,
+    WEEK,
     MONTH,
     YEAR,
 }

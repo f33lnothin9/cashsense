@@ -5,6 +5,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import java.time.format.DateTimeFormatter
@@ -33,6 +34,6 @@ fun Instant.formatDate(
     }
 }
 
-fun Instant.getZonedDateTime() = toLocalDateTime(TimeZone.currentSystemDefault())
+fun Instant.getZonedDateTime() = toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime()
 
-fun getCurrentZonedDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+fun getCurrentZonedDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime()
