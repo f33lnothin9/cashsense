@@ -29,6 +29,9 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -67,7 +70,6 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.temporal.ChronoUnit
-import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -105,9 +107,6 @@ internal fun WalletScreen(
     when (walletState) {
         WalletUiState.Loading -> LoadingState()
         is WalletUiState.Success -> {
-            val wallet = walletState.walletTransactionsCategories.wallet
-            val transactionsAndCategories = walletState.walletTransactionsCategories.transactionsWithCategories
-
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
             Scaffold(
@@ -117,14 +116,12 @@ internal fun WalletScreen(
                         title = {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
-                                    text = wallet.title,
+                                    text = walletState.wallet.title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 Text(
-                                    text = walletState.currentBalance.formatAmountWithCurrency(
-                                        wallet.currency
-                                    ),
+                                    text = walletState.currentBalance.formatAmountWithCurrency(walletState.wallet.currency),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.labelMedium,
@@ -142,7 +139,7 @@ internal fun WalletScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
+                                    onTransactionEvent(TransactionEvent.UpdateWalletId(walletState.wallet.id))
                                     onTransactionEvent(TransactionEvent.UpdateId(""))
                                     showTransactionDialog = true
                                 }
@@ -154,12 +151,12 @@ internal fun WalletScreen(
                             }
                             EditAndDeleteDropdownMenu(
                                 onEdit = {
-                                    onWalletDialogEvent(WalletDialogEvent.UpdateId(wallet.id))
+                                    onWalletDialogEvent(WalletDialogEvent.UpdateId(walletState.wallet.id))
                                     showWalletDialog = true
                                 },
                                 onDelete = {
                                     onBackClick()
-                                    onWalletDialogEvent(WalletDialogEvent.Delete(wallet.id))
+                                    onWalletDialogEvent(WalletDialogEvent.Delete(walletState.wallet.id))
                                 },
                             )
                         },
@@ -168,33 +165,35 @@ internal fun WalletScreen(
                 },
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { paddingValues ->
-                if (transactionsAndCategories.isNotEmpty()) {
-                    LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                        item {
-                            FinancePanel(
-                                walletState = walletState,
-                                onWalletEvent = onWalletEvent,
-                                modifier = Modifier
-                                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                                    .animateContentSize(),
-                            )
-                        }
+                LazyColumn(Modifier.padding(paddingValues)) {
+                    item {
+                        FinancePanel(
+                            walletState = walletState,
+                            onWalletEvent = onWalletEvent,
+                            modifier = Modifier
+                                .animateContentSize()
+                                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        )
+                    }
+                    if (walletState.transactionsCategories.isNotEmpty()) {
                         transactions(
-                            transactionsWithCategories = transactionsAndCategories,
-                            currency = wallet.currency,
+                            transactionsWithCategories = walletState.transactionsCategories,
+                            currency = walletState.wallet.currency,
                             onTransactionClick = {
-                                onTransactionEvent(TransactionEvent.UpdateWalletId(wallet.id))
+                                onTransactionEvent(TransactionEvent.UpdateWalletId(walletState.wallet.id))
                                 onTransactionEvent(TransactionEvent.UpdateId(it))
-                                onTransactionEvent(TransactionEvent.UpdateCurrency(wallet.currency))
+                                onTransactionEvent(TransactionEvent.UpdateCurrency(walletState.wallet.currency))
                                 showTransactionBottomSheet = true
                             },
                         )
+                    } else {
+                        item {
+                            EmptyState(
+                                messageRes = transactionR.string.feature_transaction_transactions_empty,
+                                animationRes = transactionR.raw.anim_transactions_empty,
+                            )
+                        }
                     }
-                } else {
-                    EmptyState(
-                        messageRes = transactionR.string.feature_transaction_transactions_empty,
-                        animationRes = transactionR.raw.anim_transactions_empty,
-                    )
                 }
             }
             if (showWalletDialog) {
@@ -218,6 +217,7 @@ internal fun WalletScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FinancePanel(
     walletState: WalletUiState,
@@ -227,80 +227,102 @@ private fun FinancePanel(
     when (walletState) {
         WalletUiState.Loading -> Unit
         is WalletUiState.Success -> {
-            val transactionsCategories = walletState.walletTransactionsCategories.transactionsWithCategories
-            val sumOfTransactions = transactionsCategories.sumOf {
+            val sumOfTransactions = walletState.transactionsCategories.sumOf {
                 it.transaction.amount.abs()
             }
 
-            val walletExpenses = transactionsCategories
+            val walletExpenses = walletState.transactionsCategories
                 .asSequence()
                 .filter { it.transaction.amount < BigDecimal.ZERO }
                 .sumOf { it.transaction.amount.abs() }
-            val walletIncome = transactionsCategories
+            val walletIncome = walletState.transactionsCategories
                 .asSequence()
                 .filter { it.transaction.amount > BigDecimal.ZERO }
                 .sumOf { it.transaction.amount }
 
-            val expensesProgress = walletExpenses
+            val expensesProgress = if (walletState.transactionsCategories.isNotEmpty()) walletExpenses
                 .divide(sumOfTransactions, MathContext.DECIMAL32)
-                .toFloat()
+                .toFloat() else 0f
 
-            Crossfade(
-                targetState = walletState.currentFinanceType,
-                label = "financePanel",
-                modifier = modifier,
-            ) { financeType ->
-                when (financeType) {
-                    FinanceType.NONE -> {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            FinanceCard(
-                                title = walletExpenses.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
+            Column {
+                Crossfade(
+                    targetState = walletState.currentFinanceType,
+                    label = "financePanel",
+                    modifier = modifier,
+                ) { financeType ->
+                    when (financeType) {
+                        FinanceType.NONE -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                FinanceCard(
+                                    title = walletExpenses.formatAmountWithCurrency(walletState.wallet.currency),
+                                    supportingTextId = R.string.feature_wallet_expenses,
+                                    indicatorProgress = expensesProgress,
+                                    modifier = Modifier.weight(1f),
+                                    onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.EXPENSES)) },
+                                    enabled = walletExpenses != BigDecimal.ZERO,
+                                )
+                                FinanceCard(
+                                    title = walletIncome.formatAmountWithCurrency(walletState.wallet.currency),
+                                    supportingTextId = R.string.feature_wallet_income,
+                                    indicatorProgress = 1.0f - expensesProgress,
+                                    modifier = Modifier.weight(1f),
+                                    onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.INCOME)) },
+                                    enabled = walletIncome != BigDecimal.ZERO,
+                                )
+                            }
+                        }
+
+                        FinanceType.EXPENSES -> {
+                            DetailedFinanceCard(
+                                title = walletExpenses.formatAmountWithCurrency(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_expenses,
-                                indicatorProgress = expensesProgress,
-                                modifier = Modifier.weight(1f),
-                                onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.EXPENSES)) },
-                                enabled = walletExpenses != BigDecimal.ZERO,
+                                availableCategories = walletState.availableCategories,
+                                selectedCategories = walletState.selectedCategories,
+                                onWalletEvent = onWalletEvent,
+                                onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.NONE)) },
+                                modifier = Modifier.fillMaxWidth(),
                             )
-                            FinanceCard(
-                                title = walletIncome.formatAmountWithCurrency(walletState.walletTransactionsCategories.wallet.currency),
+                        }
+
+                        FinanceType.INCOME -> {
+                            DetailedFinanceCard(
+                                title = walletIncome.formatAmountWithCurrency(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_income,
-                                indicatorProgress = 1.0f - expensesProgress,
-                                modifier = Modifier.weight(1f),
-                                onClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.INCOME)) },
-                                enabled = walletIncome != BigDecimal.ZERO,
+                                availableCategories = walletState.availableCategories,
+                                selectedCategories = walletState.selectedCategories,
+                                onWalletEvent = onWalletEvent,
+                                onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.NONE)) },
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }
-
-                    FinanceType.EXPENSES -> {
-                        DetailedFinanceCard(
-                            title = walletExpenses.formatAmountWithCurrency(
-                                walletState.walletTransactionsCategories.wallet.currency
-                            ),
-                            supportingTextId = R.string.feature_wallet_expenses,
-                            availableCategories = walletState.availableCategories,
-                            selectedCategories = walletState.selectedCategories,
-                            onWalletEvent = onWalletEvent,
-                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.NONE)) },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-
-                    FinanceType.INCOME -> {
-                        DetailedFinanceCard(
-                            title = walletIncome.formatAmountWithCurrency(
-                                walletState.walletTransactionsCategories.wallet.currency
-                            ),
-                            supportingTextId = R.string.feature_wallet_income,
-                            availableCategories = walletState.availableCategories,
-                            selectedCategories = walletState.selectedCategories,
-                            onWalletEvent = onWalletEvent,
-                            onBackClick = { onWalletEvent(WalletEvent.UpdateFinanceType(FinanceType.NONE)) },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                }
+                val dateTypes = listOf(
+                    stringResource(R.string.feature_wallet_all),
+                    stringResource(R.string.feature_wallet_week),
+                    stringResource(R.string.feature_wallet_month),
+                    stringResource(R.string.feature_wallet_year),
+                )
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth(),
+                ) {
+                    dateTypes.forEachIndexed { index, label ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = dateTypes.size),
+                            onClick = { onWalletEvent(WalletEvent.UpdateDateType(DateType.entries[index])) },
+                            selected = walletState.currentDateType == DateType.entries[index],
+                        ) {
+                            Text(
+                                text = label,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
                 }
             }
@@ -324,23 +346,24 @@ private fun FinanceCard(
         onClick = onClick,
         enabled = enabled,
     ) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 1,
-        )
-        Text(
-            text = stringResource(supportingTextId),
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.labelMedium,
-        )
-        LinearProgressIndicator(
-            progress = { indicatorProgress },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        )
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = title,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+            )
+            Text(
+                text = stringResource(supportingTextId),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            LinearProgressIndicator(
+                progress = { if (enabled) indicatorProgress else 0f },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 
@@ -480,7 +503,7 @@ private fun LazyListScope.transactions(
                 },
                 supportingContent = {
                     Text(
-                        text = category?.title ?: stringResource(uiR.string.none),
+                        text = category?.title ?: stringResource(ru.resodostudios.cashsense.core.ui.R.string.none),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )

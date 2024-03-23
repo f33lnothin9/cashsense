@@ -7,4 +7,8 @@
     <string name="feature_wallet_expenses">Расходы</string>
     <string name="feature_wallet_wallets_empty">Здесь будут ваши кошельки</string>
     <string name="feature_wallet_menu_icon_description">Меню кошелька</string>
+    <string name="feature_wallet_all">Все</string>
+    <string name="feature_wallet_week">Неделя</string>
+    <string name="feature_wallet_month">Месяц</string>
+    <string name="feature_wallet_year">Год</string>
 </resources>

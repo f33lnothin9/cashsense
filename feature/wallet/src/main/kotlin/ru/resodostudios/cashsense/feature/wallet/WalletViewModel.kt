@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.DateType.ALL
@@ -82,17 +82,15 @@ class WalletViewModel @Inject constructor(
                 YEAR -> filter { it.transaction.date.getZonedDateTime().year == getCurrentZonedDateTime().year }
             }
         }
-        val walletData = WalletWithTransactionsAndCategories(
-            wallet = walletTransactionsCategories.wallet,
-            transactionsWithCategories = transactionsCategories,
-        )
 
         WalletUiState.Success(
             currentBalance = currentBalance,
             availableCategories = availableCategories.minus(Category()),
             selectedCategories = selectedCategories,
             currentFinanceType = currentFinanceType,
-            walletTransactionsCategories = walletData,
+            currentDateType = currentDateType,
+            wallet = walletTransactionsCategories.wallet,
+            transactionsCategories = transactionsCategories,
         )
     }
         .catch { WalletUiState.Loading }
@@ -114,6 +112,10 @@ class WalletViewModel @Inject constructor(
 
             is WalletEvent.UpdateFinanceType -> {
                 currentFinanceTypeState.update { event.financeType }
+            }
+
+            is WalletEvent.UpdateDateType -> {
+                currentDateTypeState.update { event.dateType }
             }
         }
     }
@@ -156,6 +158,8 @@ sealed interface WalletUiState {
         val availableCategories: List<Category>,
         val selectedCategories: List<Category>,
         val currentFinanceType: FinanceType,
-        val walletTransactionsCategories: WalletWithTransactionsAndCategories,
+        val currentDateType: DateType,
+        val wallet: Wallet,
+        val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState
 }
