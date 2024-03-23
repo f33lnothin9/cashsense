@@ -170,9 +170,7 @@ internal fun WalletScreen(
                         FinancePanel(
                             walletState = walletState,
                             onWalletEvent = onWalletEvent,
-                            modifier = Modifier
-                                .animateContentSize()
-                                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
                         )
                     }
                     if (walletState.transactionsCategories.isNotEmpty()) {
@@ -244,11 +242,15 @@ private fun FinancePanel(
                 .divide(sumOfTransactions, MathContext.DECIMAL32)
                 .toFloat() else 0f
 
-            Column {
+            Column(
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Crossfade(
                     targetState = walletState.currentFinanceType,
                     label = "financePanel",
-                    modifier = modifier,
+                    modifier = Modifier.animateContentSize(),
                 ) { financeType ->
                     when (financeType) {
                         FinanceType.NONE -> {
@@ -308,7 +310,7 @@ private fun FinancePanel(
                 )
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .animateContentSize()
                         .fillMaxWidth(),
                 ) {
                     dateTypes.forEachIndexed { index, label ->
