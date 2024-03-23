@@ -62,6 +62,7 @@ fun CsApp(appState: CsAppState) {
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
                 val isSelected = currentDestination.isTopLevelDestinationInHierarchy(destination)
+
                 item(
                     selected = isSelected,
                     icon = {
@@ -75,7 +76,7 @@ fun CsApp(appState: CsAppState) {
                         )
                     },
                     label = { Text(stringResource(destination.iconTextId)) },
-                    onClick = { appState.navigateToTopLevelDestination(destination) }
+                    onClick = { appState.navigateToTopLevelDestination(destination) },
                 )
             }
         }
@@ -111,7 +112,7 @@ fun CsApp(appState: CsAppState) {
                     )
                 }
             },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
         ) { padding ->
             CsNavHost(
                 appState = appState,

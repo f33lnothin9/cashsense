@@ -61,8 +61,7 @@ class CsAppState(
     val navController: NavHostController,
 ) {
     val currentDestination: NavDestination?
-        @Composable get() = navController
-            .currentBackStackEntryAsState().value?.destination
+        @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
@@ -76,14 +75,12 @@ class CsAppState(
 
     @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
     val navigationSuiteType: NavigationSuiteType
-        @Composable get() {
-            return if (windowSize.width > 1240.dp) {
-                NavigationSuiteType.NavigationDrawer
-            } else if (windowSize.width >= 600.dp) {
-                NavigationSuiteType.NavigationRail
-            } else {
-                NavigationSuiteType.NavigationBar
-            }
+        get() = if (windowSize.width > 840.dp) {
+            NavigationSuiteType.NavigationDrawer
+        } else if (windowSize.width >= 600.dp) {
+            NavigationSuiteType.NavigationRail
+        } else {
+            NavigationSuiteType.NavigationBar
         }
 
     val currentTimeZone = timeZoneMonitor.currentTimeZone
