@@ -61,7 +61,8 @@ dependencies {
     implementation(projects.feature.subscriptions)
     implementation(projects.feature.subscription)
     implementation(projects.feature.transaction)
-    implementation(projects.feature.wallet)
+    implementation(projects.feature.wallet.detail)
+    implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.settings)
 
     implementation(libs.androidx.activity.compose)

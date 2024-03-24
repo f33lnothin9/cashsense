@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_wallet_dialog_new_wallet">Новый кошелёк</string>
+    <string name="feature_wallet_dialog_edit_wallet">Изменение кошелька</string>
+    <string name="feature_wallet_dialog_initial_balance">Первоначальный баланс</string>
+</resources>

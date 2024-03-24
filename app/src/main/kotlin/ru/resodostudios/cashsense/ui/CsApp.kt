@@ -27,7 +27,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
-import ru.resodostudios.cashsense.feature.wallet.WalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 

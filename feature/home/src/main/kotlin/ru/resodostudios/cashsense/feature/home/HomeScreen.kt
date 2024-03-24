@@ -23,12 +23,12 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
-import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
-import ru.resodostudios.cashsense.feature.wallet.WalletCard
-import ru.resodostudios.cashsense.feature.wallet.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogViewModel
-import ru.resodostudios.cashsense.feature.wallet.R as walletR
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletCard
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
+import ru.resodostudios.cashsense.feature.wallet.detail.R as walletDetailR
 
 @Composable
 internal fun HomeRoute(
@@ -101,8 +101,8 @@ internal fun HomeScreen(
             }
         } else {
             EmptyState(
-                messageRes = walletR.string.feature_wallet_wallets_empty,
-                animationRes = walletR.raw.anim_wallets_empty,
+                messageRes = walletDetailR.string.feature_wallet_detail_wallets_empty,
+                animationRes = walletDetailR.raw.anim_wallets_empty,
             )
         }
     }

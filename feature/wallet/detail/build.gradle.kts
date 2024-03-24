@@ -4,14 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.home"
+    namespace = "ru.resodostudios.cashsense.feature.wallet.detail"
 }
 
 dependencies {
     implementation(projects.core.data)
 
-    implementation(projects.feature.transaction)
-    implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.dialog)
+    implementation(projects.feature.transaction)
     implementation(projects.feature.categories)
 }

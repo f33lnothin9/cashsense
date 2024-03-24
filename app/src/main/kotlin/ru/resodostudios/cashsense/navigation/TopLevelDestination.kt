@@ -7,7 +7,7 @@ import ru.resodostudios.cashsense.feature.category.R as categoryR
 import ru.resodostudios.cashsense.feature.home.R as homeR
 import ru.resodostudios.cashsense.feature.subscription.R as subscriptionR
 import ru.resodostudios.cashsense.feature.subscriptions.R as subscriptionsR
-import ru.resodostudios.cashsense.feature.wallet.R as walletR
+import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
 enum class TopLevelDestination(
     val selectedIcon: Int,
@@ -23,7 +23,7 @@ enum class TopLevelDestination(
         iconTextId = homeR.string.feature_home_title,
         titleTextId = R.string.app_name,
         fabIcon = CsIcons.Wallet,
-        fabTitle = walletR.string.feature_wallet_new_wallet
+        fabTitle = walletDialogR.string.feature_wallet_dialog_new_wallet
     ),
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
