@@ -40,26 +40,24 @@ class WalletViewModel @Inject constructor(
 
     private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
     private val availableCategoriesState = MutableStateFlow<List<Category>>(emptyList())
-    private val currentFinanceTypeState = MutableStateFlow(NONE)
-    private val currentDateTypeState = MutableStateFlow(ALL)
+    private val financeTypeState = MutableStateFlow(NONE)
+    private val dateTypeState = MutableStateFlow(ALL)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         selectedCategoriesState.asStateFlow(),
         availableCategoriesState.asStateFlow(),
-        currentFinanceTypeState.asStateFlow(),
-        currentDateTypeState.asStateFlow(),
+        financeTypeState.asStateFlow(),
+        dateTypeState.asStateFlow(),
         walletsRepository.getWalletWithTransactions(walletArgs.walletId),
-    ) { selectedCategories, availableCategories, currentFinanceType, currentDateType, walletTransactionsCategories ->
-        val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
-            walletTransactionsCategories.transactionsWithCategories.sumOf {
-                it.transaction.amount
-            }
+    ) { selectedCategories, availableCategories, financeType, dateType, walletTransactionsCategories ->
+        val wallet = walletTransactionsCategories.wallet
+        val transactionsCategories = walletTransactionsCategories.transactionsWithCategories
+
+        val currentBalance = wallet.initialBalance.plus(
+            transactionsCategories.sumOf { it.transaction.amount }
         )
-        val sortedTransactions =
-            walletTransactionsCategories.transactionsWithCategories.sortedByDescending {
-                it.transaction.date
-            }
-        val transactionsCategories = when (currentFinanceType) {
+        val sortedTransactions = transactionsCategories.sortedByDescending { it.transaction.date }
+        val filteredTransactionsCategories = when (financeType) {
             NONE -> sortedTransactions
             EXPENSES -> calculateTransactionsCategories(
                 sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
@@ -69,7 +67,7 @@ class WalletViewModel @Inject constructor(
                 sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
             )
         }.run {
-            when (currentDateType) {
+            when (dateType) {
                 ALL -> this
                 WEEK -> filter {
                     it.transaction.date
@@ -87,10 +85,10 @@ class WalletViewModel @Inject constructor(
             currentBalance = currentBalance,
             availableCategories = availableCategories.minus(Category()),
             selectedCategories = selectedCategories,
-            currentFinanceType = currentFinanceType,
-            currentDateType = currentDateType,
-            wallet = walletTransactionsCategories.wallet,
-            transactionsCategories = transactionsCategories,
+            financeType = financeType,
+            dateType = dateType,
+            wallet = wallet,
+            transactionsCategories = filteredTransactionsCategories,
         )
     }
         .catch { WalletUiState.Loading }
@@ -111,11 +109,11 @@ class WalletViewModel @Inject constructor(
             }
 
             is WalletEvent.UpdateFinanceType -> {
-                currentFinanceTypeState.update { event.financeType }
+                financeTypeState.update { event.financeType }
             }
 
             is WalletEvent.UpdateDateType -> {
-                currentDateTypeState.update { event.dateType }
+                dateTypeState.update { event.dateType }
             }
         }
     }
@@ -157,8 +155,8 @@ sealed interface WalletUiState {
         val currentBalance: BigDecimal,
         val availableCategories: List<Category>,
         val selectedCategories: List<Category>,
-        val currentFinanceType: FinanceType,
-        val currentDateType: DateType,
+        val financeType: FinanceType,
+        val dateType: DateType,
         val wallet: Wallet,
         val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState

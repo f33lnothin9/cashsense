@@ -248,7 +248,7 @@ private fun FinancePanel(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Crossfade(
-                    targetState = walletState.currentFinanceType,
+                    targetState = walletState.financeType,
                     label = "financePanel",
                     modifier = Modifier.animateContentSize(),
                 ) { financeType ->
@@ -313,7 +313,7 @@ private fun FinancePanel(
                         SegmentedButton(
                             shape = SegmentedButtonDefaults.itemShape(index = index, count = dateTypes.size),
                             onClick = { onWalletEvent(WalletEvent.UpdateDateType(DateType.entries[index])) },
-                            selected = walletState.currentDateType == DateType.entries[index],
+                            selected = walletState.dateType == DateType.entries[index],
                         ) {
                             Text(
                                 text = label,
