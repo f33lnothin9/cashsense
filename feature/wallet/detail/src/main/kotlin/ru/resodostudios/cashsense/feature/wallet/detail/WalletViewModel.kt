@@ -22,9 +22,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletArgs
 import java.math.BigDecimal
 import java.time.temporal.WeekFields
@@ -85,7 +85,7 @@ class WalletViewModel @Inject constructor(
             currentBalance = currentBalance,
             availableCategories = availableCategories.minus(Category()),
             selectedCategories = selectedCategories,
-            financeType = financeType,
+            financeSectionType = financeType,
             dateType = dateType,
             wallet = wallet,
             transactionsCategories = filteredTransactionsCategories,
@@ -109,7 +109,7 @@ class WalletViewModel @Inject constructor(
             }
 
             is WalletEvent.UpdateFinanceType -> {
-                financeTypeState.update { event.financeType }
+                financeTypeState.update { event.financeSectionType }
             }
 
             is WalletEvent.UpdateDateType -> {
@@ -134,7 +134,7 @@ class WalletViewModel @Inject constructor(
     }
 }
 
-enum class FinanceType {
+enum class FinanceSectionType {
     NONE,
     EXPENSES,
     INCOME,
@@ -155,7 +155,7 @@ sealed interface WalletUiState {
         val currentBalance: BigDecimal,
         val availableCategories: List<Category>,
         val selectedCategories: List<Category>,
-        val financeType: FinanceType,
+        val financeSectionType: FinanceSectionType,
         val dateType: DateType,
         val wallet: Wallet,
         val transactionsCategories: List<TransactionWithCategory>,

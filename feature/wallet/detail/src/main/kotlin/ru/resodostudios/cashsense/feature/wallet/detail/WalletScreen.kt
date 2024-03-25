@@ -251,12 +251,12 @@ private fun FinancePanel(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Crossfade(
-                    targetState = walletState.financeType,
+                    targetState = walletState.financeSectionType,
                     label = "financePanel",
                     modifier = Modifier.animateContentSize(),
                 ) { financeType ->
                     when (financeType) {
-                        FinanceType.NONE -> {
+                        FinanceSectionType.NONE -> {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -268,7 +268,7 @@ private fun FinancePanel(
                                     modifier = Modifier.weight(1f),
                                     onClick = { onWalletEvent(
                                         WalletEvent.UpdateFinanceType(
-                                            FinanceType.EXPENSES
+                                            FinanceSectionType.EXPENSES
                                         )
                                     ) },
                                     enabled = walletExpenses != BigDecimal.ZERO,
@@ -280,7 +280,7 @@ private fun FinancePanel(
                                     modifier = Modifier.weight(1f),
                                     onClick = { onWalletEvent(
                                         WalletEvent.UpdateFinanceType(
-                                            FinanceType.INCOME
+                                            FinanceSectionType.INCOME
                                         )
                                     ) },
                                     enabled = walletIncome != BigDecimal.ZERO,
@@ -288,7 +288,7 @@ private fun FinancePanel(
                             }
                         }
 
-                        FinanceType.EXPENSES -> {
+                        FinanceSectionType.EXPENSES -> {
                             DetailedFinanceCard(
                                 title = walletExpenses.formatAmountWithCurrency(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_expenses,
@@ -297,14 +297,14 @@ private fun FinancePanel(
                                 onWalletEvent = onWalletEvent,
                                 onBackClick = { onWalletEvent(
                                     WalletEvent.UpdateFinanceType(
-                                        FinanceType.NONE
+                                        FinanceSectionType.NONE
                                     )
                                 ) },
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
 
-                        FinanceType.INCOME -> {
+                        FinanceSectionType.INCOME -> {
                             DetailedFinanceCard(
                                 title = walletIncome.formatAmountWithCurrency(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_income,
@@ -313,7 +313,7 @@ private fun FinancePanel(
                                 onWalletEvent = onWalletEvent,
                                 onBackClick = { onWalletEvent(
                                     WalletEvent.UpdateFinanceType(
-                                        FinanceType.NONE
+                                        FinanceSectionType.NONE
                                     )
                                 ) },
                                 modifier = Modifier.fillMaxWidth(),
