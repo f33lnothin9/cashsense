@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -123,14 +124,14 @@ private fun FinanceIndicators(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
-        if (walletExpenses != BigDecimal.ZERO) {
+        AnimatedVisibility(walletExpenses != BigDecimal.ZERO) {
             CsTag(
                 text = walletExpenses.formatAmountWithCurrency(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
         }
-        if (walletIncome != BigDecimal.ZERO) {
+        AnimatedVisibility(walletIncome != BigDecimal.ZERO) {
             CsTag(
                 text = walletIncome.formatAmountWithCurrency(currency),
                 iconId = CsIcons.TrendingUp,
