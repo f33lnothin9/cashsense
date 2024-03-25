@@ -40,6 +40,7 @@ fun LoadingState(
 fun EmptyState(
     @StringRes messageRes: Int,
     @RawRes animationRes: Int,
+    modifier: Modifier = Modifier.fillMaxSize(),
 ) {
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationRes))
     val progress by animateLottieCompositionAsState(
@@ -48,7 +49,7 @@ fun EmptyState(
     )
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Column(
