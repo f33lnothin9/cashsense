@@ -51,17 +51,17 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 @Composable
 fun TransactionDialog(
     onDismiss: () -> Unit,
-    transactionViewModel: TransactionViewModel = hiltViewModel(),
+    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
 ) {
-    val transactionState by transactionViewModel.transactionUiState.collectAsStateWithLifecycle()
+    val transactionState by transactionDialogViewModel.transactionUiState.collectAsStateWithLifecycle()
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     TransactionDialog(
         transactionState = transactionState,
         categoriesState = categoriesState,
         onDismiss = onDismiss,
-        onTransactionEvent = transactionViewModel::onTransactionEvent,
+        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
     )
 }
 
@@ -71,7 +71,7 @@ fun TransactionDialog(
     transactionState: TransactionUiState,
     categoriesState: CategoriesUiState,
     onDismiss: () -> Unit,
-    onTransactionEvent: (TransactionEvent) -> Unit,
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
     val dialogTitle = if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
     val dialogConfirmText = if (transactionState.isEditing) uiR.string.save else uiR.string.add
@@ -82,7 +82,7 @@ fun TransactionDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Transaction,
         onConfirm = {
-            onTransactionEvent(TransactionEvent.Save)
+            onTransactionEvent(TransactionDialogEvent.Save)
             onDismiss()
         },
         isConfirmEnabled = transactionState.amount.validateAmount().second,
@@ -99,7 +99,7 @@ fun TransactionDialog(
                 ) {
                     OutlinedTextField(
                         value = transactionState.amount,
-                        onValueChange = { onTransactionEvent(TransactionEvent.UpdateAmount(it.validateAmount().first)) },
+                        onValueChange = { onTransactionEvent(TransactionDialogEvent.UpdateAmount(it.validateAmount().first)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next,
@@ -128,7 +128,7 @@ fun TransactionDialog(
                                     count = financialTypes.size,
                                 ),
                                 onClick = {
-                                    onTransactionEvent(TransactionEvent.UpdateFinancialType(FinancialType.entries[index]))
+                                    onTransactionEvent(TransactionDialogEvent.UpdateFinancialType(FinancialType.entries[index]))
                                 },
                                 selected = transactionState.financialType == FinancialType.entries[index],
                                 icon = {
@@ -152,11 +152,11 @@ fun TransactionDialog(
                     CategoryExposedDropdownMenuBox(
                         currentCategory = transactionState.category,
                         categories = categoriesState.categories,
-                        onCategoryClick = { onTransactionEvent(TransactionEvent.UpdateCategory(it)) },
+                        onCategoryClick = { onTransactionEvent(TransactionDialogEvent.UpdateCategory(it)) },
                     )
                     OutlinedTextField(
                         value = transactionState.description,
-                        onValueChange = { onTransactionEvent(TransactionEvent.UpdateDescription(it)) },
+                        onValueChange = { onTransactionEvent(TransactionDialogEvent.UpdateDescription(it)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done,

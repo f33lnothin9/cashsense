@@ -65,8 +65,8 @@ import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
-import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
-import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
@@ -80,7 +80,7 @@ internal fun WalletRoute(
     onBackClick: () -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
-    transactionViewModel: TransactionViewModel = hiltViewModel(),
+    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
 
@@ -89,7 +89,7 @@ internal fun WalletRoute(
         onBackClick = onBackClick,
         onWalletEvent = walletViewModel::onWalletEvent,
         onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
-        onTransactionEvent = transactionViewModel::onTransactionEvent,
+        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
     )
 }
 
@@ -100,7 +100,7 @@ internal fun WalletScreen(
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
-    onTransactionEvent: (TransactionEvent) -> Unit,
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -142,8 +142,8 @@ internal fun WalletScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    onTransactionEvent(TransactionEvent.UpdateWalletId(walletState.wallet.id))
-                                    onTransactionEvent(TransactionEvent.UpdateId(""))
+                                    onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
+                                    onTransactionEvent(TransactionDialogEvent.UpdateId(""))
                                     showTransactionDialog = true
                                 }
                             ) {
@@ -181,9 +181,9 @@ internal fun WalletScreen(
                             transactionsWithCategories = walletState.transactionsCategories,
                             currency = walletState.wallet.currency,
                             onTransactionClick = {
-                                onTransactionEvent(TransactionEvent.UpdateWalletId(walletState.wallet.id))
-                                onTransactionEvent(TransactionEvent.UpdateId(it))
-                                onTransactionEvent(TransactionEvent.UpdateCurrency(walletState.wallet.currency))
+                                onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
+                                onTransactionEvent(TransactionDialogEvent.UpdateId(it))
+                                onTransactionEvent(TransactionDialogEvent.UpdateCurrency(walletState.wallet.currency))
                                 showTransactionBottomSheet = true
                             },
                         )

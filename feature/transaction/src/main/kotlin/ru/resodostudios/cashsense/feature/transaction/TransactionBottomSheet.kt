@@ -31,7 +31,7 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 fun TransactionBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
-    viewModel: TransactionViewModel = hiltViewModel(),
+    viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val transactionState by viewModel.transactionUiState.collectAsStateWithLifecycle()
 
@@ -47,7 +47,7 @@ fun TransactionBottomSheet(
 @Composable
 fun TransactionBottomSheet(
     transactionState: TransactionUiState,
-    onTransactionEvent: (TransactionEvent) -> Unit,
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
 ) {
@@ -113,7 +113,7 @@ fun TransactionBottomSheet(
             },
             modifier = Modifier.clickable {
                 onDismiss()
-                onTransactionEvent(TransactionEvent.Delete)
+                onTransactionEvent(TransactionDialogEvent.Delete)
             },
         )
     }

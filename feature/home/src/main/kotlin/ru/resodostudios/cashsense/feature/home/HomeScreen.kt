@@ -21,8 +21,8 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
-import ru.resodostudios.cashsense.feature.transaction.TransactionEvent
-import ru.resodostudios.cashsense.feature.transaction.TransactionViewModel
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
@@ -35,7 +35,7 @@ internal fun HomeRoute(
     onWalletClick: (String) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
-    transactionViewModel: TransactionViewModel = hiltViewModel(),
+    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
 
@@ -43,7 +43,7 @@ internal fun HomeRoute(
         walletsState = walletsState,
         onWalletItemEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
-        onTransactionEvent = transactionViewModel::onTransactionEvent,
+        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
     )
 }
 
@@ -52,7 +52,7 @@ internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletItemEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String) -> Unit,
-    onTransactionEvent: (TransactionEvent) -> Unit
+    onTransactionEvent: (TransactionDialogEvent) -> Unit
 ) {
     var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
@@ -73,7 +73,7 @@ internal fun HomeScreen(
                     walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
                     onWalletClick = onWalletClick,
                     onTransactionCreate = {
-                        onTransactionEvent(TransactionEvent.UpdateWalletId(it))
+                        onTransactionEvent(TransactionDialogEvent.UpdateWalletId(it))
                         showTransactionDialog = true
                     },
                     onWalletMenuClick = { walletId, currentWalletBalance ->

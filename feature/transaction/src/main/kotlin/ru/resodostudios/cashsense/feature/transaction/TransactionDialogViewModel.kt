@@ -23,24 +23,24 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class TransactionViewModel @Inject constructor(
+class TransactionDialogViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
 ) : ViewModel() {
 
     private val _transactionUiState = MutableStateFlow(TransactionUiState())
     val transactionUiState = _transactionUiState.asStateFlow()
 
-    fun onTransactionEvent(event: TransactionEvent) {
+    fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
-            TransactionEvent.Save -> saveTransaction()
+            TransactionDialogEvent.Save -> saveTransaction()
 
-            TransactionEvent.Delete -> {
+            TransactionDialogEvent.Delete -> {
                 viewModelScope.launch {
                     transactionsRepository.deleteTransaction(_transactionUiState.value.transactionId)
                 }
             }
 
-            is TransactionEvent.UpdateId -> {
+            is TransactionDialogEvent.UpdateId -> {
                 _transactionUiState.update {
                     it.copy(transactionId = event.id)
                 }
@@ -60,37 +60,37 @@ class TransactionViewModel @Inject constructor(
                 }
             }
 
-            is TransactionEvent.UpdateWalletId -> {
+            is TransactionDialogEvent.UpdateWalletId -> {
                 _transactionUiState.update {
                     it.copy(walletOwnerId = event.id)
                 }
             }
 
-            is TransactionEvent.UpdateCurrency -> {
+            is TransactionDialogEvent.UpdateCurrency -> {
                 _transactionUiState.update {
                     it.copy(currency = event.currency)
                 }
             }
 
-            is TransactionEvent.UpdateAmount -> {
+            is TransactionDialogEvent.UpdateAmount -> {
                 _transactionUiState.update {
                     it.copy(amount = event.amount)
                 }
             }
 
-            is TransactionEvent.UpdateFinancialType -> {
+            is TransactionDialogEvent.UpdateFinancialType -> {
                 _transactionUiState.update {
                     it.copy(financialType = event.type)
                 }
             }
 
-            is TransactionEvent.UpdateCategory -> {
+            is TransactionDialogEvent.UpdateCategory -> {
                 _transactionUiState.update {
                     it.copy(category = event.category)
                 }
             }
 
-            is TransactionEvent.UpdateDescription -> {
+            is TransactionDialogEvent.UpdateDescription -> {
                 _transactionUiState.update {
                     it.copy(description = event.description)
                 }
