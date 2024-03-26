@@ -111,6 +111,7 @@ google-services = { id = "com.google.gms.google-services", version.ref = "gmsPlu
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+room = { id = "androidx.room", version.ref = "room" }
 
 # Plugins defined by this project
 cashsense-android-application = { id = "cashsense.android.application", version = "unspecified" }
