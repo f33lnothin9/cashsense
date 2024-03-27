@@ -11,5 +11,5 @@ dependencies {
     implementation(projects.core.data)
 
     implementation(projects.feature.transaction)
-    implementation(projects.feature.categories)
+    implementation(projects.feature.category.list)
 }

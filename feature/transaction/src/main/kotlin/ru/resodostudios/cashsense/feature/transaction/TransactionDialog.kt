@@ -44,9 +44,10 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.validateAmount
-import ru.resodostudios.cashsense.feature.categories.CategoriesUiState
-import ru.resodostudios.cashsense.feature.categories.CategoriesViewModel
+import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState
+import ru.resodostudios.cashsense.feature.category.list.CategoriesViewModel
 import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
 
 @Composable
 fun TransactionDialog(
@@ -196,7 +197,7 @@ private fun CategoryExposedDropdownMenuBox(
             readOnly = true,
             value = currentCategory?.title ?: stringResource(uiR.string.none),
             onValueChange = {},
-            label = { Text(stringResource(ru.resodostudios.cashsense.feature.category.R.string.feature_category_title)) },
+            label = { Text(stringResource(categoryDialogR.string.feature_category_dialog_title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             leadingIcon = {
                 Icon(

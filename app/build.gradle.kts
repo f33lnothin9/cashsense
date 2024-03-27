@@ -56,8 +56,8 @@ dependencies {
     implementation(projects.core.ui)
 
     implementation(projects.feature.home)
-    implementation(projects.feature.categories)
-    implementation(projects.feature.category)
+    implementation(projects.feature.category.list)
+    implementation(projects.feature.category.dialog)
     implementation(projects.feature.subscriptions)
     implementation(projects.feature.subscription)
     implementation(projects.feature.transaction)

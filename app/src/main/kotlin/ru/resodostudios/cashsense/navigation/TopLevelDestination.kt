@@ -2,8 +2,8 @@ package ru.resodostudios.cashsense.navigation
 
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.feature.categories.R as categoriesR
-import ru.resodostudios.cashsense.feature.category.R as categoryR
+import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
+import ru.resodostudios.cashsense.feature.category.list.R as categoryListR
 import ru.resodostudios.cashsense.feature.home.R as homeR
 import ru.resodostudios.cashsense.feature.subscription.R as subscriptionR
 import ru.resodostudios.cashsense.feature.subscriptions.R as subscriptionsR
@@ -28,10 +28,10 @@ enum class TopLevelDestination(
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
         unselectedIcon = CsIcons.Category,
-        iconTextId = categoriesR.string.feature_categories_title,
-        titleTextId = categoriesR.string.feature_categories_title,
+        iconTextId = categoryListR.string.feature_category_list_title,
+        titleTextId = categoryListR.string.feature_category_list_title,
         fabIcon = CsIcons.Add,
-        fabTitle = categoryR.string.feature_category_new_category
+        fabTitle = categoryDialogR.string.feature_category_dialog_new_category
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.SubscriptionsFilled,

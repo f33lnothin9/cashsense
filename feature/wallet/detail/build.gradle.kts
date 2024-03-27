@@ -12,5 +12,5 @@ dependencies {
 
     implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.transaction)
-    implementation(projects.feature.categories)
+    implementation(projects.feature.category.list)
 }

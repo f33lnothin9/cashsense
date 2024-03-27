@@ -19,8 +19,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
-import ru.resodostudios.cashsense.feature.categories.navigation.CATEGORIES_ROUTE
-import ru.resodostudios.cashsense.feature.categories.navigation.navigateToCategories
+import ru.resodostudios.cashsense.feature.category.list.navigation.CATEGORIES_ROUTE
+import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
 import ru.resodostudios.cashsense.feature.subscriptions.navigation.SUBSCRIPTIONS_ROUTE
