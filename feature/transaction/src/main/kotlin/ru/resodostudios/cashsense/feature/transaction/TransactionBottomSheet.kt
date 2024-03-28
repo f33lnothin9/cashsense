@@ -22,6 +22,7 @@ import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
@@ -82,7 +83,7 @@ fun TransactionBottomSheet(
                 text = if (transactionState.date.isNotEmpty()) {
                     transactionState.date
                         .toInstant()
-                        .formatDate(withTime = true)
+                        .formatDate(DATE_TIME)
                 } else {
                     ""
                 },
