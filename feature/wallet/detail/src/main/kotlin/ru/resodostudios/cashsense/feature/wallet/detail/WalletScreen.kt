@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -178,7 +180,7 @@ internal fun WalletScreen(
                     }
                     if (walletState.transactionsCategories.isNotEmpty()) {
                         transactions(
-                            transactionsWithCategories = walletState.transactionsCategories,
+                            transactionsCategories = walletState.transactionsCategories,
                             currency = walletState.wallet.currency,
                             onTransactionClick = {
                                 onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
@@ -477,11 +479,11 @@ private fun CategoryFilterPanel(
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.transactions(
-    transactionsWithCategories: List<TransactionWithCategory>,
+    transactionsCategories: List<TransactionWithCategory>,
     currency: String,
     onTransactionClick: (String) -> Unit,
 ) {
-    val groupedTransactionsAndCategories = transactionsWithCategories
+    val groupedTransactionsCategories = transactionsCategories
         .groupBy {
             it.transaction.date
                 .toJavaInstant()
@@ -490,7 +492,7 @@ private fun LazyListScope.transactions(
         .toSortedMap(compareByDescending { it })
         .map { it.key to it.value }
 
-    groupedTransactionsAndCategories.forEach { group ->
+    groupedTransactionsCategories.forEach { group ->
         stickyHeader {
             CsTag(
                 text = group.first
@@ -498,20 +500,21 @@ private fun LazyListScope.transactions(
                     .formatDate(),
                 modifier = Modifier
                     .animateItemPlacement()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, top = 16.dp),
             )
         }
+        item { Spacer(Modifier.height(16.dp)) }
         items(
             items = group.second,
             key = { it.transaction.id },
             contentType = { "transactionCategory" },
-        ) { transactionWithCategory ->
-            val category = transactionWithCategory.category
+        ) { transactionCategory ->
+            val category = transactionCategory.category
 
             ListItem(
                 headlineContent = {
                     Text(
-                        text = transactionWithCategory.transaction.amount.formatAmountWithCurrency(
+                        text = transactionCategory.transaction.amount.formatAmountWithCurrency(
                             currency = currency,
                             withPlus = true,
                         ),
@@ -539,7 +542,7 @@ private fun LazyListScope.transactions(
                 modifier = Modifier
                     .animateItemPlacement()
                     .clickable {
-                        onTransactionClick(transactionWithCategory.transaction.id)
+                        onTransactionClick(transactionCategory.transaction.id)
                     }
             )
         }
