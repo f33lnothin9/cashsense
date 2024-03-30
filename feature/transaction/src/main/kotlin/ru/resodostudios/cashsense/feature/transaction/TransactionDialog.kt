@@ -110,6 +110,7 @@ fun TransactionDialog(
                         supportingText = { Text(stringResource(uiR.string.required)) },
                         maxLines = 1,
                         modifier = Modifier
+                            .fillMaxWidth()
                             .focusRequester(amountTextField)
                             .focusProperties { next = descTextField },
                     )
@@ -164,7 +165,9 @@ fun TransactionDialog(
                         ),
                         label = { Text(stringResource(uiR.string.description)) },
                         maxLines = 1,
-                        modifier = Modifier.focusRequester(descTextField),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(descTextField),
                     )
                 }
                 LaunchedEffect(Unit) {
@@ -185,7 +188,6 @@ private fun CategoryExposedDropdownMenuBox(
     onCategoryClick: (Category) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
     ExposedDropdownMenuBox(
@@ -193,7 +195,9 @@ private fun CategoryExposedDropdownMenuBox(
         onExpandedChange = { expanded = it },
     ) {
         OutlinedTextField(
-            modifier = Modifier.menuAnchor(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
             readOnly = true,
             value = currentCategory?.title ?: stringResource(uiR.string.none),
             onValueChange = {},
@@ -202,7 +206,7 @@ private fun CategoryExposedDropdownMenuBox(
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(StoredIcon.asRes(iconId)),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             },
             maxLines = 1,
