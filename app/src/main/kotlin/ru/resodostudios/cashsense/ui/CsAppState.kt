@@ -23,8 +23,8 @@ import ru.resodostudios.cashsense.feature.category.list.navigation.CATEGORIES_RO
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.SUBSCRIPTIONS_ROUTE
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.navigateToSubscriptionsGraph
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.SUBSCRIPTIONS_ROUTE
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptionsGraph
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME

@@ -6,9 +6,9 @@ import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_GRAPH_ROUTE_PATTERN
 import ru.resodostudios.cashsense.feature.home.navigation.homeGraph
-import ru.resodostudios.cashsense.feature.subscription.navigation.navigateToSubscription
-import ru.resodostudios.cashsense.feature.subscription.navigation.subscriptionScreen
-import ru.resodostudios.cashsense.feature.subscriptions.navigation.subscriptionsGraph
+import ru.resodostudios.cashsense.feature.subscription.detail.navigation.navigateToSubscription
+import ru.resodostudios.cashsense.feature.subscription.detail.navigation.subscriptionScreen
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsGraph
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import ru.resodostudios.cashsense.ui.CsAppState

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_subscription_detail_new">New subscription</string>
+    <string name="feature_subscription_detail_edit">Edit subscription</string>
+    <string name="feature_subscription_detail_add_subscription_icon_description">Add subscription</string>
+    <string name="feature_subscription_detail_payment_date">Payment date</string>
+</resources>

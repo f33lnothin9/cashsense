@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="feature_subscription_new_subscription">Новая подписка</string>
-    <string name="feature_subscription_edit_subscription">Изменение подписки</string>
-    <string name="feature_subscription_add_subscription_icon_description">Добавить подписку</string>
-    <string name="feature_subscription_payment_date">Дата платежа</string>
-</resources>
