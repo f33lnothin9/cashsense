@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryDialogViewModel @Inject constructor(
-    private val categoriesRepository: CategoriesRepository
+    private val categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
     private val _categoryUiState = MutableStateFlow(CategoryUiState())
@@ -28,18 +28,13 @@ class CategoryDialogViewModel @Inject constructor(
                 val category = Category(
                     id = _categoryUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _categoryUiState.value.title,
-                    iconId = _categoryUiState.value.icon
+                    iconId = _categoryUiState.value.icon,
                 )
                 viewModelScope.launch {
                     categoriesRepository.upsertCategory(category)
                 }
                 _categoryUiState.update {
-                    it.copy(
-                        id = "",
-                        title = "",
-                        icon = 0,
-                        isEditing = false,
-                    )
+                    CategoryUiState()
                 }
             }
 
