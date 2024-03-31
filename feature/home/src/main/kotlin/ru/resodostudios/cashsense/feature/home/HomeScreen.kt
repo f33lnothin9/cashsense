@@ -52,7 +52,7 @@ internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletItemEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String) -> Unit,
-    onTransactionEvent: (TransactionDialogEvent) -> Unit
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
     var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
@@ -61,7 +61,7 @@ internal fun HomeScreen(
 
     when (walletsState) {
         WalletsUiState.Loading -> LoadingState()
-        is WalletsUiState.Success -> if (walletsState.walletsWithTransactionsAndCategories.isNotEmpty()) {
+        is WalletsUiState.Success -> if (walletsState.walletsTransactionsCategories.isNotEmpty()) {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Adaptive(300.dp),
                 verticalItemSpacing = 16.dp,
@@ -70,7 +70,7 @@ internal fun HomeScreen(
                 contentPadding = PaddingValues(16.dp),
             ) {
                 walletsWithTransactionsAndCategories(
-                    walletsWithTransactionsAndCategories = walletsState.walletsWithTransactionsAndCategories,
+                    walletsTransactionsCategories = walletsState.walletsTransactionsCategories,
                     onWalletClick = onWalletClick,
                     onTransactionCreate = {
                         onTransactionEvent(TransactionDialogEvent.UpdateWalletId(it))
@@ -91,7 +91,7 @@ internal fun HomeScreen(
             }
             if (showWalletDialog) {
                 WalletDialog(
-                    onDismiss = { showWalletDialog = false }
+                    onDismiss = { showWalletDialog = false },
                 )
             }
             if (showTransactionDialog) {
@@ -110,23 +110,23 @@ internal fun HomeScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
-    walletsWithTransactionsAndCategories: List<WalletWithTransactionsAndCategories>,
+    walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onWalletMenuClick: (String, String) -> Unit,
 ) {
     items(
-        items = walletsWithTransactionsAndCategories,
+        items = walletsTransactionsCategories,
         key = { it.wallet.id },
         contentType = { "wallet" },
-    ) { walletWithTransactionsAndCategories ->
+    ) { walletTransactionsCategories ->
         WalletCard(
-            wallet = walletWithTransactionsAndCategories.wallet,
-            transactions = walletWithTransactionsAndCategories.transactionsWithCategories.map { it.transaction },
+            wallet = walletTransactionsCategories.wallet,
+            transactions = walletTransactionsCategories.transactionsWithCategories.map { it.transaction },
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onWalletMenuClick = onWalletMenuClick,
-            modifier = Modifier.animateItemPlacement()
+            modifier = Modifier.animateItemPlacement(),
         )
     }
 }
