@@ -1,5 +1,5 @@
 
-<a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense"><img src="images/logo-color-dark.png" height="63"></a>
+<a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense"><img src="images/rustore-logo.png" height="63"></a>
 
 Cash Sense
 ==================
@@ -16,7 +16,7 @@ It's a mobile app designed to help users manage their finances effectively. Whet
 
 ## Screenshots
 
-![Screenshots](images/CashSense.jpg "Screenshots")
+![Screenshots](images/screenshots.jpg "Screenshots")
 
 # UI
 
