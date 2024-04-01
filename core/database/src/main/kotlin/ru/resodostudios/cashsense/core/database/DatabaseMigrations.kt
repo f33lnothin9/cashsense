@@ -18,4 +18,11 @@ internal object DatabaseMigrations {
         toColumnName = "icon_id",
     )
     class Schema1to2 : AutoMigrationSpec
+
+    @RenameColumn(
+        tableName = "transactions",
+        fromColumnName = "date",
+        toColumnName = "timestamp",
+    )
+    class Schema2to3 : AutoMigrationSpec
 }

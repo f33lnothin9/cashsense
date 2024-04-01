@@ -24,9 +24,10 @@ import ru.resodostudios.cashsense.core.database.util.InstantConverter
         SubscriptionEntity::class,
         TransactionCategoryCrossRefEntity::class,
     ],
-    version = 2,
+    version = 3,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class)
+        AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
+        AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
     ],
     exportSchema = true,
 )

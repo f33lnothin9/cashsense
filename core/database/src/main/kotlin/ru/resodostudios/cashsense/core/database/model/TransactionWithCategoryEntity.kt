@@ -14,7 +14,7 @@ data class TransactionWithCategoryEntity(
         associateBy = Junction(
             value = TransactionCategoryCrossRefEntity::class,
             parentColumn = "transaction_id",
-            entityColumn = "category_id"
+            entityColumn = "category_id",
         )
     )
     val category: CategoryEntity?
@@ -22,5 +22,5 @@ data class TransactionWithCategoryEntity(
 
 fun TransactionWithCategoryEntity.asExternalModel() = TransactionWithCategory(
     transaction = transaction.asExternalModel(),
-    category = category?.asExternalModel()
+    category = category?.asExternalModel(),
 )

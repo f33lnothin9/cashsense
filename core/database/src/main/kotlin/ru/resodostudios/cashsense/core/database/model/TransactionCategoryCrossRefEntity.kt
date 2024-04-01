@@ -13,23 +13,23 @@ import androidx.room.Index
             entity = TransactionEntity::class,
             parentColumns = ["id"],
             childColumns = ["transaction_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = CategoryEntity::class,
             parentColumns = ["id"],
             childColumns = ["category_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         )
     ],
     indices = [
         Index(value = ["transaction_id"]),
-        Index(value = ["category_id"])
-    ]
+        Index(value = ["category_id"]),
+    ],
 )
 data class TransactionCategoryCrossRefEntity(
     @ColumnInfo(name = "transaction_id")
     val transactionId: String,
     @ColumnInfo(name = "category_id")
-    val categoryId: String
+    val categoryId: String,
 )

@@ -7,6 +7,6 @@ fun Transaction.asEntity() = TransactionEntity(
     id = id,
     walletOwnerId = walletOwnerId,
     amount = amount,
-    date = date,
+    timestamp = timestamp,
     description = description,
 )

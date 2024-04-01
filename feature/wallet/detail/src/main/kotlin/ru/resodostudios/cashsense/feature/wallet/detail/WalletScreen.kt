@@ -485,7 +485,7 @@ private fun LazyListScope.transactions(
 ) {
     val groupedTransactionsCategories = transactionsCategories
         .groupBy {
-            it.transaction.date
+            it.transaction.timestamp
                 .toJavaInstant()
                 .truncatedTo(ChronoUnit.DAYS)
         }

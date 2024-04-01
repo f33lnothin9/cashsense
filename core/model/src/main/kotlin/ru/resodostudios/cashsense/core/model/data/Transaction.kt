@@ -8,5 +8,5 @@ data class Transaction(
     val walletOwnerId: String,
     val description: String?,
     val amount: BigDecimal,
-    val date: Instant,
+    val timestamp: Instant,
 )

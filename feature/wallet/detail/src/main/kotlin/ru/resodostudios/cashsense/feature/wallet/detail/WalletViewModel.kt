@@ -56,7 +56,7 @@ class WalletViewModel @Inject constructor(
         val currentBalance = wallet.initialBalance.plus(
             transactionsCategories.sumOf { it.transaction.amount }
         )
-        val sortedTransactions = transactionsCategories.sortedByDescending { it.transaction.date }
+        val sortedTransactions = transactionsCategories.sortedByDescending { it.transaction.timestamp }
         val filteredTransactionsCategories = when (financeType) {
             NONE -> sortedTransactions
             EXPENSES -> calculateTransactionsCategories(
@@ -70,14 +70,14 @@ class WalletViewModel @Inject constructor(
             when (dateType) {
                 ALL -> this
                 WEEK -> filter {
-                    it.transaction.date
+                    it.transaction.timestamp
                         .getZonedDateTime()
                         .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
                             getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
                 }
 
-                MONTH -> filter { it.transaction.date.getZonedDateTime().month == getCurrentZonedDateTime().month }
-                YEAR -> filter { it.transaction.date.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                MONTH -> filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
+                YEAR -> filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
             }
         }
 

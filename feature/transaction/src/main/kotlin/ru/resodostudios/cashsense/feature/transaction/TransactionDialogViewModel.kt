@@ -110,7 +110,7 @@ class TransactionDialogViewModel @Inject constructor(
             } else {
                 _transactionUiState.value.amount.toBigDecimal().abs()
             },
-            date = if (_transactionUiState.value.date.isBlank()) {
+            timestamp = if (_transactionUiState.value.date.isBlank()) {
                 Clock.System.now()
             } else {
                 _transactionUiState.value.date.toInstant()
@@ -163,7 +163,7 @@ class TransactionDialogViewModel @Inject constructor(
                         description = it.transaction.description.toString(),
                         amount = it.transaction.amount.toString(),
                         financialType = if (it.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
-                        date = it.transaction.date.toString(),
+                        date = it.transaction.timestamp.toString(),
                         category = it.category,
                         isEditing = true,
                     )

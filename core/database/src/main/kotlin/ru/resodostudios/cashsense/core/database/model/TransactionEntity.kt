@@ -17,7 +17,7 @@ data class TransactionEntity(
     val walletOwnerId: String,
     val description: String?,
     val amount: BigDecimal,
-    val date: Instant,
+    val timestamp: Instant,
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(
@@ -25,5 +25,5 @@ fun TransactionEntity.asExternalModel() = Transaction(
     walletOwnerId = walletOwnerId,
     description = description,
     amount = amount,
-    date = date,
+    timestamp = timestamp,
 )

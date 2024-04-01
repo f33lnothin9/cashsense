@@ -12,9 +12,9 @@ data class WalletWithTransactionsAndCategoriesEntity(
     @Relation(
         entity = TransactionEntity::class,
         parentColumn = "id",
-        entityColumn = "wallet_owner_id"
+        entityColumn = "wallet_owner_id",
     )
-    val transactions: List<TransactionWithCategoryEntity>
+    val transactions: List<TransactionWithCategoryEntity>,
 )
 
 fun WalletWithTransactionsAndCategoriesEntity.asExternalModel() = WalletWithTransactionsAndCategories(
@@ -22,7 +22,7 @@ fun WalletWithTransactionsAndCategoriesEntity.asExternalModel() = WalletWithTran
     transactionsWithCategories = transactions.map {
         TransactionWithCategory(
             transaction = it.transaction.asExternalModel(),
-            category = it.category?.asExternalModel() ?: Category()
+            category = it.category?.asExternalModel() ?: Category(),
         )
     }
 )
