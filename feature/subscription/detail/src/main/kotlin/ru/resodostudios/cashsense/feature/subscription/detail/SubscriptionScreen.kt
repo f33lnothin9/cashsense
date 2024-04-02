@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
 import ru.resodostudios.cashsense.core.ui.formatDate
@@ -68,10 +67,11 @@ internal fun SubscriptionScreen(
 ) {
     Scaffold(
         topBar = {
-            val titleRes = if (subscriptionState.isEditing) R.string.feature_subscription_detail_edit else R.string.feature_subscription_detail_new
+            val titleRes =
+                if (subscriptionState.isEditing) R.string.feature_subscription_detail_edit else R.string.feature_subscription_detail_new
 
             TopAppBar(
-                title = { Text(text = stringResource(titleRes)) },
+                title = { Text(stringResource(titleRes)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -86,9 +86,7 @@ internal fun SubscriptionScreen(
                             onSubscriptionEvent(SubscriptionEvent.Confirm)
                             onBackClick()
                         },
-                        enabled = subscriptionState.title.isNotBlank() &&
-                                subscriptionState.amount.validateAmount().second &&
-                                subscriptionState.paymentDate.isNotBlank(),
+                        enabled = subscriptionState.title.isNotBlank() && subscriptionState.amount.validateAmount().second,
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Confirm),
@@ -118,9 +116,9 @@ internal fun SubscriptionScreen(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
                     ),
-                    label = { Text(text = stringResource(uiR.string.title)) },
-                    placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    label = { Text(stringResource(uiR.string.title)) },
+                    placeholder = { Text(stringResource(uiR.string.title) + "*") },
+                    supportingText = { Text(stringResource(uiR.string.required)) },
                     maxLines = 1,
                     modifier = Modifier
                         .focusRequester(titleTextField)
@@ -135,30 +133,23 @@ internal fun SubscriptionScreen(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(text = stringResource(uiR.string.amount)) },
-                    placeholder = { Text(text = stringResource(uiR.string.amount) + "*") },
-                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    label = { Text(stringResource(uiR.string.amount)) },
+                    placeholder = { Text(stringResource(uiR.string.amount) + "*") },
+                    supportingText = { Text(stringResource(uiR.string.required)) },
                     maxLines = 1,
                     modifier = Modifier.focusRequester(amountTextField),
                 )
             }
             item {
-                val paymentDatePickerState = rememberDatePickerState()
                 var openDialog by remember { mutableStateOf(false) }
 
                 OutlinedTextField(
-                    value = if (subscriptionState.paymentDate.isNotEmpty()) {
-                        subscriptionState.paymentDate
-                            .toInstant()
-                            .formatDate()
-                    } else {
-                        stringResource(uiR.string.none)
-                    },
-                    onValueChange = { },
+                    value = subscriptionState.paymentDate.formatDate(),
+                    onValueChange = {},
                     readOnly = true,
-                    label = { Text(text = stringResource(R.string.feature_subscription_detail_payment_date)) },
-                    placeholder = { Text(text = "${stringResource(R.string.feature_subscription_detail_payment_date)}*") },
-                    supportingText = { Text(text = stringResource(uiR.string.required)) },
+                    label = { Text(stringResource(R.string.feature_subscription_detail_payment_date)) },
+                    placeholder = { Text("${stringResource(R.string.feature_subscription_detail_payment_date)}*") },
+                    supportingText = { Text(stringResource(uiR.string.required)) },
                     leadingIcon = {
                         IconButton(onClick = { openDialog = true }) {
                             Icon(
@@ -171,8 +162,11 @@ internal fun SubscriptionScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 if (openDialog) {
+                    val datePickerState = rememberDatePickerState(
+                        initialSelectedDateMillis = subscriptionState.paymentDate.toEpochMilliseconds()
+                    )
                     val confirmEnabled = remember {
-                        derivedStateOf { paymentDatePickerState.selectedDateMillis != null }
+                        derivedStateOf { datePickerState.selectedDateMillis != null }
                     }
                     DatePickerDialog(
                         onDismissRequest = { openDialog = false },
@@ -182,8 +176,7 @@ internal fun SubscriptionScreen(
                                     openDialog = false
                                     onSubscriptionEvent(
                                         SubscriptionEvent.UpdatePaymentDate(
-                                            Instant.fromEpochMilliseconds(paymentDatePickerState.selectedDateMillis!!)
-                                                .toString()
+                                            Instant.fromEpochMilliseconds(datePickerState.selectedDateMillis!!)
                                         )
                                     )
                                 },
@@ -200,7 +193,7 @@ internal fun SubscriptionScreen(
                             }
                         },
                     ) {
-                        DatePicker(state = paymentDatePickerState)
+                        DatePicker(state = datePickerState)
                     }
                 }
             }

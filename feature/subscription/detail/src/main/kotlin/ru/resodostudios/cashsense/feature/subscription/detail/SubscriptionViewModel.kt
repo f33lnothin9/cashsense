@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
@@ -41,7 +42,7 @@ class SubscriptionViewModel @Inject constructor(
                     id = subscriptionId ?: UUID.randomUUID().toString(),
                     title = _subscriptionUiState.value.title,
                     amount = _subscriptionUiState.value.amount.toBigDecimal(),
-                    paymentDate = _subscriptionUiState.value.paymentDate.toInstant(),
+                    paymentDate = _subscriptionUiState.value.paymentDate,
                     currency = _subscriptionUiState.value.currency,
                     notificationDate = null,
                     repeatingInterval = null,
@@ -87,7 +88,7 @@ class SubscriptionViewModel @Inject constructor(
                         _subscriptionUiState.value = SubscriptionUiState(
                             title = it.title,
                             amount = it.amount.toString(),
-                            paymentDate = it.paymentDate.toString(),
+                            paymentDate = it.paymentDate,
                             currency = it.currency,
                             isEditing = true,
                         )
@@ -100,7 +101,7 @@ class SubscriptionViewModel @Inject constructor(
 data class SubscriptionUiState(
     val title: String = "",
     val amount: String = "",
-    val paymentDate: String = "",
+    val paymentDate: Instant = Clock.System.now(),
     val currency: String = Currency.USD.name,
     val isEditing: Boolean = false,
 )
