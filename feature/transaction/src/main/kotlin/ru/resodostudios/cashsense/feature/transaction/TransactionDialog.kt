@@ -66,7 +66,6 @@ fun TransactionDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDialog(
     transactionState: TransactionUiState,
@@ -114,43 +113,10 @@ fun TransactionDialog(
                             .focusRequester(amountTextField)
                             .focusProperties { next = descTextField },
                     )
-                    val financialTypes = listOf(
-                        stringResource(R.string.feature_transaction_expense),
-                        stringResource(R.string.feature_transaction_income),
+                    FinancialTypeChoiceRow(
+                        onTransactionEvent = onTransactionEvent,
+                        transactionState = transactionState,
                     )
-                    val financialIcons = listOf(
-                        CsIcons.TrendingDown,
-                        CsIcons.TrendingUp,
-                    )
-                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                        financialTypes.forEachIndexed { index, label ->
-                            SegmentedButton(
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = financialTypes.size,
-                                ),
-                                onClick = {
-                                    onTransactionEvent(TransactionDialogEvent.UpdateFinancialType(FinancialType.entries[index]))
-                                },
-                                selected = transactionState.financialType == FinancialType.entries[index],
-                                icon = {
-                                    SegmentedButtonDefaults.Icon(active = transactionState.financialType == FinancialType.entries[index]) {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(financialIcons[index]),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                                        )
-                                    }
-                                }
-                            ) {
-                                Text(
-                                    text = label,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
-                    }
                     CategoryExposedDropdownMenuBox(
                         currentCategory = transactionState.category,
                         categories = categoriesState.categories,
@@ -175,6 +141,51 @@ fun TransactionDialog(
                         amountTextField.requestFocus()
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FinancialTypeChoiceRow(
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
+    transactionState: TransactionUiState,
+) {
+    val financialTypes = listOf(
+        stringResource(R.string.feature_transaction_expense),
+        stringResource(R.string.feature_transaction_income),
+    )
+    val financialIcons = listOf(
+        CsIcons.TrendingDown,
+        CsIcons.TrendingUp,
+    )
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        financialTypes.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = financialTypes.size,
+                ),
+                onClick = {
+                    onTransactionEvent(TransactionDialogEvent.UpdateFinancialType(FinancialType.entries[index]))
+                },
+                selected = transactionState.financialType == FinancialType.entries[index],
+                icon = {
+                    SegmentedButtonDefaults.Icon(active = transactionState.financialType == FinancialType.entries[index]) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(financialIcons[index]),
+                            contentDescription = null,
+                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
+                        )
+                    }
+                }
+            ) {
+                Text(
+                    text = label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
     }
