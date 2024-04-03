@@ -221,7 +221,6 @@ internal fun WalletScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FinancePanel(
     walletState: WalletUiState,
@@ -499,7 +498,7 @@ private fun LazyListScope.transactions(
                     .toKotlinInstant()
                     .formatDate(),
                 modifier = Modifier
-                    .animateItemPlacement()
+                    .animateItem()
                     .padding(start = 16.dp, top = 16.dp),
             )
         }
@@ -540,7 +539,7 @@ private fun LazyListScope.transactions(
                     )
                 },
                 modifier = Modifier
-                    .animateItemPlacement()
+                    .animateItem()
                     .clickable {
                         onTransactionClick(transactionCategory.transaction.id)
                     }

@@ -104,7 +104,6 @@ fun SettingsBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ColumnScope.SettingsPanel(
     settings: UserEditableSettings,

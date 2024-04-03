@@ -146,7 +146,6 @@ fun TransactionDialog(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FinancialTypeChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
