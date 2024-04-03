@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Currency
@@ -52,7 +52,7 @@ class TransactionDialogViewModel @Inject constructor(
                             description = "",
                             amount = "",
                             category = Category(),
-                            date = "",
+                            date = Clock.System.now(),
                         )
                     }
                 } else {
@@ -110,11 +110,7 @@ class TransactionDialogViewModel @Inject constructor(
             } else {
                 _transactionUiState.value.amount.toBigDecimal().abs()
             },
-            timestamp = if (_transactionUiState.value.date.isBlank()) {
-                Clock.System.now()
-            } else {
-                _transactionUiState.value.date.toInstant()
-            },
+            timestamp = _transactionUiState.value.date,
         )
         val transactionCategoryCrossRef = _transactionUiState.value.category?.id?.let {
             TransactionCategoryCrossRef(
@@ -153,7 +149,7 @@ class TransactionDialogViewModel @Inject constructor(
                         description = "",
                         amount = "",
                         category = Category(),
-                        date = "",
+                        date = Clock.System.now(),
                         financialType = EXPENSE,
                     )
                 }
@@ -163,7 +159,7 @@ class TransactionDialogViewModel @Inject constructor(
                         description = it.transaction.description.toString(),
                         amount = it.transaction.amount.toString(),
                         financialType = if (it.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
-                        date = it.transaction.timestamp.toString(),
+                        date = it.transaction.timestamp,
                         category = it.category,
                         isEditing = true,
                     )
@@ -183,7 +179,7 @@ data class TransactionUiState(
     val description: String = "",
     val amount: String = "",
     val currency: String = Currency.USD.name,
-    val date: String = "",
+    val date: Instant = Clock.System.now(),
     val category: Category? = Category(),
     val financialType: FinancialType = EXPENSE,
     val isEditing: Boolean = false,

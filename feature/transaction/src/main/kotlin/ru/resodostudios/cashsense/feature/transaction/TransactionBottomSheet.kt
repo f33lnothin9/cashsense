@@ -18,7 +18,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.datetime.toInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -80,13 +79,7 @@ fun TransactionBottomSheet(
                 )
             }
             CsTag(
-                text = if (transactionState.date.isNotEmpty()) {
-                    transactionState.date
-                        .toInstant()
-                        .formatDate(DATE_TIME)
-                } else {
-                    ""
-                },
+                text = transactionState.date.formatDate(DATE_TIME),
                 iconId = CsIcons.Calendar,
             )
         }
