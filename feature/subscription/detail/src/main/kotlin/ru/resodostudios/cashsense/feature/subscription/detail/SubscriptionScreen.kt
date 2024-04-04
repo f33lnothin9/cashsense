@@ -7,24 +7,17 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -40,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
+import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -141,61 +135,14 @@ internal fun SubscriptionScreen(
                 )
             }
             item {
-                var openDialog by remember { mutableStateOf(false) }
-
-                OutlinedTextField(
+                DatePickerTextField(
                     value = subscriptionState.paymentDate.formatDate(),
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text(stringResource(R.string.feature_subscription_detail_payment_date)) },
-                    placeholder = { Text("${stringResource(R.string.feature_subscription_detail_payment_date)}*") },
-                    supportingText = { Text(stringResource(uiR.string.required)) },
-                    leadingIcon = {
-                        IconButton(onClick = { openDialog = true }) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Calendar),
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    maxLines = 1,
+                    labelTextId = R.string.feature_subscription_detail_payment_date,
+                    iconId = CsIcons.Calendar,
                     modifier = Modifier.fillMaxWidth(),
+                    initialSelectedDateMillis = subscriptionState.paymentDate.toEpochMilliseconds(),
+                    onDateClick = { onSubscriptionEvent(SubscriptionEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
                 )
-                if (openDialog) {
-                    val datePickerState = rememberDatePickerState(
-                        initialSelectedDateMillis = subscriptionState.paymentDate.toEpochMilliseconds()
-                    )
-                    val confirmEnabled = remember {
-                        derivedStateOf { datePickerState.selectedDateMillis != null }
-                    }
-                    DatePickerDialog(
-                        onDismissRequest = { openDialog = false },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    openDialog = false
-                                    onSubscriptionEvent(
-                                        SubscriptionEvent.UpdatePaymentDate(
-                                            Instant.fromEpochMilliseconds(datePickerState.selectedDateMillis!!)
-                                        )
-                                    )
-                                },
-                                enabled = confirmEnabled.value,
-                            ) {
-                                Text(stringResource(uiR.string.core_ui_ok))
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = { openDialog = false }
-                            ) {
-                                Text(stringResource(uiR.string.core_ui_cancel))
-                            }
-                        },
-                    ) {
-                        DatePicker(state = datePickerState)
-                    }
-                }
             }
             item {
                 CurrencyExposedDropdownMenuBox(

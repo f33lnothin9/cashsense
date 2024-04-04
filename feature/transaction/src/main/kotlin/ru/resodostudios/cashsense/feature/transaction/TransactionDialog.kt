@@ -41,8 +41,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState
 import ru.resodostudios.cashsense.feature.category.list.CategoriesViewModel
@@ -134,6 +136,14 @@ fun TransactionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(descTextField),
+                    )
+                    DatePickerTextField(
+                        value = transactionState.date.formatDate(),
+                        labelTextId = uiR.string.core_ui_date,
+                        iconId = CsIcons.Calendar,
+                        modifier = Modifier.fillMaxWidth(),
+                        initialSelectedDateMillis = transactionState.date.toEpochMilliseconds(),
+                        onDateClick = {},
                     )
                 }
                 LaunchedEffect(Unit) {

@@ -367,7 +367,7 @@ private fun FinanceCard(
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
                 text = title,
@@ -453,13 +453,13 @@ private fun CategoryFilterPanel(
             FilterChip(
                 selected = selected,
                 onClick = {
-                    when (selectedCategories.contains(category)) {
-                        true -> onWalletEvent(WalletEvent.RemoveFromSelectedCategories(category))
-
-                        false -> onWalletEvent(WalletEvent.AddToSelectedCategories(category))
+                    if (selectedCategories.contains(category)) {
+                        onWalletEvent(WalletEvent.RemoveFromSelectedCategories(category))
+                    } else {
+                        onWalletEvent(WalletEvent.AddToSelectedCategories(category))
                     }
                 },
-                label = { Text(text = category.title.toString()) },
+                label = { Text(category.title.toString()) },
                 leadingIcon = {
                     Icon(
                         imageVector = if (selected) {
