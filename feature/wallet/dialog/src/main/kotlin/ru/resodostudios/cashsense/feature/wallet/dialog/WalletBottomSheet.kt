@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.R
-import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
 
 @Composable
@@ -59,7 +59,7 @@ fun WalletBottomSheet(
             supportingContent = {
                 Text(
                     text = walletDialogState.currentBalance.ifEmpty {
-                        BigDecimal(0).formatAmountWithCurrency(walletDialogState.currency)
+                        BigDecimal(0).formatAmount(walletDialogState.currency)
                     },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

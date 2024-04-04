@@ -24,7 +24,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 
 @Composable
@@ -54,7 +54,7 @@ fun TransactionBottomSheet(
     val formattedAmount = if (transactionState.amount.isNotEmpty()) {
         transactionState.amount
             .toBigDecimal()
-            .formatAmountWithCurrency(transactionState.currency, true)
+            .formatAmount(transactionState.currency, true)
     } else {
         ""
     }

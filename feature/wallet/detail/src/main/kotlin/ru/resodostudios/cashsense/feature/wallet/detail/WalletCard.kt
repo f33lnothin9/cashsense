@@ -31,7 +31,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -46,7 +46,7 @@ fun WalletCard(
 ) {
     val currentWalletBalance = wallet.initialBalance
         .plus(transactions.sumOf { it.amount })
-        .formatAmountWithCurrency(wallet.currency)
+        .formatAmount(wallet.currency)
 
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
@@ -126,14 +126,14 @@ private fun FinanceIndicators(
     ) {
         AnimatedVisibility(walletExpenses != BigDecimal.ZERO) {
             CsTag(
-                text = walletExpenses.formatAmountWithCurrency(currency),
+                text = walletExpenses.formatAmount(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
         }
         AnimatedVisibility(walletIncome != BigDecimal.ZERO) {
             CsTag(
-                text = walletIncome.formatAmountWithCurrency(currency),
+                text = walletIncome.formatAmount(currency),
                 iconId = CsIcons.TrendingUp,
             )
         }

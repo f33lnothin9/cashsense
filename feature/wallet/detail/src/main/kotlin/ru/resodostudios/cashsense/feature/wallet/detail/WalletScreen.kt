@@ -63,7 +63,7 @@ import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.core.ui.formatAmountWithCurrency
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
@@ -126,7 +126,7 @@ internal fun WalletScreen(
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 Text(
-                                    text = walletState.currentBalance.formatAmountWithCurrency(walletState.wallet.currency),
+                                    text = walletState.currentBalance.formatAmount(walletState.wallet.currency),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.labelMedium,
@@ -264,7 +264,7 @@ private fun FinancePanel(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 FinanceCard(
-                                    title = walletExpenses.formatAmountWithCurrency(walletState.wallet.currency),
+                                    title = walletExpenses.formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
                                     indicatorProgress = expensesProgress,
                                     modifier = Modifier.weight(1f),
@@ -276,7 +276,7 @@ private fun FinancePanel(
                                     enabled = walletExpenses != BigDecimal.ZERO,
                                 )
                                 FinanceCard(
-                                    title = walletIncome.formatAmountWithCurrency(walletState.wallet.currency),
+                                    title = walletIncome.formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_income,
                                     indicatorProgress = 1.0f - expensesProgress,
                                     modifier = Modifier.weight(1f),
@@ -292,7 +292,7 @@ private fun FinancePanel(
 
                         FinanceSectionType.EXPENSES -> {
                             DetailedFinanceCard(
-                                title = walletExpenses.formatAmountWithCurrency(walletState.wallet.currency),
+                                title = walletExpenses.formatAmount(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_expenses,
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
@@ -308,7 +308,7 @@ private fun FinancePanel(
 
                         FinanceSectionType.INCOME -> {
                             DetailedFinanceCard(
-                                title = walletIncome.formatAmountWithCurrency(walletState.wallet.currency),
+                                title = walletIncome.formatAmount(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_income,
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
@@ -513,7 +513,7 @@ private fun LazyListScope.transactions(
             ListItem(
                 headlineContent = {
                     Text(
-                        text = transactionCategory.transaction.amount.formatAmountWithCurrency(
+                        text = transactionCategory.transaction.amount.formatAmount(
                             currency = currency,
                             withPlus = true,
                         ),
