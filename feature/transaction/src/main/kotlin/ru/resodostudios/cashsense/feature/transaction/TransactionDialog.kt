@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
@@ -75,7 +76,8 @@ fun TransactionDialog(
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val dialogTitle = if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
+    val dialogTitle =
+        if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
     val dialogConfirmText = if (transactionState.isEditing) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
@@ -101,7 +103,11 @@ fun TransactionDialog(
                 ) {
                     OutlinedTextField(
                         value = transactionState.amount,
-                        onValueChange = { onTransactionEvent(TransactionDialogEvent.UpdateAmount(it.validateAmount().first)) },
+                        onValueChange = {
+                            onTransactionEvent(
+                                TransactionDialogEvent.UpdateAmount(it.validateAmount().first)
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next,
@@ -122,11 +128,19 @@ fun TransactionDialog(
                     CategoryExposedDropdownMenuBox(
                         currentCategory = transactionState.category,
                         categories = categoriesState.categories,
-                        onCategoryClick = { onTransactionEvent(TransactionDialogEvent.UpdateCategory(it)) },
+                        onCategoryClick = {
+                            onTransactionEvent(
+                                TransactionDialogEvent.UpdateCategory(it)
+                            )
+                        },
                     )
                     OutlinedTextField(
                         value = transactionState.description,
-                        onValueChange = { onTransactionEvent(TransactionDialogEvent.UpdateDescription(it)) },
+                        onValueChange = {
+                            onTransactionEvent(
+                                TransactionDialogEvent.UpdateDescription(it)
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done,
@@ -143,7 +157,13 @@ fun TransactionDialog(
                         iconId = CsIcons.Calendar,
                         modifier = Modifier.fillMaxWidth(),
                         initialSelectedDateMillis = transactionState.date.toEpochMilliseconds(),
-                        onDateClick = {},
+                        onDateClick = {
+                            onTransactionEvent(
+                                TransactionDialogEvent.UpdateDate(
+                                    Instant.fromEpochMilliseconds(it)
+                                )
+                            )
+                        },
                     )
                 }
                 LaunchedEffect(Unit) {
@@ -177,7 +197,9 @@ private fun FinancialTypeChoiceRow(
                     count = financialTypes.size,
                 ),
                 onClick = {
-                    onTransactionEvent(TransactionDialogEvent.UpdateFinancialType(FinancialType.entries[index]))
+                    onTransactionEvent(
+                        TransactionDialogEvent.UpdateFinancialType(FinancialType.entries[index])
+                    )
                 },
                 selected = transactionState.financialType == FinancialType.entries[index],
                 icon = {
@@ -275,9 +297,7 @@ private fun CategoryExposedDropdownMenuBox(
                     leadingIcon = {
                         Icon(
                             imageVector = ImageVector.vectorResource(
-                                StoredIcon.asRes(
-                                    category.iconId ?: 0
-                                )
+                                StoredIcon.asRes(category.iconId ?: 0)
                             ),
                             contentDescription = null,
                         )

@@ -72,6 +72,12 @@ class TransactionDialogViewModel @Inject constructor(
                 }
             }
 
+            is TransactionDialogEvent.UpdateDate -> {
+                _transactionUiState.update {
+                    it.copy(date = event.date)
+                }
+            }
+
             is TransactionDialogEvent.UpdateAmount -> {
                 _transactionUiState.update {
                     it.copy(amount = event.amount)
