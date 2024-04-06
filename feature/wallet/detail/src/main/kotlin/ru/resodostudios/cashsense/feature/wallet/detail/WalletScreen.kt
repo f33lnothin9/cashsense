@@ -1,8 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -144,7 +146,11 @@ internal fun WalletScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
+                                    onTransactionEvent(
+                                        TransactionDialogEvent.UpdateWalletId(
+                                            walletState.wallet.id
+                                        )
+                                    )
                                     onTransactionEvent(TransactionDialogEvent.UpdateId(""))
                                     showTransactionDialog = true
                                 }
@@ -234,25 +240,39 @@ private fun FinancePanel(
                 it.transaction.amount.abs()
             }
 
-            val walletExpenses = walletState.transactionsCategories
-                .asSequence()
-                .filter { it.transaction.amount < BigDecimal.ZERO }
-                .sumOf { it.transaction.amount.abs() }
-            val walletIncome = walletState.transactionsCategories
-                .asSequence()
-                .filter { it.transaction.amount > BigDecimal.ZERO }
-                .sumOf { it.transaction.amount }
-
-            val expensesProgress = if (walletState.transactionsCategories.isNotEmpty()) walletExpenses
-                .divide(sumOfTransactions, MathContext.DECIMAL32)
-                .toFloat() else 0f
+            val expenses by animateFloatAsState(
+                targetValue = walletState.transactionsCategories
+                    .asSequence()
+                    .filter { it.transaction.amount < BigDecimal.ZERO }
+                    .sumOf { it.transaction.amount.abs() }
+                    .toFloat(),
+                label = "expensesAnimation",
+                animationSpec = tween(durationMillis = 500),
+            )
+            val income by animateFloatAsState(
+                targetValue = walletState.transactionsCategories
+                    .asSequence()
+                    .filter { it.transaction.amount > BigDecimal.ZERO }
+                    .sumOf { it.transaction.amount }
+                    .toFloat(),
+                label = "incomeAnimation",
+                animationSpec = tween(durationMillis = 500),
+            )
+            val expensesProgress by animateFloatAsState(
+                targetValue = if (walletState.transactionsCategories.isNotEmpty()) expenses
+                    .toBigDecimal()
+                    .divide(sumOfTransactions, MathContext.DECIMAL32)
+                    .toFloat() else 0f,
+                label = "expensesProgressAnimation",
+                animationSpec = tween(durationMillis = 500),
+            )
 
             Column(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Crossfade(
+                AnimatedContent(
                     targetState = walletState.financeSectionType,
                     label = "financePanel",
                     modifier = Modifier.animateContentSize(),
@@ -264,60 +284,76 @@ private fun FinancePanel(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 FinanceCard(
-                                    title = walletExpenses.formatAmount(walletState.wallet.currency),
+                                    title = expenses
+                                        .toBigDecimal()
+                                        .formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
                                     indicatorProgress = expensesProgress,
                                     modifier = Modifier.weight(1f),
-                                    onClick = { onWalletEvent(
-                                        WalletEvent.UpdateFinanceType(
-                                            FinanceSectionType.EXPENSES
+                                    onClick = {
+                                        onWalletEvent(
+                                            WalletEvent.UpdateFinanceType(
+                                                FinanceSectionType.EXPENSES
+                                            )
                                         )
-                                    ) },
-                                    enabled = walletExpenses != BigDecimal.ZERO,
+                                    },
+                                    enabled = expenses.toBigDecimal() != BigDecimal.ZERO,
                                 )
                                 FinanceCard(
-                                    title = walletIncome.formatAmount(walletState.wallet.currency),
+                                    title = income
+                                        .toBigDecimal()
+                                        .formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_income,
                                     indicatorProgress = 1.0f - expensesProgress,
                                     modifier = Modifier.weight(1f),
-                                    onClick = { onWalletEvent(
-                                        WalletEvent.UpdateFinanceType(
-                                            FinanceSectionType.INCOME
+                                    onClick = {
+                                        onWalletEvent(
+                                            WalletEvent.UpdateFinanceType(
+                                                FinanceSectionType.INCOME
+                                            )
                                         )
-                                    ) },
-                                    enabled = walletIncome != BigDecimal.ZERO,
+                                    },
+                                    enabled = income.toBigDecimal() != BigDecimal.ZERO,
                                 )
                             }
                         }
 
                         FinanceSectionType.EXPENSES -> {
                             DetailedFinanceCard(
-                                title = walletExpenses.formatAmount(walletState.wallet.currency),
+                                title = expenses
+                                    .toBigDecimal()
+                                    .formatAmount(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_expenses,
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
                                 onWalletEvent = onWalletEvent,
-                                onBackClick = { onWalletEvent(
-                                    WalletEvent.UpdateFinanceType(
-                                        FinanceSectionType.NONE
+                                onBackClick = {
+                                    onWalletEvent(
+                                        WalletEvent.UpdateFinanceType(
+                                            FinanceSectionType.NONE
+                                        )
                                     )
-                                ) },
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
 
                         FinanceSectionType.INCOME -> {
                             DetailedFinanceCard(
-                                title = walletIncome.formatAmount(walletState.wallet.currency),
+                                title = income
+                                    .toBigDecimal()
+                                    .formatAmount(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_income,
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
                                 onWalletEvent = onWalletEvent,
-                                onBackClick = { onWalletEvent(
-                                    WalletEvent.UpdateFinanceType(
-                                        FinanceSectionType.NONE
+                                onBackClick = {
+                                    onWalletEvent(
+                                        WalletEvent.UpdateFinanceType(
+                                            FinanceSectionType.NONE
+                                        )
                                     )
-                                ) },
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
@@ -332,7 +368,10 @@ private fun FinancePanel(
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     dateTypes.forEachIndexed { index, label ->
                         SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(index = index, count = dateTypes.size),
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = dateTypes.size
+                            ),
                             onClick = { onWalletEvent(WalletEvent.UpdateDateType(DateType.entries[index])) },
                             selected = walletState.dateType == DateType.entries[index],
                         ) {
@@ -465,7 +504,11 @@ private fun CategoryFilterPanel(
                         imageVector = if (selected) {
                             ImageVector.vectorResource(CsIcons.Confirm)
                         } else {
-                            ImageVector.vectorResource(StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId))
+                            ImageVector.vectorResource(
+                                StoredIcon.asRes(
+                                    category.iconId ?: StoredIcon.CATEGORY.storedId
+                                )
+                            )
                         },
                         contentDescription = null,
                         modifier = Modifier.size(FilterChipDefaults.IconSize),
@@ -540,9 +583,7 @@ private fun LazyListScope.transactions(
                 },
                 modifier = Modifier
                     .animateItem()
-                    .clickable {
-                        onTransactionClick(transactionCategory.transaction.id)
-                    }
+                    .clickable { onTransactionClick(transactionCategory.transaction.id) }
             )
         }
     }
