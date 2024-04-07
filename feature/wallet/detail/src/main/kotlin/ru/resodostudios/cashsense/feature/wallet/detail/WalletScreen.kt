@@ -236,35 +236,33 @@ private fun FinancePanel(
     when (walletState) {
         WalletUiState.Loading -> Unit
         is WalletUiState.Success -> {
-            val sumOfTransactions = walletState.transactionsCategories.sumOf {
-                it.transaction.amount.abs()
-            }
-
-            val expenses by animateFloatAsState(
-                targetValue = walletState.transactionsCategories
-                    .asSequence()
-                    .filter { it.transaction.amount < BigDecimal.ZERO }
-                    .sumOf { it.transaction.amount.abs() }
-                    .toFloat(),
+            val expenses = walletState.transactionsCategories
+                .asSequence()
+                .filter { it.transaction.amount < BigDecimal.ZERO }
+                .sumOf { it.transaction.amount.abs() }
+            val expensesAnimated by animateFloatAsState(
+                targetValue = expenses.toFloat(),
                 label = "expensesAnimation",
-                animationSpec = tween(durationMillis = 500),
+                animationSpec = tween(durationMillis = 400),
             )
-            val income by animateFloatAsState(
-                targetValue = walletState.transactionsCategories
-                    .asSequence()
-                    .filter { it.transaction.amount > BigDecimal.ZERO }
-                    .sumOf { it.transaction.amount }
-                    .toFloat(),
+            val income = walletState.transactionsCategories
+                .asSequence()
+                .filter { it.transaction.amount > BigDecimal.ZERO }
+                .sumOf { it.transaction.amount }
+            val incomeAnimated by animateFloatAsState(
+                targetValue = income.toFloat(),
                 label = "incomeAnimation",
-                animationSpec = tween(durationMillis = 500),
+                animationSpec = tween(durationMillis = 400),
             )
             val expensesProgress by animateFloatAsState(
                 targetValue = if (walletState.transactionsCategories.isNotEmpty()) expenses
-                    .toBigDecimal()
-                    .divide(sumOfTransactions, MathContext.DECIMAL32)
+                    .divide(
+                        walletState.transactionsCategories.sumOf { it.transaction.amount.abs() },
+                        MathContext.DECIMAL32,
+                    )
                     .toFloat() else 0f,
                 label = "expensesProgressAnimation",
-                animationSpec = tween(durationMillis = 500),
+                animationSpec = tween(durationMillis = 400),
             )
 
             Column(
@@ -284,7 +282,7 @@ private fun FinancePanel(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 FinanceCard(
-                                    title = expenses
+                                    title = expensesAnimated
                                         .toBigDecimal()
                                         .formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
@@ -297,10 +295,10 @@ private fun FinancePanel(
                                             )
                                         )
                                     },
-                                    enabled = expenses.toBigDecimal() != BigDecimal.ZERO,
+                                    enabled = expenses != BigDecimal.ZERO,
                                 )
                                 FinanceCard(
-                                    title = income
+                                    title = incomeAnimated
                                         .toBigDecimal()
                                         .formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_income,
@@ -313,14 +311,14 @@ private fun FinancePanel(
                                             )
                                         )
                                     },
-                                    enabled = income.toBigDecimal() != BigDecimal.ZERO,
+                                    enabled = income != BigDecimal.ZERO,
                                 )
                             }
                         }
 
                         FinanceSectionType.EXPENSES -> {
                             DetailedFinanceCard(
-                                title = expenses
+                                title = expensesAnimated
                                     .toBigDecimal()
                                     .formatAmount(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_expenses,
@@ -340,7 +338,7 @@ private fun FinancePanel(
 
                         FinanceSectionType.INCOME -> {
                             DetailedFinanceCard(
-                                title = income
+                                title = incomeAnimated
                                     .toBigDecimal()
                                     .formatAmount(walletState.wallet.currency),
                                 supportingTextId = R.string.feature_wallet_detail_income,
@@ -370,7 +368,7 @@ private fun FinancePanel(
                         SegmentedButton(
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = index,
-                                count = dateTypes.size
+                                count = dateTypes.size,
                             ),
                             onClick = { onWalletEvent(WalletEvent.UpdateDateType(DateType.entries[index])) },
                             selected = walletState.dateType == DateType.entries[index],
