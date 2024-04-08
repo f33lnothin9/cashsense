@@ -37,7 +37,7 @@ fun CategoryBottomSheet(
 
 @Composable
 fun CategoryBottomSheet(
-    categoryDialogState: CategoryUiState,
+    categoryDialogState: CategoryDialogUiState,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,

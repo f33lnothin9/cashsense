@@ -106,15 +106,15 @@ private fun LazyGridScope.categories(
                     },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)),
+                            imageVector = ImageVector.vectorResource(
+                                StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)
+                            ),
                             contentDescription = null,
                         )
                     },
                     modifier = Modifier
                         .animateItemPlacement()
-                        .clickable {
-                            onCategoryClick(category.id.toString())
-                        }
+                        .clickable { onCategoryClick(category.id.toString()) }
                 )
             }
         }

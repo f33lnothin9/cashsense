@@ -42,7 +42,7 @@ fun CategoryDialog(
 
 @Composable
 fun CategoryDialog(
-    categoryState: CategoryUiState,
+    categoryState: CategoryDialogUiState,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
