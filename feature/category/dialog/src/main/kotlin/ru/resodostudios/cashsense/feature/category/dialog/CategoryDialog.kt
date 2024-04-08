@@ -32,9 +32,11 @@ fun CategoryDialog(
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
     val categoryState by viewModel.categoryUiState.collectAsStateWithLifecycle()
+    val categoryId by viewModel.categoryId.collectAsStateWithLifecycle()
 
     CategoryDialog(
         categoryState = categoryState,
+        categoryId = categoryId,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
     )
@@ -43,12 +45,12 @@ fun CategoryDialog(
 @Composable
 fun CategoryDialog(
     categoryState: CategoryDialogUiState,
+    categoryId: String,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle =
-        if (categoryState.isEditing) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
-    val dialogConfirmText = if (categoryState.isEditing) uiR.string.save else uiR.string.add
+    val dialogTitle = if (categoryId.isNotEmpty()) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
+    val dialogConfirmText = if (categoryId.isNotEmpty()) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -91,7 +93,7 @@ fun CategoryDialog(
             )
         }
         LaunchedEffect(Unit) {
-            if (!categoryState.isEditing) {
+            if (categoryId.isEmpty()) {
                 titleTextField.requestFocus()
             }
         }

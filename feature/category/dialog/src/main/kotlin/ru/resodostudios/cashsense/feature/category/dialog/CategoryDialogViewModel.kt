@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
@@ -70,13 +69,11 @@ class CategoryDialogViewModel @Inject constructor(
     private fun loadCategory() {
         viewModelScope.launch {
             categoriesRepository.getCategory(categoryId.value)
-                .onStart { _categoryDialogUiState.value = CategoryDialogUiState(isEditing = true) }
                 .catch { _categoryDialogUiState.value = CategoryDialogUiState() }
                 .collect {
                     _categoryDialogUiState.value = CategoryDialogUiState(
                         title = it.title.toString(),
                         icon = it.iconId ?: 0,
-                        isEditing = true,
                     )
                 }
         }
@@ -86,7 +83,6 @@ class CategoryDialogViewModel @Inject constructor(
 data class CategoryDialogUiState(
     val title: String = "",
     val icon: Int = 0,
-    val isEditing: Boolean = false,
 )
 
 private const val CATEGORY_ID = "categoryId"
