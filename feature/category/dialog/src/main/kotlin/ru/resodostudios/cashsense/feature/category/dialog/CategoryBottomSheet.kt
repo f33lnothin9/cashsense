@@ -22,7 +22,7 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 @Composable
 fun CategoryBottomSheet(
     onDismiss: () -> Unit,
-    onEdit: (String) -> Unit,
+    onEdit: () -> Unit,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
     val categoryDialogState by viewModel.categoryUiState.collectAsStateWithLifecycle()
@@ -40,7 +40,7 @@ fun CategoryBottomSheet(
     categoryDialogState: CategoryUiState,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     onDismiss: () -> Unit,
-    onEdit: (String) -> Unit,
+    onEdit: () -> Unit,
 ) {
     CsModalBottomSheet(
         onDismiss = onDismiss
@@ -65,7 +65,7 @@ fun CategoryBottomSheet(
             },
             modifier = Modifier.clickable {
                 onDismiss()
-                onEdit(categoryDialogState.id)
+                onEdit()
             },
         )
         ListItem(
