@@ -1,5 +1,11 @@
-
-<a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense"><img src="images/rustore-logo.png" height="63"></a>
+<p align="left">
+  <a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense">
+    <img src="images/rustore-logo.png" height="63">
+  </a>
+  <a href='https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+    <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="72"/>
+  </a>
+</p>
 
 Cash Sense
 ==================
