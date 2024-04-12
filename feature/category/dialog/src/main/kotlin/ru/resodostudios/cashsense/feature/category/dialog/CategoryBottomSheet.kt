@@ -1,6 +1,10 @@
 package ru.resodostudios.cashsense.feature.category.dialog
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -17,6 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 
 @Composable
@@ -25,7 +31,7 @@ fun CategoryBottomSheet(
     onEdit: () -> Unit,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
-    val categoryDialogState by viewModel.categoryUiState.collectAsStateWithLifecycle()
+    val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
 
     CategoryBottomSheet(
         categoryDialogState = categoryDialogState,
@@ -45,41 +51,52 @@ fun CategoryBottomSheet(
     CsModalBottomSheet(
         onDismiss = onDismiss
     ) {
-        ListItem(
-            headlineContent = { Text(categoryDialogState.title) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(StoredIcon.asRes(categoryDialogState.icon)),
-                    contentDescription = null,
+        AnimatedVisibility(categoryDialogState.isLoading) {
+            LoadingState(
+                Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+            )
+        }
+        AnimatedVisibility(!categoryDialogState.isLoading) {
+            Column {
+                ListItem(
+                    headlineContent = { Text(categoryDialogState.title) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(categoryDialogState.icon)),
+                            contentDescription = null,
+                        )
+                    },
                 )
-            },
-        )
-        HorizontalDivider(Modifier.padding(16.dp))
-        ListItem(
-            headlineContent = { Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.edit)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                    contentDescription = null,
+                HorizontalDivider(Modifier.padding(16.dp))
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onDismiss()
+                        onEdit()
+                    },
                 )
-            },
-            modifier = Modifier.clickable {
-                onDismiss()
-                onEdit()
-            },
-        )
-        ListItem(
-            headlineContent = { Text(stringResource(ru.resodostudios.cashsense.core.ui.R.string.delete)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                    contentDescription = null,
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onDismiss()
+                        onCategoryEvent(CategoryDialogEvent.Delete)
+                    },
                 )
-            },
-            modifier = Modifier.clickable {
-                onDismiss()
-                onCategoryEvent(CategoryDialogEvent.Delete)
-            },
-        )
+            }
+        }
     }
 }

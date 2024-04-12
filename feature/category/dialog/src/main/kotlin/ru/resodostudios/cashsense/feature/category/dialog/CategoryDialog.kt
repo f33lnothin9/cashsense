@@ -31,11 +31,11 @@ fun CategoryDialog(
     onDismiss: () -> Unit,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
-    val categoryState by viewModel.categoryUiState.collectAsStateWithLifecycle()
+    val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
     val categoryId by viewModel.categoryId.collectAsStateWithLifecycle()
 
     CategoryDialog(
-        categoryState = categoryState,
+        categoryState = categoryDialogState,
         categoryId = categoryId,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
