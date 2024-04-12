@@ -58,11 +58,11 @@ fun TransactionDialog(
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
 ) {
-    val transactionState by transactionDialogViewModel.transactionUiState.collectAsStateWithLifecycle()
+    val transactionDialogState by transactionDialogViewModel.transactionDialogUiState.collectAsStateWithLifecycle()
     val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     TransactionDialog(
-        transactionState = transactionState,
+        transactionDialogState = transactionDialogState,
         categoriesState = categoriesState,
         onDismiss = onDismiss,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
@@ -71,14 +71,13 @@ fun TransactionDialog(
 
 @Composable
 fun TransactionDialog(
-    transactionState: TransactionUiState,
+    transactionDialogState: TransactionDialogUiState,
     categoriesState: CategoriesUiState,
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val dialogTitle =
-        if (transactionState.isEditing) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
-    val dialogConfirmText = if (transactionState.isEditing) uiR.string.save else uiR.string.add
+    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
+    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -89,7 +88,7 @@ fun TransactionDialog(
             onTransactionEvent(TransactionDialogEvent.Save)
             onDismiss()
         },
-        isConfirmEnabled = transactionState.amount.validateAmount().second,
+        isConfirmEnabled = transactionDialogState.amount.validateAmount().second,
         onDismiss = onDismiss,
     ) {
         when (categoriesState) {
@@ -102,7 +101,7 @@ fun TransactionDialog(
                     modifier = Modifier.verticalScroll(rememberScrollState()),
                 ) {
                     OutlinedTextField(
-                        value = transactionState.amount,
+                        value = transactionDialogState.amount,
                         onValueChange = {
                             onTransactionEvent(
                                 TransactionDialogEvent.UpdateAmount(it.validateAmount().first)
@@ -123,10 +122,10 @@ fun TransactionDialog(
                     )
                     FinancialTypeChoiceRow(
                         onTransactionEvent = onTransactionEvent,
-                        transactionState = transactionState,
+                        transactionState = transactionDialogState,
                     )
                     CategoryExposedDropdownMenuBox(
-                        currentCategory = transactionState.category,
+                        currentCategory = transactionDialogState.category,
                         categories = categoriesState.categories,
                         onCategoryClick = {
                             onTransactionEvent(
@@ -135,7 +134,7 @@ fun TransactionDialog(
                         },
                     )
                     OutlinedTextField(
-                        value = transactionState.description,
+                        value = transactionDialogState.description,
                         onValueChange = {
                             onTransactionEvent(
                                 TransactionDialogEvent.UpdateDescription(it)
@@ -152,11 +151,11 @@ fun TransactionDialog(
                             .focusRequester(descTextField),
                     )
                     DatePickerTextField(
-                        value = transactionState.date.formatDate(),
+                        value = transactionDialogState.date.formatDate(),
                         labelTextId = uiR.string.core_ui_date,
                         iconId = CsIcons.Calendar,
                         modifier = Modifier.fillMaxWidth(),
-                        initialSelectedDateMillis = transactionState.date.toEpochMilliseconds(),
+                        initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
                         onDateClick = {
                             onTransactionEvent(
                                 TransactionDialogEvent.UpdateDate(
@@ -167,7 +166,7 @@ fun TransactionDialog(
                     )
                 }
                 LaunchedEffect(Unit) {
-                    if (!transactionState.isEditing) {
+                    if (transactionDialogState.transactionId.isEmpty()) {
                         amountTextField.requestFocus()
                     }
                 }
@@ -179,7 +178,7 @@ fun TransactionDialog(
 @Composable
 private fun FinancialTypeChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
-    transactionState: TransactionUiState,
+    transactionState: TransactionDialogUiState,
 ) {
     val financialTypes = listOf(
         stringResource(R.string.feature_transaction_expense),

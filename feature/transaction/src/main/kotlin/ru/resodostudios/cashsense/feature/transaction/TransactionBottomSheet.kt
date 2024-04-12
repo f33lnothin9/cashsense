@@ -1,9 +1,13 @@
 package ru.resodostudios.cashsense.feature.transaction
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,6 +26,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
@@ -33,10 +38,10 @@ fun TransactionBottomSheet(
     onEdit: () -> Unit,
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
-    val transactionState by viewModel.transactionUiState.collectAsStateWithLifecycle()
+    val transactionDialogState by viewModel.transactionDialogUiState.collectAsStateWithLifecycle()
 
     TransactionBottomSheet(
-        transactionState = transactionState,
+        transactionDialogState = transactionDialogState,
         onTransactionEvent = viewModel::onTransactionEvent,
         onDismiss = onDismiss,
         onEdit = onEdit,
@@ -46,69 +51,78 @@ fun TransactionBottomSheet(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TransactionBottomSheet(
-    transactionState: TransactionUiState,
+    transactionDialogState: TransactionDialogUiState,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
 ) {
-    val formattedAmount = if (transactionState.amount.isNotEmpty()) {
-        transactionState.amount
-            .toBigDecimal()
-            .formatAmount(transactionState.currency, true)
-    } else {
-        ""
-    }
-
     CsModalBottomSheet(onDismiss = onDismiss) {
-        ListItem(
-            headlineContent = { Text(formattedAmount) },
-            supportingContent = if (transactionState.description.isNotEmpty()) {
-                { Text(text = transactionState.description) }
-            } else {
-                null
-            }
-        )
-        FlowRow(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (transactionState.category != null) {
-                CsTag(
-                    text = transactionState.category.title.toString(),
-                    iconId = StoredIcon.asRes(transactionState.category.iconId ?: 0),
-                )
-            }
-            CsTag(
-                text = transactionState.date.formatDate(DATE_TIME),
-                iconId = CsIcons.Calendar,
+        AnimatedVisibility(transactionDialogState.isLoading) {
+            LoadingState(
+                Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
             )
         }
-        HorizontalDivider(Modifier.padding(16.dp))
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.edit)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                    contentDescription = null,
+        AnimatedVisibility(!transactionDialogState.isLoading) {
+            Column {
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            transactionDialogState.amount
+                                .toBigDecimal()
+                                .formatAmount(transactionDialogState.currency, true)
+                        )
+                    },
+                    supportingContent = {
+                        if (transactionDialogState.description.isNotEmpty()) {
+                            Text(text = transactionDialogState.description)
+                        }
+                    }
                 )
-            },
-            modifier = Modifier.clickable {
-                onDismiss()
-                onEdit()
-            },
-        )
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.delete)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                    contentDescription = null,
+                FlowRow(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (transactionDialogState.category != null) {
+                        CsTag(
+                            text = transactionDialogState.category.title.toString(),
+                            iconId = StoredIcon.asRes(transactionDialogState.category.iconId ?: 0),
+                        )
+                    }
+                    CsTag(
+                        text = transactionDialogState.date.formatDate(DATE_TIME),
+                        iconId = CsIcons.Calendar,
+                    )
+                }
+                HorizontalDivider(Modifier.padding(16.dp))
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onDismiss()
+                        onEdit()
+                    },
                 )
-            },
-            modifier = Modifier.clickable {
-                onDismiss()
-                onTransactionEvent(TransactionDialogEvent.Delete)
-            },
-        )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onDismiss()
+                        onTransactionEvent(TransactionDialogEvent.Delete)
+                    },
+                )
+            }
+        }
     }
 }

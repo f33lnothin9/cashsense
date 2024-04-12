@@ -48,9 +48,7 @@ fun CategoryBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
 ) {
-    CsModalBottomSheet(
-        onDismiss = onDismiss
-    ) {
+    CsModalBottomSheet(onDismiss = onDismiss) {
         AnimatedVisibility(categoryDialogState.isLoading) {
             LoadingState(
                 Modifier
