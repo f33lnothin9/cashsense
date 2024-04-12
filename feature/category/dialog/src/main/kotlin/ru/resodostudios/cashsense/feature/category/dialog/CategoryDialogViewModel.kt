@@ -74,6 +74,7 @@ class CategoryDialogViewModel @Inject constructor(
                 .catch { _categoryDialogUiState.value = CategoryDialogUiState() }
                 .collect {
                     _categoryDialogUiState.value = CategoryDialogUiState(
+                        id = it.id.toString(),
                         title = it.title.toString(),
                         icon = it.iconId ?: 0,
                     )

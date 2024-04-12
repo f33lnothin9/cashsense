@@ -34,7 +34,7 @@ fun CategoryDialog(
     val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
 
     CategoryDialog(
-        categoryState = categoryDialogState,
+        categoryDialogState = categoryDialogState,
         onCategoryEvent = viewModel::onCategoryEvent,
         onDismiss = onDismiss,
     )
@@ -42,12 +42,12 @@ fun CategoryDialog(
 
 @Composable
 fun CategoryDialog(
-    categoryState: CategoryDialogUiState,
+    categoryDialogState: CategoryDialogUiState,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (categoryState.id.isNotEmpty()) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
-    val dialogConfirmText = if (categoryState.id.isNotEmpty()) uiR.string.save else uiR.string.add
+    val dialogTitle = if (categoryDialogState.id.isNotEmpty()) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
+    val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -58,7 +58,7 @@ fun CategoryDialog(
             onCategoryEvent(CategoryDialogEvent.Save)
             onDismiss()
         },
-        isConfirmEnabled = categoryState.title.isNotBlank(),
+        isConfirmEnabled = categoryDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
         val focusManager = LocalFocusManager.current
@@ -69,7 +69,7 @@ fun CategoryDialog(
             modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
             OutlinedTextField(
-                value = categoryState.title,
+                value = categoryDialogState.title,
                 onValueChange = { onCategoryEvent(CategoryDialogEvent.UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -81,7 +81,7 @@ fun CategoryDialog(
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(
-                        currentIconId = categoryState.icon,
+                        currentIconId = categoryDialogState.icon,
                         onSelectedIconClick = { onCategoryEvent(CategoryDialogEvent.UpdateIcon(it)) },
                         onClick = { focusManager.clearFocus() },
                     )
@@ -90,7 +90,7 @@ fun CategoryDialog(
             )
         }
         LaunchedEffect(Unit) {
-            if (categoryState.id.isEmpty()) {
+            if (categoryDialogState.id.isEmpty()) {
                 titleTextField.requestFocus()
             }
         }
