@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.category.dialog
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryDialogViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    val categoryId = savedStateHandle.getStateFlow(key = CATEGORY_ID, initialValue = "")
 
     private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
     val categoryDialogUiState = _categoryDialogUiState.asStateFlow()
@@ -31,7 +27,7 @@ class CategoryDialogViewModel @Inject constructor(
         when (event) {
             CategoryDialogEvent.Save -> {
                 val category = Category(
-                    id = categoryId.value.ifEmpty { UUID.randomUUID().toString() },
+                    id = _categoryDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _categoryDialogUiState.value.title,
                     iconId = _categoryDialogUiState.value.icon,
                 )
@@ -45,12 +41,14 @@ class CategoryDialogViewModel @Inject constructor(
 
             CategoryDialogEvent.Delete -> {
                 viewModelScope.launch {
-                    categoriesRepository.deleteCategory(categoryId.value)
+                    categoriesRepository.deleteCategory(_categoryDialogUiState.value.id)
                 }
             }
 
             is CategoryDialogEvent.UpdateId -> {
-                savedStateHandle[CATEGORY_ID] = event.id
+                _categoryDialogUiState.update {
+                    it.copy(id = event.id)
+                }
                 loadCategory()
             }
 
@@ -70,7 +68,7 @@ class CategoryDialogViewModel @Inject constructor(
 
     private fun loadCategory() {
         viewModelScope.launch {
-            categoriesRepository.getCategory(categoryId.value)
+            categoriesRepository.getCategory(_categoryDialogUiState.value.id)
                 .onStart { _categoryDialogUiState.update { it.copy(isLoading = true) } }
                 .onCompletion { _categoryDialogUiState.update { it.copy(isLoading = false) } }
                 .catch { _categoryDialogUiState.value = CategoryDialogUiState() }
@@ -85,9 +83,8 @@ class CategoryDialogViewModel @Inject constructor(
 }
 
 data class CategoryDialogUiState(
+    val id: String = "",
     val title: String = "",
     val icon: Int = 0,
     val isLoading: Boolean = false,
 )
-
-private const val CATEGORY_ID = "categoryId"
