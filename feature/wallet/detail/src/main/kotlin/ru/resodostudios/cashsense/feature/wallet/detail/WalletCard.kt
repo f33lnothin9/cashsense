@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -17,6 +19,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,9 +47,12 @@ fun WalletCard(
     onWalletMenuClick: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentWalletBalance = wallet.initialBalance
-        .plus(transactions.sumOf { it.amount })
-        .formatAmount(wallet.currency)
+    val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
+    val currentBalanceAnimated by animateFloatAsState(
+        targetValue = currentBalance.toFloat(),
+        label = "currentBalanceAnimation",
+        animationSpec = tween(durationMillis = 400),
+    )
 
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
@@ -67,7 +73,9 @@ fun WalletCard(
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                text = currentWalletBalance,
+                text = currentBalanceAnimated
+                    .toBigDecimal()
+                    .formatAmount(wallet.currency),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,
@@ -90,7 +98,7 @@ fun WalletCard(
                 Text(stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             IconButton(
-                onClick = { onWalletMenuClick(wallet.id, currentWalletBalance) },
+                onClick = { onWalletMenuClick(wallet.id, currentBalance.formatAmount(wallet.currency)) },
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
@@ -108,32 +116,46 @@ private fun FinanceIndicators(
     currency: String,
     modifier: Modifier = Modifier,
 ) {
-    val walletExpenses = transactions
+    val expenses = transactions
         .asSequence()
         .filter { it.amount < BigDecimal.ZERO }
         .sumOf { it.amount }
         .abs()
-    val walletIncome = transactions
+    val expensesAnimated by animateFloatAsState(
+        targetValue = expenses.toFloat(),
+        label = "expensesAnimation",
+        animationSpec = tween(durationMillis = 400),
+    )
+    val income = transactions
         .asSequence()
         .filter { it.amount > BigDecimal.ZERO }
         .sumOf { it.amount }
         .abs()
+    val incomeAnimated by animateFloatAsState(
+        targetValue = income.toFloat(),
+        label = "incomeAnimation",
+        animationSpec = tween(durationMillis = 400),
+    )
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
-        AnimatedVisibility(walletExpenses != BigDecimal.ZERO) {
+        AnimatedVisibility(expenses != BigDecimal.ZERO) {
             CsTag(
-                text = walletExpenses.formatAmount(currency),
+                text = expensesAnimated
+                    .toBigDecimal()
+                    .formatAmount(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
         }
-        AnimatedVisibility(walletIncome != BigDecimal.ZERO) {
+        AnimatedVisibility(income != BigDecimal.ZERO) {
             CsTag(
-                text = walletIncome.formatAmount(currency),
+                text = incomeAnimated
+                    .toBigDecimal()
+                    .formatAmount(currency),
                 iconId = CsIcons.TrendingUp,
             )
         }
