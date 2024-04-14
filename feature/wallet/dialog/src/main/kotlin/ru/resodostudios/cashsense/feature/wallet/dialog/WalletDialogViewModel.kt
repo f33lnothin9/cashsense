@@ -36,13 +36,7 @@ class WalletDialogViewModel @Inject constructor(
                     walletsRepository.upsertWallet(wallet)
                 }
                 _walletDialogUiState.update {
-                    it.copy(
-                        id = "",
-                        title = "",
-                        initialBalance = "",
-                        currency = Currency.USD.name,
-                        isEditing = false,
-                    )
+                    WalletDialogUiState()
                 }
             }
 
@@ -88,7 +82,7 @@ class WalletDialogViewModel @Inject constructor(
     private fun loadWallet() {
         viewModelScope.launch {
             walletsRepository.getWallet(_walletDialogUiState.value.id)
-                .onStart { _walletDialogUiState.value = WalletDialogUiState(isEditing = true) }
+                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
                 .catch { _walletDialogUiState.value = WalletDialogUiState() }
                 .collect {
                     _walletDialogUiState.value = _walletDialogUiState.value.copy(
@@ -96,7 +90,7 @@ class WalletDialogViewModel @Inject constructor(
                         title = it.title,
                         initialBalance = it.initialBalance.toString(),
                         currency = it.currency,
-                        isEditing = true,
+                        isLoading = false,
                     )
                 }
         }
@@ -109,5 +103,5 @@ data class WalletDialogUiState(
     val initialBalance: String = "",
     val currentBalance: String = "",
     val currency: String = Currency.USD.name,
-    val isEditing: Boolean = false,
+    val isLoading: Boolean = false,
 )

@@ -1,6 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -18,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
@@ -45,53 +50,62 @@ fun WalletBottomSheet(
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
 ) {
-    CsModalBottomSheet(
-        onDismiss = onDismiss
-    ) {
-        ListItem(
-            headlineContent = { Text(walletDialogState.title) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Wallet),
-                    contentDescription = null,
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = walletDialogState.currentBalance.ifEmpty {
-                        BigDecimal(0).formatAmount(walletDialogState.currency)
+    CsModalBottomSheet(onDismiss) {
+        AnimatedVisibility(walletDialogState.isLoading) {
+            LoadingState(
+                Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+            )
+        }
+        AnimatedVisibility(!walletDialogState.isLoading) {
+            Column {
+                ListItem(
+                    headlineContent = { Text(walletDialogState.title) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Wallet),
+                            contentDescription = null,
+                        )
                     },
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    supportingContent = {
+                        Text(
+                            text = walletDialogState.currentBalance.ifEmpty {
+                                BigDecimal(0).formatAmount(walletDialogState.currency)
+                            },
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                )
+                HorizontalDivider(Modifier.padding(16.dp))
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onEdit(walletDialogState.id)
+                        onDismiss()
+                    },
+                )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                            contentDescription = null,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onWalletEvent(WalletDialogEvent.Delete(walletDialogState.id))
+                        onDismiss()
+                    },
                 )
             }
-        )
-        HorizontalDivider(Modifier.padding(16.dp))
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.edit)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                    contentDescription = null,
-                )
-            },
-            modifier = Modifier.clickable {
-                onEdit(walletDialogState.id)
-                onDismiss()
-            },
-        )
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.delete)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                    contentDescription = null,
-                )
-            },
-            modifier = Modifier.clickable {
-                onWalletEvent(WalletDialogEvent.Delete(walletDialogState.id))
-                onDismiss()
-            },
-        )
+        }
     }
 }

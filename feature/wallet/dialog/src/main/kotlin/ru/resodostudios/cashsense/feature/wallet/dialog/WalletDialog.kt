@@ -47,8 +47,8 @@ fun WalletDialog(
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (walletDialogState.isEditing) R.string.feature_wallet_dialog_edit_wallet else R.string.feature_wallet_dialog_new_wallet
-    val dialogConfirmText = if (walletDialogState.isEditing) uiR.string.save else uiR.string.add
+    val dialogTitle = if (walletDialogState.id.isNotEmpty()) R.string.feature_wallet_dialog_edit_wallet else R.string.feature_wallet_dialog_new_wallet
+    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -75,9 +75,9 @@ fun WalletDialog(
                 modifier = Modifier
                     .focusRequester(titleTextField)
                     .focusProperties { next = initialBalanceTextField },
-                label = { Text(text = stringResource(uiR.string.title)) },
-                placeholder = { Text(text = stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(text = stringResource(uiR.string.required)) },
+                label = { Text(stringResource(uiR.string.title)) },
+                placeholder = { Text(stringResource(uiR.string.title) + "*") },
+                supportingText = { Text(stringResource(uiR.string.required)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
@@ -88,8 +88,8 @@ fun WalletDialog(
                 value = walletDialogState.initialBalance,
                 onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.validateAmount().first)) },
                 modifier = Modifier.focusRequester(initialBalanceTextField),
-                label = { Text(text = stringResource(R.string.feature_wallet_dialog_initial_balance)) },
-                placeholder = { Text(text = "100") },
+                label = { Text(stringResource(R.string.feature_wallet_dialog_initial_balance)) },
+                placeholder = { Text("100") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
@@ -102,7 +102,9 @@ fun WalletDialog(
             )
         }
         LaunchedEffect(Unit) {
-            if (!walletDialogState.isEditing) titleTextField.requestFocus()
+            if (walletDialogState.id.isEmpty()) {
+                titleTextField.requestFocus()
+            }
         }
     }
 }

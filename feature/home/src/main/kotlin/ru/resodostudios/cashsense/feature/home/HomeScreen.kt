@@ -69,7 +69,7 @@ internal fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
             ) {
-                walletsWithTransactionsAndCategories(
+                wallets(
                     walletsTransactionsCategories = walletsState.walletsTransactionsCategories,
                     onWalletClick = onWalletClick,
                     onTransactionCreate = {
@@ -109,7 +109,7 @@ internal fun HomeScreen(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private fun LazyStaggeredGridScope.walletsWithTransactionsAndCategories(
+private fun LazyStaggeredGridScope.wallets(
     walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
