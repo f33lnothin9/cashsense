@@ -11,5 +11,5 @@ interface SubscriptionsRepository {
 
     suspend fun upsertSubscription(subscription: Subscription)
 
-    suspend fun deleteSubscription(subscription: Subscription)
+    suspend fun deleteSubscription(id: String)
 }

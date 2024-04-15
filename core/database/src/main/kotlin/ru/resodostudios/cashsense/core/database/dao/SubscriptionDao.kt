@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.core.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +18,6 @@ interface SubscriptionDao {
     @Upsert
     suspend fun upsertSubscription(subscription: SubscriptionEntity)
 
-    @Delete
-    suspend fun deleteSubscription(subscription: SubscriptionEntity)
+    @Query("DELETE FROM subscriptions WHERE id = :id")
+    suspend fun deleteSubscription(id: String)
 }

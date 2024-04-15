@@ -23,6 +23,6 @@ class OfflineSubscriptionsRepository @Inject constructor(
     override suspend fun upsertSubscription(subscription: Subscription) =
         subscriptionDao.upsertSubscription(subscription.asEntity())
 
-    override suspend fun deleteSubscription(subscription: Subscription) =
-        subscriptionDao.deleteSubscription(subscription.asEntity())
+    override suspend fun deleteSubscription(id: String) =
+        subscriptionDao.deleteSubscription(id)
 }
