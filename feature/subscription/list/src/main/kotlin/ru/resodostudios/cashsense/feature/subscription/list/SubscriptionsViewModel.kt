@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import javax.inject.Inject
@@ -27,12 +26,6 @@ class SubscriptionsViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = SubscriptionsUiState.Loading
             )
-
-    fun deleteSubscription(subscription: Subscription) {
-        viewModelScope.launch {
-            subscriptionsRepository.deleteSubscription(subscription)
-        }
-    }
 }
 
 sealed interface SubscriptionsUiState {

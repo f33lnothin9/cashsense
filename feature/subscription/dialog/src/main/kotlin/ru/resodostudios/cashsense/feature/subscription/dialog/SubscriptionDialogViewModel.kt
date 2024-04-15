@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,35 +14,26 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionArgs
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class SubscriptionDialogViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    private val subscriptionsRepository: SubscriptionsRepository
+    private val subscriptionsRepository: SubscriptionsRepository,
 ) : ViewModel() {
 
-    private val subscriptionArgs: SubscriptionArgs = SubscriptionArgs(savedStateHandle)
-    private val subscriptionId: String? = subscriptionArgs.subscriptionId
-
-    private val _subscriptionUiState = MutableStateFlow(SubscriptionUiState())
-    val subscriptionUiState = _subscriptionUiState.asStateFlow()
-
-    init {
-        loadSubscription()
-    }
+    private val _subscriptionDialogUiState = MutableStateFlow(SubscriptionDialogUiState())
+    val subscriptionDialogUiState = _subscriptionDialogUiState.asStateFlow()
 
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
-            SubscriptionDialogEvent.Confirm -> {
+            SubscriptionDialogEvent.Save -> {
                 val subscription = Subscription(
-                    id = subscriptionId ?: UUID.randomUUID().toString(),
-                    title = _subscriptionUiState.value.title,
-                    amount = _subscriptionUiState.value.amount.toBigDecimal(),
-                    paymentDate = _subscriptionUiState.value.paymentDate,
-                    currency = _subscriptionUiState.value.currency,
+                    id = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+                    title = _subscriptionDialogUiState.value.title,
+                    amount = _subscriptionDialogUiState.value.amount.toBigDecimal(),
+                    paymentDate = _subscriptionDialogUiState.value.paymentDate,
+                    currency = _subscriptionDialogUiState.value.currency,
                     notificationDate = null,
                     repeatingInterval = null,
                 )
@@ -52,56 +42,69 @@ class SubscriptionDialogViewModel @Inject constructor(
                 }
             }
 
+            SubscriptionDialogEvent.Delete -> {
+                viewModelScope.launch {
+                    subscriptionsRepository.deleteSubscription(_subscriptionDialogUiState.value.id)
+                }
+            }
+
+            is SubscriptionDialogEvent.UpdateId -> {
+                _subscriptionDialogUiState.update {
+                    it.copy(id = event.id)
+                }
+                loadSubscription()
+            }
+
+            is SubscriptionDialogEvent.UpdateTitle -> {
+                _subscriptionDialogUiState.update {
+                    it.copy(title = event.title)
+                }
+            }
+
             is SubscriptionDialogEvent.UpdateAmount -> {
-                _subscriptionUiState.update {
+                _subscriptionDialogUiState.update {
                     it.copy(amount = event.amount)
                 }
             }
 
             is SubscriptionDialogEvent.UpdateCurrency -> {
-                _subscriptionUiState.update {
+                _subscriptionDialogUiState.update {
                     it.copy(currency = event.currency)
                 }
             }
 
             is SubscriptionDialogEvent.UpdatePaymentDate -> {
-                _subscriptionUiState.update {
+                _subscriptionDialogUiState.update {
                     it.copy(paymentDate = event.paymentDate)
-                }
-            }
-
-            is SubscriptionDialogEvent.UpdateTitle -> {
-                _subscriptionUiState.update {
-                    it.copy(title = event.title)
                 }
             }
         }
     }
 
     private fun loadSubscription() {
-        if (subscriptionId != null) {
-            viewModelScope.launch {
-                subscriptionsRepository.getSubscription(subscriptionId)
-                    .onStart { _subscriptionUiState.value = SubscriptionUiState(isEditing = true) }
-                    .catch { _subscriptionUiState.value = SubscriptionUiState() }
-                    .collect {
-                        _subscriptionUiState.value = SubscriptionUiState(
-                            title = it.title,
-                            amount = it.amount.toString(),
-                            paymentDate = it.paymentDate,
-                            currency = it.currency,
-                            isEditing = true,
-                        )
-                    }
-            }
+        viewModelScope.launch {
+            subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
+                .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
+                .catch { _subscriptionDialogUiState.value = SubscriptionDialogUiState() }
+                .collect {
+                    _subscriptionDialogUiState.value = SubscriptionDialogUiState(
+                        id = it.id,
+                        title = it.title,
+                        amount = it.amount.toString(),
+                        paymentDate = it.paymentDate,
+                        currency = it.currency,
+                        isLoading = false,
+                    )
+                }
         }
     }
 }
 
-data class SubscriptionUiState(
+data class SubscriptionDialogUiState(
+    val id: String = "",
     val title: String = "",
     val amount: String = "",
     val paymentDate: Instant = Clock.System.now(),
     val currency: String = Currency.USD.name,
-    val isEditing: Boolean = false,
+    val isLoading: Boolean = false,
 )

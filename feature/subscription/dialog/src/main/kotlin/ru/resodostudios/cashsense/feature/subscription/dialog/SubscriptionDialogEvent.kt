@@ -4,6 +4,8 @@ import kotlinx.datetime.Instant
 
 sealed interface SubscriptionDialogEvent {
 
+    data class UpdateId(val id: String) : SubscriptionDialogEvent
+
     data class UpdateTitle(val title: String) : SubscriptionDialogEvent
 
     data class UpdateAmount(val amount: String) : SubscriptionDialogEvent
@@ -12,5 +14,7 @@ sealed interface SubscriptionDialogEvent {
 
     data class UpdateCurrency(val currency: String) : SubscriptionDialogEvent
 
-    data object Confirm : SubscriptionDialogEvent
+    data object Save : SubscriptionDialogEvent
+
+    data object Delete : SubscriptionDialogEvent
 }
