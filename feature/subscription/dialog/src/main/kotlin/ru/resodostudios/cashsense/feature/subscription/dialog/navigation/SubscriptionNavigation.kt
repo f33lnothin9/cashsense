@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.subscription.detail.navigation
+package ru.resodostudios.cashsense.feature.subscription.dialog.navigation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ru.resodostudios.cashsense.feature.subscription.detail.SubscriptionRoute
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionRoute
 
 internal const val SUBSCRIPTION_ID_ARG = "subscriptionId"
 

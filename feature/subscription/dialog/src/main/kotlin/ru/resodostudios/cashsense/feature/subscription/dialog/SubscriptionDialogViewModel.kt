@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.subscription.detail
+package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,12 +15,12 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscription.detail.navigation.SubscriptionArgs
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionArgs
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class SubscriptionViewModel @Inject constructor(
+class SubscriptionDialogViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val subscriptionsRepository: SubscriptionsRepository
 ) : ViewModel() {
@@ -35,9 +35,9 @@ class SubscriptionViewModel @Inject constructor(
         loadSubscription()
     }
 
-    fun onSubscriptionEvent(subscriptionEvent: SubscriptionEvent) {
-        when (subscriptionEvent) {
-            SubscriptionEvent.Confirm -> {
+    fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
+        when (event) {
+            SubscriptionDialogEvent.Confirm -> {
                 val subscription = Subscription(
                     id = subscriptionId ?: UUID.randomUUID().toString(),
                     title = _subscriptionUiState.value.title,
@@ -52,27 +52,27 @@ class SubscriptionViewModel @Inject constructor(
                 }
             }
 
-            is SubscriptionEvent.UpdateAmount -> {
+            is SubscriptionDialogEvent.UpdateAmount -> {
                 _subscriptionUiState.update {
-                    it.copy(amount = subscriptionEvent.amount)
+                    it.copy(amount = event.amount)
                 }
             }
 
-            is SubscriptionEvent.UpdateCurrency -> {
+            is SubscriptionDialogEvent.UpdateCurrency -> {
                 _subscriptionUiState.update {
-                    it.copy(currency = subscriptionEvent.currency)
+                    it.copy(currency = event.currency)
                 }
             }
 
-            is SubscriptionEvent.UpdatePaymentDate -> {
+            is SubscriptionDialogEvent.UpdatePaymentDate -> {
                 _subscriptionUiState.update {
-                    it.copy(paymentDate = subscriptionEvent.paymentDate)
+                    it.copy(paymentDate = event.paymentDate)
                 }
             }
 
-            is SubscriptionEvent.UpdateTitle -> {
+            is SubscriptionDialogEvent.UpdateTitle -> {
                 _subscriptionUiState.update {
-                    it.copy(title = subscriptionEvent.title)
+                    it.copy(title = event.title)
                 }
             }
         }

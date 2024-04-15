@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.subscription.detail
+package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 @Composable
 internal fun SubscriptionRoute(
     onBackClick: () -> Unit,
-    viewModel: SubscriptionViewModel = hiltViewModel(),
+    viewModel: SubscriptionDialogViewModel = hiltViewModel(),
 ) {
     val subscriptionState by viewModel.subscriptionUiState.collectAsStateWithLifecycle()
 
@@ -56,7 +56,7 @@ internal fun SubscriptionRoute(
 @Composable
 internal fun SubscriptionScreen(
     subscriptionState: SubscriptionUiState,
-    onSubscriptionEvent: (SubscriptionEvent) -> Unit,
+    onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onBackClick: () -> Unit,
 ) {
     Scaffold(
@@ -77,7 +77,7 @@ internal fun SubscriptionScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onSubscriptionEvent(SubscriptionEvent.Confirm)
+                            onSubscriptionEvent(SubscriptionDialogEvent.Confirm)
                             onBackClick()
                         },
                         enabled = subscriptionState.title.isNotBlank() && subscriptionState.amount.validateAmount().second,
@@ -105,7 +105,7 @@ internal fun SubscriptionScreen(
             ) {
                 OutlinedTextField(
                     value = subscriptionState.title,
-                    onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateTitle(it)) },
+                    onValueChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateTitle(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
@@ -122,7 +122,7 @@ internal fun SubscriptionScreen(
             item {
                 OutlinedTextField(
                     value = subscriptionState.amount,
-                    onValueChange = { onSubscriptionEvent(SubscriptionEvent.UpdateAmount(it.validateAmount().first)) },
+                    onValueChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateAmount(it.validateAmount().first)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done,
@@ -141,13 +141,13 @@ internal fun SubscriptionScreen(
                     iconId = CsIcons.Calendar,
                     modifier = Modifier.fillMaxWidth(),
                     initialSelectedDateMillis = subscriptionState.paymentDate.toEpochMilliseconds(),
-                    onDateClick = { onSubscriptionEvent(SubscriptionEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                    onDateClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
                 )
             }
             item {
                 CurrencyExposedDropdownMenuBox(
                     currencyName = subscriptionState.currency,
-                    onCurrencyClick = { onSubscriptionEvent(SubscriptionEvent.UpdateCurrency(it.name)) },
+                    onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it.name)) },
                 )
             }
         }

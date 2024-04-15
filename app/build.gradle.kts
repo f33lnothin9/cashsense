@@ -59,7 +59,7 @@ dependencies {
     implementation(projects.feature.category.list)
     implementation(projects.feature.category.dialog)
     implementation(projects.feature.subscription.list)
-    implementation(projects.feature.subscription.detail)
+    implementation(projects.feature.subscription.dialog)
     implementation(projects.feature.transaction)
     implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.dialog)
