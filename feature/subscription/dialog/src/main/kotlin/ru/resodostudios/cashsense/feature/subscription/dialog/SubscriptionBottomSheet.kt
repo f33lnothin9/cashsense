@@ -2,7 +2,10 @@ package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,9 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.R
+import ru.resodostudios.cashsense.core.ui.formatDate
 
 @Composable
 fun SubscriptionBottomSheet(
@@ -40,6 +46,7 @@ fun SubscriptionBottomSheet(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SubscriptionBottomSheet(
     subscriptionDialogState: SubscriptionDialogUiState,
@@ -66,6 +73,15 @@ fun SubscriptionBottomSheet(
                         )
                     },
                 )
+                FlowRow(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    CsTag(
+                        text = subscriptionDialogState.paymentDate.formatDate(DATE_TIME),
+                        iconId = CsIcons.Calendar,
+                    )
+                }
                 HorizontalDivider(Modifier.padding(16.dp))
                 ListItem(
                     headlineContent = { Text(stringResource(R.string.edit)) },
