@@ -40,6 +40,9 @@ class SubscriptionDialogViewModel @Inject constructor(
                 viewModelScope.launch {
                     subscriptionsRepository.upsertSubscription(subscription)
                 }
+                _subscriptionDialogUiState.update {
+                    SubscriptionDialogUiState()
+                }
             }
 
             SubscriptionDialogEvent.Delete -> {
