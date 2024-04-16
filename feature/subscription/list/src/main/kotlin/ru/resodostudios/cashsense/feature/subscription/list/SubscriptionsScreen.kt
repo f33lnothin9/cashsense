@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatAmount
@@ -21,23 +19,18 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 
 @Composable
 internal fun SubscriptionsRoute(
-    onEdit: (String) -> Unit,
     viewModel: SubscriptionsViewModel = hiltViewModel(),
 ) {
     val subscriptionsState by viewModel.subscriptionsUiState.collectAsStateWithLifecycle()
 
     SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
-        onEdit = onEdit,
-        onDelete = viewModel::deleteSubscription,
     )
 }
 
 @Composable
 internal fun SubscriptionsScreen(
     subscriptionsState: SubscriptionsUiState,
-    onEdit: (String) -> Unit,
-    onDelete: (Subscription) -> Unit,
 ) {
     when (subscriptionsState) {
         SubscriptionsUiState.Loading -> LoadingState()
@@ -52,12 +45,6 @@ internal fun SubscriptionsScreen(
                             headlineContent = { Text(subscription.title) },
                             supportingContent = { Text(subscription.amount.formatAmount(subscription.currency)) },
                             overlineContent = { Text(subscription.paymentDate.formatDate()) },
-                            trailingContent = {
-                                EditAndDeleteDropdownMenu(
-                                    onEdit = { onEdit(subscription.id) },
-                                    onDelete = { onDelete(subscription) },
-                                )
-                            }
                         )
                     }
                 }

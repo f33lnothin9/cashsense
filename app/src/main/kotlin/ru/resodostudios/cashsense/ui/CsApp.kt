@@ -26,7 +26,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
-import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscription
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -38,6 +38,7 @@ fun CsApp(appState: CsAppState) {
     var showSettingsBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
+    var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showSettingsBottomSheet) {
         SettingsBottomSheet(
@@ -52,6 +53,11 @@ fun CsApp(appState: CsAppState) {
     if (showWalletDialog) {
         WalletDialog(
             onDismiss = { showWalletDialog = false }
+        )
+    }
+    if (showSubscriptionDialog) {
+        SubscriptionDialog(
+            onDismiss = { showSubscriptionDialog = false }
         )
     }
 
@@ -106,7 +112,7 @@ fun CsApp(appState: CsAppState) {
                             when (destination) {
                                 TopLevelDestination.HOME -> { showWalletDialog = true }
                                 TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
-                                TopLevelDestination.SUBSCRIPTIONS -> { appState.navController.navigateToSubscription() }
+                                TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
                             }
                         }
                     )
@@ -116,7 +122,7 @@ fun CsApp(appState: CsAppState) {
         ) { padding ->
             CsNavHost(
                 appState = appState,
-                modifier = Modifier.padding(padding)
+                modifier = Modifier.padding(padding),
             )
         }
     }

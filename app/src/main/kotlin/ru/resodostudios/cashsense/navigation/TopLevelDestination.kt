@@ -5,7 +5,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
 import ru.resodostudios.cashsense.feature.category.list.R as categoryListR
 import ru.resodostudios.cashsense.feature.home.R as homeR
-import ru.resodostudios.cashsense.feature.subscription.dialog.R as subscriptionDetailR
+import ru.resodostudios.cashsense.feature.subscription.dialog.R as subscriptionDialogR
 import ru.resodostudios.cashsense.feature.subscription.list.R as subscriptionListR
 import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
@@ -39,6 +39,6 @@ enum class TopLevelDestination(
         iconTextId = subscriptionListR.string.feature_subscription_list_title,
         titleTextId = subscriptionListR.string.feature_subscription_list_title,
         fabIcon = CsIcons.Add,
-        fabTitle = subscriptionDetailR.string.feature_subscription_detail_new,
+        fabTitle = subscriptionDialogR.string.feature_subscription_dialog_new,
     )
 }
