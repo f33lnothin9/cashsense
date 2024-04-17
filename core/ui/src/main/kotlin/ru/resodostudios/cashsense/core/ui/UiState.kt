@@ -26,21 +26,20 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
 fun LoadingState(
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator()
-    }
+        content = { CircularProgressIndicator() },
+    )
 }
 
 @Composable
 fun EmptyState(
     @StringRes messageRes: Int,
     @RawRes animationRes: Int,
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier,
 ) {
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationRes))
     val progress by animateLottieCompositionAsState(

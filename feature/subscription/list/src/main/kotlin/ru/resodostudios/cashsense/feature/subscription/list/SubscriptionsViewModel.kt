@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubscriptionsViewModel @Inject constructor(
-    private val subscriptionsRepository: SubscriptionsRepository
+    subscriptionsRepository: SubscriptionsRepository,
 ) : ViewModel() {
 
     val subscriptionsUiState: StateFlow<SubscriptionsUiState> =

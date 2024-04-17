@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +59,7 @@ internal fun HomeScreen(
     var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
     when (walletsState) {
-        WalletsUiState.Loading -> LoadingState()
+        WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletsUiState.Success -> if (walletsState.walletsTransactionsCategories.isNotEmpty()) {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Adaptive(300.dp),
@@ -108,7 +107,6 @@ internal fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyStaggeredGridScope.wallets(
     walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
     onWalletClick: (String) -> Unit,
@@ -126,7 +124,7 @@ private fun LazyStaggeredGridScope.wallets(
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onWalletMenuClick = onWalletMenuClick,
-            modifier = Modifier.animateItemPlacement(),
+            modifier = Modifier.animateItem(),
         )
     }
 }

@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -92,7 +94,11 @@ fun TransactionDialog(
         onDismiss = onDismiss,
     ) {
         when (categoriesState) {
-            CategoriesUiState.Loading -> LoadingState(modifier = Modifier.fillMaxWidth())
+            CategoriesUiState.Loading -> LoadingState(
+                Modifier
+                    .height(200.dp)
+                    .fillMaxWidth()
+            )
             is CategoriesUiState.Success -> {
                 val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
@@ -238,7 +244,7 @@ private fun CategoryExposedDropdownMenuBox(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(),
+                .menuAnchor(MenuAnchorType.PrimaryEditable),
             readOnly = true,
             value = currentCategory?.title ?: stringResource(uiR.string.none),
             onValueChange = {},

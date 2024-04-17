@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.category.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -53,7 +52,7 @@ internal fun CategoriesScreen(
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
     when (categoriesState) {
-        Loading -> LoadingState()
+        Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> if (categoriesState.categories.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),
@@ -87,7 +86,6 @@ internal fun CategoriesScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyGridScope.categories(
     categoriesState: CategoriesUiState,
     onCategoryClick: (String) -> Unit,
@@ -113,7 +111,7 @@ private fun LazyGridScope.categories(
                         )
                     },
                     modifier = Modifier
-                        .animateItemPlacement()
+                        .animateItem()
                         .clickable { onCategoryClick(category.id.toString()) }
                 )
             }

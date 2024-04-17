@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsRoute
 
 const val SUBSCRIPTIONS_ROUTE = "subscriptions_route"

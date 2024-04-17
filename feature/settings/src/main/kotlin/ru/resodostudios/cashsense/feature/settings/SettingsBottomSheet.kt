@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -85,7 +86,11 @@ fun SettingsBottomSheet(
                 )
         ) {
             when (settingsUiState) {
-                Loading -> LoadingState()
+                Loading -> LoadingState(
+                    Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                )
                 is Success -> {
                     Text(
                         text = stringResource(R.string.feature_settings_title),
