@@ -1,12 +1,11 @@
 package ru.resodostudios.cashsense.feature.subscription.list
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,8 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent
@@ -52,17 +49,19 @@ internal fun SubscriptionsScreen(
             if (subscriptionsState.subscriptions.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     items(subscriptionsState.subscriptions) { subscription ->
-                        ListItem(
-                            headlineContent = { Text(subscription.title) },
-                            supportingContent = { Text(subscription.amount.formatAmount(subscription.currency)) },
-                            overlineContent = { Text(subscription.paymentDate.formatDate()) },
-                            modifier = Modifier.clickable {
-                                onSubscriptionEvent(SubscriptionDialogEvent.UpdateId(subscription.id))
+                        SubscriptionCard(
+                            subscription = subscription,
+                            onClick = { id ->
+                                onSubscriptionEvent(SubscriptionDialogEvent.UpdateId(id))
                                 showSubscriptionBottomSheet = true
-                            }
+                            },
+                            modifier = Modifier.animateItem(),
                         )
                     }
                 }
