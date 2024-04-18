@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
+import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.formatDate
@@ -78,7 +78,7 @@ fun SubscriptionBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     CsTag(
-                        text = subscriptionDialogState.paymentDate.formatDate(DATE_TIME),
+                        text = subscriptionDialogState.paymentDate.formatDate(DATE),
                         iconId = CsIcons.Calendar,
                     )
                 }
