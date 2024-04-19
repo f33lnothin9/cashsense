@@ -59,8 +59,6 @@ private fun Project.configureKotlin() {
             val warningsAsErrors: String? by project
             allWarningsAsErrors = warningsAsErrors.toBoolean()
             freeCompilerArgs += listOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             )
         }

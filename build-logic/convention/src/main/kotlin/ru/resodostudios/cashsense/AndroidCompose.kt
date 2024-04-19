@@ -33,6 +33,7 @@ internal fun Project.configureAndroidCompose(
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             freeCompilerArgs += buildComposeMetricsParameters()
+            freeCompilerArgs += strongSkippingConfiguration()
         }
     }
 }
@@ -62,3 +63,8 @@ private fun Project.buildComposeMetricsParameters(): List<String> {
     }
     return metricParameters.toList()
 }
+
+private fun strongSkippingConfiguration() = listOf(
+    "-P",
+    "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+)
