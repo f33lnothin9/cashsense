@@ -12,10 +12,10 @@
                 android:gradientRadius="58.82"
                 android:type="radial">
                 <item
-                    android:color="#FF88D990"
+                    android:color="@color/inverse_primary"
                     android:offset="0" />
                 <item
-                    android:color="#FF1A6C30"
+                    android:color="@color/primary"
                     android:offset="0.6" />
             </gradient>
         </aapt:attr>
@@ -30,16 +30,16 @@
                 android:gradientRadius="58.82"
                 android:type="radial">
                 <item
-                    android:color="#FF88D990"
+                    android:color="@color/inverse_primary"
                     android:offset="0" />
                 <item
-                    android:color="#FF1A6C30"
+                    android:color="@color/primary"
                     android:offset="0.6" />
             </gradient>
         </aapt:attr>
     </path>
     <path
-        android:fillColor="#002108"
+        android:fillColor="@color/on_primary_container"
         android:fillType="evenOdd"
         android:pathData="M45.3,61.6h23.9a5.2,5.2 0,0 1,5.4 -5.4L74.6,45.3a5.2,5.2 0,0 1,-5.4 -5.4L45.3,39.9a5.2,5.2 0,0 1,-5.4 5.4v10.9a5.2,5.2 0,0 1,5.4 5.4ZM52.6,55.4a6.3,6.3 0,0 0,4.6 1.9c1.9,0 3.4,-0.7 4.7,-2a6.3,6.3 0,0 0,1.9 -4.5c0,-1.9 -0.7,-3.4 -2,-4.7a6.3,6.3 0,0 0,-4.5 -1.9c-1.9,0 -3.4,0.7 -4.7,2a6.3,6.3 0,0 0,-1.9 4.5c0,1.9 0.7,3.4 2,4.7Z" />
     <path android:pathData="M40,64.8c-1,0 -1.7,-0.3 -2.4,-1a3,3 0,0 1,-1 -2.2V43.2h-3.2v22.4c0,1.4 1.1,2.5 2.5,2.5h35.4v-3.3H40Z">
@@ -50,15 +50,15 @@
                 android:gradientRadius="58.82"
                 android:type="radial">
                 <item
-                    android:color="#FF88D990"
+                    android:color="@color/inverse_primary"
                     android:offset="0" />
                 <item
-                    android:color="#FF1A6C30"
+                    android:color="@color/primary"
                     android:offset="0.6" />
             </gradient>
         </aapt:attr>
     </path>
     <path
-        android:fillColor="#002108"
+        android:fillColor="@color/on_primary_container"
         android:pathData="M40,64.8c-1,0 -1.7,-0.3 -2.4,-1a3,3 0,0 1,-1 -2.2V43.2h-3.2v22.4c0,1.4 1.1,2.5 2.5,2.5h35.4v-3.3H40Z" />
 </vector>

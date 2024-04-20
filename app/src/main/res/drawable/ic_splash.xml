@@ -16,11 +16,11 @@
                 android:type="radial">
 
                 <item
-                    android:color="#FF88D990"
+                    android:color="@color/inverse_primary"
                     android:offset="0" />
 
                 <item
-                    android:color="#FF1A6C30"
+                    android:color="@color/primary"
                     android:offset="0.6" />
 
             </gradient>
@@ -42,11 +42,11 @@
                 android:type="radial">
 
                 <item
-                    android:color="#FF88D990"
+                    android:color="@color/inverse_primary"
                     android:offset="0" />
 
                 <item
-                    android:color="#FF1A6C30"
+                    android:color="@color/primary"
                     android:offset="0.6" />
 
             </gradient>
@@ -56,7 +56,7 @@
     </path>
 
     <path
-        android:fillColor="#002108"
+        android:fillColor="@color/on_primary_container"
         android:fillType="evenOdd"
         android:pathData="M119.7,165.3h66.9c0,-4.3 1.5,-7.9 4.4,-10.8 3,-3 6.5,-4.4 10.8,-4.4v-30.4c-4.3,0 -7.9,-1.5 -10.8,-4.4 -3,-3 -4.4,-6.6 -4.4,-10.8h-67a15,15 0,0 1,-15.1 15.2L104.5,150a15,15 0,0 1,15.2 15.2ZM140.2,147.8c3.5,3.6 7.9,5.3 13,5.3 5,0 9.3,-1.7 12.9,-5.3 3.5,-3.5 5.3,-7.9 5.3,-13 0,-5 -1.8,-9.3 -5.3,-12.9a17.6,17.6 0,0 0,-13 -5.3c-5,0 -9.4,1.8 -12.9,5.3a17.6,17.6 0,0 0,-5.3 13c0,5 1.7,9.4 5.3,12.9Z" />
 
@@ -71,11 +71,11 @@
                 android:type="radial">
 
                 <item
-                    android:color="#FF88D990"
+                    android:color="@color/inverse_primary"
                     android:offset="0" />
 
                 <item
-                    android:color="#FF1A6C30"
+                    android:color="@color/primary"
                     android:offset="0.6" />
 
             </gradient>
@@ -85,7 +85,7 @@
     </path>
 
     <path
-        android:fillColor="#002108"
+        android:fillColor="@color/on_primary_container"
         android:pathData="M104.5,174.4c-2.6,0 -4.7,-0.9 -6.5,-2.7a8.8,8.8 0,0 1,-2.7 -6.4v-51.7h-9V176c0,4.2 3.3,7.5 7.4,7.5h99v-9h-88.2Z" />
 
 </vector>
