@@ -3,6 +3,10 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -143,7 +147,11 @@ private fun FinanceIndicators(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
-        AnimatedVisibility(expenses != BigDecimal.ZERO) {
+        AnimatedVisibility(
+            visible = expenses != BigDecimal.ZERO,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
             CsTag(
                 text = expensesAnimated
                     .toBigDecimal()
@@ -152,7 +160,11 @@ private fun FinanceIndicators(
                 iconId = CsIcons.TrendingDown,
             )
         }
-        AnimatedVisibility(income != BigDecimal.ZERO) {
+        AnimatedVisibility(
+            visible = income != BigDecimal.ZERO,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
             CsTag(
                 text = incomeAnimated
                     .toBigDecimal()
