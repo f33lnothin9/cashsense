@@ -40,16 +40,16 @@ fun SubscriptionCard(
         modifier = modifier,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .fillMaxWidth(),
         ) {
             Text(
                 text = subscription.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = subscription.amount
@@ -61,7 +61,7 @@ fun SubscriptionCard(
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = modifier,
+                modifier = Modifier.padding(top = 12.dp),
             ) {
                 CsTag(
                     text = subscription.paymentDate.formatDate(DATE),

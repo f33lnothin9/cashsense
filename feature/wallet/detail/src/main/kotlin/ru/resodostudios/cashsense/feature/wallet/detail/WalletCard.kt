@@ -60,17 +60,17 @@ fun WalletCard(
         modifier = modifier,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                .fillMaxWidth(),
         ) {
             Text(
                 text = wallet.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = currentBalanceAnimated
@@ -83,13 +83,14 @@ fun WalletCard(
             FinanceIndicators(
                 transactions = transactions,
                 currency = wallet.currency,
+                modifier = Modifier.padding(top = 8.dp),
             )
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp)
+                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 12.dp)
                 .fillMaxWidth(),
         ) {
             Button(

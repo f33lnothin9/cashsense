@@ -6,6 +6,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.LineHeightStyle.Alignment
+import androidx.compose.ui.text.style.LineHeightStyle.Trim
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
 
@@ -87,7 +90,11 @@ internal val CsTypography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.5.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = Alignment.Center,
+            trim = Trim.None,
+        ),
     ),
     bodyMedium = TextStyle(
         fontWeight = FontWeight.Normal,
