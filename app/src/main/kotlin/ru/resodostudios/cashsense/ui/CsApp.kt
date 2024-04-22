@@ -1,10 +1,15 @@
 package ru.resodostudios.cashsense.ui
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -63,67 +68,70 @@ fun CsApp(appState: CsAppState) {
 
     val currentDestination = appState.currentDestination
 
-    NavigationSuiteScaffold(
-        layoutType = appState.navigationSuiteType,
-        navigationSuiteItems = {
-            appState.topLevelDestinations.forEach { destination ->
-                val isSelected = currentDestination.isTopLevelDestinationInHierarchy(destination)
+    Surface {
+        NavigationSuiteScaffold(
+            layoutType = appState.navigationSuiteType,
+            navigationSuiteItems = {
+                appState.topLevelDestinations.forEach { destination ->
+                    val isSelected = currentDestination.isTopLevelDestinationInHierarchy(destination)
 
-                item(
-                    selected = isSelected,
-                    icon = {
-                        Icon(
-                            imageVector = if (isSelected) {
-                                ImageVector.vectorResource(destination.selectedIcon)
-                            } else {
-                                ImageVector.vectorResource(destination.unselectedIcon)
-                            },
-                            contentDescription = null
+                    item(
+                        selected = isSelected,
+                        icon = {
+                            Icon(
+                                imageVector = if (isSelected) {
+                                    ImageVector.vectorResource(destination.selectedIcon)
+                                } else {
+                                    ImageVector.vectorResource(destination.unselectedIcon)
+                                },
+                                contentDescription = null
+                            )
+                        },
+                        label = { Text(stringResource(destination.iconTextId)) },
+                        onClick = { appState.navigateToTopLevelDestination(destination) },
+                    )
+                }
+            },
+            modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
+        ) {
+            val destination = appState.currentTopLevelDestination
+
+            Scaffold(
+                topBar = {
+                    if (destination != null) {
+                        CsTopAppBar(
+                            titleRes = destination.titleTextId,
+                            actionIconRes = CsIcons.Settings,
+                            actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
+                            onActionClick = { showSettingsBottomSheet = true }
                         )
-                    },
-                    label = { Text(stringResource(destination.iconTextId)) },
-                    onClick = { appState.navigateToTopLevelDestination(destination) },
+                    }
+                },
+                floatingActionButton = {
+                    if (destination != null) {
+                        CsFloatingActionButton(
+                            titleRes = destination.fabTitle,
+                            iconRes = destination.fabIcon,
+                            modifier = Modifier.then(
+                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
+                            ),
+                            onClick = {
+                                when (destination) {
+                                    TopLevelDestination.HOME -> { showWalletDialog = true }
+                                    TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
+                                    TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
+                                }
+                            }
+                        )
+                    }
+                },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            ) { padding ->
+                CsNavHost(
+                    appState = appState,
+                    modifier = Modifier.padding(padding),
                 )
             }
-        }
-    ) {
-        val destination = appState.currentTopLevelDestination
-
-        Scaffold(
-            topBar = {
-                if (destination != null) {
-                    CsTopAppBar(
-                        titleRes = destination.titleTextId,
-                        actionIconRes = CsIcons.Settings,
-                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                        onActionClick = { showSettingsBottomSheet = true }
-                    )
-                }
-            },
-            floatingActionButton = {
-                if (destination != null) {
-                    CsFloatingActionButton(
-                        titleRes = destination.fabTitle,
-                        iconRes = destination.fabIcon,
-                        modifier = Modifier.then(
-                            if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
-                        ),
-                        onClick = {
-                            when (destination) {
-                                TopLevelDestination.HOME -> { showWalletDialog = true }
-                                TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
-                                TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
-                            }
-                        }
-                    )
-                }
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        ) { padding ->
-            CsNavHost(
-                appState = appState,
-                modifier = Modifier.padding(padding),
-            )
         }
     }
 }
