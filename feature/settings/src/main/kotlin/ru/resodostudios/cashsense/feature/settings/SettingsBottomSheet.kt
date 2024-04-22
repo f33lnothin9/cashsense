@@ -1,31 +1,22 @@
 package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Intent
-import android.os.Build.VERSION
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -39,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
@@ -52,6 +44,7 @@ fun SettingsBottomSheet(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
+
     SettingsBottomSheet(
         onDismiss = onDismiss,
         settingsUiState = settingsUiState,
@@ -60,7 +53,6 @@ fun SettingsBottomSheet(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsBottomSheet(
     onDismiss: () -> Unit,
@@ -69,41 +61,27 @@ fun SettingsBottomSheet(
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-
-    ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
-        sheetState = sheetState,
-        windowInsets = WindowInsets(0, 0, 0, 0)
+    CsModalBottomSheet(
+        onDismiss = { onDismiss() }
     ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .then(
-                    if (VERSION.SDK_INT <= 25) Modifier.padding(bottom = 40.dp) else Modifier.navigationBarsPadding()
+        when (settingsUiState) {
+            Loading -> LoadingState(
+                Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+            )
+            is Success -> {
+                Text(
+                    text = stringResource(R.string.feature_settings_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                 )
-        ) {
-            when (settingsUiState) {
-                Loading -> LoadingState(
-                    Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
+                SettingsPanel(
+                    settings = settingsUiState.settings,
+                    supportDynamicColor = supportDynamicColor,
+                    onChangeDynamicColorPreference = onChangeDynamicColorPreference,
+                    onChangeDarkThemeConfig = onChangeDarkThemeConfig,
                 )
-                is Success -> {
-                    Text(
-                        text = stringResource(R.string.feature_settings_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                    )
-                    SettingsPanel(
-                        settings = settingsUiState.settings,
-                        supportDynamicColor = supportDynamicColor,
-                        onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                        onChangeDarkThemeConfig = onChangeDarkThemeConfig,
-                    )
-                }
             }
         }
     }
