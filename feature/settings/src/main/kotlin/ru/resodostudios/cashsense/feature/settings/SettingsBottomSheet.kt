@@ -15,7 +15,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -74,7 +73,7 @@ fun SettingsBottomSheet(
                 Text(
                     text = stringResource(R.string.feature_settings_title),
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                 )
                 SettingsPanel(
                     settings = settingsUiState.settings,
@@ -95,7 +94,7 @@ private fun ColumnScope.SettingsPanel(
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
     SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_theme))
-    AnimatedVisibility(visible = supportDynamicColor) {
+    AnimatedVisibility(supportDynamicColor) {
         ListItem(
             headlineContent = {
                 Text(
@@ -115,17 +114,6 @@ private fun ColumnScope.SettingsPanel(
                 Switch(
                     checked = settings.useDynamicColor,
                     onCheckedChange = { onChangeDynamicColorPreference(it) },
-                    thumbContent = if (settings.useDynamicColor) {
-                        {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Confirm),
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    } else {
-                        null
-                    }
                 )
             }
         )
@@ -152,7 +140,7 @@ private fun ColumnScope.SettingsPanel(
                 onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
                 selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
                 icon = {
-                    SegmentedButtonDefaults.Icon(active = settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
+                    SegmentedButtonDefaults.Icon(settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
                         Icon(
                             imageVector = ImageVector.vectorResource(optionIcons[index]),
                             contentDescription = null,
@@ -170,10 +158,10 @@ private fun ColumnScope.SettingsPanel(
         }
     }
 
-    SettingsBottomSheetSectionTitle(text = stringResource(R.string.feature_settings_about))
+    SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_about))
     val uriHandler = LocalUriHandler.current
     ListItem(
-        headlineContent = { Text(text = stringResource(R.string.feature_settings_privacy_policy)) },
+        headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.Policy),
@@ -184,7 +172,7 @@ private fun ColumnScope.SettingsPanel(
     )
     val context = LocalContext.current
     ListItem(
-        headlineContent = { Text(text = stringResource(R.string.feature_settings_licenses)) },
+        headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
@@ -195,8 +183,8 @@ private fun ColumnScope.SettingsPanel(
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     ListItem(
-        headlineContent = { Text(text = stringResource(R.string.feature_settings_version)) },
-        supportingContent = { Text(text = packageInfo.versionName) },
+        headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
+        supportingContent = { Text(packageInfo.versionName) },
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.Info),
