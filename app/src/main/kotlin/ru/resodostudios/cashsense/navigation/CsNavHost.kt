@@ -1,5 +1,9 @@
 package ru.resodostudios.cashsense.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -22,7 +26,11 @@ fun CsNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it } + fadeOut() },
+        modifier = modifier,
     ) {
         homeGraph(
             onWalletClick = navController::navigateToWallet,
