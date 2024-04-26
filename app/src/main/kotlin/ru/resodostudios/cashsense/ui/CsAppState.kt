@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import androidx.tracing.trace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -54,6 +55,7 @@ fun rememberCsAppState(
     }
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Stable
 class CsAppState(
     windowSizeClass: WindowSizeClass,
@@ -74,7 +76,6 @@ class CsAppState(
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
 
-    @OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
     val navigationSuiteType: NavigationSuiteType = when (windowSizeClass.widthSizeClass) {
         Expanded -> NavigationSuiteType.NavigationDrawer
         Medium -> NavigationSuiteType.NavigationRail
@@ -89,18 +90,20 @@ class CsAppState(
         )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
-        val topLevelNavOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
+        trace("Navigation: ${topLevelDestination.name}") {
+            val topLevelNavOptions = navOptions {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
             }
-            launchSingleTop = true
-            restoreState = true
-        }
 
-        when (topLevelDestination) {
-            HOME -> navController.navigateToHomeGraph(topLevelNavOptions)
-            CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
-            SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
+            when (topLevelDestination) {
+                HOME -> navController.navigateToHomeGraph(topLevelNavOptions)
+                CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
+                SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
+            }
         }
     }
 }

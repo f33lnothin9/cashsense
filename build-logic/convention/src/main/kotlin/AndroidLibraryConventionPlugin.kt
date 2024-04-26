@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.kotlin
 import ru.resodostudios.cashsense.configureKotlinAndroid
 import ru.resodostudios.cashsense.configurePrintApksTask
 import ru.resodostudios.cashsense.disableUnnecessaryAndroidTests
+import ru.resodostudios.cashsense.libs
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
 
@@ -28,9 +29,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
             dependencies {
                 add("testImplementation", kotlin("test"))
-                //add("testImplementation", project(":core:testing"))
-                add("androidTestImplementation", kotlin("test"))
-                //add("androidTestImplementation", project(":core:testing"))
+
+                add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
             }
         }
     }

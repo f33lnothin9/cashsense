@@ -50,11 +50,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.data)
-    implementation(projects.core.designsystem)
-    implementation(projects.core.model)
-    implementation(projects.core.ui)
-
     implementation(projects.feature.home)
     implementation(projects.feature.category.list)
     implementation(projects.feature.category.dialog)
@@ -65,15 +60,21 @@ dependencies {
     implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.settings)
 
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.model)
+    implementation(projects.core.ui)
+
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.tracing.ktx)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 
