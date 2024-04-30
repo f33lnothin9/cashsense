@@ -44,7 +44,7 @@ internal fun SubscriptionsScreen(
     var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
     when (subscriptionsState) {
-        SubscriptionsUiState.Loading -> LoadingState()
+        SubscriptionsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is SubscriptionsUiState.Success -> {
             if (subscriptionsState.subscriptions.isNotEmpty()) {
                 LazyVerticalGrid(
