@@ -1,3 +1,4 @@
+
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
@@ -6,7 +7,6 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 import ru.resodostudios.cashsense.configureKotlinAndroid
-import ru.resodostudios.cashsense.configurePrintApksTask
 import ru.resodostudios.cashsense.disableUnnecessaryAndroidTests
 import ru.resodostudios.cashsense.libs
 
@@ -24,7 +24,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 defaultConfig.targetSdk = 34
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
-                configurePrintApksTask(this)
                 disableUnnecessaryAndroidTests(target)
             }
             dependencies {
