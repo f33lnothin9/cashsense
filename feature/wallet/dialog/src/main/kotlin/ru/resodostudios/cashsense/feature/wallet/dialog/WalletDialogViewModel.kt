@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
 
@@ -29,7 +30,11 @@ class WalletDialogViewModel @Inject constructor(
                 val wallet = Wallet(
                     id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
                     title = _walletDialogUiState.value.title,
-                    initialBalance = _walletDialogUiState.value.initialBalance.toBigDecimal(),
+                    initialBalance = if (_walletDialogUiState.value.initialBalance.isEmpty()) {
+                        BigDecimal.ZERO
+                    } else {
+                        _walletDialogUiState.value.initialBalance.toBigDecimal()
+                    },
                     currency = _walletDialogUiState.value.currency,
                 )
                 viewModelScope.launch {

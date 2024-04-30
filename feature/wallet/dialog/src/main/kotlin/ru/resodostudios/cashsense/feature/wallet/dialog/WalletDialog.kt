@@ -59,8 +59,7 @@ fun WalletDialog(
             onWalletDialogEvent(WalletDialogEvent.Save)
             onDismiss()
         },
-        isConfirmEnabled = walletDialogState.title.isNotBlank() &&
-                walletDialogState.initialBalance.validateAmount().second,
+        isConfirmEnabled = walletDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
         val (titleTextField, initialBalanceTextField) = remember { FocusRequester.createRefs() }
@@ -89,7 +88,7 @@ fun WalletDialog(
                 onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.validateAmount().first)) },
                 modifier = Modifier.focusRequester(initialBalanceTextField),
                 label = { Text(stringResource(R.string.feature_wallet_dialog_initial_balance)) },
-                placeholder = { Text("100") },
+                placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
