@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import ru.resodostudios.cashsense.feature.home.HomeRoute
 
+const val WALLET_ID_ARG = "walletId"
 const val HOME_GRAPH_ROUTE_PATTERN = "home_graph"
 const val HOME_ROUTE = "home_route"
 

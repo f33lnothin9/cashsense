@@ -9,7 +9,6 @@ import androidx.navigation.navArgument
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletRoute
 
 internal const val WALLET_ID_ARG = "walletId"
-
 internal const val WALLET_ROUTE = "wallet_route"
 
 internal class WalletArgs(val walletId: String) {

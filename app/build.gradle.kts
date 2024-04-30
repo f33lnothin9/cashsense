@@ -28,8 +28,8 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            baselineProfile.automaticGenerationDuringBuild = true
             applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
+            baselineProfile.automaticGenerationDuringBuild = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -47,6 +47,10 @@ android {
         }
     }
     namespace = "ru.resodostudios.cashsense"
+}
+
+baselineProfile {
+    automaticGenerationDuringBuild = false
 }
 
 dependencies {
@@ -79,8 +83,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.testManifest)
 
     baselineProfile(projects.baselineprofile)
-}
-
-baselineProfile {
-    automaticGenerationDuringBuild = false
 }
