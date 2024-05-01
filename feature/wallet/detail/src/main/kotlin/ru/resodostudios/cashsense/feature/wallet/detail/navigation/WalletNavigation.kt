@@ -28,7 +28,7 @@ fun NavController.navigateToWallet(
 }
 
 fun NavGraphBuilder.walletScreen(
-    showBackButton: Boolean,
+    showDetailActions: Boolean,
     onBackClick: () -> Unit,
 ) {
     composable(
@@ -38,6 +38,7 @@ fun NavGraphBuilder.walletScreen(
         )
     ) {
         WalletRoute(
+            showDetailActions = showDetailActions,
             onBackClick = onBackClick,
         )
     }

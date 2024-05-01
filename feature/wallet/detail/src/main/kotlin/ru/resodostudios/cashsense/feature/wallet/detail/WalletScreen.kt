@@ -78,6 +78,7 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletRoute(
+    showDetailActions: Boolean,
     onBackClick: () -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
@@ -87,6 +88,7 @@ internal fun WalletRoute(
 
     WalletScreen(
         walletState = walletState,
+        showDetailActions = showDetailActions,
         onBackClick = onBackClick,
         onWalletEvent = walletViewModel::onWalletEvent,
         onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
@@ -98,6 +100,7 @@ internal fun WalletRoute(
 @Composable
 internal fun WalletScreen(
     walletState: WalletUiState,
+    showDetailActions: Boolean,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
@@ -133,11 +136,13 @@ internal fun WalletScreen(
                             }
                         },
                         navigationIcon = {
-                            IconButton(onClick = onBackClick) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
-                                    contentDescription = null,
-                                )
+                            if (showDetailActions) {
+                                IconButton(onClick = onBackClick) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                                        contentDescription = null,
+                                    )
+                                }
                             }
                         },
                         actions = {
@@ -157,18 +162,20 @@ internal fun WalletScreen(
                                     contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
                                 )
                             }
-                            EditAndDeleteDropdownMenu(
-                                onEdit = {
-                                    onWalletDialogEvent(WalletDialogEvent.UpdateId(walletState.wallet.id))
-                                    showWalletDialog = true
-                                },
-                                onDelete = {
-                                    onBackClick()
-                                    onWalletDialogEvent(WalletDialogEvent.Delete(walletState.wallet.id))
-                                },
-                            )
+                            if (showDetailActions) {
+                                EditAndDeleteDropdownMenu(
+                                    onEdit = {
+                                        onWalletDialogEvent(WalletDialogEvent.UpdateId(walletState.wallet.id))
+                                        showWalletDialog = true
+                                    },
+                                    onDelete = {
+                                        onBackClick()
+                                        onWalletDialogEvent(WalletDialogEvent.Delete(walletState.wallet.id))
+                                    },
+                                )
+                            }
                         },
-                        windowInsets = WindowInsets(0, 0, 0, 0)
+                        windowInsets = WindowInsets(0, 0, 0, 0),
                     )
                 }
                 item {

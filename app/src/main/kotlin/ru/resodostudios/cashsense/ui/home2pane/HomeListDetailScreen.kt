@@ -92,7 +92,7 @@ internal fun HomeListDetailScreen(
                 route = HOME_DETAIL_PANE_ROUTE,
             ) {
                 walletScreen(
-                    showBackButton = !listDetailNavigator.isListPaneVisible(),
+                    showDetailActions = !listDetailNavigator.isListPaneVisible(),
                     onBackClick = listDetailNavigator::navigateBack,
                 )
                 composable(route = WALLET_ROUTE) {
