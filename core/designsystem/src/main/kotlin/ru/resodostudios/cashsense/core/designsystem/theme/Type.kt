@@ -86,7 +86,7 @@ internal val CsTypography = Typography(
         fontFamily = bodyFontFamily,
     ),
     titleSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
@@ -118,21 +118,21 @@ internal val CsTypography = Typography(
         fontFamily = bodyFontFamily,
     ),
     labelLarge = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
         fontFamily = bodyFontFamily,
     ),
     labelMedium = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
         fontFamily = bodyFontFamily,
     ),
     labelSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 10.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
