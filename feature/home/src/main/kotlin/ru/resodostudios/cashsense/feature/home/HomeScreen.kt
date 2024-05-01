@@ -30,8 +30,9 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.detail.R as walletDetailR
 
 @Composable
-internal fun HomeRoute(
+fun HomeRoute(
     onWalletClick: (String) -> Unit,
+    highlightSelectedWallet: Boolean = false,
     homeViewModel: HomeViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),

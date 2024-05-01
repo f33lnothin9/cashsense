@@ -32,7 +32,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -109,11 +108,14 @@ internal fun WalletScreen(
     var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
-    when (walletState) {
-        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-        is WalletUiState.Success -> {
-            Scaffold(
-                topBar = {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        when (walletState) {
+            WalletUiState.Loading -> item { LoadingState(Modifier.fillMaxSize()) }
+            is WalletUiState.Success -> {
+                item {
                     TopAppBar(
                         title = {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -166,52 +168,51 @@ internal fun WalletScreen(
                                 },
                             )
                         },
+                        windowInsets = WindowInsets(0, 0, 0, 0)
                     )
-                },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            ) { paddingValues ->
-                LazyColumn(Modifier.padding(paddingValues)) {
+                }
+                item {
+                    FinancePanel(
+                        walletState = walletState,
+                        onWalletEvent = onWalletEvent,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    )
+                }
+                if (walletState.transactionsCategories.isNotEmpty()) {
+                    transactions(
+                        transactionsCategories = walletState.transactionsCategories,
+                        currency = walletState.wallet.currency,
+                        onTransactionClick = {
+                            onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
+                            onTransactionEvent(TransactionDialogEvent.UpdateId(it))
+                            onTransactionEvent(TransactionDialogEvent.UpdateCurrency(walletState.wallet.currency))
+                            showTransactionBottomSheet = true
+                        },
+                    )
+                } else {
                     item {
-                        FinancePanel(
-                            walletState = walletState,
-                            onWalletEvent = onWalletEvent,
-                            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        EmptyState(
+                            messageRes = transactionR.string.feature_transaction_transactions_empty,
+                            animationRes = transactionR.raw.anim_transactions_empty,
+                            modifier = Modifier.fillParentMaxHeight(0.7f),
                         )
-                    }
-                    if (walletState.transactionsCategories.isNotEmpty()) {
-                        transactions(
-                            transactionsCategories = walletState.transactionsCategories,
-                            currency = walletState.wallet.currency,
-                            onTransactionClick = {
-                                onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
-                                onTransactionEvent(TransactionDialogEvent.UpdateId(it))
-                                onTransactionEvent(TransactionDialogEvent.UpdateCurrency(walletState.wallet.currency))
-                                showTransactionBottomSheet = true
-                            },
-                        )
-                    } else {
-                        item {
-                            EmptyState(
-                                messageRes = transactionR.string.feature_transaction_transactions_empty,
-                                animationRes = transactionR.raw.anim_transactions_empty,
-                                modifier = Modifier.fillParentMaxHeight(0.7f),
-                            )
-                        }
                     }
                 }
-            }
-            if (showWalletDialog) {
-                WalletDialog(onDismiss = { showWalletDialog = false })
-            }
+                item {
+                    if (showWalletDialog) {
+                        WalletDialog(onDismiss = { showWalletDialog = false })
+                    }
 
-            if (showTransactionBottomSheet) {
-                TransactionBottomSheet(
-                    onDismiss = { showTransactionBottomSheet = false },
-                    onEdit = { showTransactionDialog = true },
-                )
-            }
-            if (showTransactionDialog) {
-                TransactionDialog(onDismiss = { showTransactionDialog = false })
+                    if (showTransactionBottomSheet) {
+                        TransactionBottomSheet(
+                            onDismiss = { showTransactionBottomSheet = false },
+                            onEdit = { showTransactionDialog = true },
+                        )
+                    }
+                    if (showTransactionDialog) {
+                        TransactionDialog(onDismiss = { showTransactionDialog = false })
+                    }
+                }
             }
         }
     }

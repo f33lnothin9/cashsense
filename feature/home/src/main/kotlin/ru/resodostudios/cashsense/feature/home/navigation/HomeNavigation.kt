@@ -1,31 +1,16 @@
 package ru.resodostudios.cashsense.feature.home.navigation
 
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import ru.resodostudios.cashsense.feature.home.HomeRoute
 
 const val WALLET_ID_ARG = "walletId"
-const val HOME_GRAPH_ROUTE_PATTERN = "home_graph"
 const val HOME_ROUTE = "home_route"
 
-fun NavController.navigateToHomeGraph(navOptions: NavOptions? = null) = navigate(HOME_GRAPH_ROUTE_PATTERN, navOptions)
-
-fun NavGraphBuilder.homeGraph(
-    onWalletClick: (String) -> Unit,
-    nestedGraphs: NavGraphBuilder.() -> Unit
-) {
-    navigation(
-        route = HOME_GRAPH_ROUTE_PATTERN,
-        startDestination = HOME_ROUTE,
-    ) {
-        composable(route = HOME_ROUTE) {
-            HomeRoute(
-                onWalletClick = onWalletClick,
-            )
-        }
-        nestedGraphs()
+fun NavController.navigateToHome(walletId: String? = null, navOptions: NavOptions? = null) {
+    val route = if (walletId != null) {
+        "${HOME_ROUTE}?${WALLET_ID_ARG}=$walletId"
+    } else {
+        HOME_ROUTE
     }
+    navigate(route, navOptions)
 }

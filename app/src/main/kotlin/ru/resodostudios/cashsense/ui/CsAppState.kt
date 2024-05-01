@@ -24,7 +24,7 @@ import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.category.list.navigation.CATEGORIES_ROUTE
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
-import ru.resodostudios.cashsense.feature.home.navigation.navigateToHomeGraph
+import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SUBSCRIPTIONS_ROUTE
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -100,7 +100,7 @@ class CsAppState(
             }
 
             when (topLevelDestination) {
-                HOME -> navController.navigateToHomeGraph(topLevelNavOptions)
+                HOME -> navController.navigateToHome(null, topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
             }
