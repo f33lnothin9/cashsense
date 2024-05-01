@@ -111,13 +111,10 @@ internal fun WalletScreen(
     var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        when (walletState) {
-            WalletUiState.Loading -> item { LoadingState(Modifier.fillMaxSize()) }
-            is WalletUiState.Success -> {
+    when (walletState) {
+        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
+        is WalletUiState.Success -> {
+            LazyColumn(Modifier.fillMaxSize()) {
                 item {
                     TopAppBar(
                         title = {
@@ -205,21 +202,19 @@ internal fun WalletScreen(
                         )
                     }
                 }
-                item {
-                    if (showWalletDialog) {
-                        WalletDialog(onDismiss = { showWalletDialog = false })
-                    }
+            }
+            if (showWalletDialog) {
+                WalletDialog(onDismiss = { showWalletDialog = false })
+            }
 
-                    if (showTransactionBottomSheet) {
-                        TransactionBottomSheet(
-                            onDismiss = { showTransactionBottomSheet = false },
-                            onEdit = { showTransactionDialog = true },
-                        )
-                    }
-                    if (showTransactionDialog) {
-                        TransactionDialog(onDismiss = { showTransactionDialog = false })
-                    }
-                }
+            if (showTransactionBottomSheet) {
+                TransactionBottomSheet(
+                    onDismiss = { showTransactionBottomSheet = false },
+                    onEdit = { showTransactionDialog = true },
+                )
+            }
+            if (showTransactionDialog) {
+                TransactionDialog(onDismiss = { showTransactionDialog = false })
             }
         }
     }
