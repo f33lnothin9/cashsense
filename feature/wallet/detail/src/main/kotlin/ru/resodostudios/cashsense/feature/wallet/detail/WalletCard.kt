@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -50,6 +53,7 @@ fun WalletCard(
     onTransactionCreate: (String) -> Unit,
     onWalletMenuClick: (String, String) -> Unit,
     modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
 ) {
     val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
     val currentBalanceAnimated by animateFloatAsState(
@@ -61,7 +65,11 @@ fun WalletCard(
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
         shape = RoundedCornerShape(24.dp),
-        modifier = modifier,
+        elevation = if (isSelected) CardDefaults.outlinedCardElevation(defaultElevation = 6.dp) else CardDefaults.outlinedCardElevation(),
+        modifier = modifier
+            .semantics(mergeDescendants = true) {
+                selected = isSelected
+            },
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),

@@ -42,8 +42,12 @@ fun HomeRoute(
     HomeScreen(
         walletsState = walletsState,
         onWalletItemEvent = walletDialogViewModel::onWalletDialogEvent,
-        onWalletClick = onWalletClick,
+        onWalletClick = {
+            homeViewModel.onWalletClick(it)
+            onWalletClick(it)
+        },
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
+        highlightSelectedWallet = highlightSelectedWallet,
     )
 }
 
@@ -53,6 +57,7 @@ internal fun HomeScreen(
     onWalletItemEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
+    highlightSelectedWallet: Boolean = false,
 ) {
     var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
@@ -81,6 +86,8 @@ internal fun HomeScreen(
                         onWalletItemEvent(WalletDialogEvent.UpdateCurrentBalance(currentWalletBalance))
                         showWalletBottomSheet = true
                     },
+                    selectedWalletId = walletsState.selectedWalletId,
+                    highlightSelectedWallet = highlightSelectedWallet,
                 )
             }
             if (showWalletBottomSheet) {
@@ -113,19 +120,24 @@ private fun LazyStaggeredGridScope.wallets(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onWalletMenuClick: (String, String) -> Unit,
+    selectedWalletId: String? = null,
+    highlightSelectedWallet: Boolean = false,
 ) {
     items(
         items = walletsTransactionsCategories,
         key = { it.wallet.id },
         contentType = { "wallet" },
-    ) { walletTransactionsCategories ->
+    ) { walletPopulated ->
+        val isSelected = highlightSelectedWallet && walletPopulated.wallet.id == selectedWalletId
+
         WalletCard(
-            wallet = walletTransactionsCategories.wallet,
-            transactions = walletTransactionsCategories.transactionsWithCategories.map { it.transaction },
+            wallet = walletPopulated.wallet,
+            transactions = walletPopulated.transactionsWithCategories.map { it.transaction },
             onWalletClick = onWalletClick,
             onTransactionCreate = onTransactionCreate,
             onWalletMenuClick = onWalletMenuClick,
             modifier = Modifier.animateItem(),
+            isSelected = isSelected,
         )
     }
 }
