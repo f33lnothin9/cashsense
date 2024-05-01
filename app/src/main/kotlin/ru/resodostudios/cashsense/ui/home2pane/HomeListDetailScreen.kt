@@ -18,7 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.feature.home.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
 import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_ARG
@@ -96,7 +96,10 @@ internal fun HomeListDetailScreen(
                     onBackClick = listDetailNavigator::navigateBack,
                 )
                 composable(route = WALLET_ROUTE) {
-                    LoadingState()
+                    EmptyState(
+                        messageRes = ru.resodostudios.cashsense.feature.wallet.detail.R.string.feature_wallet_detail_select_wallet,
+                        animationRes = ru.resodostudios.cashsense.feature.wallet.detail.R.raw.anim_select_wallet,
+                    )
                 }
             }
         },
