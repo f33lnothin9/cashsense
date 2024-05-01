@@ -11,6 +11,7 @@ import javax.inject.Inject
 class Home2PaneViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
     val selectedWalletId: StateFlow<String?> = savedStateHandle.getStateFlow(WALLET_ID_ARG, null)
 
     fun onWalletClick(walletId: String?) {
