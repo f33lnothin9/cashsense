@@ -8,8 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -35,7 +33,6 @@ import ru.resodostudios.cashsense.ui.CsApp
 import ru.resodostudios.cashsense.ui.rememberCsAppState
 import javax.inject.Inject
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -84,7 +81,6 @@ class MainActivity : ComponentActivity() {
             }
 
             val appState = rememberCsAppState(
-                windowSizeClass = calculateWindowSizeClass(this),
                 timeZoneMonitor = timeZoneMonitor,
             )
 

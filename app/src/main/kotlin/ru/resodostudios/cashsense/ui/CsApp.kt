@@ -1,16 +1,21 @@
 package ru.resodostudios.cashsense.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,8 +39,10 @@ import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 
 @Composable
-fun CsApp(appState: CsAppState) {
-
+fun CsApp(
+    appState: CsAppState,
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+) {
     var showSettingsBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
@@ -64,67 +71,74 @@ fun CsApp(appState: CsAppState) {
 
     val currentDestination = appState.currentDestination
 
-    Surface {
-        NavigationSuiteScaffold(
-            layoutType = appState.navigationSuiteType,
-            navigationSuiteItems = {
-                appState.topLevelDestinations.forEach { destination ->
-                    val isSelected = currentDestination.isTopLevelDestinationInHierarchy(destination)
+    val layoutType = NavigationSuiteScaffoldDefaults
+        .calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
-                    item(
-                        selected = isSelected,
-                        icon = {
-                            Icon(
-                                imageVector = if (isSelected) {
-                                    ImageVector.vectorResource(destination.selectedIcon)
-                                } else {
-                                    ImageVector.vectorResource(destination.unselectedIcon)
-                                },
-                                contentDescription = null
-                            )
+    NavigationSuiteScaffold(
+        layoutType = layoutType,
+        navigationSuiteItems = {
+            appState.topLevelDestinations.forEach { destination ->
+                val selected = currentDestination
+                    .isTopLevelDestinationInHierarchy(destination)
+                item(
+                    selected = selected,
+                    icon = {
+                        Icon(
+                            imageVector = if (selected) {
+                                ImageVector.vectorResource(destination.selectedIcon)
+                            } else {
+                                ImageVector.vectorResource(destination.unselectedIcon)
+                            },
+                            contentDescription = null,
+                        )
+                    },
+                    label = { Text(stringResource(destination.iconTextId)) },
+                    onClick = { appState.navigateToTopLevelDestination(destination) },
+                )
+            }
+        },
+    ) {
+        val destination = appState.currentTopLevelDestination
+
+        Scaffold(
+            floatingActionButton = {
+                if (destination != null) {
+                    CsFloatingActionButton(
+                        titleRes = destination.fabTitle,
+                        iconRes = destination.fabIcon,
+                        onClick = {
+                            when (destination) {
+                                TopLevelDestination.HOME -> { showWalletDialog = true }
+                                TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
+                                TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
+                            }
                         },
-                        label = { Text(stringResource(destination.iconTextId)) },
-                        onClick = { appState.navigateToTopLevelDestination(destination) },
                     )
                 }
             },
-            modifier = Modifier.windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-            ),
-        ) {
-            val destination = appState.currentTopLevelDestination
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        ) { padding ->
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+                    ),
+            ) {
+                val shouldShowTopAppBar = destination != null
+                if (destination != null) {
+                    CsTopAppBar(
+                        titleRes = destination.titleTextId,
+                        actionIconRes = CsIcons.Settings,
+                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
+                        onActionClick = { showSettingsBottomSheet = true },
+                    )
+                }
 
-            Scaffold(
-                topBar = {
-                    if (destination != null) {
-                        CsTopAppBar(
-                            titleRes = destination.titleTextId,
-                            actionIconRes = CsIcons.Settings,
-                            actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                            onActionClick = { showSettingsBottomSheet = true },
-                        )
-                    }
-                },
-                floatingActionButton = {
-                    if (destination != null) {
-                        CsFloatingActionButton(
-                            titleRes = destination.fabTitle,
-                            iconRes = destination.fabIcon,
-                            onClick = {
-                                when (destination) {
-                                    TopLevelDestination.HOME -> { showWalletDialog = true }
-                                    TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
-                                    TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
-                                }
-                            },
-                        )
-                    }
-                },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            ) { padding ->
                 CsNavHost(
                     appState = appState,
-                    modifier = Modifier.padding(padding),
                 )
             }
         }

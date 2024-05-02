@@ -1,9 +1,5 @@
 package ru.resodostudios.cashsense.ui
 
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Companion.Expanded
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Companion.Medium
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -33,20 +29,17 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
 @Composable
 fun rememberCsAppState(
-    windowSizeClass: WindowSizeClass,
     timeZoneMonitor: TimeZoneMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
 ): CsAppState {
 
     return remember(
-        windowSizeClass,
         timeZoneMonitor,
         coroutineScope,
         navController,
     ) {
         CsAppState(
-            windowSizeClass = windowSizeClass,
             timeZoneMonitor = timeZoneMonitor,
             coroutineScope = coroutineScope,
             navController = navController,
@@ -56,7 +49,6 @@ fun rememberCsAppState(
 
 @Stable
 class CsAppState(
-    windowSizeClass: WindowSizeClass,
     timeZoneMonitor: TimeZoneMonitor,
     coroutineScope: CoroutineScope,
     val navController: NavHostController,
@@ -73,12 +65,6 @@ class CsAppState(
         }
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
-
-    val navigationSuiteType: NavigationSuiteType = when (windowSizeClass.widthSizeClass) {
-        Expanded -> NavigationSuiteType.NavigationDrawer
-        Medium -> NavigationSuiteType.NavigationRail
-        else -> NavigationSuiteType.NavigationBar
-    }
 
     val currentTimeZone = timeZoneMonitor.currentTimeZone
         .stateIn(
