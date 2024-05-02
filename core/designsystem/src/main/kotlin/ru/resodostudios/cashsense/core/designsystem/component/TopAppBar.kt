@@ -21,14 +21,14 @@ fun CsTopAppBar(
     onActionClick: () -> Unit = {}
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = titleRes)) },
+        title = { Text(stringResource(titleRes)) },
         actions = {
             IconButton(onClick = onActionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(actionIconRes),
-                    contentDescription = actionIconContentDescription
+                    contentDescription = actionIconContentDescription,
                 )
             }
-        }
+        },
     )
 }

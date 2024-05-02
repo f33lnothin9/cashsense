@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_ARG
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WALLET_ROUTE
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
+import ru.resodostudios.cashsense.feature.wallet.detail.R as walletDetailR
 
 private const val HOME_DETAIL_PANE_ROUTE = "home_detail_pane_route"
 
@@ -97,8 +98,8 @@ internal fun HomeListDetailScreen(
                 )
                 composable(route = WALLET_ROUTE) {
                     EmptyState(
-                        messageRes = ru.resodostudios.cashsense.feature.wallet.detail.R.string.feature_wallet_detail_select_wallet,
-                        animationRes = ru.resodostudios.cashsense.feature.wallet.detail.R.raw.anim_select_wallet,
+                        messageRes = walletDetailR.string.feature_wallet_detail_select_wallet,
+                        animationRes = walletDetailR.raw.anim_select_wallet,
                     )
                 }
             }

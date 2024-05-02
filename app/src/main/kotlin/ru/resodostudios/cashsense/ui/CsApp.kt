@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -11,9 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +33,6 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 
-@OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Composable
 fun CsApp(appState: CsAppState) {
 
@@ -92,7 +88,9 @@ fun CsApp(appState: CsAppState) {
                     )
                 }
             },
-            modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
+            modifier = Modifier.windowInsetsPadding(
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+            ),
         ) {
             val destination = appState.currentTopLevelDestination
 
@@ -103,7 +101,7 @@ fun CsApp(appState: CsAppState) {
                             titleRes = destination.titleTextId,
                             actionIconRes = CsIcons.Settings,
                             actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                            onActionClick = { showSettingsBottomSheet = true }
+                            onActionClick = { showSettingsBottomSheet = true },
                         )
                     }
                 },
@@ -112,16 +110,13 @@ fun CsApp(appState: CsAppState) {
                         CsFloatingActionButton(
                             titleRes = destination.fabTitle,
                             iconRes = destination.fabIcon,
-                            modifier = Modifier.then(
-                                if (appState.navigationSuiteType != NavigationSuiteType.NavigationBar) Modifier.navigationBarsPadding() else Modifier
-                            ),
                             onClick = {
                                 when (destination) {
                                     TopLevelDestination.HOME -> { showWalletDialog = true }
                                     TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
                                     TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
                                 }
-                            }
+                            },
                         )
                     }
                 },

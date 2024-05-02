@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.ui
 
-import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Companion.Expanded
@@ -55,7 +54,6 @@ fun rememberCsAppState(
     }
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveNavigationSuiteApi::class)
 @Stable
 class CsAppState(
     windowSizeClass: WindowSizeClass,
