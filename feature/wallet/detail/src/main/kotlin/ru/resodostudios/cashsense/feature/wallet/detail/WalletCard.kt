@@ -65,7 +65,7 @@ fun WalletCard(
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
         shape = RoundedCornerShape(24.dp),
-        elevation = if (isSelected) CardDefaults.outlinedCardElevation(defaultElevation = 6.dp) else CardDefaults.outlinedCardElevation(),
+        elevation = if (isSelected) CardDefaults.outlinedCardElevation(defaultElevation = 3.dp) else CardDefaults.outlinedCardElevation(),
         modifier = modifier
             .semantics(mergeDescendants = true) {
                 selected = isSelected

@@ -57,7 +57,7 @@ fun EmptyState(
             verticalArrangement = Arrangement.Center,
         ) {
             LottieAnimation(
-                modifier = Modifier.size(230.dp),
+                modifier = Modifier.size(185.dp),
                 composition = lottieComposition,
                 progress = { progress },
             )
