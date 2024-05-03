@@ -41,7 +41,12 @@ class CategoryDialogViewModel @Inject constructor(
 
             CategoryDialogEvent.Delete -> {
                 viewModelScope.launch {
-                    categoriesRepository.deleteCategory(_categoryDialogUiState.value.id)
+                    val category = Category(
+                        id = _categoryDialogUiState.value.id,
+                        title = _categoryDialogUiState.value.title,
+                        iconId = _categoryDialogUiState.value.icon,
+                    )
+                    categoriesRepository.deleteCategory(category)
                 }
             }
 

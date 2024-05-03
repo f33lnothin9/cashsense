@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,6 @@ interface CategoryDao {
     @Upsert
     suspend fun upsertCategory(category: CategoryEntity)
 
-    @Query("DELETE FROM categories WHERE id = :id")
-    suspend fun deleteCategory(id: String)
+    @Delete
+    suspend fun deleteCategory(category: CategoryEntity)
 }
