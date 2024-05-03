@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
@@ -22,10 +23,10 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.feature.home.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
 import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_ARG
+import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WALLET_ROUTE
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
-import ru.resodostudios.cashsense.feature.wallet.detail.R as walletDetailR
 
 private const val HOME_DETAIL_PANE_ROUTE = "home_detail_pane_route"
 
@@ -81,10 +82,12 @@ internal fun HomeListDetailScreen(
         value = listDetailNavigator.scaffoldValue,
         directive = listDetailNavigator.scaffoldDirective,
         listPane = {
-            HomeRoute(
-                onWalletClick = ::onWalletClickShowDetailPane,
-                highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
-            )
+            AnimatedPane {
+                HomeRoute(
+                    onWalletClick = ::onWalletClickShowDetailPane,
+                    highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
+                )
+            }
         },
         detailPane = {
             NavHost(
@@ -95,11 +98,12 @@ internal fun HomeListDetailScreen(
                 walletScreen(
                     showDetailActions = !listDetailNavigator.isListPaneVisible(),
                     onBackClick = listDetailNavigator::navigateBack,
+                    threePaneScaffoldScope = this@ListDetailPaneScaffold,
                 )
                 composable(route = WALLET_ROUTE) {
                     EmptyState(
-                        messageRes = walletDetailR.string.feature_wallet_detail_select_wallet,
-                        animationRes = walletDetailR.raw.anim_select_wallet,
+                        messageRes = R.string.feature_wallet_detail_select_wallet,
+                        animationRes = R.raw.anim_select_wallet,
                     )
                 }
             }

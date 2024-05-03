@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.navigation
 
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -27,9 +30,11 @@ fun NavController.navigateToWallet(
     }
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun NavGraphBuilder.walletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
+    threePaneScaffoldScope: ThreePaneScaffoldScope,
 ) {
     composable(
         route = "$WALLET_ROUTE/{$WALLET_ID_ARG}",
@@ -37,9 +42,11 @@ fun NavGraphBuilder.walletScreen(
             navArgument(WALLET_ID_ARG) { type = NavType.StringType }
         )
     ) {
-        WalletRoute(
-            showDetailActions = showDetailActions,
-            onBackClick = onBackClick,
-        )
+        threePaneScaffoldScope.AnimatedPane {
+            WalletRoute(
+                showDetailActions = showDetailActions,
+                onBackClick = onBackClick,
+            )
+        }
     }
 }
