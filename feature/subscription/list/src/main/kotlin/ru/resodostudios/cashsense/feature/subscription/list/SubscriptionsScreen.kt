@@ -23,7 +23,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogViewModel
 
 @Composable
-internal fun SubscriptionsRoute(
+internal fun SubscriptionsScreen(
     subscriptionsViewModel: SubscriptionsViewModel = hiltViewModel(),
     subscriptionDialogViewModel: SubscriptionDialogViewModel = hiltViewModel(),
 ) {

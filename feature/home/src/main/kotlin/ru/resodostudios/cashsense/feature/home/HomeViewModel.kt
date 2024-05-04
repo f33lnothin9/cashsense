@@ -3,38 +3,35 @@ package ru.resodostudios.cashsense.feature.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
-import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_ARG
+import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
+import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     walletsRepository: WalletsRepository,
 ) : ViewModel() {
 
-    private val selectedWalletId: StateFlow<String?> = savedStateHandle.getStateFlow(WALLET_ID_ARG, null)
+    private val homeDestination: HomeDestination = savedStateHandle.toRoute()
 
-    val walletsUiState: StateFlow<WalletsUiState> = combine(
-        selectedWalletId,
-        walletsRepository.getWalletsWithTransactions(),
-        WalletsUiState::Success,
-    )
+    val walletsUiState: StateFlow<WalletsUiState> = walletsRepository.getWalletsWithTransactions()
+        .map { wallets ->
+            Success(homeDestination.walletId, wallets)
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = WalletsUiState.Loading,
         )
-
-    fun onWalletClick(walletId: String?) {
-        savedStateHandle[WALLET_ID_ARG] = walletId
-    }
 }
 
 sealed interface WalletsUiState {

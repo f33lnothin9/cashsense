@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -16,11 +17,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
-import ru.resodostudios.cashsense.feature.category.list.navigation.CATEGORIES_ROUTE
+import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesDestination
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
-import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
+import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.SUBSCRIPTIONS_ROUTE
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsDestination
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
@@ -57,11 +58,13 @@ class CsAppState(
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
     val currentTopLevelDestination: TopLevelDestination?
-        @Composable get() = when (currentDestination?.route) {
-            HOME_ROUTE -> HOME
-            CATEGORIES_ROUTE -> CATEGORIES
-            SUBSCRIPTIONS_ROUTE -> SUBSCRIPTIONS
-            else -> null
+        @Composable get() {
+            with(currentDestination) {
+                if (this?.hasRoute<HomeDestination>() == true) return HOME
+                if (this?.hasRoute<CategoriesDestination>() == true) return CATEGORIES
+                if (this?.hasRoute<SubscriptionsDestination>() == true) return SUBSCRIPTIONS
+            }
+            return null
         }
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries

@@ -4,16 +4,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsRoute
+import kotlinx.serialization.Serializable
+import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsScreen
 
-const val SUBSCRIPTIONS_ROUTE = "subscriptions_route"
+@Serializable
+object SubscriptionsDestination
 
-fun NavController.navigateToSubscriptions(navOptions: NavOptions? = null) = navigate(SUBSCRIPTIONS_ROUTE, navOptions)
+fun NavController.navigateToSubscriptions(navOptions: NavOptions) =
+    navigate(route = SubscriptionsDestination, navOptions)
 
 fun NavGraphBuilder.subscriptionsScreen() {
-    composable(
-        route = SUBSCRIPTIONS_ROUTE
-    ) {
-        SubscriptionsRoute()
+    composable<SubscriptionsDestination> {
+        SubscriptionsScreen()
     }
 }

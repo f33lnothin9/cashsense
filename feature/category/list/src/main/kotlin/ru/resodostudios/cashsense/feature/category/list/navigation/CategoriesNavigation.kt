@@ -4,16 +4,19 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import ru.resodostudios.cashsense.feature.category.list.CategoryRoute
+import kotlinx.serialization.Serializable
+import ru.resodostudios.cashsense.feature.category.list.CategoriesScreen
 
-const val CATEGORIES_ROUTE = "categories_route"
+@Serializable
+data object CategoriesDestination
 
-fun NavController.navigateToCategories(navOptions: NavOptions? = null) = navigate(CATEGORIES_ROUTE, navOptions)
+fun NavController.navigateToCategories(navOptions: NavOptions) =
+    navigate(route = CategoriesDestination, navOptions)
 
 fun NavGraphBuilder.categoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
-    composable(route = CATEGORIES_ROUTE) {
-        CategoryRoute(onShowSnackbar)
+    composable<CategoriesDestination> {
+        CategoriesScreen(onShowSnackbar)
     }
 }

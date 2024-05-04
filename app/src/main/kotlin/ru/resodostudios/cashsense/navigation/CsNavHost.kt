@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
-import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
+import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
 import ru.resodostudios.cashsense.ui.CsAppState
 import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
@@ -17,13 +17,12 @@ fun CsNavHost(
     appState: CsAppState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,
-    startDestination: String = HOME_ROUTE,
 ) {
     val navController = appState.navController
 
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = HomeDestination(null),
         enterTransition = { slideInVertically { it / 16 } + fadeIn() },
         exitTransition = { fadeOut() },
         popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },

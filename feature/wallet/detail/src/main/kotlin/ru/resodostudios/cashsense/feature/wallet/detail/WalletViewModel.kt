@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +26,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletArgs
+import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletDestination
 import java.math.BigDecimal
 import java.time.temporal.WeekFields
 import javax.inject.Inject
@@ -36,7 +37,7 @@ class WalletViewModel @Inject constructor(
     walletsRepository: WalletsRepository,
 ) : ViewModel() {
 
-    private val walletArgs: WalletArgs = WalletArgs(savedStateHandle)
+    private val walletDestination: WalletDestination = savedStateHandle.toRoute()
 
     private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
     private val availableCategoriesState = MutableStateFlow<List<Category>>(emptyList())
@@ -48,7 +49,7 @@ class WalletViewModel @Inject constructor(
         availableCategoriesState.asStateFlow(),
         financeTypeState.asStateFlow(),
         dateTypeState.asStateFlow(),
-        walletsRepository.getWalletWithTransactions(walletArgs.walletId),
+        walletsRepository.getWalletWithTransactions(walletDestination.id),
     ) { selectedCategories, availableCategories, financeType, dateType, walletTransactionsCategories ->
         val wallet = walletTransactionsCategories.wallet
         val transactionsCategories = walletTransactionsCategories.transactionsWithCategories

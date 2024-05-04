@@ -77,7 +77,7 @@ import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
-internal fun WalletRoute(
+internal fun WalletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),

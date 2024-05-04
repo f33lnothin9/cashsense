@@ -11,56 +11,44 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.core.ui.EmptyState
-import ru.resodostudios.cashsense.feature.home.HomeRoute
-import ru.resodostudios.cashsense.feature.home.navigation.HOME_ROUTE
-import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_ARG
+import ru.resodostudios.cashsense.feature.home.HomeScreen
+import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
 import ru.resodostudios.cashsense.feature.wallet.detail.R
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WALLET_ROUTE
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 
-private const val HOME_DETAIL_PANE_ROUTE = "home_detail_pane_route"
+@Serializable
+object WalletPlaceholderDestination
+
+@Serializable
+object DetailPaneNavHostDestination
 
 fun NavGraphBuilder.homeListDetailScreen() {
-    composable(
-        route = HOME_ROUTE,
-        arguments = listOf(
-            navArgument(WALLET_ID_ARG) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-        ),
-    ) {
-        HomeListDetailScreen()
+    composable<HomeDestination> { backStackEntry ->
+        val walletIdArgument = backStackEntry.toRoute<HomeDestination>().walletId
+        var walletId: String? by rememberSaveable { mutableStateOf(walletIdArgument) }
+
+        HomeListDetailScreen(
+            selectedWalletId = walletId,
+            onWalletClick = { walletId = it },
+        )
     }
-}
-
-@Composable
-internal fun HomeListDetailScreen(
-    viewModel: Home2PaneViewModel = hiltViewModel(),
-) {
-    val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
-
-    HomeListDetailScreen(
-        selectedTopicId = selectedWalletId,
-        onWalletClick = viewModel::onWalletClick,
-    )
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 internal fun HomeListDetailScreen(
-    selectedTopicId: String?,
+    selectedWalletId: String?,
     onWalletClick: (String) -> Unit,
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator()
@@ -73,7 +61,7 @@ internal fun HomeListDetailScreen(
     fun onWalletClickShowDetailPane(walletId: String) {
         onWalletClick(walletId)
         nestedNavController.navigateToWallet(walletId) {
-            popUpTo(HOME_DETAIL_PANE_ROUTE)
+            popUpTo<DetailPaneNavHostDestination>()
         }
         listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
     }
@@ -83,7 +71,7 @@ internal fun HomeListDetailScreen(
         directive = listDetailNavigator.scaffoldDirective,
         listPane = {
             AnimatedPane {
-                HomeRoute(
+                HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                 )
@@ -92,15 +80,15 @@ internal fun HomeListDetailScreen(
         detailPane = {
             NavHost(
                 navController = nestedNavController,
-                startDestination = WALLET_ROUTE,
-                route = HOME_DETAIL_PANE_ROUTE,
+                startDestination = WalletPlaceholderDestination::class,
+                route = DetailPaneNavHostDestination::class,
             ) {
                 walletScreen(
                     showDetailActions = !listDetailNavigator.isListPaneVisible(),
                     onBackClick = listDetailNavigator::navigateBack,
                     threePaneScaffoldScope = this@ListDetailPaneScaffold,
                 )
-                composable(route = WALLET_ROUTE) {
+                composable<WalletPlaceholderDestination> {
                     EmptyState(
                         messageRes = R.string.feature_wallet_detail_select_wallet,
                         animationRes = R.raw.anim_select_wallet,
@@ -110,8 +98,8 @@ internal fun HomeListDetailScreen(
         },
     )
     LaunchedEffect(Unit) {
-        if (selectedTopicId != null) {
-            onWalletClickShowDetailPane(selectedTopicId)
+        if (selectedWalletId != null) {
+            onWalletClickShowDetailPane(selectedWalletId)
         }
     }
 }

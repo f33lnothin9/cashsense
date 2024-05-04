@@ -36,7 +36,7 @@ import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Succes
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
-internal fun CategoryRoute(
+internal fun CategoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
     categoryDialogViewModel: CategoryDialogViewModel = hiltViewModel(),

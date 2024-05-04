@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
@@ -54,24 +55,16 @@ fun CsApp(
     var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showSettingsBottomSheet) {
-        SettingsBottomSheet(
-            onDismiss = { showSettingsBottomSheet = false }
-        )
+        SettingsBottomSheet(onDismiss = { showSettingsBottomSheet = false })
     }
     if (showCategoryDialog) {
-        CategoryDialog(
-            onDismiss = { showCategoryDialog = false }
-        )
+        CategoryDialog(onDismiss = { showCategoryDialog = false })
     }
     if (showWalletDialog) {
-        WalletDialog(
-            onDismiss = { showWalletDialog = false }
-        )
+        WalletDialog(onDismiss = { showWalletDialog = false })
     }
     if (showSubscriptionDialog) {
-        SubscriptionDialog(
-            onDismiss = { showSubscriptionDialog = false }
-        )
+        SubscriptionDialog(onDismiss = { showSubscriptionDialog = false })
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -161,5 +154,5 @@ fun CsApp(
 
 private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
     this?.hierarchy?.any {
-        it.route?.contains(destination.name, true) ?: false
+        it.hasRoute(destination.route)
     } ?: false

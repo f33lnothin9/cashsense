@@ -12,6 +12,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             pluginManager.apply {
                 apply("cashsense.android.library")
                 apply("cashsense.android.hilt")
+                apply("org.jetbrains.kotlin.plugin.serialization")
             }
             extensions.configure<LibraryExtension> {
                 defaultConfig {
@@ -26,7 +27,9 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
+                add("implementation", libs.findLibrary("androidx.navigation.compose").get())
                 add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
+                add("implementation", libs.findLibrary("kotlinx.serialization.json").get())
             }
         }
     }
