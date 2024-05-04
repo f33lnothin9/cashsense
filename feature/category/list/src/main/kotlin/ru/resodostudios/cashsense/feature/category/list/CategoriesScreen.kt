@@ -10,15 +10,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -29,9 +33,11 @@ import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogViewModel
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Success
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 internal fun CategoryRoute(
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
     categoryDialogViewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
@@ -39,17 +45,43 @@ internal fun CategoryRoute(
 
     CategoriesScreen(
         categoriesState = categoriesState,
+        onShowSnackbar = onShowSnackbar,
         onCategoryEvent = categoryDialogViewModel::onCategoryEvent,
+        shouldDisplayUndoCategory = categoryDialogViewModel.shouldDisplayUndoCategory,
+        undoCategoryRemoval = categoryDialogViewModel::undoCategoryRemoval,
+        clearUndoState = categoryDialogViewModel::clearUndoState,
     )
 }
 
 @Composable
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
+    shouldDisplayUndoCategory: Boolean = false,
+    undoCategoryRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
     var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+
+    val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
+    val undoText = stringResource(uiR.string.core_ui_undo)
+
+    LaunchedEffect(shouldDisplayUndoCategory) {
+        if (shouldDisplayUndoCategory) {
+            val snackBarResult = onShowSnackbar(categoryDeletedMessage, undoText)
+            if (snackBarResult) {
+                undoCategoryRemoval()
+            } else {
+                clearUndoState()
+            }
+        }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        clearUndoState()
+    }
 
     when (categoriesState) {
         Loading -> LoadingState(Modifier.fillMaxSize())

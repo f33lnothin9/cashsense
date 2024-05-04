@@ -15,6 +15,7 @@ import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
 @Composable
 fun CsNavHost(
     appState: CsAppState,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,
     startDestination: String = HOME_ROUTE,
 ) {
@@ -30,7 +31,9 @@ fun CsNavHost(
         modifier = modifier,
     ) {
         homeListDetailScreen()
-        categoriesScreen()
+        categoriesScreen(
+            onShowSnackbar = onShowSnackbar,
+        )
         subscriptionsScreen()
     }
 }

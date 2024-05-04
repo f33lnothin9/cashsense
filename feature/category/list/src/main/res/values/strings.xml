@@ -2,4 +2,5 @@
 <resources>
     <string name="feature_category_list_title">Categories</string>
     <string name="feature_category_list_empty">Nothing in Categories</string>
+    <string name="feature_category_list_deleted">Category deleted</string>
 </resources>

@@ -10,10 +10,10 @@ const val CATEGORIES_ROUTE = "categories_route"
 
 fun NavController.navigateToCategories(navOptions: NavOptions? = null) = navigate(CATEGORIES_ROUTE, navOptions)
 
-fun NavGraphBuilder.categoriesScreen() {
-    composable(
-        route = CATEGORIES_ROUTE
-    ) {
-        CategoryRoute()
+fun NavGraphBuilder.categoriesScreen(
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+) {
+    composable(route = CATEGORIES_ROUTE) {
+        CategoryRoute(onShowSnackbar)
     }
 }

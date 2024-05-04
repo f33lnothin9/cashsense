@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration.Short
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -19,6 +23,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -69,6 +74,8 @@ fun CsApp(
         )
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val currentDestination = appState.currentDestination
 
     val layoutType = NavigationSuiteScaffoldDefaults
@@ -101,6 +108,7 @@ fun CsApp(
         val destination = appState.currentTopLevelDestination
 
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton = {
                 if (destination != null) {
                     CsFloatingActionButton(
@@ -119,7 +127,7 @@ fun CsApp(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
         ) { padding ->
             Column(
-                Modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
                     .consumeWindowInsets(padding)
@@ -127,7 +135,6 @@ fun CsApp(
                         WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
                     ),
             ) {
-                val shouldShowTopAppBar = destination != null
                 if (destination != null) {
                     CsTopAppBar(
                         titleRes = destination.titleTextId,
@@ -139,6 +146,13 @@ fun CsApp(
 
                 CsNavHost(
                     appState = appState,
+                    onShowSnackbar = { message, action ->
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            actionLabel = action,
+                            duration = Short,
+                        ) == ActionPerformed
+                    },
                 )
             }
         }
