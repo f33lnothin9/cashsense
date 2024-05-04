@@ -43,6 +43,9 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
 @Composable
 fun CsApp(
@@ -109,9 +112,9 @@ fun CsApp(
                         iconRes = destination.fabIcon,
                         onClick = {
                             when (destination) {
-                                TopLevelDestination.HOME -> { showWalletDialog = true }
-                                TopLevelDestination.CATEGORIES -> { showCategoryDialog = true }
-                                TopLevelDestination.SUBSCRIPTIONS -> { showSubscriptionDialog = true }
+                                HOME -> showWalletDialog = true
+                                CATEGORIES -> showCategoryDialog = true
+                                SUBSCRIPTIONS -> showSubscriptionDialog = true
                             }
                         },
                     )

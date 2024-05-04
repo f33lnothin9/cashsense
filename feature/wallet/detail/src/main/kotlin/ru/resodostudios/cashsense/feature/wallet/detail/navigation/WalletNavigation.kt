@@ -15,7 +15,7 @@ data class WalletDestination(val id: String)
 
 fun NavController.navigateToWallet(
     walletId: String,
-    navOptions: NavOptionsBuilder.() -> Unit = {}
+    navOptions: NavOptionsBuilder.() -> Unit = {},
 ) {
     navigate(route = WalletDestination(walletId)) {
         navOptions()
