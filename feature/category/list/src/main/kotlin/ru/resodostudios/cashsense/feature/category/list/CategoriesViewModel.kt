@@ -41,22 +41,25 @@ class CategoriesViewModel @Inject constructor(
         )
 
     fun hideCategory(category: Category) {
+        if (lastRemovedCategoryState.value != null) {
+            clearUndoState()
+        }
         shouldDisplayUndoCategoryState.value = true
         lastRemovedCategoryState.value = category
     }
 
     fun undoCategoryRemoval() {
         lastRemovedCategoryState.value = null
-        clearUndoState()
+        shouldDisplayUndoCategoryState.value = false
     }
 
     fun clearUndoState() {
-        lastRemovedCategoryState.value?.let {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            lastRemovedCategoryState.value?.let {
                 categoriesRepository.deleteCategory(it)
             }
         }
-        shouldDisplayUndoCategoryState.value = false
+        undoCategoryRemoval()
     }
 }
 
