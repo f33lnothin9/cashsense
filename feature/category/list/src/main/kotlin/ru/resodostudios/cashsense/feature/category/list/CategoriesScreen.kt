@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -47,9 +48,9 @@ internal fun CategoriesScreen(
         categoriesState = categoriesState,
         onShowSnackbar = onShowSnackbar,
         onCategoryEvent = categoryDialogViewModel::onCategoryEvent,
-        shouldDisplayUndoCategory = categoryDialogViewModel.shouldDisplayUndoCategory,
-        undoCategoryRemoval = categoryDialogViewModel::undoCategoryRemoval,
-        clearUndoState = categoryDialogViewModel::clearUndoState,
+        hideCategory = categoriesViewModel::hideCategory,
+        undoCategoryRemoval = categoriesViewModel::undoCategoryRemoval,
+        clearUndoState = categoriesViewModel::clearUndoState,
     )
 }
 
@@ -58,34 +59,33 @@ internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
-    shouldDisplayUndoCategory: Boolean = false,
+    hideCategory: (Category) -> Unit = {},
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
     var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
-    val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
-    val undoText = stringResource(uiR.string.core_ui_undo)
-
-    LaunchedEffect(shouldDisplayUndoCategory) {
-        if (shouldDisplayUndoCategory) {
-            val snackBarResult = onShowSnackbar(categoryDeletedMessage, undoText)
-            if (snackBarResult) {
-                undoCategoryRemoval()
-            } else {
-                clearUndoState()
-            }
-        }
-    }
-
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-        clearUndoState()
-    }
-
     when (categoriesState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> if (categoriesState.categories.isNotEmpty()) {
+            val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
+            val undoText = stringResource(uiR.string.core_ui_undo)
+
+            LaunchedEffect(categoriesState.shouldDisplayUndoCategory) {
+                if (categoriesState.shouldDisplayUndoCategory) {
+                    val snackBarResult = onShowSnackbar(categoryDeletedMessage, undoText)
+                    if (snackBarResult) {
+                        undoCategoryRemoval()
+                    } else {
+                        clearUndoState()
+                    }
+                }
+            }
+            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+                clearUndoState()
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(300.dp),
                 modifier = Modifier.fillMaxSize(),
@@ -102,12 +102,11 @@ internal fun CategoriesScreen(
                 CategoryBottomSheet(
                     onDismiss = { showCategoryBottomSheet = false },
                     onEdit = { showCategoryDialog = true },
+                    onDelete = hideCategory,
                 )
             }
             if (showCategoryDialog) {
-                CategoryDialog(
-                    onDismiss = { showCategoryDialog = false },
-                )
+                CategoryDialog(onDismiss = { showCategoryDialog = false })
             }
         } else {
             EmptyState(

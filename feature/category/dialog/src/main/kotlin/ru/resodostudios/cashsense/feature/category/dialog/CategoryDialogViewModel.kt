@@ -20,9 +20,6 @@ class CategoryDialogViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
-    var shouldDisplayUndoCategory: Boolean = false
-    private var lastRemovedCategory: Category? = null
-
     private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
     val categoryDialogUiState = _categoryDialogUiState.asStateFlow()
 
@@ -39,19 +36,6 @@ class CategoryDialogViewModel @Inject constructor(
                 }
                 _categoryDialogUiState.update {
                     CategoryDialogUiState()
-                }
-            }
-
-            CategoryDialogEvent.Delete -> {
-                viewModelScope.launch {
-                    val category = Category(
-                        id = _categoryDialogUiState.value.id,
-                        title = _categoryDialogUiState.value.title,
-                        iconId = _categoryDialogUiState.value.icon,
-                    )
-                    shouldDisplayUndoCategory = true
-                    lastRemovedCategory = category
-                    categoriesRepository.deleteCategory(category)
                 }
             }
 
@@ -90,20 +74,6 @@ class CategoryDialogViewModel @Inject constructor(
                     )
                 }
         }
-    }
-
-    fun undoCategoryRemoval() {
-        viewModelScope.launch {
-            lastRemovedCategory?.let {
-                categoriesRepository.upsertCategory(it)
-            }
-        }
-        clearUndoState()
-    }
-
-    fun clearUndoState() {
-        shouldDisplayUndoCategory = false
-        lastRemovedCategory = null
     }
 }
 

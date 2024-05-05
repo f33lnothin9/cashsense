@@ -9,6 +9,4 @@ sealed interface CategoryDialogEvent {
     data class UpdateIcon(val icon: Int) : CategoryDialogEvent
 
     data object Save : CategoryDialogEvent
-
-    data object Delete : CategoryDialogEvent
 }
