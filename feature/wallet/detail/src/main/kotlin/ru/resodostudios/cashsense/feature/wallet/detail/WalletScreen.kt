@@ -74,12 +74,14 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.temporal.ChronoUnit
+import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     walletViewModel: WalletViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
@@ -90,9 +92,13 @@ internal fun WalletScreen(
         walletState = walletState,
         showDetailActions = showDetailActions,
         onBackClick = onBackClick,
-        onWalletEvent = walletViewModel::onWalletEvent,
+        onShowSnackbar = onShowSnackbar,
         onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
+        addToSelectedCategories = walletViewModel::addToSelectedCategories,
+        removeFromSelectedCategories = walletViewModel::removeFromSelectedCategories,
+        updateFinanceType = walletViewModel::updateFinanceType,
+        updateDateType = walletViewModel::updateDateType,
     )
 }
 
@@ -102,9 +108,13 @@ internal fun WalletScreen(
     walletState: WalletUiState,
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
-    onWalletEvent: (WalletEvent) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
+    addToSelectedCategories: (Category) -> Unit,
+    removeFromSelectedCategories: (Category) -> Unit,
+    updateFinanceType: (FinanceSectionType) -> Unit,
+    updateDateType: (DateType) -> Unit,
 ) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -114,6 +124,24 @@ internal fun WalletScreen(
     when (walletState) {
         WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
+            val transactionDeletedMessage =
+                stringResource(transactionR.string.feature_transaction_deleted)
+            val undoText = stringResource(uiR.string.core_ui_undo)
+
+//            LaunchedEffect(categoriesState.shouldDisplayUndoCategory) {
+//                if (categoriesState.shouldDisplayUndoCategory) {
+//                    val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
+//                    if (snackBarResult) {
+//                        undoCategoryRemoval()
+//                    } else {
+//                        clearUndoState()
+//                    }
+//                }
+//            }
+//            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+//                clearUndoState()
+//            }
+
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
                     TopAppBar(
@@ -178,7 +206,10 @@ internal fun WalletScreen(
                 item {
                     FinancePanel(
                         walletState = walletState,
-                        onWalletEvent = onWalletEvent,
+                        addToSelectedCategories = addToSelectedCategories,
+                        removeFromSelectedCategories = removeFromSelectedCategories,
+                        updateFinanceType = updateFinanceType,
+                        updateDateType = updateDateType,
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
                     )
                 }
@@ -223,7 +254,10 @@ internal fun WalletScreen(
 @Composable
 private fun FinancePanel(
     walletState: WalletUiState,
-    onWalletEvent: (WalletEvent) -> Unit,
+    addToSelectedCategories: (Category) -> Unit,
+    removeFromSelectedCategories: (Category) -> Unit,
+    updateFinanceType: (FinanceSectionType) -> Unit,
+    updateDateType: (DateType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (walletState) {
@@ -281,13 +315,7 @@ private fun FinancePanel(
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
                                     indicatorProgress = expensesProgress,
                                     modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        onWalletEvent(
-                                            WalletEvent.UpdateFinanceType(
-                                                FinanceSectionType.EXPENSES
-                                            )
-                                        )
-                                    },
+                                    onClick = { updateFinanceType(FinanceSectionType.EXPENSES) },
                                     enabled = expenses != BigDecimal.ZERO,
                                 )
                                 FinanceCard(
@@ -297,13 +325,7 @@ private fun FinancePanel(
                                     supportingTextId = R.string.feature_wallet_detail_income,
                                     indicatorProgress = 1.0f - expensesProgress,
                                     modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        onWalletEvent(
-                                            WalletEvent.UpdateFinanceType(
-                                                FinanceSectionType.INCOME
-                                            )
-                                        )
-                                    },
+                                    onClick = { updateFinanceType(FinanceSectionType.INCOME) },
                                     enabled = income != BigDecimal.ZERO,
                                 )
                             }
@@ -317,14 +339,9 @@ private fun FinancePanel(
                                 supportingTextId = R.string.feature_wallet_detail_expenses,
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
-                                onWalletEvent = onWalletEvent,
-                                onBackClick = {
-                                    onWalletEvent(
-                                        WalletEvent.UpdateFinanceType(
-                                            FinanceSectionType.NONE
-                                        )
-                                    )
-                                },
+                                onBackClick = { updateFinanceType(FinanceSectionType.NONE) },
+                                addToSelectedCategories = addToSelectedCategories,
+                                removeFromSelectedCategories = removeFromSelectedCategories,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
@@ -337,14 +354,9 @@ private fun FinancePanel(
                                 supportingTextId = R.string.feature_wallet_detail_income,
                                 availableCategories = walletState.availableCategories,
                                 selectedCategories = walletState.selectedCategories,
-                                onWalletEvent = onWalletEvent,
-                                onBackClick = {
-                                    onWalletEvent(
-                                        WalletEvent.UpdateFinanceType(
-                                            FinanceSectionType.NONE
-                                        )
-                                    )
-                                },
+                                onBackClick = { updateFinanceType(FinanceSectionType.NONE) },
+                                addToSelectedCategories = addToSelectedCategories,
+                                removeFromSelectedCategories = removeFromSelectedCategories,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
@@ -363,7 +375,7 @@ private fun FinancePanel(
                                 index = index,
                                 count = dateTypes.size,
                             ),
-                            onClick = { onWalletEvent(WalletEvent.UpdateDateType(DateType.entries[index])) },
+                            onClick = { updateDateType(DateType.entries[index]) },
                             selected = walletState.dateType == DateType.entries[index],
                         ) {
                             Text(
@@ -423,8 +435,9 @@ private fun DetailedFinanceCard(
     supportingTextId: Int,
     availableCategories: List<Category>,
     selectedCategories: List<Category>,
-    onWalletEvent: (WalletEvent) -> Unit,
     onBackClick: () -> Unit,
+    addToSelectedCategories: (Category) -> Unit,
+    removeFromSelectedCategories: (Category) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
@@ -458,7 +471,8 @@ private fun DetailedFinanceCard(
         CategoryFilterPanel(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
-            onWalletEvent = onWalletEvent,
+            addToSelectedCategories = addToSelectedCategories,
+            removeFromSelectedCategories = removeFromSelectedCategories,
             modifier = Modifier.padding(start = 16.dp, bottom = 4.dp, end = 16.dp, top = 16.dp),
         )
     }
@@ -469,7 +483,8 @@ private fun DetailedFinanceCard(
 private fun CategoryFilterPanel(
     availableCategories: List<Category>,
     selectedCategories: List<Category>,
-    onWalletEvent: (WalletEvent) -> Unit,
+    addToSelectedCategories: (Category) -> Unit,
+    removeFromSelectedCategories: (Category) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selected by rememberSaveable { mutableStateOf(false) }
@@ -484,9 +499,9 @@ private fun CategoryFilterPanel(
                 selected = selected,
                 onClick = {
                     if (selectedCategories.contains(category)) {
-                        onWalletEvent(WalletEvent.RemoveFromSelectedCategories(category))
+                        removeFromSelectedCategories(category)
                     } else {
-                        onWalletEvent(WalletEvent.AddToSelectedCategories(category))
+                        addToSelectedCategories(category)
                     }
                 },
                 label = { Text(category.title.toString()) },
@@ -557,7 +572,8 @@ private fun LazyListScope.transactions(
                 },
                 supportingContent = {
                     Text(
-                        text = category?.title ?: stringResource(ru.resodostudios.cashsense.core.ui.R.string.none),
+                        text = category?.title
+                            ?: stringResource(ru.resodostudios.cashsense.core.ui.R.string.none),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )

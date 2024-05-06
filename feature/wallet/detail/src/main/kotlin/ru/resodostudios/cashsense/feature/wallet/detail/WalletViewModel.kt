@@ -8,13 +8,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
@@ -39,26 +39,24 @@ class WalletViewModel @Inject constructor(
 
     private val walletDestination: WalletDestination = savedStateHandle.toRoute()
 
-    private val selectedCategoriesState = MutableStateFlow<List<Category>>(emptyList())
-    private val availableCategoriesState = MutableStateFlow<List<Category>>(emptyList())
-    private val financeTypeState = MutableStateFlow(NONE)
-    private val dateTypeState = MutableStateFlow(ALL)
+    private val shouldDisplayUndoTransactionState = MutableStateFlow(false)
+    private val lastRemovedTransactionState = MutableStateFlow<Transaction?>(null)
+
+    private val walletFilterState = MutableStateFlow(WalletFilterState())
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        selectedCategoriesState.asStateFlow(),
-        availableCategoriesState.asStateFlow(),
-        financeTypeState.asStateFlow(),
-        dateTypeState.asStateFlow(),
         walletsRepository.getWalletWithTransactions(walletDestination.id),
-    ) { selectedCategories, availableCategories, financeType, dateType, walletTransactionsCategories ->
+        walletFilterState,
+    ) { walletTransactionsCategories, walletFilter ->
         val wallet = walletTransactionsCategories.wallet
         val transactionsCategories = walletTransactionsCategories.transactionsWithCategories
 
         val currentBalance = wallet.initialBalance.plus(
             transactionsCategories.sumOf { it.transaction.amount }
         )
-        val sortedTransactions = transactionsCategories.sortedByDescending { it.transaction.timestamp }
-        val filteredTransactionsCategories = when (financeType) {
+        val sortedTransactions =
+            transactionsCategories.sortedByDescending { it.transaction.timestamp }
+        val filteredTransactionsCategories = when (walletFilter.financeType) {
             NONE -> sortedTransactions
             EXPENSES -> calculateTransactionsCategories(
                 sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
@@ -68,7 +66,7 @@ class WalletViewModel @Inject constructor(
                 sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
             )
         }.run {
-            when (dateType) {
+            when (walletFilter.dateType) {
                 ALL -> this
                 WEEK -> filter {
                     it.transaction.timestamp
@@ -84,12 +82,13 @@ class WalletViewModel @Inject constructor(
 
         WalletUiState.Success(
             currentBalance = currentBalance,
-            availableCategories = availableCategories.minus(Category()),
-            selectedCategories = selectedCategories,
-            financeSectionType = financeType,
-            dateType = dateType,
+            availableCategories = walletFilter.availableCategories.minus(Category()),
+            selectedCategories = walletFilter.selectedCategories,
+            financeSectionType = walletFilter.financeType,
+            dateType = walletFilter.dateType,
             wallet = wallet,
             transactionsCategories = filteredTransactionsCategories,
+            shouldDisplayUndoTransaction = shouldDisplayUndoTransactionState.value
         )
     }
         .catch { WalletUiState.Loading }
@@ -99,38 +98,51 @@ class WalletViewModel @Inject constructor(
             initialValue = WalletUiState.Loading,
         )
 
-    fun onWalletEvent(event: WalletEvent) {
-        when (event) {
-            is WalletEvent.AddToSelectedCategories -> {
-                selectedCategoriesState.update { it.plus(event.category) }
-            }
-
-            is WalletEvent.RemoveFromSelectedCategories -> {
-                selectedCategoriesState.update { it.minus(event.category) }
-            }
-
-            is WalletEvent.UpdateFinanceType -> {
-                financeTypeState.update { event.financeSectionType }
-            }
-
-            is WalletEvent.UpdateDateType -> {
-                dateTypeState.update { event.dateType }
-            }
-        }
-    }
-
     private fun calculateTransactionsCategories(transactionsCategories: List<TransactionWithCategory>): List<TransactionWithCategory> {
         transactionsCategories
             .map { it.category }
             .toSet()
-            .toList()
-            .also { availableCategoriesState.value = it.filterNotNull() }
-        return if (selectedCategoriesState.value.isNotEmpty()) {
+            .also { categories ->
+                walletFilterState.update {
+                    it.copy(availableCategories = categories.filterNotNull())
+                }
+            }
+        return if (walletFilterState.value.selectedCategories.isNotEmpty()) {
             transactionsCategories
-                .filter { selectedCategoriesState.value.contains(it.category) }
-                .apply { if (this.isEmpty()) selectedCategoriesState.value = emptyList() }
-        } else {
-            transactionsCategories
+                .filter {
+                    walletFilterState.value.selectedCategories.contains(it.category)
+                }
+                .apply {
+                    if (this.isEmpty()) {
+                        walletFilterState.update {
+                            it.copy(selectedCategories = emptyList())
+                        }
+                    }
+                }
+        } else transactionsCategories
+    }
+
+    fun addToSelectedCategories(category: Category) {
+        walletFilterState.update {
+            it.copy(selectedCategories = it.selectedCategories.plus(category))
+        }
+    }
+
+    fun removeFromSelectedCategories(category: Category) {
+        walletFilterState.update {
+            it.copy(selectedCategories = it.selectedCategories.minus(category))
+        }
+    }
+
+    fun updateFinanceType(financeType: FinanceSectionType) {
+        walletFilterState.update {
+            it.copy(financeType = financeType)
+        }
+    }
+
+    fun updateDateType(dateType: DateType) {
+        walletFilterState.update {
+            it.copy(dateType = dateType)
         }
     }
 }
@@ -148,6 +160,13 @@ enum class DateType {
     YEAR,
 }
 
+data class WalletFilterState(
+    val selectedCategories: List<Category> = emptyList(),
+    val availableCategories: List<Category> = emptyList(),
+    val financeType: FinanceSectionType = NONE,
+    val dateType: DateType = ALL,
+)
+
 sealed interface WalletUiState {
 
     data object Loading : WalletUiState
@@ -159,6 +178,7 @@ sealed interface WalletUiState {
         val financeSectionType: FinanceSectionType,
         val dateType: DateType,
         val wallet: Wallet,
+        val shouldDisplayUndoTransaction: Boolean,
         val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState
 }
