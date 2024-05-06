@@ -26,6 +26,7 @@ fun NavController.navigateToWallet(
 fun NavGraphBuilder.walletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     threePaneScaffoldScope: ThreePaneScaffoldScope,
 ) {
     composable<WalletDestination> {
@@ -33,6 +34,7 @@ fun NavGraphBuilder.walletScreen(
             WalletScreen(
                 showDetailActions = showDetailActions,
                 onBackClick = onBackClick,
+                onShowSnackbar = onShowSnackbar,
             )
         }
     }

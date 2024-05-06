@@ -7,4 +7,5 @@
     <string name="feature_transaction_add_transaction_icon_description">Add transaction</string>
     <string name="feature_transaction_expense">Expense</string>
     <string name="feature_transaction_income">Income</string>
+    <string name="feature_transaction_deleted">Transaction deleted</string>
 </resources>

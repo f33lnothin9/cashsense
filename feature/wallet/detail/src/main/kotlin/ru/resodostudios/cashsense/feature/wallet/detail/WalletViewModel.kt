@@ -12,9 +12,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
@@ -33,21 +34,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val transactionsRepository: TransactionsRepository,
     walletsRepository: WalletsRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val walletDestination: WalletDestination = savedStateHandle.toRoute()
 
     private val shouldDisplayUndoTransactionState = MutableStateFlow(false)
-    private val lastRemovedTransactionState = MutableStateFlow<Transaction?>(null)
+    private val lastRemovedTransactionIdState = MutableStateFlow<String?>(null)
 
     private val walletFilterState = MutableStateFlow(WalletFilterState())
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         walletsRepository.getWalletWithTransactions(walletDestination.id),
         walletFilterState,
-    ) { walletTransactionsCategories, walletFilter ->
+        shouldDisplayUndoTransactionState,
+        lastRemovedTransactionIdState,
+    ) { walletTransactionsCategories, walletFilter, shouldDisplayUndoTransaction, lastRemovedTransactionId ->
         val wallet = walletTransactionsCategories.wallet
         val transactionsCategories = walletTransactionsCategories.transactionsWithCategories
 
@@ -65,20 +69,23 @@ class WalletViewModel @Inject constructor(
             INCOME -> calculateTransactionsCategories(
                 sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
             )
-        }.run {
-            when (walletFilter.dateType) {
-                ALL -> this
-                WEEK -> filter {
-                    it.transaction.timestamp
-                        .getZonedDateTime()
-                        .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
-                            getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
+        }
+            .run {
+                when (walletFilter.dateType) {
+                    ALL -> this
+                    WEEK -> filter {
+                        it.transaction.timestamp
+                            .getZonedDateTime()
+                            .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
+                                getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
+                    }
+
+                    MONTH -> filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
+                    YEAR -> filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
                 }
 
-                MONTH -> filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
-                YEAR -> filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
             }
-        }
+            .filterNot { it.transaction.id == lastRemovedTransactionId }
 
         WalletUiState.Success(
             currentBalance = currentBalance,
@@ -88,7 +95,7 @@ class WalletViewModel @Inject constructor(
             dateType = walletFilter.dateType,
             wallet = wallet,
             transactionsCategories = filteredTransactionsCategories,
-            shouldDisplayUndoTransaction = shouldDisplayUndoTransactionState.value
+            shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
         )
     }
         .catch { WalletUiState.Loading }
@@ -144,6 +151,28 @@ class WalletViewModel @Inject constructor(
         walletFilterState.update {
             it.copy(dateType = dateType)
         }
+    }
+
+    fun hideTransaction(id: String) {
+        if (lastRemovedTransactionIdState.value != null) {
+            clearUndoState()
+        }
+        shouldDisplayUndoTransactionState.value = true
+        lastRemovedTransactionIdState.value = id
+    }
+
+    fun undoTransactionRemoval() {
+        lastRemovedTransactionIdState.value = null
+        shouldDisplayUndoTransactionState.value = false
+    }
+
+    fun clearUndoState() {
+        viewModelScope.launch {
+            lastRemovedTransactionIdState.value?.let {
+                transactionsRepository.deleteTransaction(it)
+            }
+        }
+        undoTransactionRemoval()
     }
 }
 

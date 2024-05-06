@@ -29,7 +29,9 @@ fun CsNavHost(
         popExitTransition = { fadeOut() },
         modifier = modifier,
     ) {
-        homeListDetailScreen()
+        homeListDetailScreen(
+            onShowSnackbar = onShowSnackbar,
+        )
         categoriesScreen(
             onShowSnackbar = onShowSnackbar,
         )

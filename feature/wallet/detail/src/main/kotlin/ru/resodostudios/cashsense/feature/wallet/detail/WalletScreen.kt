@@ -38,6 +38,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -51,6 +52,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
@@ -99,6 +102,9 @@ internal fun WalletScreen(
         removeFromSelectedCategories = walletViewModel::removeFromSelectedCategories,
         updateFinanceType = walletViewModel::updateFinanceType,
         updateDateType = walletViewModel::updateDateType,
+        hideTransaction = walletViewModel::hideTransaction,
+        undoTransactionRemoval = walletViewModel::undoTransactionRemoval,
+        clearUndoState = walletViewModel::clearUndoState,
     )
 }
 
@@ -115,32 +121,34 @@ internal fun WalletScreen(
     removeFromSelectedCategories: (Category) -> Unit,
     updateFinanceType: (FinanceSectionType) -> Unit,
     updateDateType: (DateType) -> Unit,
+    hideTransaction: (String) -> Unit = {},
+    undoTransactionRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
     var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
-
+    
     when (walletState) {
         WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
-            val transactionDeletedMessage =
-                stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
-//            LaunchedEffect(categoriesState.shouldDisplayUndoCategory) {
-//                if (categoriesState.shouldDisplayUndoCategory) {
-//                    val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
-//                    if (snackBarResult) {
-//                        undoCategoryRemoval()
-//                    } else {
-//                        clearUndoState()
-//                    }
-//                }
-//            }
-//            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-//                clearUndoState()
-//            }
+            LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
+                if (walletState.shouldDisplayUndoTransaction) {
+                    val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
+                    if (snackBarResult) {
+                        undoTransactionRemoval()
+                    } else {
+                        clearUndoState()
+                    }
+                }
+            }
+            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+                clearUndoState()
+            }
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
@@ -242,6 +250,7 @@ internal fun WalletScreen(
                 TransactionBottomSheet(
                     onDismiss = { showTransactionBottomSheet = false },
                     onEdit = { showTransactionDialog = true },
+                    onDelete = hideTransaction,
                 )
             }
             if (showTransactionDialog) {

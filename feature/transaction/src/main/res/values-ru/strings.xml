@@ -7,4 +7,5 @@
     <string name="feature_transaction_add_transaction_icon_description">Добавить транзакцию</string>
     <string name="feature_transaction_expense">Расход</string>
     <string name="feature_transaction_income">Доход</string>
+    <string name="feature_transaction_deleted">Транзакция удалена</string>
 </resources>

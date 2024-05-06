@@ -33,7 +33,9 @@ object WalletPlaceholderDestination
 @Serializable
 object DetailPaneNavHostDestination
 
-fun NavGraphBuilder.homeListDetailScreen() {
+fun NavGraphBuilder.homeListDetailScreen(
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+) {
     composable<HomeDestination> { backStackEntry ->
         val walletIdArgument = backStackEntry.toRoute<HomeDestination>().walletId
         var walletId: String? by rememberSaveable { mutableStateOf(walletIdArgument) }
@@ -41,6 +43,7 @@ fun NavGraphBuilder.homeListDetailScreen() {
         HomeListDetailScreen(
             selectedWalletId = walletId,
             onWalletClick = { walletId = it },
+            onShowSnackbar = onShowSnackbar,
         )
     }
 }
@@ -50,6 +53,7 @@ fun NavGraphBuilder.homeListDetailScreen() {
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     onWalletClick: (String) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator()
     BackHandler(listDetailNavigator.canNavigateBack()) {
@@ -86,6 +90,7 @@ internal fun HomeListDetailScreen(
                 walletScreen(
                     showDetailActions = !listDetailNavigator.isListPaneVisible(),
                     onBackClick = listDetailNavigator::navigateBack,
+                    onShowSnackbar = onShowSnackbar,
                     threePaneScaffoldScope = this@ListDetailPaneScaffold,
                 )
                 composable<WalletPlaceholderDestination> {
