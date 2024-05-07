@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -30,7 +29,7 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 fun CategoryBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: (Category) -> Unit,
+    onDelete: (String) -> Unit,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
     val categoryDialogState by viewModel.categoryDialogUiState.collectAsStateWithLifecycle()
@@ -48,7 +47,7 @@ fun CategoryBottomSheet(
     categoryDialogState: CategoryDialogUiState,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: (Category) -> Unit,
+    onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(categoryDialogState.isLoading) {
@@ -97,13 +96,7 @@ fun CategoryBottomSheet(
                     },
                     modifier = Modifier.clickable {
                         onDismiss()
-                        onDelete(
-                            Category(
-                                id = categoryDialogState.id,
-                                title = categoryDialogState.title,
-                                iconId = categoryDialogState.icon,
-                            )
-                        )
+                        onDelete(categoryDialogState.id)
                     },
                 )
             }

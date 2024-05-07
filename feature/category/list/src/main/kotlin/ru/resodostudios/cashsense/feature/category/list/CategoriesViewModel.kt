@@ -19,19 +19,16 @@ class CategoriesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val shouldDisplayUndoCategoryState = MutableStateFlow(false)
-    private val lastRemovedCategoryState = MutableStateFlow<Category?>(null)
+    private val lastRemovedCategoryIdState = MutableStateFlow<String?>(null)
 
     val categoriesUiState: StateFlow<CategoriesUiState> = combine(
         categoriesRepository.getCategories(),
         shouldDisplayUndoCategoryState,
-        lastRemovedCategoryState,
-    ) { categories, shouldDisplayUndoCategory, lastRemovedCategory ->
-        val updatedCategories = lastRemovedCategory
-            .let(categories::minus)
-            .filterIsInstance<Category>()
+        lastRemovedCategoryIdState,
+    ) { categories, shouldDisplayUndoCategory, lastRemovedCategoryId ->
         CategoriesUiState.Success(
             shouldDisplayUndoCategory,
-            updatedCategories,
+            categories.filterNot { it.id == lastRemovedCategoryId },
         )
     }
         .stateIn(
@@ -40,22 +37,22 @@ class CategoriesViewModel @Inject constructor(
             initialValue = CategoriesUiState.Loading,
         )
 
-    fun hideCategory(category: Category) {
-        if (lastRemovedCategoryState.value != null) {
+    fun hideCategory(id: String) {
+        if (lastRemovedCategoryIdState.value != null) {
             clearUndoState()
         }
         shouldDisplayUndoCategoryState.value = true
-        lastRemovedCategoryState.value = category
+        lastRemovedCategoryIdState.value = id
     }
 
     fun undoCategoryRemoval() {
-        lastRemovedCategoryState.value = null
+        lastRemovedCategoryIdState.value = null
         shouldDisplayUndoCategoryState.value = false
     }
 
     fun clearUndoState() {
         viewModelScope.launch {
-            lastRemovedCategoryState.value?.let {
+            lastRemovedCategoryIdState.value?.let {
                 categoriesRepository.deleteCategory(it)
             }
         }

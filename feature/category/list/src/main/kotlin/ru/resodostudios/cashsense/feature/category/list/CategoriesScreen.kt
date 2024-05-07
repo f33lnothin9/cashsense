@@ -24,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -59,7 +58,7 @@ internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
-    hideCategory: (Category) -> Unit = {},
+    hideCategory: (String) -> Unit = {},
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
