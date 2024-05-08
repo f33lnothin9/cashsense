@@ -34,15 +34,16 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 fun SubscriptionBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
+    onDelete: (String) -> Unit,
     viewModel: SubscriptionDialogViewModel = hiltViewModel(),
 ) {
     val subscriptionDialogState by viewModel.subscriptionDialogUiState.collectAsStateWithLifecycle()
 
     SubscriptionBottomSheet(
         subscriptionDialogState = subscriptionDialogState,
-        onSubscriptionEvent = viewModel::onSubscriptionEvent,
         onDismiss = onDismiss,
         onEdit = onEdit,
+        onDelete = onDelete,
     )
 }
 
@@ -50,9 +51,9 @@ fun SubscriptionBottomSheet(
 @Composable
 fun SubscriptionBottomSheet(
     subscriptionDialogState: SubscriptionDialogUiState,
-    onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
+    onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(subscriptionDialogState.isLoading) {
@@ -106,7 +107,7 @@ fun SubscriptionBottomSheet(
                     },
                     modifier = Modifier.clickable {
                         onDismiss()
-                        onSubscriptionEvent(SubscriptionDialogEvent.Delete)
+                        onDelete(subscriptionDialogState.id)
                     },
                 )
             }

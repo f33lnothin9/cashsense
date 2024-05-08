@@ -69,6 +69,7 @@ internal fun SubscriptionsScreen(
                     SubscriptionBottomSheet(
                         onDismiss = { showSubscriptionBottomSheet = false },
                         onEdit = { showSubscriptionDialog = true },
+                        onDelete = {},
                     )
                 }
                 if (showSubscriptionDialog) {

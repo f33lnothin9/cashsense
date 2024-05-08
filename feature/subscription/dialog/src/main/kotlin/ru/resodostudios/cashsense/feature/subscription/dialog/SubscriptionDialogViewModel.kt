@@ -45,12 +45,6 @@ class SubscriptionDialogViewModel @Inject constructor(
                 }
             }
 
-            SubscriptionDialogEvent.Delete -> {
-                viewModelScope.launch {
-                    subscriptionsRepository.deleteSubscription(_subscriptionDialogUiState.value.id)
-                }
-            }
-
             is SubscriptionDialogEvent.UpdateId -> {
                 _subscriptionDialogUiState.update {
                     it.copy(id = event.id)

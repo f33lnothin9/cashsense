@@ -15,6 +15,4 @@ sealed interface SubscriptionDialogEvent {
     data class UpdateCurrency(val currency: String) : SubscriptionDialogEvent
 
     data object Save : SubscriptionDialogEvent
-
-    data object Delete : SubscriptionDialogEvent
 }
