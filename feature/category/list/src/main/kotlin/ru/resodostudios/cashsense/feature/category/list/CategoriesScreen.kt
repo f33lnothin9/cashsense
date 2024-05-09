@@ -67,7 +67,7 @@ internal fun CategoriesScreen(
 
     when (categoriesState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
-        is Success -> if (categoriesState.categories.isNotEmpty()) {
+        is Success -> {
             val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
@@ -85,33 +85,35 @@ internal fun CategoriesScreen(
                 clearUndoState()
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(300.dp),
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                categories(
-                    categoriesState = categoriesState,
-                    onCategoryClick = {
-                        onCategoryEvent(CategoryDialogEvent.UpdateId(it))
-                        showCategoryBottomSheet = true
-                    },
+            if (categoriesState.categories.isNotEmpty()) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(300.dp),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    categories(
+                        categoriesState = categoriesState,
+                        onCategoryClick = {
+                            onCategoryEvent(CategoryDialogEvent.UpdateId(it))
+                            showCategoryBottomSheet = true
+                        },
+                    )
+                }
+                if (showCategoryBottomSheet) {
+                    CategoryBottomSheet(
+                        onDismiss = { showCategoryBottomSheet = false },
+                        onEdit = { showCategoryDialog = true },
+                        onDelete = hideCategory,
+                    )
+                }
+                if (showCategoryDialog) {
+                    CategoryDialog(onDismiss = { showCategoryDialog = false })
+                }
+            } else {
+                EmptyState(
+                    messageRes = R.string.feature_category_list_empty,
+                    animationRes = R.raw.anim_categories_empty,
                 )
             }
-            if (showCategoryBottomSheet) {
-                CategoryBottomSheet(
-                    onDismiss = { showCategoryBottomSheet = false },
-                    onEdit = { showCategoryDialog = true },
-                    onDelete = hideCategory,
-                )
-            }
-            if (showCategoryDialog) {
-                CategoryDialog(onDismiss = { showCategoryDialog = false })
-            }
-        } else {
-            EmptyState(
-                messageRes = R.string.feature_category_list_empty,
-                animationRes = R.raw.anim_categories_empty,
-            )
         }
     }
 }
