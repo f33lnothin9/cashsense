@@ -37,6 +37,12 @@ class CategoriesViewModel @Inject constructor(
             initialValue = CategoriesUiState.Loading,
         )
 
+    private fun deleteCategory(id: String) {
+        viewModelScope.launch {
+            categoriesRepository.deleteCategory(id)
+        }
+    }
+
     fun hideCategory(id: String) {
         if (lastRemovedCategoryIdState.value != null) {
             clearUndoState()
@@ -51,11 +57,7 @@ class CategoriesViewModel @Inject constructor(
     }
 
     fun clearUndoState() {
-        viewModelScope.launch {
-            lastRemovedCategoryIdState.value?.let {
-                categoriesRepository.deleteCategory(it)
-            }
-        }
+        lastRemovedCategoryIdState.value?.let(::deleteCategory)
         undoCategoryRemoval()
     }
 }

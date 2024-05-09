@@ -129,6 +129,12 @@ class WalletViewModel @Inject constructor(
         } else transactionsCategories
     }
 
+    private fun deleteTransaction(id: String) {
+        viewModelScope.launch {
+            transactionsRepository.deleteTransaction(id)
+        }
+    }
+
     fun addToSelectedCategories(category: Category) {
         walletFilterState.update {
             it.copy(selectedCategories = it.selectedCategories.plus(category))
@@ -167,11 +173,7 @@ class WalletViewModel @Inject constructor(
     }
 
     fun clearUndoState() {
-        viewModelScope.launch {
-            lastRemovedTransactionIdState.value?.let {
-                transactionsRepository.deleteTransaction(it)
-            }
-        }
+        lastRemovedTransactionIdState.value?.let(::deleteTransaction)
         undoTransactionRemoval()
     }
 }
