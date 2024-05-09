@@ -35,6 +35,8 @@ fun CsNavHost(
         categoriesScreen(
             onShowSnackbar = onShowSnackbar,
         )
-        subscriptionsScreen()
+        subscriptionsScreen(
+            onShowSnackbar = onShowSnackbar,
+        )
     }
 }

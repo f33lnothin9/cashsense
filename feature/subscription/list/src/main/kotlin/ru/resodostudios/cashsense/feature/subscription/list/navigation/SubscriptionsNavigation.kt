@@ -13,8 +13,10 @@ object SubscriptionsDestination
 fun NavController.navigateToSubscriptions(navOptions: NavOptions) =
     navigate(route = SubscriptionsDestination, navOptions)
 
-fun NavGraphBuilder.subscriptionsScreen() {
+fun NavGraphBuilder.subscriptionsScreen(
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+) {
     composable<SubscriptionsDestination> {
-        SubscriptionsScreen()
+        SubscriptionsScreen(onShowSnackbar)
     }
 }
