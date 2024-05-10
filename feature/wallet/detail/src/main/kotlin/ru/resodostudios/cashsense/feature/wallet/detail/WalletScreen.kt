@@ -61,7 +61,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.EditAndDeleteDropdownMenu
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -196,16 +195,19 @@ internal fun WalletScreen(
                                 )
                             }
                             if (showDetailActions) {
-                                EditAndDeleteDropdownMenu(
-                                    onEdit = {
-                                        onWalletDialogEvent(WalletDialogEvent.UpdateId(walletState.wallet.id))
+                                IconButton(
+                                    onClick = {
+                                        onWalletDialogEvent(
+                                            WalletDialogEvent.UpdateId(walletState.wallet.id)
+                                        )
                                         showWalletDialog = true
                                     },
-                                    onDelete = {
-                                        onBackClick()
-                                        // TODO()
-                                    },
-                                )
+                                ) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                                        contentDescription = null,
+                                    )
+                                }
                             }
                         },
                         windowInsets = WindowInsets(0, 0, 0, 0),
