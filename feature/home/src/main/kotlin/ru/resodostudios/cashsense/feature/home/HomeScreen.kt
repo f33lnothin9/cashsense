@@ -91,6 +91,7 @@ internal fun HomeScreen(
                 WalletBottomSheet(
                     onDismiss = { showWalletBottomSheet = false },
                     onEdit = { showWalletDialog = true },
+                    onDelete = {},
                 )
             }
             if (showWalletDialog) {

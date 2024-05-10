@@ -31,24 +31,25 @@ import java.math.BigDecimal
 fun WalletBottomSheet(
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
+    onDelete: (String) -> Unit,
     viewModel: WalletDialogViewModel = hiltViewModel(),
 ) {
     val walletDialogState by viewModel.walletDialogUiState.collectAsStateWithLifecycle()
 
     WalletBottomSheet(
         walletDialogState = walletDialogState,
-        onWalletEvent = viewModel::onWalletDialogEvent,
         onDismiss = onDismiss,
         onEdit = onEdit,
+        onDelete = onDelete,
     )
 }
 
 @Composable
 fun WalletBottomSheet(
     walletDialogState: WalletDialogUiState,
-    onWalletEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
+    onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(walletDialogState.isLoading) {
@@ -101,7 +102,7 @@ fun WalletBottomSheet(
                         )
                     },
                     modifier = Modifier.clickable {
-                        onWalletEvent(WalletDialogEvent.Delete(walletDialogState.id))
+                        onDelete(walletDialogState.id)
                         onDismiss()
                     },
                 )

@@ -45,12 +45,6 @@ class WalletDialogViewModel @Inject constructor(
                 }
             }
 
-            is WalletDialogEvent.Delete -> {
-                viewModelScope.launch {
-                    walletsRepository.deleteWalletWithTransactions(event.id)
-                }
-            }
-
             is WalletDialogEvent.UpdateId -> {
                 _walletDialogUiState.update {
                     it.copy(id = event.id)

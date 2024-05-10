@@ -203,7 +203,7 @@ internal fun WalletScreen(
                                     },
                                     onDelete = {
                                         onBackClick()
-                                        onWalletDialogEvent(WalletDialogEvent.Delete(walletState.wallet.id))
+                                        TODO()
                                     },
                                 )
                             }
