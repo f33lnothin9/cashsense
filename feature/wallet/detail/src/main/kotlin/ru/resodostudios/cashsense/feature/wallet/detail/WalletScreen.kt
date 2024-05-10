@@ -203,7 +203,7 @@ internal fun WalletScreen(
                                     },
                                     onDelete = {
                                         onBackClick()
-                                        TODO()
+                                        // TODO()
                                     },
                                 )
                             }
