@@ -14,5 +14,5 @@ interface WalletsRepository {
 
     suspend fun upsertWallet(wallet: Wallet)
 
-    suspend fun deleteWallet(id: String)
+    suspend fun deleteWalletWithTransactions(id: String)
 }

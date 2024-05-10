@@ -29,7 +29,7 @@ class OfflineWalletsRepository @Inject constructor(
     override suspend fun upsertWallet(wallet: Wallet) =
         walletDao.upsertWallet(wallet.asEntity())
 
-    override suspend fun deleteWallet(id: String) {
+    override suspend fun deleteWalletWithTransactions(id: String) {
         walletDao.deleteWallet(id)
         transactionDao.deleteTransactions(id)
     }
