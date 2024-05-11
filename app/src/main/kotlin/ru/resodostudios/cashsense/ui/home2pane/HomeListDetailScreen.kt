@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
@@ -38,7 +38,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 ) {
     composable<HomeDestination> { backStackEntry ->
         val walletIdArgument = backStackEntry.toRoute<HomeDestination>().walletId
-        var walletId: String? by rememberSaveable { mutableStateOf(walletIdArgument) }
+        var walletId: String? by remember { mutableStateOf(walletIdArgument) }
 
         HomeListDetailScreen(
             selectedWalletId = walletId,
@@ -62,10 +62,14 @@ internal fun HomeListDetailScreen(
 
     val nestedNavController = rememberNavController()
 
-    fun onWalletClickShowDetailPane(walletId: String) {
-        onWalletClick(walletId)
-        nestedNavController.navigateToWallet(walletId) {
-            popUpTo<DetailPaneNavHostDestination>()
+    fun onWalletClickShowDetailPane(walletId: String?) {
+        if (walletId != null) {
+            onWalletClick(walletId)
+            nestedNavController.navigateToWallet(walletId) {
+                popUpTo<DetailPaneNavHostDestination>()
+            }
+        } else {
+            nestedNavController.navigate(WalletPlaceholderDestination)
         }
         listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
     }
@@ -77,6 +81,7 @@ internal fun HomeListDetailScreen(
             AnimatedPane {
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
+                    onShowSnackbar = onShowSnackbar,
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                 )
             }
