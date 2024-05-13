@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.home
 
+import android.Manifest
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,12 +17,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus.Denied
+import com.google.accompanist.permissions.rememberPermissionState
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -151,6 +158,7 @@ internal fun HomeScreen(
             }
         }
     }
+    NotificationPermissionEffect()
 }
 
 private fun LazyStaggeredGridScope.wallets(
@@ -177,5 +185,24 @@ private fun LazyStaggeredGridScope.wallets(
             modifier = Modifier.animateItem(),
             isSelected = isSelected,
         )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalPermissionsApi::class)
+private fun NotificationPermissionEffect() {
+
+    if (LocalInspectionMode.current) return
+    if (VERSION.SDK_INT < VERSION_CODES.TIRAMISU) return
+
+    val notificationsPermissionState = rememberPermissionState(
+        Manifest.permission.POST_NOTIFICATIONS,
+    )
+
+    LaunchedEffect(notificationsPermissionState) {
+        val status = notificationsPermissionState.status
+        if (status is Denied && !status.shouldShowRationale) {
+            notificationsPermissionState.launchPermissionRequest()
+        }
     }
 }
