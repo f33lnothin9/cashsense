@@ -68,10 +68,10 @@ internal fun HomeListDetailScreen(
             nestedNavController.navigateToWallet(walletId) {
                 popUpTo<DetailPaneNavHostDestination>()
             }
+            listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         } else {
             nestedNavController.navigate(WalletPlaceholderDestination)
         }
-        listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
     }
 
     ListDetailPaneScaffold(
