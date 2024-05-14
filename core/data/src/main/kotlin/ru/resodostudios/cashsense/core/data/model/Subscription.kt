@@ -9,6 +9,5 @@ fun Subscription.asEntity() = SubscriptionEntity(
     amount = amount,
     currency = currency,
     paymentDate = paymentDate,
-    notificationDate = notificationDate,
-    repeatingInterval = repeatingInterval
+    reminder = reminder,
 )

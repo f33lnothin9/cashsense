@@ -34,8 +34,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                     amount = _subscriptionDialogUiState.value.amount.toBigDecimal(),
                     paymentDate = _subscriptionDialogUiState.value.paymentDate,
                     currency = _subscriptionDialogUiState.value.currency,
-                    notificationDate = null,
-                    repeatingInterval = null,
+                    reminder = null,
                 )
                 viewModelScope.launch {
                     subscriptionsRepository.upsertSubscription(subscription)
