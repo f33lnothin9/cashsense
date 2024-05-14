@@ -10,7 +10,7 @@ import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import javax.inject.Inject
 
-class OfflineSubscriptionsRepository @Inject constructor(
+internal class OfflineSubscriptionsRepository @Inject constructor(
     private val subscriptionDao: SubscriptionDao
 ) : SubscriptionsRepository {
 

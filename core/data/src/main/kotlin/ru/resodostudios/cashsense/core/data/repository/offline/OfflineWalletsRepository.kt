@@ -12,7 +12,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import javax.inject.Inject
 
-class OfflineWalletsRepository @Inject constructor(
+internal class OfflineWalletsRepository @Inject constructor(
     private val walletDao: WalletDao,
     private val transactionDao: TransactionDao,
 ) : WalletsRepository {
