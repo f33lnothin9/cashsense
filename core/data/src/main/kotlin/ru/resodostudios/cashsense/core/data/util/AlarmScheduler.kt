@@ -6,5 +6,5 @@ interface AlarmScheduler {
 
     fun schedule(reminder: Reminder)
 
-    fun cancel(reminder: Reminder)
+    fun cancel(reminderId: Int)
 }

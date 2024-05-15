@@ -14,14 +14,14 @@ internal class NotificationAlarmScheduler @Inject constructor(
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-    private fun createPendingIntent(reminder: Reminder): PendingIntent {
+    private fun createPendingIntent(reminderId: Int): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra(EXTRA_REMINDER_ID, reminder.id)
+            putExtra(EXTRA_REMINDER_ID, reminderId)
         }
 
         return PendingIntent.getBroadcast(
             context,
-            reminder.id ?: 0,
+            reminderId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -32,13 +32,13 @@ internal class NotificationAlarmScheduler @Inject constructor(
             AlarmManager.RTC_WAKEUP,
             reminder.notificationDate?.toEpochMilliseconds() ?: 0L,
             reminder.repeatingInterval ?: 0,
-            createPendingIntent(reminder),
+            createPendingIntent(reminder.id ?: 0),
         )
     }
 
-    override fun cancel(reminder: Reminder) {
+    override fun cancel(reminderId: Int) {
         alarmManager.cancel(
-            createPendingIntent(reminder)
+            createPendingIntent(reminderId)
         )
     }
 }
