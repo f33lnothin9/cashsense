@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="core_notifications_subscriptions_notification_channel_name">Subscription reminders</string>
+    <string name="core_notifications_subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
 </resources>

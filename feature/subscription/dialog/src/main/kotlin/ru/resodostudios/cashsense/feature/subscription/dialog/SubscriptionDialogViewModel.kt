@@ -13,6 +13,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
+import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import java.util.UUID
 import javax.inject.Inject
@@ -28,13 +29,18 @@ class SubscriptionDialogViewModel @Inject constructor(
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
             SubscriptionDialogEvent.Save -> {
+                val subscriptionId = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() }
                 val subscription = Subscription(
-                    id = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+                    id = subscriptionId,
                     title = _subscriptionDialogUiState.value.title,
                     amount = _subscriptionDialogUiState.value.amount.toBigDecimal(),
                     paymentDate = _subscriptionDialogUiState.value.paymentDate,
                     currency = _subscriptionDialogUiState.value.currency,
-                    reminder = null,
+                    reminder = Reminder(
+                        id = subscriptionId.hashCode(),
+                        notificationDate = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds() + 10000L),
+                        repeatingInterval = 15000L,
+                    ),
                 )
                 viewModelScope.launch {
                     subscriptionsRepository.upsertSubscription(subscription)
