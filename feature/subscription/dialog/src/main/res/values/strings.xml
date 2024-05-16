@@ -4,5 +4,5 @@
     <string name="feature_subscription_dialog_edit">Edit subscription</string>
     <string name="feature_subscription_dialog_payment_date">Payment date</string>
     <string name="feature_subscription_dialog_reminder">Reminder</string>
-    <string name="feature_subscription_dialog_reminder_description">You\'ll be notified every week.</string>
+    <string name="feature_subscription_dialog_reminder_description">You\'ll be notified every week</string>
 </resources>
