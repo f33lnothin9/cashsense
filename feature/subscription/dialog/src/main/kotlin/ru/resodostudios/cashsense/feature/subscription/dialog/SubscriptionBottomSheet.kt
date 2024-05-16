@@ -26,8 +26,8 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun SubscriptionBottomSheet(
@@ -81,10 +81,16 @@ fun SubscriptionBottomSheet(
                         text = subscriptionDialogState.paymentDate.formatDate(DATE),
                         iconId = CsIcons.Calendar,
                     )
+                    AnimatedVisibility(visible = subscriptionDialogState.isReminderEnabled) {
+                        CsTag(
+                            text = stringResource(R.string.feature_subscription_dialog_reminder),
+                            iconId = CsIcons.Check,
+                        )
+                    }
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    headlineContent = { Text(stringResource(uiR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -97,7 +103,7 @@ fun SubscriptionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    headlineContent = { Text(stringResource(uiR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

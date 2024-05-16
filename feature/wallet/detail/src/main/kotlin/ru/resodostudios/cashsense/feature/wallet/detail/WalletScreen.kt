@@ -518,7 +518,7 @@ private fun CategoryFilterPanel(
                 leadingIcon = {
                     Icon(
                         imageVector = if (selected) {
-                            ImageVector.vectorResource(CsIcons.Confirm)
+                            ImageVector.vectorResource(CsIcons.Check)
                         } else {
                             ImageVector.vectorResource(
                                 StoredIcon.asRes(
