@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -139,7 +140,10 @@ private fun ColumnScope.SettingsPanel(
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
                     }
-                }
+                },
+                colors = SegmentedButtonDefaults.colors(
+                    inactiveContainerColor = Color.Transparent,
+                )
             ) {
                 Text(
                     text = label,
