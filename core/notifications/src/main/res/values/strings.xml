@@ -2,4 +2,5 @@
 <resources>
     <string name="core_notifications_subscriptions_notification_channel_name">Subscription reminders</string>
     <string name="core_notifications_subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
+    <string name="core_notifications_subscriptions_content_text">Tomorrow you need to pay %1$s for your subscription</string>
 </resources>

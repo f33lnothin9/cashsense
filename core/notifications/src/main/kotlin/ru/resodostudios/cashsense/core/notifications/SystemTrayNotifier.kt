@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -39,9 +40,11 @@ internal class SystemTrayNotifier @Inject constructor(
         if (checkSelfPermission(this, permission.POST_NOTIFICATIONS) != PERMISSION_GRANTED) return
 
         val subscriptionNotification = createSubscriptionNotification {
+            val price = subscription.amount.formatAmount(subscription.currency)
+            val contentText = getString(R.string.core_notifications_subscriptions_content_text, price)
             setSmallIcon(CsIcons.Payments)
                 .setContentTitle(subscription.title)
-                .setContentText(subscription.amount.toString())
+                .setContentText(contentText)
                 .setContentIntent(subscriptionPendingIntent())
                 .setGroup(SUBSCRIPTIONS_NOTIFICATION_GROUP)
                 .setAutoCancel(true)
