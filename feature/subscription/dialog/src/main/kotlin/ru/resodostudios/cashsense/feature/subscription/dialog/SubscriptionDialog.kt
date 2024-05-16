@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -24,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
@@ -112,6 +117,21 @@ fun SubscriptionDialog(
             CurrencyExposedDropdownMenuBox(
                 currencyName = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it.name)) },
+            )
+            CsListItem(
+                headlineContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder)) },
+                leadingContent = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Notifications),
+                        contentDescription = null,
+                    )
+                },
+                trailingContent = {
+                    Switch(
+                        checked = subscriptionDialogState.isReminderEnabled,
+                        onCheckedChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it)) },
+                    )
+                }
             )
         }
         LaunchedEffect(Unit) {

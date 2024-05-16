@@ -95,14 +95,7 @@ private fun ColumnScope.SettingsPanel(
     SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_theme))
     AnimatedVisibility(supportDynamicColor) {
         CsListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(R.string.feature_settings_dynamic_color),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            },
+            headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
