@@ -143,7 +143,7 @@ private fun ColumnScope.SettingsPanel(
                 },
                 colors = SegmentedButtonDefaults.colors(
                     inactiveContainerColor = Color.Transparent,
-                )
+                ),
             ) {
                 Text(
                     text = label,

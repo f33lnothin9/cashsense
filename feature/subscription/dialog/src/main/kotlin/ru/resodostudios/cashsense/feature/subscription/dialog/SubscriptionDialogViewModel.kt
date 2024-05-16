@@ -51,7 +51,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                     reminder = Reminder(
                         id = subscriptionId.hashCode(),
                         notificationDate = notificationDate,
-                        repeatingInterval = 30 * AlarmManager.INTERVAL_DAY,
+                        repeatingInterval = 7 * AlarmManager.INTERVAL_DAY,
                     )
                 }
 

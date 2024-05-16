@@ -120,6 +120,7 @@ fun SubscriptionDialog(
             )
             CsListItem(
                 headlineContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder)) },
+                supportingContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder_description)) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Notifications),
