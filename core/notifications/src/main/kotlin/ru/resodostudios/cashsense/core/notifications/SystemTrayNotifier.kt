@@ -14,6 +14,7 @@ import android.os.Build.VERSION_CODES
 import androidx.core.app.ActivityCompat.checkSelfPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -32,6 +33,8 @@ private const val TARGET_ACTIVITY_NAME = "ru.resodostudios.cashsense.MainActivit
 private const val SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE = 0
 private const val SUBSCRIPTIONS_NOTIFICATION_CHANNEL_ID = ""
 private const val SUBSCRIPTIONS_NOTIFICATION_GROUP = "SUBSCRIPTIONS_NOTIFICATIONS"
+const val DEEP_LINK_SCHEME_AND_HOST = "https://www.resodostudios.ru/cashsense"
+const val SUBSCRIPTIONS_PATH = "subscriptions"
 
 /**
  * Implementation of [Notifier] that displays notifications in the system tray.
@@ -105,6 +108,7 @@ private fun Context.subscriptionPendingIntent(): PendingIntent? = PendingIntent.
     SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE,
     Intent().apply {
         action = Intent.ACTION_VIEW
+        data = "$DEEP_LINK_SCHEME_AND_HOST/$SUBSCRIPTIONS_PATH".toUri()
         component = ComponentName(
             packageName,
             TARGET_ACTIVITY_NAME,
