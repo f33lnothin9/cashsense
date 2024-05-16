@@ -15,9 +15,16 @@ import androidx.core.app.ActivityCompat.checkSelfPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +48,8 @@ internal class SystemTrayNotifier @Inject constructor(
 
         val subscriptionNotification = createSubscriptionNotification {
             val price = subscription.amount.formatAmount(subscription.currency)
-            val contentText = getString(R.string.core_notifications_subscriptions_content_text, price)
+            val date = subscription.paymentDate.formatDate()
+            val contentText = getString(R.string.core_notifications_subscriptions_content_text, price, date)
             setSmallIcon(CsIcons.Payments)
                 .setContentTitle(subscription.title)
                 .setContentText(contentText)
@@ -104,3 +112,10 @@ private fun Context.subscriptionPendingIntent(): PendingIntent? = PendingIntent.
     },
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
 )
+
+private fun Instant.formatDate(): String =
+    DateTimeFormatter
+        .ofLocalizedDate(FormatStyle.MEDIUM)
+        .withLocale(Locale.getDefault())
+        .withZone(TimeZone.currentSystemDefault().toJavaZoneId())
+        .format(toJavaInstant())
