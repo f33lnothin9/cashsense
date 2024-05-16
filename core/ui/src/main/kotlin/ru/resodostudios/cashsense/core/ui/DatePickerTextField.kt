@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -26,10 +27,8 @@ import androidx.compose.ui.res.vectorResource
 @Composable
 fun DatePickerTextField(
     value: String,
-    @StringRes
-    labelTextId: Int,
-    @DrawableRes
-    iconId: Int,
+    @StringRes labelTextId: Int,
+    @DrawableRes iconId: Int,
     modifier: Modifier = Modifier,
     initialSelectedDateMillis: Long? = null,
     onDateClick: (Long) -> Unit,
@@ -54,7 +53,13 @@ fun DatePickerTextField(
     )
     if (openDialog) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = initialSelectedDateMillis
+            initialSelectedDateMillis = initialSelectedDateMillis,
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                    utcTimeMillis >= System.currentTimeMillis()
+
+                override fun isSelectableYear(year: Int): Boolean = true
+            },
         )
         val confirmEnabled = remember {
             derivedStateOf { datePickerState.selectedDateMillis != null }

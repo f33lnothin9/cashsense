@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -67,7 +66,7 @@ fun TransactionBottomSheet(
         }
         AnimatedVisibility(!transactionDialogState.isLoading) {
             Column {
-                ListItem(
+                CsListItem(
                     headlineContent = {
                         Text(
                             transactionDialogState.amount
@@ -79,7 +78,7 @@ fun TransactionBottomSheet(
                         if (transactionDialogState.description.isNotEmpty()) {
                             Text(text = transactionDialogState.description)
                         }
-                    }
+                    },
                 )
                 FlowRow(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
@@ -97,7 +96,7 @@ fun TransactionBottomSheet(
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
-                ListItem(
+                CsListItem(
                     headlineContent = { Text(stringResource(R.string.edit)) },
                     leadingContent = {
                         Icon(
@@ -105,12 +104,12 @@ fun TransactionBottomSheet(
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
+                    onClick = {
                         onDismiss()
                         onEdit()
                     },
                 )
-                ListItem(
+                CsListItem(
                     headlineContent = { Text(stringResource(R.string.delete)) },
                     leadingContent = {
                         Icon(
@@ -118,7 +117,7 @@ fun TransactionBottomSheet(
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
+                    onClick = {
                         onDismiss()
                         onDelete(transactionDialogState.transactionId)
                     },

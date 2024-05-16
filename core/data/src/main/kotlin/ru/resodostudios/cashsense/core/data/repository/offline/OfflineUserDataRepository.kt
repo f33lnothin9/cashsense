@@ -7,7 +7,7 @@ import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.UserData
 import javax.inject.Inject
 
-class OfflineUserDataRepository @Inject constructor(
+internal class OfflineUserDataRepository @Inject constructor(
     private val flickPreferencesDataSource: CsPreferencesDataSource
 ) : UserDataRepository {
 

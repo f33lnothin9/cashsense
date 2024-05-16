@@ -1,13 +1,11 @@
 package ru.resodostudios.cashsense.feature.category.list
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -130,10 +129,8 @@ private fun LazyGridScope.categories(
                 key = { it.id!! },
                 contentType = { "category" },
             ) { category ->
-                ListItem(
-                    headlineContent = {
-                        Text(category.title.toString())
-                    },
+                CsListItem(
+                    headlineContent = { Text(category.title.toString()) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(
@@ -142,9 +139,8 @@ private fun LazyGridScope.categories(
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier
-                        .animateItem()
-                        .clickable { onCategoryClick(category.id.toString()) }
+                    modifier = Modifier.animateItem(),
+                    onClick = { onCategoryClick(category.id.toString()) },
                 )
             }
         }

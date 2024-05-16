@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
+import android.app.AlarmManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,9 +11,17 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
+import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import java.util.UUID
 import javax.inject.Inject
@@ -28,14 +37,31 @@ class SubscriptionDialogViewModel @Inject constructor(
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
             SubscriptionDialogEvent.Save -> {
+                val subscriptionId = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() }
+                var reminder: Reminder? = null
+
+                if (_subscriptionDialogUiState.value.isReminderEnabled) {
+                    val timeZone = TimeZone.currentSystemDefault()
+                    val currentInstant = _subscriptionDialogUiState.value.paymentDate
+                    val currentDateTime = currentInstant.toLocalDateTime(timeZone)
+                    val previousDate = currentDateTime.date.minus(1, DateTimeUnit.DAY)
+                    val notificationDate = LocalDateTime(previousDate, LocalTime(9, 0))
+                        .toInstant(timeZone)
+
+                    reminder = Reminder(
+                        id = subscriptionId.hashCode(),
+                        notificationDate = notificationDate,
+                        repeatingInterval = 7 * AlarmManager.INTERVAL_DAY,
+                    )
+                }
+
                 val subscription = Subscription(
-                    id = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+                    id = subscriptionId,
                     title = _subscriptionDialogUiState.value.title,
                     amount = _subscriptionDialogUiState.value.amount.toBigDecimal(),
                     paymentDate = _subscriptionDialogUiState.value.paymentDate,
                     currency = _subscriptionDialogUiState.value.currency,
-                    notificationDate = null,
-                    repeatingInterval = null,
+                    reminder = reminder,
                 )
                 viewModelScope.launch {
                     subscriptionsRepository.upsertSubscription(subscription)
@@ -75,6 +101,12 @@ class SubscriptionDialogViewModel @Inject constructor(
                     it.copy(paymentDate = event.paymentDate)
                 }
             }
+
+            is SubscriptionDialogEvent.UpdateReminderSwitch -> {
+                _subscriptionDialogUiState.update {
+                    it.copy(isReminderEnabled = event.isReminderActive)
+                }
+            }
         }
     }
 
@@ -90,6 +122,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                         amount = it.amount.toString(),
                         paymentDate = it.paymentDate,
                         currency = it.currency,
+                        isReminderEnabled = it.reminder != null,
                         isLoading = false,
                     )
                 }
@@ -103,5 +136,6 @@ data class SubscriptionDialogUiState(
     val amount: String = "",
     val paymentDate: Instant = Clock.System.now(),
     val currency: String = Currency.USD.name,
+    val isReminderEnabled: Boolean = false,
     val isLoading: Boolean = false,
 )

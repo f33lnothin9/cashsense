@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,13 +20,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun SubscriptionBottomSheet(
@@ -58,14 +57,14 @@ fun SubscriptionBottomSheet(
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(subscriptionDialogState.isLoading) {
             LoadingState(
-                Modifier
+                modifier = Modifier
                     .height(100.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
         AnimatedVisibility(!subscriptionDialogState.isLoading) {
             Column {
-                ListItem(
+                CsListItem(
                     headlineContent = { Text(subscriptionDialogState.title) },
                     leadingContent = {
                         Icon(
@@ -82,30 +81,36 @@ fun SubscriptionBottomSheet(
                         text = subscriptionDialogState.paymentDate.formatDate(DATE),
                         iconId = CsIcons.Calendar,
                     )
+                    AnimatedVisibility(visible = subscriptionDialogState.isReminderEnabled) {
+                        CsTag(
+                            text = stringResource(R.string.feature_subscription_dialog_reminder),
+                            iconId = CsIcons.Check,
+                        )
+                    }
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.edit)) },
+                CsListItem(
+                    headlineContent = { Text(stringResource(uiR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
+                    onClick = {
                         onDismiss()
                         onEdit()
                     },
                 )
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.delete)) },
+                CsListItem(
+                    headlineContent = { Text(stringResource(uiR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
+                    onClick = {
                         onDismiss()
                         onDelete(subscriptionDialogState.id)
                     },

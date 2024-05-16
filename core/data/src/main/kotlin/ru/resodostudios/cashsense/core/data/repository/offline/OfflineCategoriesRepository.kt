@@ -10,7 +10,7 @@ import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Category
 import javax.inject.Inject
 
-class OfflineCategoriesRepository @Inject constructor(
+internal class OfflineCategoriesRepository @Inject constructor(
     private val dao: CategoryDao
 ) : CategoriesRepository {
 

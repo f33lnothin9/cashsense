@@ -14,6 +14,8 @@ import ru.resodostudios.cashsense.core.data.repository.offline.OfflineSubscripti
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineTransactionRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
+import ru.resodostudios.cashsense.core.data.util.AlarmScheduler
+import ru.resodostudios.cashsense.core.data.util.NotificationAlarmScheduler
 import ru.resodostudios.cashsense.core.data.util.TimeZoneBroadcastMonitor
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 
@@ -23,31 +25,36 @@ abstract class DataModule {
 
     @Binds
     internal abstract fun bindsCategoriesRepository(
-        categoriesRepository: OfflineCategoriesRepository
+        categoriesRepository: OfflineCategoriesRepository,
     ): CategoriesRepository
 
     @Binds
     internal abstract fun bindsTransactionsRepository(
-        transactionsRepository: OfflineTransactionRepository
+        transactionsRepository: OfflineTransactionRepository,
     ): TransactionsRepository
 
     @Binds
     internal abstract fun bindsWalletsRepository(
-        walletsRepository: OfflineWalletsRepository
+        walletsRepository: OfflineWalletsRepository,
     ): WalletsRepository
 
     @Binds
     internal abstract fun bindsSubscriptionsRepository(
-        subscriptionsRepository: OfflineSubscriptionsRepository
+        subscriptionsRepository: OfflineSubscriptionsRepository,
     ): SubscriptionsRepository
 
     @Binds
     internal abstract fun bindsUserDataRepository(
-        userDataRepository: OfflineUserDataRepository
+        userDataRepository: OfflineUserDataRepository,
     ): UserDataRepository
 
     @Binds
     internal abstract fun bindsTimeZoneMonitor(
-        timeZoneMonitor: TimeZoneBroadcastMonitor
+        timeZoneMonitor: TimeZoneBroadcastMonitor,
     ): TimeZoneMonitor
+
+    @Binds
+    internal abstract fun bindsNotificationAlarmScheduler(
+        notificationAlarmScheduler: NotificationAlarmScheduler,
+    ): AlarmScheduler
 }

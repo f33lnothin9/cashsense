@@ -25,4 +25,18 @@ internal object DatabaseMigrations {
         toColumnName = "timestamp",
     )
     class Schema2to3 : AutoMigrationSpec
+
+    @RenameColumn.Entries(
+        RenameColumn(
+            tableName = "subscriptions",
+            fromColumnName = "notification_date",
+            toColumnName = "alarm_notificationDate",
+        ),
+        RenameColumn(
+            tableName = "subscriptions",
+            fromColumnName = "repeating_interval",
+            toColumnName = "alarm_repeatingInterval",
+        ),
+    )
+    class Schema3to4 : AutoMigrationSpec
 }

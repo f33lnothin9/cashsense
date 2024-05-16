@@ -14,5 +14,7 @@ sealed interface SubscriptionDialogEvent {
 
     data class UpdateCurrency(val currency: String) : SubscriptionDialogEvent
 
+    data class UpdateReminderSwitch(val isReminderActive: Boolean) : SubscriptionDialogEvent
+
     data object Save : SubscriptionDialogEvent
 }

@@ -9,6 +9,5 @@ data class Subscription(
     val amount: BigDecimal,
     val currency: String,
     val paymentDate: Instant,
-    val notificationDate: Instant?,
-    val repeatingInterval: Long?
+    val reminder: Reminder?,
 )

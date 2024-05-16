@@ -3,4 +3,6 @@
     <string name="feature_subscription_dialog_new">Новая подписка</string>
     <string name="feature_subscription_dialog_edit">Изменение подписки</string>
     <string name="feature_subscription_dialog_payment_date">Дата платежа</string>
+    <string name="feature_subscription_dialog_reminder">Напоминание</string>
+    <string name="feature_subscription_dialog_reminder_description">Вы будете получать уведомления каждую неделю</string>
 </resources>

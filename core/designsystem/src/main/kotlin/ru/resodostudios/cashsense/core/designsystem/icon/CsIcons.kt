@@ -13,7 +13,6 @@ object CsIcons {
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
     val Settings = R.drawable.ic_outlined_settings
     val Transaction = R.drawable.ic_outlined_receipt_long
-    val Confirm = R.drawable.ic_outlined_check
     val Calendar = R.drawable.ic_outlined_event
     val Delete = R.drawable.ic_outlined_delete
     val TrendingUp = R.drawable.ic_outlined_trending_up
@@ -28,6 +27,7 @@ object CsIcons {
     val AccountBalance = R.drawable.ic_outlined_account_balance
     val Apparel = R.drawable.ic_outlined_apparel
     val Chair = R.drawable.ic_outlined_chair
+    val Check = R.drawable.ic_outlined_check
     val DarkMode = R.drawable.ic_outlined_dark_mode
     val DirectionsBus = R.drawable.ic_outlined_directions_bus
     val Exercise = R.drawable.ic_outlined_exercise
@@ -42,6 +42,7 @@ object CsIcons {
     val Memory = R.drawable.ic_outlined_memory
     val Monitoring = R.drawable.ic_outlined_monitoring
     val MusicNote = R.drawable.ic_outlined_music_note
+    val Notifications = R.drawable.ic_outlined_notifications
     val Payments = R.drawable.ic_outlined_payments
     val Pets = R.drawable.ic_outlined_pets
     val Phishing = R.drawable.ic_outlined_phishing

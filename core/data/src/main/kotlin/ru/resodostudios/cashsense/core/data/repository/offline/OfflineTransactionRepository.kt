@@ -11,7 +11,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import javax.inject.Inject
 
-class OfflineTransactionRepository @Inject constructor(
+internal class OfflineTransactionRepository @Inject constructor(
     private val dao: TransactionDao
 ) : TransactionsRepository {
 
