@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 fun CsListItem(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
@@ -26,7 +26,7 @@ fun CsListItem(
     ) {
         ListItem(
             headlineContent = headlineContent,
-            modifier = Modifier.clickable { onClick() },
+            modifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier,
             overlineContent = overlineContent,
             supportingContent = supportingContent,
             leadingContent = leadingContent,
