@@ -1,14 +1,12 @@
 package ru.resodostudios.cashsense.feature.category.dialog
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +17,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -52,14 +51,14 @@ fun CategoryBottomSheet(
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(categoryDialogState.isLoading) {
             LoadingState(
-                Modifier
+                modifier = Modifier
                     .height(100.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
         AnimatedVisibility(!categoryDialogState.isLoading) {
             Column {
-                ListItem(
+                CsListItem(
                     headlineContent = { Text(categoryDialogState.title) },
                     leadingContent = {
                         Icon(
@@ -73,7 +72,7 @@ fun CategoryBottomSheet(
                     },
                 )
                 HorizontalDivider(Modifier.padding(16.dp))
-                ListItem(
+                CsListItem(
                     headlineContent = { Text(stringResource(R.string.edit)) },
                     leadingContent = {
                         Icon(
@@ -81,12 +80,12 @@ fun CategoryBottomSheet(
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
+                    onClick = {
                         onDismiss()
                         onEdit()
                     },
                 )
-                ListItem(
+                CsListItem(
                     headlineContent = { Text(stringResource(R.string.delete)) },
                     leadingContent = {
                         Icon(
@@ -94,7 +93,7 @@ fun CategoryBottomSheet(
                             contentDescription = null,
                         )
                     },
-                    modifier = Modifier.clickable {
+                    onClick = {
                         onDismiss()
                         onDelete(categoryDialogState.id)
                     },

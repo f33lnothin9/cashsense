@@ -2,14 +2,12 @@ package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -29,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
@@ -95,7 +94,7 @@ private fun ColumnScope.SettingsPanel(
 ) {
     SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_theme))
     AnimatedVisibility(supportDynamicColor) {
-        ListItem(
+        CsListItem(
             headlineContent = {
                 Text(
                     text = stringResource(R.string.feature_settings_dynamic_color),
@@ -160,7 +159,7 @@ private fun ColumnScope.SettingsPanel(
 
     SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_about))
     val uriHandler = LocalUriHandler.current
-    ListItem(
+    CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
         leadingContent = {
             Icon(
@@ -168,10 +167,12 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        modifier = Modifier.clickable { uriHandler.openUri(PRIVACY_POLICY_URL) },
+        onClick = {
+            uriHandler.openUri(PRIVACY_POLICY_URL)
+        }
     )
     val context = LocalContext.current
-    ListItem(
+    CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
         leadingContent = {
             Icon(
@@ -179,10 +180,12 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        modifier = Modifier.clickable { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) },
+        onClick = {
+            context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+        },
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    ListItem(
+    CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
         supportingContent = { Text(packageInfo.versionName) },
         leadingContent = {

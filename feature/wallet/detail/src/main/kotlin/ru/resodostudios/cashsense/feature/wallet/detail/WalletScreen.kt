@@ -6,7 +6,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -29,7 +28,6 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SegmentedButton
@@ -57,6 +55,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
@@ -570,7 +569,7 @@ private fun LazyListScope.transactions(
         ) { transactionCategory ->
             val category = transactionCategory.category
 
-            ListItem(
+            CsListItem(
                 headlineContent = {
                     Text(
                         text = transactionCategory.transaction.amount.formatAmount(
@@ -599,9 +598,10 @@ private fun LazyListScope.transactions(
                         contentDescription = null,
                     )
                 },
-                modifier = Modifier
-                    .animateItem()
-                    .clickable { onTransactionClick(transactionCategory.transaction.id) }
+                modifier = Modifier.animateItem(),
+                onClick = {
+                    onTransactionClick(transactionCategory.transaction.id)
+                },
             )
         }
     }
