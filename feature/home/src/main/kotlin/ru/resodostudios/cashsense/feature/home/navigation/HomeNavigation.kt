@@ -4,8 +4,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class HomeDestination(val walletId: String?)
+const val WALLET_ID_KEY = "walletId"
 
-fun NavController.navigateToHome(walletId: String? = null, navOptions: NavOptions? = null) =
-    navigate(route = HomeDestination(walletId), navOptions)
+@Serializable
+data class HomeDestination(val initialWalletId: String?)
+
+fun NavController.navigateToHome(
+    initialWalletId: String? = null,
+    navOptions: NavOptions? = null,
+) = navigate(route = HomeDestination(initialWalletId), navOptions)
