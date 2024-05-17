@@ -76,13 +76,13 @@ fun TransactionBottomSheet(
                     },
                     supportingContent = {
                         if (transactionDialogState.description.isNotEmpty()) {
-                            Text(text = transactionDialogState.description)
+                            Text(transactionDialogState.description)
                         }
                     },
                 )
                 FlowRow(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     if (transactionDialogState.category != null) {
                         CsTag(

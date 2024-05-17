@@ -61,13 +61,13 @@ fun SettingsBottomSheet(
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
     CsModalBottomSheet(
-        onDismiss = { onDismiss() }
+        onDismiss = { onDismiss() },
     ) {
         when (settingsUiState) {
             Loading -> LoadingState(
-                Modifier
+                modifier = Modifier
                     .height(100.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
             is Success -> {
                 Text(
@@ -108,7 +108,7 @@ private fun ColumnScope.SettingsPanel(
                     checked = settings.useDynamicColor,
                     onCheckedChange = { onChangeDynamicColorPreference(it) },
                 )
-            }
+            },
         )
     }
 
@@ -164,7 +164,7 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }
+        onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
     )
     val context = LocalContext.current
     CsListItem(
