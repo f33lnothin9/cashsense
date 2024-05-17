@@ -91,7 +91,8 @@ fun SubscriptionDialog(
                 maxLines = 1,
                 modifier = Modifier
                     .focusRequester(titleTextField)
-                    .focusProperties { next = amountTextField },
+                    .focusProperties { next = amountTextField }
+                    .fillMaxWidth(),
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
@@ -104,7 +105,9 @@ fun SubscriptionDialog(
                 placeholder = { Text(stringResource(uiR.string.amount) + "*") },
                 supportingText = { Text(stringResource(uiR.string.required)) },
                 maxLines = 1,
-                modifier = Modifier.focusRequester(amountTextField),
+                modifier = Modifier
+                    .focusRequester(amountTextField)
+                    .fillMaxWidth(),
             )
             DatePickerTextField(
                 value = subscriptionDialogState.paymentDate.formatDate(),
@@ -117,6 +120,7 @@ fun SubscriptionDialog(
             CurrencyExposedDropdownMenuBox(
                 currencyName = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it.name)) },
+                modifier = Modifier.fillMaxWidth(),
             )
             CsListItem(
                 headlineContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder)) },

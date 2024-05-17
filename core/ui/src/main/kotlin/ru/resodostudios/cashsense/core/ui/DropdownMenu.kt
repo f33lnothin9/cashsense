@@ -22,24 +22,26 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 @Composable
 fun CurrencyExposedDropdownMenuBox(
     currencyName: String,
-    onCurrencyClick: (Currency) -> Unit
+    onCurrencyClick: (Currency) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val currencyList = Currency.entries
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it }
+        onExpandedChange = { expanded = it },
+        modifier = modifier,
     ) {
         OutlinedTextField(
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
             readOnly = true,
             value = currencyName,
             onValueChange = {},
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Text,
             ),
-            label = { Text(text = stringResource(R.string.core_ui_currency)) },
+            label = { Text(stringResource(R.string.core_ui_currency)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
         )
         ExposedDropdownMenu(
