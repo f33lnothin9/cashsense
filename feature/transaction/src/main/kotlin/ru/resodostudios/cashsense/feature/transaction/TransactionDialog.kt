@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -194,7 +195,9 @@ private fun FinancialTypeChoiceRow(
         CsIcons.TrendingDown,
         CsIcons.TrendingUp,
     )
-    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+    SingleChoiceSegmentedButtonRow(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         financialTypes.forEachIndexed { index, label ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
@@ -215,7 +218,10 @@ private fun FinancialTypeChoiceRow(
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
                     }
-                }
+                },
+                colors = SegmentedButtonDefaults.colors(
+                    inactiveContainerColor = Color.Transparent,
+                ),
             ) {
                 Text(
                     text = label,

@@ -164,9 +164,7 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = {
-            uriHandler.openUri(PRIVACY_POLICY_URL)
-        }
+        onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }
     )
     val context = LocalContext.current
     CsListItem(
@@ -177,9 +175,7 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = {
-            context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-        },
+        onClick = { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) },
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     CsListItem(

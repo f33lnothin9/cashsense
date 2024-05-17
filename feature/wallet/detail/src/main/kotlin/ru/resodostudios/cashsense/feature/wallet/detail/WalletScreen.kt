@@ -43,6 +43,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -387,6 +388,9 @@ private fun FinancePanel(
                             ),
                             onClick = { updateDateType(DateType.entries[index]) },
                             selected = walletState.dateType == DateType.entries[index],
+                            colors = SegmentedButtonDefaults.colors(
+                                inactiveContainerColor = Color.Transparent,
+                            ),
                         ) {
                             Text(
                                 text = label,
