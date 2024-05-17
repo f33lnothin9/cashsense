@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.cashsense.android.application.firebase)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
