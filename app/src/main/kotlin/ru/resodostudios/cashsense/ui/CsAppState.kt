@@ -71,9 +71,9 @@ class CsAppState(
 
     val currentTimeZone = timeZoneMonitor.currentTimeZone
         .stateIn(
-            coroutineScope,
-            SharingStarted.WhileSubscribed(5_000),
-            TimeZone.currentSystemDefault(),
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = TimeZone.currentSystemDefault(),
         )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
