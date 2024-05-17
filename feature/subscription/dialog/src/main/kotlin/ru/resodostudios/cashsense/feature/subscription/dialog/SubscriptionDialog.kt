@@ -113,9 +113,10 @@ fun SubscriptionDialog(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = R.string.feature_subscription_dialog_payment_date,
                 iconId = CsIcons.Calendar,
+                onDateClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
                 modifier = Modifier.fillMaxWidth(),
                 initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
-                onDateClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                isAllDatesEnabled = false,
             )
             CurrencyExposedDropdownMenuBox(
                 currencyName = subscriptionDialogState.currency,

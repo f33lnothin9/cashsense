@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.ui
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,9 +30,10 @@ fun DatePickerTextField(
     value: String,
     @StringRes labelTextId: Int,
     @DrawableRes iconId: Int,
+    onDateClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     initialSelectedDateMillis: Long? = null,
-    onDateClick: (Long) -> Unit,
+    isAllDatesEnabled: Boolean = true,
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
@@ -54,12 +56,14 @@ fun DatePickerTextField(
     if (openDialog) {
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = initialSelectedDateMillis,
-            selectableDates = object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long): Boolean =
-                    utcTimeMillis >= System.currentTimeMillis()
+            selectableDates = if (!isAllDatesEnabled) {
+                object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                        utcTimeMillis >= System.currentTimeMillis()
 
-                override fun isSelectableYear(year: Int): Boolean = true
-            },
+                    override fun isSelectableYear(year: Int): Boolean = true
+                }
+            } else DatePickerDefaults.AllDates,
         )
         val confirmEnabled = remember {
             derivedStateOf { datePickerState.selectedDateMillis != null }
