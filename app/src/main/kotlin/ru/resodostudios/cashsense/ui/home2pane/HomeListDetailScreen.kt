@@ -28,10 +28,10 @@ import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWal
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 
 @Serializable
-object WalletPlaceholderDestination
+data object WalletPlaceholderDestination
 
 @Serializable
-object DetailPaneNavHostDestination
+data object DetailPaneNavHostDestination
 
 fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
