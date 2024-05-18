@@ -4,6 +4,10 @@ import android.Manifest.permission
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.benchmark.macro.MacrobenchmarkScope
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
+import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
 
 /**
  * Because the app under test is different from the one running the instrumentation test,
@@ -34,4 +38,19 @@ fun MacrobenchmarkScope.allowNotifications() {
 fun MacrobenchmarkScope.startActivityAndAllowNotifications() {
     startActivityAndWait()
     allowNotifications()
+}
+
+/**
+ * Waits for and returns the `csTopAppBar`
+ */
+fun MacrobenchmarkScope.getTopAppBar(): UiObject2 {
+    device.wait(Until.hasObject(By.res("csTopAppBar")), 2_000)
+    return device.findObject(By.res("csTopAppBar"))
+}
+
+/**
+ * Waits for an object on the top app bar, passed in as [selector].
+ */
+fun MacrobenchmarkScope.waitForObjectOnTopAppBar(selector: BySelector, timeout: Long = 2_000) {
+    getTopAppBar().wait(Until.hasObject(selector), timeout)
 }

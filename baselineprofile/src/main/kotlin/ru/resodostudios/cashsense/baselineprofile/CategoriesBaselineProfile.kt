@@ -4,10 +4,10 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
 import ru.resodostudios.cashsense.PACKAGE_NAME
-import ru.resodostudios.cashsense.home.homeWaitForContent
+import ru.resodostudios.cashsense.categories.goToCategoriesScreen
 import ru.resodostudios.cashsense.startActivityAndAllowNotifications
 
-class HomeBaselineProfile {
+class CategoriesBaselineProfile {
 
     @get:Rule
     val baselineProfileRule = BaselineProfileRule()
@@ -16,6 +16,7 @@ class HomeBaselineProfile {
     fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
         startActivityAndAllowNotifications()
 
-        homeWaitForContent()
+        // Navigate to categories screen
+        goToCategoriesScreen()
     }
 }
