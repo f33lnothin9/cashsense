@@ -103,21 +103,14 @@ internal fun HomeScreen(
                 clearUndoState()
             }
 
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(300.dp),
-                verticalItemSpacing = 16.dp,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.testTag("home:wallets"),
-                contentPadding = PaddingValues(16.dp),
-            ) {
-                if (walletsState.walletsTransactionsCategories.isEmpty()) {
-                    item {
-                        EmptyState(
-                            messageRes = walletDetailR.string.feature_wallet_detail_wallets_empty,
-                            animationRes = walletDetailR.raw.anim_wallets_empty,
-                        )
-                    }
-                } else {
+            if (walletsState.walletsTransactionsCategories.isNotEmpty()) {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(300.dp),
+                    verticalItemSpacing = 16.dp,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.testTag("home:wallets"),
+                    contentPadding = PaddingValues(16.dp),
+                ) {
                     wallets(
                         walletsTransactionsCategories = walletsState.walletsTransactionsCategories,
                         onWalletClick = onWalletClick,
@@ -138,6 +131,11 @@ internal fun HomeScreen(
                         highlightSelectedWallet = highlightSelectedWallet,
                     )
                 }
+            } else {
+                EmptyState(
+                    messageRes = walletDetailR.string.feature_wallet_detail_wallets_empty,
+                    animationRes = walletDetailR.raw.anim_wallets_empty,
+                )
             }
 
             if (showWalletBottomSheet) {
