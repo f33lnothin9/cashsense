@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.ui
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -105,6 +105,16 @@ fun CsApp(
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                if (destination != null) {
+                    CsTopAppBar(
+                        titleRes = destination.titleTextId,
+                        actionIconRes = CsIcons.Settings,
+                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
+                        onActionClick = { showSettingsBottomSheet = true },
+                    )
+                }
+            },
             floatingActionButton = {
                 if (destination != null) {
                     CsFloatingActionButton(
@@ -122,7 +132,7 @@ fun CsApp(
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
         ) { padding ->
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
@@ -131,15 +141,6 @@ fun CsApp(
                         WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
                     ),
             ) {
-                if (destination != null) {
-                    CsTopAppBar(
-                        titleRes = destination.titleTextId,
-                        actionIconRes = CsIcons.Settings,
-                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                        onActionClick = { showSettingsBottomSheet = true },
-                    )
-                }
-
                 CsNavHost(
                     appState = appState,
                     onShowSnackbar = { message, action ->
