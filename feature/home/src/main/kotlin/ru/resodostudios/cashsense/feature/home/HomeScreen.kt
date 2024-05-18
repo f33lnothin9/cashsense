@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -102,14 +103,21 @@ internal fun HomeScreen(
                 clearUndoState()
             }
 
-            if (walletsState.walletsTransactionsCategories.isNotEmpty()) {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(300.dp),
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                ) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(300.dp),
+                verticalItemSpacing = 16.dp,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.testTag("home:wallets"),
+                contentPadding = PaddingValues(16.dp),
+            ) {
+                if (walletsState.walletsTransactionsCategories.isEmpty()) {
+                    item {
+                        EmptyState(
+                            messageRes = walletDetailR.string.feature_wallet_detail_wallets_empty,
+                            animationRes = walletDetailR.raw.anim_wallets_empty,
+                        )
+                    }
+                } else {
                     wallets(
                         walletsTransactionsCategories = walletsState.walletsTransactionsCategories,
                         onWalletClick = onWalletClick,
@@ -130,30 +138,26 @@ internal fun HomeScreen(
                         highlightSelectedWallet = highlightSelectedWallet,
                     )
                 }
-                if (showWalletBottomSheet) {
-                    WalletBottomSheet(
-                        onDismiss = { showWalletBottomSheet = false },
-                        onEdit = { showWalletDialog = true },
-                        onDelete = {
-                            hideWallet(it)
-                            onWalletClick(null)
-                        },
-                    )
-                }
-                if (showWalletDialog) {
-                    WalletDialog(
-                        onDismiss = { showWalletDialog = false },
-                    )
-                }
-                if (showTransactionDialog) {
-                    TransactionDialog(
-                        onDismiss = { showTransactionDialog = false },
-                    )
-                }
-            } else {
-                EmptyState(
-                    messageRes = walletDetailR.string.feature_wallet_detail_wallets_empty,
-                    animationRes = walletDetailR.raw.anim_wallets_empty,
+            }
+
+            if (showWalletBottomSheet) {
+                WalletBottomSheet(
+                    onDismiss = { showWalletBottomSheet = false },
+                    onEdit = { showWalletDialog = true },
+                    onDelete = {
+                        hideWallet(it)
+                        onWalletClick(null)
+                    },
+                )
+            }
+            if (showWalletDialog) {
+                WalletDialog(
+                    onDismiss = { showWalletDialog = false },
+                )
+            }
+            if (showTransactionDialog) {
+                TransactionDialog(
+                    onDismiss = { showTransactionDialog = false },
                 )
             }
         }

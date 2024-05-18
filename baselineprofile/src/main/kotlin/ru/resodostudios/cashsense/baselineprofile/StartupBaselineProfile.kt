@@ -13,7 +13,8 @@ import ru.resodostudios.cashsense.startActivityAndAllowNotifications
  */
 class StartupBaselineProfile {
 
-    @get:Rule val baselineProfileRule = BaselineProfileRule()
+    @get:Rule
+    val baselineProfileRule = BaselineProfileRule()
 
     @Test
     fun generate() = baselineProfileRule.collect(
