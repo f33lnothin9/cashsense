@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
-import android.app.AlarmManager
+import android.app.AlarmManager.INTERVAL_DAY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +23,7 @@ import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingInterval.NONE
 import java.util.UUID
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                     reminder = Reminder(
                         id = subscriptionId.hashCode(),
                         notificationDate = notificationDate,
-                        repeatingInterval = 7 * AlarmManager.INTERVAL_DAY,
+                        repeatingInterval = _subscriptionDialogUiState.value.repeatingInterval.period,
                     )
                 }
 
@@ -107,6 +108,12 @@ class SubscriptionDialogViewModel @Inject constructor(
                     it.copy(isReminderEnabled = event.isReminderActive)
                 }
             }
+
+            is SubscriptionDialogEvent.UpdateRepeatingInterval -> {
+                _subscriptionDialogUiState.update {
+                    it.copy(repeatingInterval = event.repeatingInterval)
+                }
+            }
         }
     }
 
@@ -123,11 +130,23 @@ class SubscriptionDialogViewModel @Inject constructor(
                         paymentDate = it.paymentDate,
                         currency = it.currency,
                         isReminderEnabled = it.reminder != null,
+                        repeatingInterval = getRepeatingIntervalEnum(it.reminder?.repeatingInterval ?: 0),
                         isLoading = false,
                     )
                 }
         }
     }
+
+    private fun getRepeatingIntervalEnum(repeatingInterval: Long): RepeatingInterval =
+        RepeatingInterval.entries.firstOrNull { it.period == repeatingInterval } ?: NONE
+}
+
+enum class RepeatingInterval(val period: Long) {
+    NONE(0L),
+    DAILY(INTERVAL_DAY),
+    WEEKLY(7 * INTERVAL_DAY),
+    MONTHLY(30 * INTERVAL_DAY),
+    YEARLY(365 * INTERVAL_DAY),
 }
 
 data class SubscriptionDialogUiState(
@@ -137,5 +156,6 @@ data class SubscriptionDialogUiState(
     val paymentDate: Instant = Clock.System.now(),
     val currency: String = Currency.USD.name,
     val isReminderEnabled: Boolean = false,
+    val repeatingInterval: RepeatingInterval = NONE,
     val isLoading: Boolean = false,
 )

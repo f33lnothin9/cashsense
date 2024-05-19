@@ -1,19 +1,27 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -30,7 +38,7 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
+import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
@@ -118,7 +126,7 @@ fun SubscriptionDialog(
                 initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
                 isAllDatesEnabled = false,
             )
-            CurrencyExposedDropdownMenuBox(
+            CurrencyDropdownMenu(
                 currencyName = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it.name)) },
                 modifier = Modifier.fillMaxWidth(),
@@ -139,10 +147,68 @@ fun SubscriptionDialog(
                     )
                 }
             )
+            AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
+                RepeatingIntervalDropdownMenu(
+                    interval = subscriptionDialogState.repeatingInterval,
+                    onIntervalChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
         LaunchedEffect(Unit) {
             if (subscriptionDialogState.id.isEmpty()) {
                 titleTextField.requestFocus()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RepeatingIntervalDropdownMenu(
+    interval: RepeatingInterval,
+    onIntervalChange: (RepeatingInterval) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val intervalNames = listOf(
+        stringResource(R.string.feature_subscription_dialog_repeat_none),
+        stringResource(R.string.feature_subscription_dialog_repeat_daily),
+        stringResource(R.string.feature_subscription_dialog_repeat_weekly),
+        stringResource(R.string.feature_subscription_dialog_repeat_monthly),
+        stringResource(R.string.feature_subscription_dialog_repeat_yearly),
+    )
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier,
+    ) {
+        OutlinedTextField(
+            value = intervalNames[interval.ordinal],
+            onValueChange = {},
+            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            readOnly = true,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+            ),
+            label = { Text(stringResource(R.string.feature_subscription_dialog_repeating_interval)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            intervalNames.forEachIndexed { index, label ->
+                DropdownMenuItem(
+                    text = { Text(label) },
+                    onClick = {
+                        onIntervalChange(RepeatingInterval.entries[index])
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
             }
         }
     }

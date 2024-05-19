@@ -4,5 +4,11 @@
     <string name="feature_subscription_dialog_edit">Edit subscription</string>
     <string name="feature_subscription_dialog_payment_date">Payment date</string>
     <string name="feature_subscription_dialog_reminder">Reminder</string>
-    <string name="feature_subscription_dialog_reminder_description">You\'ll be notified every week</string>
+    <string name="feature_subscription_dialog_reminder_description">You\'ll be notified 1 day before your payment date</string>
+    <string name="feature_subscription_dialog_repeating_interval">Repeating interval</string>
+    <string name="feature_subscription_dialog_repeat_none">Doesn\'t repeating</string>
+    <string name="feature_subscription_dialog_repeat_daily">Daily</string>
+    <string name="feature_subscription_dialog_repeat_weekly">Weekly</string>
+    <string name="feature_subscription_dialog_repeat_monthly">Monthly</string>
+    <string name="feature_subscription_dialog_repeat_yearly">Yearly</string>
 </resources>
