@@ -20,7 +20,7 @@ import ru.resodostudios.cashsense.core.model.data.Currency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CurrencyExposedDropdownMenuBox(
+fun CurrencyDropdownMenu(
     currencyName: String,
     onCurrencyClick: (Currency) -> Unit,
     modifier: Modifier = Modifier,
@@ -34,19 +34,20 @@ fun CurrencyExposedDropdownMenuBox(
         modifier = modifier,
     ) {
         OutlinedTextField(
-            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             readOnly = true,
+            singleLine = true,
             value = currencyName,
             onValueChange = {},
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
             ),
             label = { Text(stringResource(R.string.core_ui_currency)) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             currencyList.forEach { selectionOption ->
                 DropdownMenuItem(
@@ -55,7 +56,7 @@ fun CurrencyExposedDropdownMenuBox(
                         onCurrencyClick(selectionOption)
                         expanded = false
                     },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }

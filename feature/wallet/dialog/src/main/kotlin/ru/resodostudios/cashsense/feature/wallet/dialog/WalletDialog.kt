@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.CurrencyExposedDropdownMenuBox
+import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -95,7 +95,7 @@ fun WalletDialog(
                 ),
                 maxLines = 1,
             )
-            CurrencyExposedDropdownMenuBox(
+            CurrencyDropdownMenu(
                 currencyName = walletDialogState.currency,
                 onCurrencyClick = { onWalletDialogEvent(WalletDialogEvent.UpdateCurrency(it.name)) },
             )
