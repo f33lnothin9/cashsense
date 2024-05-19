@@ -84,6 +84,10 @@ internal val CsTypography = Typography(
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
         fontFamily = RobotoSlabFontFamily,
+        lineHeightStyle = LineHeightStyle(
+            alignment = Alignment.Bottom,
+            trim = Trim.LastLineBottom,
+        ),
     ),
     titleMedium = TextStyle(
         fontWeight = FontWeight.Bold,
@@ -104,11 +108,11 @@ internal val CsTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
+        fontFamily = PoppinsFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.None,
         ),
-        fontFamily = PoppinsFontFamily,
     ),
     bodyMedium = TextStyle(
         fontWeight = FontWeight.Normal,
@@ -130,6 +134,10 @@ internal val CsTypography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
         fontFamily = PoppinsFontFamily,
+        lineHeightStyle = LineHeightStyle(
+            alignment = Alignment.Center,
+            trim = Trim.LastLineBottom,
+        ),
     ),
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
@@ -137,6 +145,10 @@ internal val CsTypography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
         fontFamily = PoppinsFontFamily,
+        lineHeightStyle = LineHeightStyle(
+            alignment = Alignment.Center,
+            trim = Trim.LastLineBottom,
+        ),
     ),
     labelSmall = TextStyle(
         fontWeight = FontWeight.Medium,
@@ -144,5 +156,9 @@ internal val CsTypography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
         fontFamily = PoppinsFontFamily,
+        lineHeightStyle = LineHeightStyle(
+            alignment = Alignment.Center,
+            trim = Trim.LastLineBottom,
+        ),
     )
 )
