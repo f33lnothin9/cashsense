@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -83,7 +83,6 @@ fun SubscriptionDialog(
         val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
             OutlinedTextField(
@@ -98,9 +97,10 @@ fun SubscriptionDialog(
                 supportingText = { Text(stringResource(uiR.string.required)) },
                 maxLines = 1,
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
                     .focusRequester(titleTextField)
-                    .focusProperties { next = amountTextField }
-                    .fillMaxWidth(),
+                    .focusProperties { next = amountTextField },
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
@@ -114,22 +114,27 @@ fun SubscriptionDialog(
                 supportingText = { Text(stringResource(uiR.string.required)) },
                 maxLines = 1,
                 modifier = Modifier
-                    .focusRequester(amountTextField)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .focusRequester(amountTextField),
             )
             DatePickerTextField(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = R.string.feature_subscription_dialog_payment_date,
                 iconId = CsIcons.Calendar,
                 onDateClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
                 isAllDatesEnabled = false,
             )
             CurrencyDropdownMenu(
                 currencyName = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it.name)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
             )
             CsListItem(
                 headlineContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder)) },
@@ -145,13 +150,15 @@ fun SubscriptionDialog(
                         checked = subscriptionDialogState.isReminderEnabled,
                         onCheckedChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it)) },
                     )
-                }
+                },
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
                     interval = subscriptionDialogState.repeatingInterval,
                     onIntervalChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it)) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                 )
             }
         }
