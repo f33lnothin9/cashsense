@@ -3,7 +3,6 @@ package ru.resodostudios.cashsense.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -103,44 +102,42 @@ fun CsApp(
     ) {
         val destination = appState.currentTopLevelDestination
 
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                if (destination != null) {
-                    CsTopAppBar(
-                        titleRes = destination.titleTextId,
-                        actionIconRes = CsIcons.Settings,
-                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                        onActionClick = { showSettingsBottomSheet = true },
-                    )
-                }
-            },
-            floatingActionButton = {
-                if (destination != null) {
-                    CsFloatingActionButton(
-                        titleRes = destination.fabTitle,
-                        iconRes = destination.fabIcon,
-                        onClick = {
-                            when (destination) {
-                                HOME -> showWalletDialog = true
-                                CATEGORIES -> showCategoryDialog = true
-                                SUBSCRIPTIONS -> showSubscriptionDialog = true
-                            }
-                        },
-                    )
-                }
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        ) { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .consumeWindowInsets(padding)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-                    ),
-            ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+                ),
+        ) {
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                topBar = {
+                    if (destination != null) {
+                        CsTopAppBar(
+                            titleRes = destination.titleTextId,
+                            actionIconRes = CsIcons.Settings,
+                            actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
+                            onActionClick = { showSettingsBottomSheet = true },
+                        )
+                    }
+                },
+                floatingActionButton = {
+                    if (destination != null) {
+                        CsFloatingActionButton(
+                            titleRes = destination.fabTitle,
+                            iconRes = destination.fabIcon,
+                            onClick = {
+                                when (destination) {
+                                    HOME -> showWalletDialog = true
+                                    CATEGORIES -> showCategoryDialog = true
+                                    SUBSCRIPTIONS -> showSubscriptionDialog = true
+                                }
+                            },
+                        )
+                    }
+                },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            ) { padding ->
                 CsNavHost(
                     appState = appState,
                     onShowSnackbar = { message, action ->
@@ -150,6 +147,7 @@ fun CsApp(
                             duration = Short,
                         ) == ActionPerformed
                     },
+                    modifier = Modifier.padding(padding),
                 )
             }
         }
