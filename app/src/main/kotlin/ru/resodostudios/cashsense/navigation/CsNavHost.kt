@@ -23,7 +23,7 @@ fun CsNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = HomeDestination(null),
+        startDestination = HomeDestination(),
         enterTransition = { slideInVertically { it / 16 } + fadeIn() },
         exitTransition = { fadeOut(tween(100)) },
         popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },

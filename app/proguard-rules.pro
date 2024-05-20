@@ -5,3 +5,5 @@
 
 -keep class ru.resodostudios.cashsense.ui.home2pane.WalletPlaceholderDestination
 -keep class ru.resodostudios.cashsense.ui.home2pane.DetailPaneNavHostDestination
+-keep class ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsDestination
+-keep class ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
