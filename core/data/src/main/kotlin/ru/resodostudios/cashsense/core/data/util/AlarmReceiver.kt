@@ -28,26 +28,34 @@ internal class AlarmReceiver : BroadcastReceiver() {
         val reminderId = intent?.getIntExtra(EXTRA_REMINDER_ID, 0)
 
         CoroutineScope(Dispatchers.IO).launch {
-            subscriptionsRepository.getSubscriptions().collect { subscriptions ->
-                val subscription = subscriptions.find { it.id.hashCode() == reminderId }
-
-                subscription?.let {
-                    notifier.postSubscriptionNotification(it)
-                }
-            }
+            findSubscriptionAndPostNotification(reminderId)
         }
 
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
             CoroutineScope(Dispatchers.IO).launch {
-                subscriptionsRepository.getSubscriptions().collect { subscriptions ->
-                    subscriptions
-                        .filter { it.reminder != null }
-                        .forEach { subscription ->
-                            subscription.reminder?.let {
-                                notificationAlarmScheduler.schedule(it)
-                            }
-                        }
+                rescheduleRemindersAfterRebooting()
+            }
+        }
+    }
+
+    private suspend fun rescheduleRemindersAfterRebooting() {
+        subscriptionsRepository.getSubscriptions().collect { subscriptions ->
+            subscriptions
+                .filter { it.reminder != null }
+                .forEach { subscription ->
+                    subscription.reminder?.let {
+                        notificationAlarmScheduler.schedule(it)
+                    }
                 }
+        }
+    }
+
+    private suspend fun findSubscriptionAndPostNotification(reminderId: Int?) {
+        subscriptionsRepository.getSubscriptions().collect { subscriptions ->
+            val subscription = subscriptions.firstOrNull { it.id.hashCode() == reminderId }
+
+            subscription?.let {
+                notifier.postSubscriptionNotification(it)
             }
         }
     }
