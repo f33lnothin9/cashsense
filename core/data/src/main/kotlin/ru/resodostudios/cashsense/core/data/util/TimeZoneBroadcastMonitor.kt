@@ -79,5 +79,9 @@ internal class TimeZoneBroadcastMonitor @Inject constructor(
             .conflate()
             .flowOn(ioDispatcher)
             // Sharing the callback to prevent multiple BroadcastReceivers being registered
-            .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), 1)
+            .shareIn(
+                scope = appScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                replay = 1,
+            )
 }
