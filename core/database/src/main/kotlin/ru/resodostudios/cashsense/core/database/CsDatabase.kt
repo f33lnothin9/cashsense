@@ -36,7 +36,7 @@ import ru.resodostudios.cashsense.core.database.util.InstantConverter
     InstantConverter::class,
     BigDecimalConverter::class,
 )
-abstract class CsDatabase : RoomDatabase() {
+internal abstract class CsDatabase : RoomDatabase() {
 
     abstract fun transactionDao(): TransactionDao
 

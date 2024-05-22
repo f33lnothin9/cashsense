@@ -3,7 +3,8 @@ package ru.resodostudios.cashsense.core.database.util
 import androidx.room.TypeConverter
 import java.math.BigDecimal
 
-class BigDecimalConverter {
+internal class BigDecimalConverter {
+
     @TypeConverter
     fun fromBigDecimal(value: BigDecimal?): String? {
         return value?.toString()
