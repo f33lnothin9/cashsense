@@ -1,8 +1,9 @@
 package ru.resodostudios.cashsense.ui
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -25,10 +26,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -46,6 +50,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CsApp(
     appState: CsAppState,
@@ -102,42 +107,48 @@ fun CsApp(
     ) {
         val destination = appState.currentTopLevelDestination
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-                ),
-        ) {
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                topBar = {
-                    if (destination != null) {
-                        CsTopAppBar(
-                            titleRes = destination.titleTextId,
-                            actionIconRes = CsIcons.Settings,
-                            actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                            onActionClick = { showSettingsBottomSheet = true },
-                        )
-                    }
-                },
-                floatingActionButton = {
-                    if (destination != null) {
-                        CsFloatingActionButton(
-                            titleRes = destination.fabTitle,
-                            iconRes = destination.fabIcon,
-                            onClick = {
-                                when (destination) {
-                                    HOME -> showWalletDialog = true
-                                    CATEGORIES -> showCategoryDialog = true
-                                    SUBSCRIPTIONS -> showSubscriptionDialog = true
-                                }
-                            },
-                        )
-                    }
-                },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            ) { padding ->
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            floatingActionButton = {
+                if (destination != null) {
+                    CsFloatingActionButton(
+                        titleRes = destination.fabTitle,
+                        iconRes = destination.fabIcon,
+                        onClick = {
+                            when (destination) {
+                                HOME -> showWalletDialog = true
+                                CATEGORIES -> showCategoryDialog = true
+                                SUBSCRIPTIONS -> showSubscriptionDialog = true
+                            }
+                        },
+                    )
+                }
+            },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            modifier = Modifier.semantics {
+                testTagsAsResourceId = true
+            },
+        ) { padding ->
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(
+                            WindowInsetsSides.Horizontal,
+                        ),
+                    ),
+            ) {
+                if (destination != null) {
+                    CsTopAppBar(
+                        titleRes = destination.titleTextId,
+                        actionIconRes = CsIcons.Settings,
+                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
+                        onActionClick = { showSettingsBottomSheet = true },
+                    )
+                }
+
                 CsNavHost(
                     appState = appState,
                     onShowSnackbar = { message, action ->
