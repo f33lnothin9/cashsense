@@ -4,7 +4,6 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
 import ru.resodostudios.cashsense.PACKAGE_NAME
-import ru.resodostudios.cashsense.startActivityAndAllowNotifications
 import ru.resodostudios.cashsense.subscriptions.goToSubscriptionsScreen
 
 class SubscriptionsBaselineProfile {
@@ -14,7 +13,7 @@ class SubscriptionsBaselineProfile {
 
     @Test
     fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
-        startActivityAndAllowNotifications()
+        startActivityAndWait()
 
         // Navigate to subscriptions screen
         goToSubscriptionsScreen()

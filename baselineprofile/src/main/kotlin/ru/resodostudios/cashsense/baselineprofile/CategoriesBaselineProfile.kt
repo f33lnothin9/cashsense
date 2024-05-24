@@ -5,7 +5,6 @@ import org.junit.Rule
 import org.junit.Test
 import ru.resodostudios.cashsense.PACKAGE_NAME
 import ru.resodostudios.cashsense.categories.goToCategoriesScreen
-import ru.resodostudios.cashsense.startActivityAndAllowNotifications
 
 class CategoriesBaselineProfile {
 
@@ -14,7 +13,7 @@ class CategoriesBaselineProfile {
 
     @Test
     fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
-        startActivityAndAllowNotifications()
+        startActivityAndWait()
 
         // Navigate to categories screen
         goToCategoriesScreen()

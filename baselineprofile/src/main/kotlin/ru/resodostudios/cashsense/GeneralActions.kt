@@ -32,15 +32,6 @@ fun MacrobenchmarkScope.allowNotifications() {
 }
 
 /**
- * Wraps starting the default activity, waiting for it to start and then allowing notifications in
- * one convenient call.
- */
-fun MacrobenchmarkScope.startActivityAndAllowNotifications() {
-    startActivityAndWait()
-    allowNotifications()
-}
-
-/**
  * Waits for and returns the `csTopAppBar`
  */
 fun MacrobenchmarkScope.getTopAppBar(): UiObject2 {
