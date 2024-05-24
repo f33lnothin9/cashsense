@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
+import android.Manifest
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -34,6 +38,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus.Denied
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
@@ -64,8 +71,10 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) R.string.feature_subscription_dialog_edit else R.string.feature_subscription_dialog_new
-    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
+    val dialogTitle =
+        if (subscriptionDialogState.id.isNotEmpty()) R.string.feature_subscription_dialog_edit else R.string.feature_subscription_dialog_new
+    val dialogConfirmText =
+        if (subscriptionDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -87,7 +96,11 @@ fun SubscriptionDialog(
         ) {
             OutlinedTextField(
                 value = subscriptionDialogState.title,
-                onValueChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateTitle(it)) },
+                onValueChange = {
+                    onSubscriptionEvent(
+                        SubscriptionDialogEvent.UpdateTitle(it)
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
@@ -104,7 +117,11 @@ fun SubscriptionDialog(
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
-                onValueChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateAmount(it.validateAmount().first)) },
+                onValueChange = {
+                    onSubscriptionEvent(
+                        SubscriptionDialogEvent.UpdateAmount(it.validateAmount().first)
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
@@ -122,7 +139,13 @@ fun SubscriptionDialog(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = R.string.feature_subscription_dialog_payment_date,
                 iconId = CsIcons.Calendar,
-                onDateClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                onDateClick = {
+                    onSubscriptionEvent(
+                        SubscriptionDialogEvent.UpdatePaymentDate(
+                            Instant.fromEpochMilliseconds(it)
+                        )
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -131,7 +154,11 @@ fun SubscriptionDialog(
             )
             CurrencyDropdownMenu(
                 currencyName = subscriptionDialogState.currency,
-                onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it.name)) },
+                onCurrencyClick = {
+                    onSubscriptionEvent(
+                        SubscriptionDialogEvent.UpdateCurrency(it.name)
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -148,14 +175,22 @@ fun SubscriptionDialog(
                 trailingContent = {
                     Switch(
                         checked = subscriptionDialogState.isReminderEnabled,
-                        onCheckedChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it)) },
+                        onCheckedChange = {
+                            onSubscriptionEvent(
+                                SubscriptionDialogEvent.UpdateReminderSwitch(it)
+                            )
+                        },
                     )
                 },
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
                     interval = subscriptionDialogState.repeatingInterval,
-                    onIntervalChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it)) },
+                    onIntervalChange = {
+                        onSubscriptionEvent(
+                            SubscriptionDialogEvent.UpdateRepeatingInterval(it)
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
@@ -167,6 +202,8 @@ fun SubscriptionDialog(
                 titleTextField.requestFocus()
             }
         }
+
+        NotificationPermissionEffect()
     }
 }
 
@@ -217,6 +254,25 @@ fun RepeatingIntervalDropdownMenu(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalPermissionsApi::class)
+private fun NotificationPermissionEffect() {
+
+    if (LocalInspectionMode.current) return
+    if (VERSION.SDK_INT < VERSION_CODES.TIRAMISU) return
+
+    val notificationsPermissionState = rememberPermissionState(
+        Manifest.permission.POST_NOTIFICATIONS,
+    )
+
+    LaunchedEffect(notificationsPermissionState) {
+        val status = notificationsPermissionState.status
+        if (status is Denied && !status.shouldShowRationale) {
+            notificationsPermissionState.launchPermissionRequest()
         }
     }
 }

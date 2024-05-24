@@ -14,6 +14,4 @@ dependencies {
     implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.category.list)
-
-    implementation(libs.accompanist.permissions)
 }
