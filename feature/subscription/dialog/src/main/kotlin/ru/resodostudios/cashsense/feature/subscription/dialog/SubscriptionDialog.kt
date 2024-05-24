@@ -203,7 +203,7 @@ fun SubscriptionDialog(
             }
         }
 
-        NotificationPermissionEffect()
+        if (subscriptionDialogState.isReminderEnabled) NotificationPermissionEffect()
     }
 }
 
