@@ -11,5 +11,6 @@ dependencies {
     implementation(projects.core.data)
 
     implementation(libs.androidx.appcompat)
+    implementation(libs.android.material)
     implementation(libs.google.oss.licenses)
 }

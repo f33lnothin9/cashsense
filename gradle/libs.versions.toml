@@ -2,6 +2,7 @@
 accompanist = "0.35.0-alpha"
 androidGradlePlugin = "8.4.1"
 androidDesugarJdkLibs = "2.0.4"
+androidMaterial = "1.12.0"
 androidxActivityCompose = "1.9.0"
 androidxAppCompat = "1.6.1"
 androidxCompose = "1.7.0-beta01"
@@ -44,6 +45,7 @@ room = "2.6.1"
 [libraries]
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
+android-material = { group = "com.google.android.material", name = "material", version.ref = "androidMaterial" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
