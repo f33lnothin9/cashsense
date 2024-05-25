@@ -7,9 +7,8 @@ import ru.resodostudios.cashsense.waitForObjectOnTopAppBar
 
 fun MacrobenchmarkScope.goToSubscriptionsScreen() {
     device.findObject(By.text("Subscriptions")).click()
-    device.waitForIdle()
     waitForObjectOnTopAppBar(By.text("Subscriptions"))
 
     // Wait until content is loaded by checking if subscriptions are loaded
-    device.wait(Until.gone(By.res("loadingCircle")), 5_000)
+    device.wait(Until.gone(By.res("loadingCircle")), 2_500)
 }

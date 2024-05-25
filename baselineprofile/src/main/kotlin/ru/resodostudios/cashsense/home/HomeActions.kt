@@ -5,5 +5,5 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 
 fun MacrobenchmarkScope.homeWaitForContent() {
-    device.wait(Until.gone(By.res("loadingCircle")), 5_000)
+    device.wait(Until.gone(By.res("loadingCircle")), 2_500)
 }

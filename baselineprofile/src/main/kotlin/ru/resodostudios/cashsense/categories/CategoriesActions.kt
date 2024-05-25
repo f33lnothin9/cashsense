@@ -7,9 +7,8 @@ import ru.resodostudios.cashsense.waitForObjectOnTopAppBar
 
 fun MacrobenchmarkScope.goToCategoriesScreen() {
     device.findObject(By.text("Categories")).click()
-    device.waitForIdle()
     waitForObjectOnTopAppBar(By.text("Categories"))
 
     // Wait until content is loaded by checking if categories are loaded
-    device.wait(Until.gone(By.res("loadingCircle")), 5_000)
+    device.wait(Until.gone(By.res("loadingCircle")), 2_500)
 }
