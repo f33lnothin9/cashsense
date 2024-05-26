@@ -11,5 +11,7 @@ message UserPreferences {
 
     bool use_dynamic_color = 2;
 
-    // NEXT AVAILABLE ID: 3
+    string primary_wallet_id = 3;
+
+    // NEXT AVAILABLE ID: 4
 }

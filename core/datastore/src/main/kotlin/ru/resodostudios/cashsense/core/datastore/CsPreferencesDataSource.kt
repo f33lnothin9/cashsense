@@ -3,6 +3,9 @@ package ru.resodostudios.cashsense.core.datastore
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.map
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.DARK
+import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
+import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.LIGHT
 import ru.resodostudios.cashsense.core.model.data.UserData
 import javax.inject.Inject
 
@@ -17,11 +20,13 @@ class CsPreferencesDataSource @Inject constructor(
                     DarkThemeConfigProto.DARK_THEME_CONFIG_UNSPECIFIED,
                     DarkThemeConfigProto.UNRECOGNIZED,
                     DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM,
-                    -> DarkThemeConfig.FOLLOW_SYSTEM
-                    DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT -> DarkThemeConfig.LIGHT
-                    DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DarkThemeConfig.DARK
+                    -> FOLLOW_SYSTEM
+
+                    DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT -> LIGHT
+                    DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DARK
                 },
-                useDynamicColor = it.useDynamicColor
+                useDynamicColor = it.useDynamicColor,
+                primaryWalletId = it.primaryWalletId,
             )
         }
 
@@ -37,10 +42,18 @@ class CsPreferencesDataSource @Inject constructor(
         userPreferences.updateData {
             it.copy {
                 this.darkThemeConfig = when (darkThemeConfig) {
-                    DarkThemeConfig.FOLLOW_SYSTEM -> DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM
-                    DarkThemeConfig.LIGHT -> DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT
-                    DarkThemeConfig.DARK -> DarkThemeConfigProto.DARK_THEME_CONFIG_DARK
+                    FOLLOW_SYSTEM -> DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM
+                    LIGHT -> DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT
+                    DARK -> DarkThemeConfigProto.DARK_THEME_CONFIG_DARK
                 }
+            }
+        }
+    }
+
+    suspend fun setPrimaryWalletId(id: String) {
+        userPreferences.updateData {
+            it.copy {
+                this.primaryWalletId = id
             }
         }
     }
