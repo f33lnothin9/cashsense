@@ -27,7 +27,6 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletCard
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
@@ -177,7 +176,7 @@ private fun LazyStaggeredGridScope.wallets(
             onTransactionCreate = onTransactionCreate,
             onWalletMenuClick = onWalletMenuClick,
             modifier = Modifier.animateItem(),
-            isSelected = isSelected,
+            selected = isSelected,
         )
     }
 }

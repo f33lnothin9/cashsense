@@ -55,6 +55,7 @@ object CsIcons {
     val SimCard = R.drawable.ic_outlined_sim_card
     val SmokingRooms = R.drawable.ic_outlined_smoking_rooms
     val SportsEsports = R.drawable.ic_outlined_sports_esports
+    val Star = R.drawable.ic_outlined_star
     val Travel = R.drawable.ic_outlined_travel
     val Info = R.drawable.ic_outlined_info
     val Work = R.drawable.ic_outlined_work

@@ -3,7 +3,6 @@
     <string name="feature_wallet_detail_income">Доходы</string>
     <string name="feature_wallet_detail_expenses">Расходы</string>
     <string name="feature_wallet_detail_wallets_empty">Здесь будут ваши кошельки</string>
-    <string name="feature_wallet_detail_menu_icon_description">Меню кошелька</string>
     <string name="feature_wallet_detail_all">Все</string>
     <string name="feature_wallet_detail_week">Неделя</string>
     <string name="feature_wallet_detail_month">Месяц</string>

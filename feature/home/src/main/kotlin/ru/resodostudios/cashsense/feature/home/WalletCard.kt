@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail
+package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -30,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -53,7 +51,8 @@ fun WalletCard(
     onTransactionCreate: (String) -> Unit,
     onWalletMenuClick: (String, String) -> Unit,
     modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
+    selected: Boolean = false,
+    isPrimary: Boolean = false,
 ) {
     val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
     val currentBalanceAnimated by animateFloatAsState(
@@ -65,11 +64,8 @@ fun WalletCard(
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
         shape = RoundedCornerShape(24.dp),
-        elevation = if (isSelected) CardDefaults.outlinedCardElevation(defaultElevation = 3.dp) else CardDefaults.outlinedCardElevation(),
-        modifier = modifier
-            .semantics(mergeDescendants = true) {
-                selected = isSelected
-            },
+        elevation = if (selected) CardDefaults.outlinedCardElevation(defaultElevation = 3.dp) else CardDefaults.outlinedCardElevation(),
+        modifier = modifier,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -92,9 +88,10 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            FinanceIndicators(
+            TagsSection(
                 transactions = transactions,
                 currency = wallet.currency,
+                isPrimary = isPrimary,
                 modifier = Modifier.padding(top = 8.dp),
             )
         }
@@ -115,7 +112,7 @@ fun WalletCard(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                    contentDescription = stringResource(R.string.feature_wallet_detail_menu_icon_description),
+                    contentDescription = stringResource(R.string.feature_home_wallet_menu_icon_description),
                 )
             }
         }
@@ -124,10 +121,11 @@ fun WalletCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun FinanceIndicators(
+private fun TagsSection(
     transactions: List<Transaction>,
     currency: String,
     modifier: Modifier = Modifier,
+    isPrimary: Boolean = false,
 ) {
     val expenses = transactions
         .asSequence()
@@ -155,6 +153,16 @@ private fun FinanceIndicators(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
+        AnimatedVisibility(
+            visible = isPrimary,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
+            CsTag(
+                text = stringResource(R.string.feature_home_primary),
+                iconId = CsIcons.Star,
+            )
+        }
         AnimatedVisibility(
             visible = expenses != BigDecimal.ZERO,
             enter = fadeIn() + scaleIn(),

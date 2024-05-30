@@ -3,7 +3,6 @@
     <string name="feature_wallet_detail_income">Income</string>
     <string name="feature_wallet_detail_expenses">Expenses</string>
     <string name="feature_wallet_detail_wallets_empty">Nothing in Wallets</string>
-    <string name="feature_wallet_detail_menu_icon_description">Wallet menu</string>
     <string name="feature_wallet_detail_all">All</string>
     <string name="feature_wallet_detail_week">Week</string>
     <string name="feature_wallet_detail_month">Month</string>
