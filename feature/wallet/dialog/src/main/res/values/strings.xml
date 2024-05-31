@@ -3,4 +3,5 @@
     <string name="feature_wallet_dialog_new_wallet">New wallet</string>
     <string name="feature_wallet_dialog_edit_wallet">Edit wallet</string>
     <string name="feature_wallet_dialog_initial_balance">Initial balance</string>
+    <string name="feature_wallet_dialog_primary">Primary</string>
 </resources>

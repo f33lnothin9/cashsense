@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -24,14 +23,14 @@ class SettingsViewModel @Inject constructor(
                 SettingsUiState.Success(
                     settings = UserEditableSettings(
                         useDynamicColor = userData.useDynamicColor,
-                        darkThemeConfig = userData.darkThemeConfig
+                        darkThemeConfig = userData.darkThemeConfig,
                     )
                 )
             }
             .stateIn(
                 scope = viewModelScope,
-                started = WhileSubscribed(5.seconds.inWholeMilliseconds),
-                initialValue = SettingsUiState.Loading
+                started = WhileSubscribed(5_000),
+                initialValue = SettingsUiState.Loading,
             )
 
     fun updateDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
@@ -49,10 +48,12 @@ class SettingsViewModel @Inject constructor(
 
 data class UserEditableSettings(
     val useDynamicColor: Boolean,
-    val darkThemeConfig: DarkThemeConfig
+    val darkThemeConfig: DarkThemeConfig,
 )
 
 sealed interface SettingsUiState {
+
     data object Loading : SettingsUiState
+
     data class Success(val settings: UserEditableSettings) : SettingsUiState
 }

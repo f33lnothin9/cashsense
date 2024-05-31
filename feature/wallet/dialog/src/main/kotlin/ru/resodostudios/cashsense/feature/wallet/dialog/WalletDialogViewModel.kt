@@ -6,9 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
@@ -19,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
     private val walletsRepository: WalletsRepository,
+    private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
 
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
@@ -78,20 +81,37 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
+    fun updatePrimaryWallet(isPrimary: Boolean) {
+        _walletDialogUiState.update {
+            it.copy(isPrimary = isPrimary)
+        }
+        viewModelScope.launch {
+            if (isPrimary) {
+                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
+            } else {
+                userDataRepository.setPrimaryWalletId("")
+            }
+        }
+    }
+
     private fun loadWallet() {
         viewModelScope.launch {
-            walletsRepository.getWallet(_walletDialogUiState.value.id)
+            combine(
+                userDataRepository.userData,
+                walletsRepository.getWallet(_walletDialogUiState.value.id),
+            ) { userData, wallet ->
+                _walletDialogUiState.value.copy(
+                    id = wallet.id,
+                    title = wallet.title,
+                    initialBalance = wallet.initialBalance.toString(),
+                    currency = wallet.currency,
+                    isPrimary = userData.primaryWalletId == wallet.id,
+                    isLoading = false,
+                )
+            }
                 .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
                 .catch { _walletDialogUiState.value = WalletDialogUiState() }
-                .collect {
-                    _walletDialogUiState.value = _walletDialogUiState.value.copy(
-                        id = it.id,
-                        title = it.title,
-                        initialBalance = it.initialBalance.toString(),
-                        currency = it.currency,
-                        isLoading = false,
-                    )
-                }
+                .collect { _walletDialogUiState.value = it }
         }
     }
 }
@@ -102,5 +122,6 @@ data class WalletDialogUiState(
     val initialBalance: String = "",
     val currentBalance: String = "",
     val currency: String = Currency.USD.name,
+    val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
 )

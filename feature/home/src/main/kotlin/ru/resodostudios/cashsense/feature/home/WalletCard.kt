@@ -42,6 +42,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
+import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
 @Composable
 fun WalletCard(
@@ -159,7 +160,7 @@ private fun TagsSection(
             exit = fadeOut() + scaleOut(),
         ) {
             CsTag(
-                text = stringResource(R.string.feature_home_primary),
+                text = stringResource(walletDialogR.string.feature_wallet_dialog_primary),
                 iconId = CsIcons.Star,
             )
         }

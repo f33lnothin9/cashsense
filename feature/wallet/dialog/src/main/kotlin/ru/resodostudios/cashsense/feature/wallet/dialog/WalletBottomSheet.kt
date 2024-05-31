@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +23,9 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun WalletBottomSheet(
@@ -40,6 +41,7 @@ fun WalletBottomSheet(
         onDismiss = onDismiss,
         onEdit = onEdit,
         onDelete = onDelete,
+        updatePrimaryWallet = viewModel::updatePrimaryWallet,
     )
 }
 
@@ -49,13 +51,14 @@ fun WalletBottomSheet(
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
+    updatePrimaryWallet: (Boolean) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(walletDialogState.isLoading) {
             LoadingState(
-                Modifier
+                modifier = Modifier
                     .height(100.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
         AnimatedVisibility(!walletDialogState.isLoading) {
@@ -80,7 +83,22 @@ fun WalletBottomSheet(
                 )
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Star),
+                            contentDescription = null,
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = walletDialogState.isPrimary,
+                            onCheckedChange = updatePrimaryWallet,
+                        )
+                    }
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(uiR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -90,10 +108,10 @@ fun WalletBottomSheet(
                     onClick = {
                         onEdit(walletDialogState.id)
                         onDismiss()
-                    }
+                    },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    headlineContent = { Text(stringResource(uiR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),
@@ -103,7 +121,7 @@ fun WalletBottomSheet(
                     onClick = {
                         onDelete(walletDialogState.id)
                         onDismiss()
-                    }
+                    },
                 )
             }
         }
