@@ -107,7 +107,7 @@ internal fun HomeListDetailScreen(
                 nestedNavKey = UUID.randomUUID()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-        } else {
+        } else if (listDetailNavigator.isDetailPaneVisible()) {
             nestedNavController.navigate(WalletPlaceholderDestination)
         }
     }
