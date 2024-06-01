@@ -47,7 +47,9 @@ class HomeViewModel @Inject constructor(
             selectedWalletId = selectedWalletId,
             primaryWalletId = userData.primaryWalletId,
             shouldDisplayUndoWallet = shouldDisplayUndoWallet,
-            walletsTransactionsCategories = wallets.filterNot { it.wallet.id == lastRemovedWalletId },
+            walletsTransactionsCategories = wallets
+                .filterNot { it.wallet.id == lastRemovedWalletId }
+                .sortedByDescending { it.wallet.id == userData.primaryWalletId },
         )
     }
         .stateIn(
