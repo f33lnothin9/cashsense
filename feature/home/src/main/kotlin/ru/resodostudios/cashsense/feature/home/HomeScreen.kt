@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
@@ -104,7 +103,7 @@ internal fun HomeScreen(
                     contentPadding = PaddingValues(16.dp),
                 ) {
                     wallets(
-                        walletsTransactionsCategories = walletsState.walletsTransactionsCategories,
+                        walletsState = walletsState,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = {
                             onTransactionEvent(TransactionDialogEvent.UpdateWalletId(it))
@@ -119,7 +118,6 @@ internal fun HomeScreen(
                             )
                             showWalletBottomSheet = true
                         },
-                        selectedWalletId = walletsState.selectedWalletId,
                         highlightSelectedWallet = highlightSelectedWallet,
                     )
                 }
@@ -155,28 +153,34 @@ internal fun HomeScreen(
 }
 
 private fun LazyStaggeredGridScope.wallets(
-    walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
+    walletsState: WalletsUiState,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onWalletMenuClick: (String, String) -> Unit,
-    selectedWalletId: String? = null,
     highlightSelectedWallet: Boolean = false,
 ) {
-    items(
-        items = walletsTransactionsCategories,
-        key = { it.wallet.id },
-        contentType = { "wallet" },
-    ) { walletPopulated ->
-        val isSelected = highlightSelectedWallet && walletPopulated.wallet.id == selectedWalletId
+    when (walletsState) {
+        WalletsUiState.Loading -> Unit
+        is WalletsUiState.Success -> {
+            items(
+                items = walletsState.walletsTransactionsCategories,
+                key = { it.wallet.id },
+                contentType = { "wallet" },
+            ) { walletPopulated ->
+                val isSelected = highlightSelectedWallet && walletPopulated.wallet.id == walletsState.selectedWalletId
+                val isPrimary = walletPopulated.wallet.id == walletsState.primaryWalletId
 
-        WalletCard(
-            wallet = walletPopulated.wallet,
-            transactions = walletPopulated.transactionsWithCategories.map { it.transaction },
-            onWalletClick = onWalletClick,
-            onTransactionCreate = onTransactionCreate,
-            onWalletMenuClick = onWalletMenuClick,
-            modifier = Modifier.animateItem(),
-            selected = isSelected,
-        )
+                WalletCard(
+                    wallet = walletPopulated.wallet,
+                    transactions = walletPopulated.transactionsWithCategories.map { it.transaction },
+                    onWalletClick = onWalletClick,
+                    onTransactionCreate = onTransactionCreate,
+                    onWalletMenuClick = onWalletMenuClick,
+                    modifier = Modifier.animateItem(),
+                    selected = isSelected,
+                    isPrimary = isPrimary,
+                )
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val walletsRepository: WalletsRepository,
+    userDataRepository: UserDataRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -35,13 +37,15 @@ class HomeViewModel @Inject constructor(
     private val lastRemovedWalletIdState = MutableStateFlow<String?>(null)
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
-        selectedWalletId,
         walletsRepository.getWalletsWithTransactions(),
+        userDataRepository.userData,
+        selectedWalletId,
         shouldDisplayUndoWalletState,
         lastRemovedWalletIdState,
-    ) { selectedWalletId, wallets, shouldDisplayUndoWallet, lastRemovedWalletId ->
+    ) { wallets, userData, selectedWalletId, shouldDisplayUndoWallet, lastRemovedWalletId ->
         Success(
             selectedWalletId = selectedWalletId,
+            primaryWalletId = userData.primaryWalletId,
             shouldDisplayUndoWallet = shouldDisplayUndoWallet,
             walletsTransactionsCategories = wallets.filterNot { it.wallet.id == lastRemovedWalletId },
         )
@@ -83,6 +87,7 @@ sealed interface WalletsUiState {
 
     data class Success(
         val selectedWalletId: String?,
+        val primaryWalletId: String,
         val shouldDisplayUndoWallet: Boolean,
         val walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
     ) : WalletsUiState
