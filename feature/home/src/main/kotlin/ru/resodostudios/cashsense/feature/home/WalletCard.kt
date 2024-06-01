@@ -24,7 +24,9 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -58,7 +60,7 @@ fun WalletCard(
     val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
     val currentBalanceAnimated by animateFloatAsState(
         targetValue = currentBalance.toFloat(),
-        label = "currentBalanceAnimation",
+        label = "CurrentBalanceAnimation",
         animationSpec = tween(durationMillis = 400),
     )
 
@@ -128,24 +130,31 @@ private fun TagsSection(
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
-    val expenses = transactions
-        .asSequence()
-        .filter { it.amount < BigDecimal.ZERO }
-        .sumOf { it.amount }
-        .abs()
+    val expenses by remember(transactions) {
+        derivedStateOf {
+            transactions
+                .filter { it.amount < BigDecimal.ZERO }
+                .sumOf { it.amount }
+                .abs()
+        }
+    }
+    val income by remember(transactions) {
+        derivedStateOf {
+            transactions
+                .filter { it.amount > BigDecimal.ZERO }
+                .sumOf { it.amount }
+                .abs()
+        }
+    }
+
     val expensesAnimated by animateFloatAsState(
         targetValue = expenses.toFloat(),
-        label = "expensesAnimation",
+        label = "ExpensesAnimation",
         animationSpec = tween(durationMillis = 400),
     )
-    val income = transactions
-        .asSequence()
-        .filter { it.amount > BigDecimal.ZERO }
-        .sumOf { it.amount }
-        .abs()
     val incomeAnimated by animateFloatAsState(
         targetValue = income.toFloat(),
-        label = "incomeAnimation",
+        label = "IncomeAnimation",
         animationSpec = tween(durationMillis = 400),
     )
 
