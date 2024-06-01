@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -128,7 +129,12 @@ internal fun WalletScreen(
 
     var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
-    
+
+    BackHandler {
+        onBackClick()
+        clearUndoState()
+    }
+
     when (walletState) {
         WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
@@ -169,7 +175,12 @@ internal fun WalletScreen(
                         },
                         navigationIcon = {
                             if (showDetailActions) {
-                                IconButton(onClick = onBackClick) {
+                                IconButton(
+                                    onClick = {
+                                        onBackClick()
+                                        clearUndoState()
+                                    },
+                                ) {
                                     Icon(
                                         imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
                                         contentDescription = null,
