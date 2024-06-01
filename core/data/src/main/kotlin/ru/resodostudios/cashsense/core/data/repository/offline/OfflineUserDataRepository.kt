@@ -8,7 +8,7 @@ import ru.resodostudios.cashsense.core.model.data.UserData
 import javax.inject.Inject
 
 internal class OfflineUserDataRepository @Inject constructor(
-    private val csPreferencesDataSource: CsPreferencesDataSource
+    private val csPreferencesDataSource: CsPreferencesDataSource,
 ) : UserDataRepository {
 
     override val userData: Flow<UserData> =

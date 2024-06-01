@@ -32,9 +32,7 @@ class CsPreferencesDataSource @Inject constructor(
 
     suspend fun setDynamicColorPreference(useDynamicColor: Boolean) {
         userPreferences.updateData {
-            it.copy {
-                this.useDynamicColor = useDynamicColor
-            }
+            it.copy { this.useDynamicColor = useDynamicColor }
         }
     }
 
@@ -52,9 +50,7 @@ class CsPreferencesDataSource @Inject constructor(
 
     suspend fun setPrimaryWalletId(id: String) {
         userPreferences.updateData {
-            it.copy {
-                this.primaryWalletId = id
-            }
+            it.copy { this.primaryWalletId = id }
         }
     }
 }

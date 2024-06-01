@@ -24,7 +24,7 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun providesUserPreferencesDataStore(
+    internal fun providesUserPreferencesDataStore(
         @ApplicationContext context: Context,
         @Dispatcher(IO) ioDispatcher: CoroutineDispatcher,
         @ApplicationScope scope: CoroutineScope,
