@@ -25,6 +25,10 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.validateAmount
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -56,7 +60,7 @@ fun WalletDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
-            onWalletDialogEvent(WalletDialogEvent.Save)
+            onWalletDialogEvent(Save)
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
@@ -70,7 +74,7 @@ fun WalletDialog(
         ) {
             OutlinedTextField(
                 value = walletDialogState.title,
-                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateTitle(it)) },
+                onValueChange = { onWalletDialogEvent(UpdateTitle(it)) },
                 modifier = Modifier
                     .focusRequester(titleTextField)
                     .focusProperties { next = initialBalanceTextField },
@@ -85,7 +89,7 @@ fun WalletDialog(
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(WalletDialogEvent.UpdateInitialBalance(it.validateAmount().first)) },
+                onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.validateAmount().first)) },
                 modifier = Modifier.focusRequester(initialBalanceTextField),
                 label = { Text(stringResource(R.string.feature_wallet_dialog_initial_balance)) },
                 placeholder = { Text("0") },
@@ -97,7 +101,7 @@ fun WalletDialog(
             )
             CurrencyDropdownMenu(
                 currencyName = walletDialogState.currency,
-                onCurrencyClick = { onWalletDialogEvent(WalletDialogEvent.UpdateCurrency(it.name)) },
+                onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.name)) },
             )
         }
         LaunchedEffect(Unit) {
