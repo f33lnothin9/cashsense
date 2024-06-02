@@ -40,6 +40,7 @@ class WalletDialogViewModel @Inject constructor(
                     },
                     currency = _walletDialogUiState.value.currency,
                 )
+                updatePrimaryWalletId()
                 viewModelScope.launch {
                     walletsRepository.upsertWallet(wallet)
                 }
@@ -78,19 +79,14 @@ class WalletDialogViewModel @Inject constructor(
                     it.copy(currency = event.currency)
                 }
             }
+
+            is WalletDialogEvent.UpdatePrimary -> updatePrimary(event.isPrimary)
         }
     }
 
-    fun updatePrimaryWallet(isPrimary: Boolean) {
+    private fun updatePrimary(isPrimary: Boolean) {
         _walletDialogUiState.update {
             it.copy(isPrimary = isPrimary)
-        }
-        viewModelScope.launch {
-            if (isPrimary) {
-                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
-            } else {
-                userDataRepository.setPrimaryWalletId("")
-            }
         }
     }
 
@@ -105,6 +101,7 @@ class WalletDialogViewModel @Inject constructor(
                     title = wallet.title,
                     initialBalance = wallet.initialBalance.toString(),
                     currency = wallet.currency,
+                    currentPrimaryWalletId = userData.primaryWalletId,
                     isPrimary = userData.primaryWalletId == wallet.id,
                     isLoading = false,
                 )
@@ -114,6 +111,16 @@ class WalletDialogViewModel @Inject constructor(
                 .collect { _walletDialogUiState.value = it }
         }
     }
+
+    fun updatePrimaryWalletId() {
+        viewModelScope.launch {
+            if (_walletDialogUiState.value.isPrimary) {
+                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
+            } else if (_walletDialogUiState.value.currentPrimaryWalletId == walletDialogUiState.value.id) {
+                userDataRepository.setPrimaryWalletId("")
+            }
+        }
+    }
 }
 
 data class WalletDialogUiState(
@@ -121,6 +128,7 @@ data class WalletDialogUiState(
     val title: String = "",
     val initialBalance: String = "",
     val currentBalance: String = "",
+    val currentPrimaryWalletId: String = "",
     val currency: String = Currency.USD.name,
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,

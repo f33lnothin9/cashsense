@@ -12,5 +12,7 @@ sealed interface WalletDialogEvent {
 
     data class UpdateCurrency(val currency: String) : WalletDialogEvent
 
+    data class UpdatePrimary(val isPrimary: Boolean) : WalletDialogEvent
+
     data object Save : WalletDialogEvent
 }

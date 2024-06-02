@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,19 +17,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -102,6 +108,21 @@ fun WalletDialog(
             CurrencyDropdownMenu(
                 currencyName = walletDialogState.currency,
                 onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.name)) },
+            )
+            CsListItem(
+                headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
+                leadingContent = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Star),
+                        contentDescription = null,
+                    )
+                },
+                trailingContent = {
+                    Switch(
+                        checked = walletDialogState.isPrimary,
+                        onCheckedChange = { onWalletDialogEvent(UpdatePrimary(it)) },
+                    )
+                }
             )
         }
         LaunchedEffect(Unit) {
