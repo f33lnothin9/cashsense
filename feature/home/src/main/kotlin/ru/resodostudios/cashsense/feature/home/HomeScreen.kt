@@ -100,7 +100,12 @@ internal fun HomeScreen(
                     verticalItemSpacing = 16.dp,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.testTag("home:wallets"),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 88.dp,
+                    ),
                 ) {
                     wallets(
                         walletsState = walletsState,
