@@ -163,7 +163,11 @@ private fun TagsSection(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier,
     ) {
-        if (isPrimary) {
+        AnimatedVisibility(
+            visible = isPrimary,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
             CsTag(
                 text = stringResource(walletDialogR.string.feature_wallet_dialog_primary),
                 iconId = CsIcons.Star,
