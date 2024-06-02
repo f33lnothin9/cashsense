@@ -14,6 +14,13 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
@@ -29,58 +36,62 @@ class WalletDialogViewModel @Inject constructor(
 
     fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
-            WalletDialogEvent.Save -> {
-                val wallet = Wallet(
-                    id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _walletDialogUiState.value.title,
-                    initialBalance = if (_walletDialogUiState.value.initialBalance.isEmpty()) {
-                        BigDecimal.ZERO
-                    } else {
-                        _walletDialogUiState.value.initialBalance.toBigDecimal()
-                    },
-                    currency = _walletDialogUiState.value.currency,
-                )
-                updatePrimaryWalletId()
-                viewModelScope.launch {
-                    walletsRepository.upsertWallet(wallet)
-                }
-                _walletDialogUiState.update {
-                    WalletDialogUiState()
-                }
-            }
+            Save -> saveWallet()
+            is UpdateId -> updateId(event.id)
+            is UpdateTitle -> updateTitle(event.title)
+            is UpdateInitialBalance -> updateInitialBalance(event.initialBalance)
+            is UpdateCurrentBalance -> updateCurrentBalance(event.currentBalance)
+            is UpdateCurrency -> updateCurrency(event.currency)
+            is UpdatePrimary -> updatePrimary(event.isPrimary)
+        }
+    }
 
-            is WalletDialogEvent.UpdateId -> {
-                _walletDialogUiState.update {
-                    it.copy(id = event.id)
-                }
-                loadWallet()
-            }
+    private fun saveWallet() {
+        val wallet = Wallet(
+            id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+            title = _walletDialogUiState.value.title,
+            initialBalance = if (_walletDialogUiState.value.initialBalance.isEmpty()) {
+                BigDecimal.ZERO
+            } else {
+                _walletDialogUiState.value.initialBalance.toBigDecimal()
+            },
+            currency = _walletDialogUiState.value.currency,
+        )
+        updatePrimaryWalletId()
+        upsertWallet(wallet)
+        _walletDialogUiState.update {
+            WalletDialogUiState()
+        }
+    }
 
-            is WalletDialogEvent.UpdateTitle -> {
-                _walletDialogUiState.update {
-                    it.copy(title = event.title)
-                }
-            }
+    private fun updateId(id: String) {
+        _walletDialogUiState.update {
+            it.copy(id = id)
+        }
+        loadWallet()
+    }
 
-            is WalletDialogEvent.UpdateInitialBalance -> {
-                _walletDialogUiState.update {
-                    it.copy(initialBalance = event.initialBalance)
-                }
-            }
+    private fun updateTitle(title: String) {
+        _walletDialogUiState.update {
+            it.copy(title = title)
+        }
+    }
 
-            is WalletDialogEvent.UpdateCurrentBalance -> {
-                _walletDialogUiState.update {
-                    it.copy(currentBalance = event.currentBalance)
-                }
-            }
+    private fun updateInitialBalance(initialBalance: String) {
+        _walletDialogUiState.update {
+            it.copy(initialBalance = initialBalance)
+        }
+    }
 
-            is WalletDialogEvent.UpdateCurrency -> {
-                _walletDialogUiState.update {
-                    it.copy(currency = event.currency)
-                }
-            }
+    private fun updateCurrentBalance(currentBalance: String) {
+        _walletDialogUiState.update {
+            it.copy(currentBalance = currentBalance)
+        }
+    }
 
-            is WalletDialogEvent.UpdatePrimary -> updatePrimary(event.isPrimary)
+    private fun updateCurrency(currency: String) {
+        _walletDialogUiState.update {
+            it.copy(currency = currency)
         }
     }
 
@@ -106,9 +117,17 @@ class WalletDialogViewModel @Inject constructor(
                     isLoading = false,
                 )
             }
-                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
+                .onStart {
+                    _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true)
+                }
                 .catch { _walletDialogUiState.value = WalletDialogUiState() }
                 .collect { _walletDialogUiState.value = it }
+        }
+    }
+
+    private fun upsertWallet(wallet: Wallet) {
+        viewModelScope.launch {
+            walletsRepository.upsertWallet(wallet)
         }
     }
 
