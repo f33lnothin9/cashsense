@@ -191,6 +191,7 @@ private fun TagsSection(
                 text = incomeAnimated
                     .toBigDecimal()
                     .formatAmount(currency),
+                color = MaterialTheme.colorScheme.tertiaryContainer,
                 iconId = CsIcons.TrendingUp,
             )
         }
