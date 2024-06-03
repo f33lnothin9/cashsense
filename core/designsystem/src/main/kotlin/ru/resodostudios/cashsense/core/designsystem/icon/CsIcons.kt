@@ -13,7 +13,7 @@ object CsIcons {
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
     val Settings = R.drawable.ic_outlined_settings
     val Transaction = R.drawable.ic_outlined_receipt_long
-    val Calendar = R.drawable.ic_outlined_event
+    val Calendar = R.drawable.ic_outlined_calendar
     val Delete = R.drawable.ic_outlined_delete
     val TrendingUp = R.drawable.ic_outlined_trending_up
     val TrendingDown = R.drawable.ic_outlined_trending_down

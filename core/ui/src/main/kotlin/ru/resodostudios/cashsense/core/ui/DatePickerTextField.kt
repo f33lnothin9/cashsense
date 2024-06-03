@@ -42,7 +42,7 @@ fun DatePickerTextField(
         onValueChange = {},
         readOnly = true,
         label = { Text(stringResource(labelTextId)) },
-        leadingIcon = {
+        trailingIcon = {
             IconButton(onClick = { openDialog = true }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(iconId),
