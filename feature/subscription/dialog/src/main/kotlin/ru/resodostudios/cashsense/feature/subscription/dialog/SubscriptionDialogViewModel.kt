@@ -20,7 +20,6 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
-import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingInterval.NONE
@@ -154,7 +153,7 @@ data class SubscriptionDialogUiState(
     val title: String = "",
     val amount: String = "",
     val paymentDate: Instant = Clock.System.now(),
-    val currency: String = Currency.USD.name,
+    val currency: String = "USD",
     val isReminderEnabled: Boolean = false,
     val repeatingInterval: RepeatingInterval = NONE,
     val isLoading: Boolean = false,

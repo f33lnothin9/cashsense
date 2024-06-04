@@ -15,7 +15,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.feature.transaction.FinancialType.EXPENSE
@@ -167,7 +166,7 @@ data class TransactionDialogUiState(
     val transactionId: String = "",
     val description: String = "",
     val amount: String = "",
-    val currency: String = Currency.USD.name,
+    val currency: String = "USD",
     val date: Instant = Clock.System.now(),
     val category: Category? = Category(),
     val financialType: FinancialType = EXPENSE,

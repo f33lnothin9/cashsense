@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.formatAmount
@@ -210,9 +209,9 @@ fun WalletCardPreview() {
             WalletCard(
                 wallet = Wallet(
                     id = "",
-                    title = "Main",
+                    title = "Debit",
                     initialBalance = BigDecimal(1499.99),
-                    currency = Currency.USD.name,
+                    currency = "USD",
                 ),
                 transactions = emptyList(),
                 onWalletClick = {},

@@ -588,7 +588,7 @@ private fun LazyListScope.transactions(
                 headlineContent = {
                     Text(
                         text = transactionCategory.transaction.amount.formatAmount(
-                            currency = currency,
+                            currencyCode = currency,
                             withPlus = true,
                         ),
                         maxLines = 1,

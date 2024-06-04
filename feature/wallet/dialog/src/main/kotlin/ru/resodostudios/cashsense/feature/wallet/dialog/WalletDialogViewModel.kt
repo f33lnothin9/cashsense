@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
@@ -148,7 +147,7 @@ data class WalletDialogUiState(
     val initialBalance: String = "",
     val currentBalance: String = "",
     val currentPrimaryWalletId: String = "",
-    val currency: String = Currency.USD.name,
+    val currency: String = "USD",
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
 )

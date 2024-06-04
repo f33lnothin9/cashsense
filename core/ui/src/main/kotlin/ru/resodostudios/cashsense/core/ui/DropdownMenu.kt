@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.ui
 
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -15,8 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import ru.resodostudios.cashsense.core.model.data.Currency
+import java.util.Currency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +23,8 @@ fun CurrencyDropdownMenu(
     onCurrencyClick: (Currency) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currencyList = Currency.entries
+    val currencies = Currency.getAvailableCurrencies()
+        .sortedBy { it.displayName }
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -39,9 +38,6 @@ fun CurrencyDropdownMenu(
             singleLine = true,
             value = currencyName,
             onValueChange = {},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-            ),
             label = { Text(stringResource(R.string.core_ui_currency)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
@@ -49,9 +45,10 @@ fun CurrencyDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            currencyList.forEach { selectionOption ->
+            currencies.forEach { selectionOption ->
+                val currencyText = "${selectionOption.symbol} - ${selectionOption.displayName}"
                 DropdownMenuItem(
-                    text = { Text(selectionOption.name) },
+                    text = { Text(currencyText) },
                     onClick = {
                         onCurrencyClick(selectionOption)
                         expanded = false

@@ -156,7 +156,7 @@ fun SubscriptionDialog(
                 currencyName = subscriptionDialogState.currency,
                 onCurrencyClick = {
                     onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdateCurrency(it.name)
+                        SubscriptionDialogEvent.UpdateCurrency(it.currencyCode)
                     )
                 },
                 modifier = Modifier

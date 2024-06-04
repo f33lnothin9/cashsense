@@ -26,7 +26,6 @@ import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.Currency
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.formatAmount
@@ -99,7 +98,7 @@ fun SubscriptionCardPreview() {
                     id = "",
                     title = "Spotify Premium",
                     amount = BigDecimal(399),
-                    currency = Currency.TRY.name,
+                    currency = "TRY",
                     paymentDate = Clock.System.now(),
                     reminder = null,
                 ),

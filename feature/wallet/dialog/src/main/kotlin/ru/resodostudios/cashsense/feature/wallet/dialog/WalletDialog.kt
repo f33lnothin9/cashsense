@@ -107,7 +107,7 @@ fun WalletDialog(
             )
             CurrencyDropdownMenu(
                 currencyName = walletDialogState.currency,
-                onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.name)) },
+                onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.currencyCode)) },
             )
             CsListItem(
                 headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
