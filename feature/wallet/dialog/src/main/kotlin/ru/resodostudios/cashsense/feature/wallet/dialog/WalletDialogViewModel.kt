@@ -56,6 +56,9 @@ class WalletDialogViewModel @Inject constructor(
             },
             currency = _walletDialogUiState.value.currency,
         )
+        _walletDialogUiState.update {
+            it.copy(id = wallet.id)
+        }
         updatePrimaryWalletId()
         upsertWallet(wallet)
         _walletDialogUiState.update {
@@ -116,9 +119,7 @@ class WalletDialogViewModel @Inject constructor(
                     isLoading = false,
                 )
             }
-                .onStart {
-                    _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true)
-                }
+                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
                 .catch { _walletDialogUiState.value = WalletDialogUiState() }
                 .collect { _walletDialogUiState.value = it }
         }
@@ -134,7 +135,7 @@ class WalletDialogViewModel @Inject constructor(
         viewModelScope.launch {
             if (_walletDialogUiState.value.isPrimary) {
                 userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
-            } else if (_walletDialogUiState.value.currentPrimaryWalletId == walletDialogUiState.value.id) {
+            } else if (_walletDialogUiState.value.currentPrimaryWalletId == _walletDialogUiState.value.id) {
                 userDataRepository.setPrimaryWalletId("")
             }
         }
