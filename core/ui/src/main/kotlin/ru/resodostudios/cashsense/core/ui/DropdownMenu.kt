@@ -4,6 +4,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -13,7 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import java.util.Currency
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +28,7 @@ fun CurrencyDropdownMenu(
     modifier: Modifier = Modifier,
 ) {
     val currencies = Currency.getAvailableCurrencies()
-        .sortedBy { it.displayName }
+        .sortedBy { it.currencyCode }
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -53,6 +57,14 @@ fun CurrencyDropdownMenu(
                         onCurrencyClick(selectionOption)
                         expanded = false
                     },
+                    leadingIcon = if (currencyName == selectionOption.currencyCode) {
+                        {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Check),
+                                contentDescription = null,
+                            )
+                        }
+                    } else null,
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
