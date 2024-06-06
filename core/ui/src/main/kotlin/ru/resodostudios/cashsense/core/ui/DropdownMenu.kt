@@ -39,7 +39,6 @@ fun CurrencyDropdownMenu(
         OutlinedTextField(
             modifier = modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             readOnly = true,
-            singleLine = true,
             value = currencyName,
             onValueChange = {},
             label = { Text(stringResource(R.string.core_ui_currency)) },

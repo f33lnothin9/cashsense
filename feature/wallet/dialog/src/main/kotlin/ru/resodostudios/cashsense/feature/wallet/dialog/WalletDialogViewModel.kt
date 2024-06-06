@@ -36,6 +36,7 @@ class WalletDialogViewModel @Inject constructor(
     fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
             Save -> saveWallet()
+            WalletDialogEvent.UpdatePrimaryWalletId -> updatePrimaryWalletId()
             is UpdateId -> updateId(event.id)
             is UpdateTitle -> updateTitle(event.title)
             is UpdateInitialBalance -> updateInitialBalance(event.initialBalance)
@@ -103,6 +104,16 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
+    private fun updatePrimaryWalletId() {
+        viewModelScope.launch {
+            if (_walletDialogUiState.value.isPrimary) {
+                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
+            } else if (_walletDialogUiState.value.currentPrimaryWalletId == _walletDialogUiState.value.id) {
+                userDataRepository.setPrimaryWalletId("")
+            }
+        }
+    }
+
     private fun loadWallet() {
         viewModelScope.launch {
             combine(
@@ -128,16 +139,6 @@ class WalletDialogViewModel @Inject constructor(
     private fun upsertWallet(wallet: Wallet) {
         viewModelScope.launch {
             walletsRepository.upsertWallet(wallet)
-        }
-    }
-
-    fun updatePrimaryWalletId() {
-        viewModelScope.launch {
-            if (_walletDialogUiState.value.isPrimary) {
-                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
-            } else if (_walletDialogUiState.value.currentPrimaryWalletId == _walletDialogUiState.value.id) {
-                userDataRepository.setPrimaryWalletId("")
-            }
         }
     }
 }

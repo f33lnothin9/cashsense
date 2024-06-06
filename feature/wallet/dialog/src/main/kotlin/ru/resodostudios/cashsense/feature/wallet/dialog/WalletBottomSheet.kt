@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -43,7 +44,6 @@ fun WalletBottomSheet(
         onEdit = onEdit,
         onDelete = onDelete,
         onWalletDialogEvent = viewModel::onWalletDialogEvent,
-        updatePrimaryWalletId = viewModel::updatePrimaryWalletId,
     )
 }
 
@@ -54,7 +54,6 @@ fun WalletBottomSheet(
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
-    updatePrimaryWalletId: () -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
         AnimatedVisibility(walletDialogState.isLoading) {
@@ -98,7 +97,7 @@ fun WalletBottomSheet(
                             checked = walletDialogState.isPrimary,
                             onCheckedChange = {
                                 onWalletDialogEvent(UpdatePrimary(it))
-                                updatePrimaryWalletId()
+                                onWalletDialogEvent(UpdatePrimaryWalletId)
                             },
                         )
                     }
