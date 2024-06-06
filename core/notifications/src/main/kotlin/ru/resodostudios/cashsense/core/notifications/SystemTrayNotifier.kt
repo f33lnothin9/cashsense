@@ -13,6 +13,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.core.app.ActivityCompat.checkSelfPermission
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.InboxStyle
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,6 +32,7 @@ import javax.inject.Singleton
 
 private const val TARGET_ACTIVITY_NAME = "ru.resodostudios.cashsense.MainActivity"
 private const val SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE = 0
+private const val SUBSCRIPTIONS_NOTIFICATION_SUMMARY_ID = 1
 private const val SUBSCRIPTIONS_NOTIFICATION_CHANNEL_ID = ""
 private const val SUBSCRIPTIONS_NOTIFICATION_GROUP = "SUBSCRIPTIONS_NOTIFICATIONS"
 const val DEEP_LINK_SCHEME_AND_HOST = "https://www.resodostudios.ru/cashsense"
@@ -60,14 +62,37 @@ internal class SystemTrayNotifier @Inject constructor(
                 .setGroup(SUBSCRIPTIONS_NOTIFICATION_GROUP)
                 .setAutoCancel(true)
         }
+        val summaryNotification = createSubscriptionNotification {
+            val title = getString(R.string.core_notifications_subscriptions_summary_title)
+            setContentTitle(title)
+                .setContentText(title)
+                .setSmallIcon(CsIcons.Payments)
+                .setStyle(subscriptionsNotificationStyle(subscription, title))
+                .setGroup(SUBSCRIPTIONS_NOTIFICATION_GROUP)
+                .setGroupSummary(true)
+                .setAutoCancel(true)
+                .build()
+        }
 
-        // Send the notification
+        // Send the notifications
         val notificationManager = NotificationManagerCompat.from(this)
         notificationManager.notify(
             subscription.id.hashCode(),
             subscriptionNotification,
         )
+        notificationManager.notify(SUBSCRIPTIONS_NOTIFICATION_SUMMARY_ID, summaryNotification)
     }
+
+    /**
+     * Creates an inbox style summary notification for subscriptions
+     */
+    private fun subscriptionsNotificationStyle(
+        subscription: Subscription,
+        title: String,
+    ): InboxStyle = InboxStyle()
+        .addLine(subscription.title)
+        .setBigContentTitle(title)
+        .setSummaryText(title)
 }
 
 /**
