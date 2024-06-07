@@ -571,7 +571,6 @@ private fun LazyListScope.transactions(
                     .toKotlinInstant()
                     .formatDate(),
                 modifier = Modifier
-                    .animateItem()
                     .padding(start = 16.dp, top = 16.dp),
             )
         }
