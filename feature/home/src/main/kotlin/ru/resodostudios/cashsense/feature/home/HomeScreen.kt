@@ -25,10 +25,13 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.wallet.detail.R as walletDetailR
@@ -46,7 +49,7 @@ fun HomeScreen(
 
     HomeScreen(
         walletsState = walletsState,
-        onWalletItemEvent = walletDialogViewModel::onWalletDialogEvent,
+        onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
         onShowSnackbar = onShowSnackbar,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
@@ -60,7 +63,7 @@ fun HomeScreen(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    onWalletItemEvent: (WalletDialogEvent) -> Unit,
+    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String?) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
@@ -111,16 +114,12 @@ internal fun HomeScreen(
                         walletsState = walletsState,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = {
-                            onTransactionEvent(TransactionDialogEvent.UpdateWalletId(it))
+                            onTransactionEvent(UpdateWalletId(it))
                             showTransactionDialog = true
                         },
                         onWalletMenuClick = { walletId, currentWalletBalance ->
-                            onWalletItemEvent(WalletDialogEvent.UpdateId(walletId))
-                            onWalletItemEvent(
-                                WalletDialogEvent.UpdateCurrentBalance(
-                                    currentWalletBalance
-                                )
-                            )
+                            onWalletDialogEvent(UpdateId(walletId))
+                            onWalletDialogEvent(UpdateCurrentBalance(currentWalletBalance))
                             showWalletBottomSheet = true
                         },
                         highlightSelectedWallet = highlightSelectedWallet,

@@ -73,6 +73,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.MathContext
@@ -208,9 +209,7 @@ internal fun WalletScreen(
                             if (showDetailActions) {
                                 IconButton(
                                     onClick = {
-                                        onWalletDialogEvent(
-                                            WalletDialogEvent.UpdateId(walletState.wallet.id)
-                                        )
+                                        onWalletDialogEvent(UpdateId(walletState.wallet.id))
                                         showWalletDialog = true
                                     },
                                 ) {

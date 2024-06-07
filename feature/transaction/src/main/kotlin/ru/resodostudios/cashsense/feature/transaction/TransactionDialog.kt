@@ -52,6 +52,12 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState
 import ru.resodostudios.cashsense.feature.category.list.CategoriesViewModel
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateFinancialType
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
 
@@ -88,7 +94,7 @@ fun TransactionDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Transaction,
         onConfirm = {
-            onTransactionEvent(TransactionDialogEvent.Save)
+            onTransactionEvent(Save)
             onDismiss()
         },
         isConfirmEnabled = transactionDialogState.amount.validateAmount().second,
@@ -109,11 +115,7 @@ fun TransactionDialog(
                 ) {
                     OutlinedTextField(
                         value = transactionDialogState.amount,
-                        onValueChange = {
-                            onTransactionEvent(
-                                TransactionDialogEvent.UpdateAmount(it.validateAmount().first)
-                            )
-                        },
+                        onValueChange = { onTransactionEvent(UpdateAmount(it.validateAmount().first)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Next,
@@ -134,19 +136,11 @@ fun TransactionDialog(
                     CategoryExposedDropdownMenuBox(
                         currentCategory = transactionDialogState.category,
                         categories = categoriesState.categories,
-                        onCategoryClick = {
-                            onTransactionEvent(
-                                TransactionDialogEvent.UpdateCategory(it)
-                            )
-                        },
+                        onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
                     )
                     OutlinedTextField(
                         value = transactionDialogState.description,
-                        onValueChange = {
-                            onTransactionEvent(
-                                TransactionDialogEvent.UpdateDescription(it)
-                            )
-                        },
+                        onValueChange = { onTransactionEvent(UpdateDescription(it)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done,
@@ -163,13 +157,7 @@ fun TransactionDialog(
                         iconId = CsIcons.Calendar,
                         modifier = Modifier.fillMaxWidth(),
                         initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
-                        onDateClick = {
-                            onTransactionEvent(
-                                TransactionDialogEvent.UpdateDate(
-                                    Instant.fromEpochMilliseconds(it)
-                                )
-                            )
-                        },
+                        onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
                     )
                 }
                 LaunchedEffect(Unit) {
@@ -204,11 +192,7 @@ private fun FinancialTypeChoiceRow(
                     index = index,
                     count = financialTypes.size,
                 ),
-                onClick = {
-                    onTransactionEvent(
-                        TransactionDialogEvent.UpdateFinancialType(FinancialType.entries[index])
-                    )
-                },
+                onClick = { onTransactionEvent(UpdateFinancialType(FinancialType.entries[index])) },
                 selected = transactionState.financialType == FinancialType.entries[index],
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.financialType == FinancialType.entries[index]) {

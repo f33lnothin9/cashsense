@@ -49,6 +49,13 @@ import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdatePaymentDate
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateReminderSwitch
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateRepeatingInterval
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateTitle
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -82,7 +89,7 @@ fun SubscriptionDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Subscriptions,
         onConfirm = {
-            onSubscriptionEvent(SubscriptionDialogEvent.Save)
+            onSubscriptionEvent(Save)
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
@@ -96,11 +103,7 @@ fun SubscriptionDialog(
         ) {
             OutlinedTextField(
                 value = subscriptionDialogState.title,
-                onValueChange = {
-                    onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdateTitle(it)
-                    )
-                },
+                onValueChange = { onSubscriptionEvent(UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
@@ -117,11 +120,7 @@ fun SubscriptionDialog(
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
-                onValueChange = {
-                    onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdateAmount(it.validateAmount().first)
-                    )
-                },
+                onValueChange = { onSubscriptionEvent(UpdateAmount(it.validateAmount().first)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
@@ -139,13 +138,7 @@ fun SubscriptionDialog(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = R.string.feature_subscription_dialog_payment_date,
                 iconId = CsIcons.Calendar,
-                onDateClick = {
-                    onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdatePaymentDate(
-                            Instant.fromEpochMilliseconds(it)
-                        )
-                    )
-                },
+                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -154,11 +147,7 @@ fun SubscriptionDialog(
             )
             CurrencyDropdownMenu(
                 currencyName = subscriptionDialogState.currency,
-                onCurrencyClick = {
-                    onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdateCurrency(it.currencyCode)
-                    )
-                },
+                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it.currencyCode)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -175,22 +164,14 @@ fun SubscriptionDialog(
                 trailingContent = {
                     Switch(
                         checked = subscriptionDialogState.isReminderEnabled,
-                        onCheckedChange = {
-                            onSubscriptionEvent(
-                                SubscriptionDialogEvent.UpdateReminderSwitch(it)
-                            )
-                        },
+                        onCheckedChange = { onSubscriptionEvent(UpdateReminderSwitch(it)) },
                     )
                 },
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
                     interval = subscriptionDialogState.repeatingInterval,
-                    onIntervalChange = {
-                        onSubscriptionEvent(
-                            SubscriptionDialogEvent.UpdateRepeatingInterval(it)
-                        )
-                    },
+                    onIntervalChange = { onSubscriptionEvent(UpdateRepeatingInterval(it)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),

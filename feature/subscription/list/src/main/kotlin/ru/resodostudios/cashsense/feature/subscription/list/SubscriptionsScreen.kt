@@ -24,6 +24,7 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent
+import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogViewModel
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
@@ -89,7 +90,7 @@ internal fun SubscriptionsScreen(
                         SubscriptionCard(
                             subscription = subscription,
                             onClick = { id ->
-                                onSubscriptionEvent(SubscriptionDialogEvent.UpdateId(id))
+                                onSubscriptionEvent(UpdateId(id))
                                 showSubscriptionBottomSheet = true
                             },
                             modifier = Modifier.animateItem(),

@@ -24,6 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.IconPickerDropdownMenu
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.Save
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateIcon
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateTitle
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -55,7 +58,7 @@ fun CategoryDialog(
         dismissButtonTextRes = uiR.string.core_ui_cancel,
         iconRes = CsIcons.Category,
         onConfirm = {
-            onCategoryEvent(CategoryDialogEvent.Save)
+            onCategoryEvent(Save)
             onDismiss()
         },
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
@@ -70,7 +73,7 @@ fun CategoryDialog(
         ) {
             OutlinedTextField(
                 value = categoryDialogState.title,
-                onValueChange = { onCategoryEvent(CategoryDialogEvent.UpdateTitle(it)) },
+                onValueChange = { onCategoryEvent(UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done,
@@ -82,7 +85,7 @@ fun CategoryDialog(
                 leadingIcon = {
                     IconPickerDropdownMenu(
                         currentIconId = categoryDialogState.icon,
-                        onSelectedIconClick = { onCategoryEvent(CategoryDialogEvent.UpdateIcon(it)) },
+                        onSelectedIconClick = { onCategoryEvent(UpdateIcon(it)) },
                         onClick = { focusManager.clearFocus() },
                     )
                 },
