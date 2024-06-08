@@ -8,15 +8,15 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.category.list.CategoriesScreen
 
 @Serializable
-data object CategoriesDestination
+data object CategoriesRoute
 
 fun NavController.navigateToCategories(navOptions: NavOptions) =
-    navigate(route = CategoriesDestination, navOptions)
+    navigate(route = CategoriesRoute, navOptions)
 
 fun NavGraphBuilder.categoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
-    composable<CategoriesDestination> {
+    composable<CategoriesRoute> {
         CategoriesScreen(onShowSnackbar)
     }
 }

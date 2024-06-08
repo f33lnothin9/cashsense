@@ -8,13 +8,13 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletScreen
 
 @Serializable
-data class WalletDestination(val id: String)
+data class WalletRoute(val id: String)
 
 fun NavController.navigateToWallet(
     walletId: String,
     navOptions: NavOptionsBuilder.() -> Unit = {},
 ) {
-    navigate(route = WalletDestination(walletId)) {
+    navigate(route = WalletRoute(walletId)) {
         navOptions()
     }
 }
@@ -24,7 +24,7 @@ fun NavGraphBuilder.walletScreen(
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
-    composable<WalletDestination> {
+    composable<WalletRoute> {
         WalletScreen(
             showDetailActions = showDetailActions,
             onBackClick = onBackClick,

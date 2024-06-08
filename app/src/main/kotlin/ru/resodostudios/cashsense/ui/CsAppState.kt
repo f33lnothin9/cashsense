@@ -17,11 +17,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
-import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesDestination
+import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
-import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
+import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsDestination
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
@@ -60,9 +60,9 @@ class CsAppState(
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() {
             with(currentDestination) {
-                if (this?.hasRoute<HomeDestination>() == true) return HOME
-                if (this?.hasRoute<CategoriesDestination>() == true) return CATEGORIES
-                if (this?.hasRoute<SubscriptionsDestination>() == true) return SUBSCRIPTIONS
+                if (this?.hasRoute<HomeRoute>() == true) return HOME
+                if (this?.hasRoute<CategoriesRoute>() == true) return CATEGORIES
+                if (this?.hasRoute<SubscriptionsRoute>() == true) return SUBSCRIPTIONS
             }
             return null
         }

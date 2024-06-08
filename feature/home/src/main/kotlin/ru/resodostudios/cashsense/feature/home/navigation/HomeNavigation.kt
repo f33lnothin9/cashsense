@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 const val WALLET_ID_KEY = "walletId"
 
 @Serializable
-data class HomeDestination(val initialWalletId: String? = null)
+data class HomeRoute(val initialWalletId: String? = null)
 
 fun NavController.navigateToHome(
     initialWalletId: String? = null,
     navOptions: NavOptions? = null,
-) = navigate(route = HomeDestination(initialWalletId), navOptions)
+) = navigate(route = HomeRoute(initialWalletId), navOptions)

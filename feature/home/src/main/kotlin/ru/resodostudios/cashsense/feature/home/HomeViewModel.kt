@@ -15,7 +15,7 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
-import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
+import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_KEY
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val homeDestination: HomeDestination = savedStateHandle.toRoute()
+    private val homeDestination: HomeRoute = savedStateHandle.toRoute()
 
     private val selectedWalletId = savedStateHandle.getStateFlow(
         key = WALLET_ID_KEY,

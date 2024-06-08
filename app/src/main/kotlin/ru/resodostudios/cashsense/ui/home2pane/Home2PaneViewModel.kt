@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
-import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
+import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_KEY
 import javax.inject.Inject
 
@@ -14,10 +14,11 @@ class Home2PaneViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val destination = savedStateHandle.toRoute<HomeDestination>()
+    private val route = savedStateHandle.toRoute<HomeRoute>()
+
     val selectedWalletId: StateFlow<String?> = savedStateHandle.getStateFlow(
         key = WALLET_ID_KEY,
-        initialValue = destination.initialWalletId,
+        initialValue = route.initialWalletId,
     )
 
     fun onWalletClick(walletId: String?) {

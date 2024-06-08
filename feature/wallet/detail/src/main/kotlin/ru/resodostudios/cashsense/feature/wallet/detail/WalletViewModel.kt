@@ -27,7 +27,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletDestination
+import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
 import java.time.temporal.WeekFields
 import javax.inject.Inject
@@ -39,7 +39,7 @@ class WalletViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val walletDestination: WalletDestination = savedStateHandle.toRoute()
+    private val walletRoute: WalletRoute = savedStateHandle.toRoute()
 
     private val shouldDisplayUndoTransactionState = MutableStateFlow(false)
     private val lastRemovedTransactionIdState = MutableStateFlow<String?>(null)
@@ -47,7 +47,7 @@ class WalletViewModel @Inject constructor(
     private val walletFilterState = MutableStateFlow(WalletFilterState())
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        walletsRepository.getWalletWithTransactions(walletDestination.id),
+        walletsRepository.getWalletWithTransactions(walletRoute.id),
         walletFilterState,
         shouldDisplayUndoTransactionState,
         lastRemovedTransactionIdState,

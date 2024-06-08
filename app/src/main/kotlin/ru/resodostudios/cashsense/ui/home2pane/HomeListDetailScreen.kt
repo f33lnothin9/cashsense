@@ -26,23 +26,23 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.feature.home.HomeScreen
-import ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
+import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.R
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletDestination
+import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import java.util.UUID
 
 @Serializable
-object WalletPlaceholderDestination
+internal object WalletPlaceholderDestination
 
 @Serializable
-object DetailPaneNavHostDestination
+internal object DetailPaneNavHostDestination
 
 fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
-    composable<HomeDestination> {
+    composable<HomeRoute> {
         HomeListDetailScreen(
             onShowSnackbar = onShowSnackbar,
         )
@@ -82,9 +82,9 @@ internal fun HomeListDetailScreen(
         listDetailNavigator.navigateBack()
     }
 
-    var nestedNavHostStartDestination by remember {
-        val destination = selectedWalletId?.let { WalletDestination(id = it) } ?: WalletPlaceholderDestination
-        mutableStateOf(destination)
+    var nestedNavHostStartRoute by remember {
+        val route = selectedWalletId?.let { WalletRoute(id = it) } ?: WalletPlaceholderDestination
+        mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
         stateSaver = Saver({ it.toString() }, UUID::fromString),
@@ -103,7 +103,7 @@ internal fun HomeListDetailScreen(
                     popUpTo<DetailPaneNavHostDestination>()
                 }
             } else {
-                nestedNavHostStartDestination = WalletDestination(id = walletId)
+                nestedNavHostStartRoute = WalletRoute(id = walletId)
                 nestedNavKey = UUID.randomUUID()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
@@ -129,7 +129,7 @@ internal fun HomeListDetailScreen(
                 key(nestedNavKey) {
                     NavHost(
                         navController = nestedNavController,
-                        startDestination = nestedNavHostStartDestination,
+                        startDestination = nestedNavHostStartRoute,
                         route = DetailPaneNavHostDestination::class,
                     ) {
                         walletScreen(
