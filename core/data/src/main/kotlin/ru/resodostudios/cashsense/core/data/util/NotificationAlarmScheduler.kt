@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import javax.inject.Inject
@@ -12,7 +13,7 @@ internal class NotificationAlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : AlarmScheduler {
 
-    private val alarmManager = context.getSystemService(AlarmManager::class.java)
+    private val alarmManager = context.getSystemService<AlarmManager>()
 
     private fun createPendingIntent(reminderId: Int): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
@@ -28,7 +29,7 @@ internal class NotificationAlarmScheduler @Inject constructor(
     }
 
     override fun schedule(reminder: Reminder) {
-        alarmManager.setInexactRepeating(
+        alarmManager?.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
             reminder.notificationDate?.toEpochMilliseconds() ?: 0L,
             reminder.repeatingInterval ?: 0,
@@ -37,7 +38,7 @@ internal class NotificationAlarmScheduler @Inject constructor(
     }
 
     override fun cancel(reminderId: Int) {
-        alarmManager.cancel(
+        alarmManager?.cancel(
             createPendingIntent(reminderId)
         )
     }
