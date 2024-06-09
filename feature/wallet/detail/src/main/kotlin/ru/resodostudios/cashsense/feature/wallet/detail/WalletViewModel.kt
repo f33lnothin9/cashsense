@@ -27,6 +27,13 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
 import java.time.temporal.WeekFields
@@ -129,37 +136,49 @@ class WalletViewModel @Inject constructor(
         } else transactionsCategories
     }
 
+    fun onWalletEvent(event: WalletEvent) {
+        when (event) {
+            is AddToSelectedCategories -> addToSelectedCategories(event.category)
+            is RemoveFromSelectedCategories -> removeFromSelectedCategories(event.category)
+            is UpdateFinanceType -> updateFinanceType(event.financeType)
+            is UpdateDateType -> updateDateType(event.dateType)
+            is HideTransaction -> hideTransaction(event.id)
+            ClearUndoState -> clearUndoState()
+            UndoTransactionRemoval -> undoTransactionRemoval()
+        }
+    }
+
     private fun deleteTransaction(id: String) {
         viewModelScope.launch {
             transactionsRepository.deleteTransaction(id)
         }
     }
 
-    fun addToSelectedCategories(category: Category) {
+    private fun addToSelectedCategories(category: Category) {
         walletFilterState.update {
-            it.copy(selectedCategories = it.selectedCategories.plus(category))
+            it.copy(selectedCategories = it.selectedCategories + category)
         }
     }
 
-    fun removeFromSelectedCategories(category: Category) {
+    private fun removeFromSelectedCategories(category: Category) {
         walletFilterState.update {
-            it.copy(selectedCategories = it.selectedCategories.minus(category))
+            it.copy(selectedCategories = it.selectedCategories - category)
         }
     }
 
-    fun updateFinanceType(financeType: FinanceSectionType) {
+    private fun updateFinanceType(financeType: FinanceSectionType) {
         walletFilterState.update {
             it.copy(financeType = financeType)
         }
     }
 
-    fun updateDateType(dateType: DateType) {
+    private fun updateDateType(dateType: DateType) {
         walletFilterState.update {
             it.copy(dateType = dateType)
         }
     }
 
-    fun hideTransaction(id: String) {
+    private fun hideTransaction(id: String) {
         if (lastRemovedTransactionIdState.value != null) {
             clearUndoState()
         }
@@ -167,12 +186,12 @@ class WalletViewModel @Inject constructor(
         lastRemovedTransactionIdState.value = id
     }
 
-    fun undoTransactionRemoval() {
+    private fun undoTransactionRemoval() {
         lastRemovedTransactionIdState.value = null
         shouldDisplayUndoTransactionState.value = false
     }
 
-    fun clearUndoState() {
+    private fun clearUndoState() {
         lastRemovedTransactionIdState.value?.let(::deleteTransaction)
         undoTransactionRemoval()
     }

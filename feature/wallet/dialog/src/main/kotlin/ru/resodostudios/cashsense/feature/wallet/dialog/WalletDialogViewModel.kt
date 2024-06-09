@@ -22,6 +22,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import java.math.BigDecimal
 import java.util.UUID
@@ -42,7 +43,7 @@ class WalletDialogViewModel @Inject constructor(
     fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
             Save -> saveWallet()
-            WalletDialogEvent.UpdatePrimaryWalletId -> updatePrimaryWalletId()
+            UpdatePrimaryWalletId -> updatePrimaryWalletId()
             is UpdateId -> updateId(event.id)
             is UpdateTitle -> updateTitle(event.title)
             is UpdateInitialBalance -> updateInitialBalance(event.initialBalance)
