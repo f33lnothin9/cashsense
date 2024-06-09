@@ -15,7 +15,9 @@ import ru.resodostudios.cashsense.core.data.repository.offline.OfflineTransactio
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
 import ru.resodostudios.cashsense.core.data.util.AlarmScheduler
+import ru.resodostudios.cashsense.core.data.util.DynamicShortcutManager
 import ru.resodostudios.cashsense.core.data.util.NotificationAlarmScheduler
+import ru.resodostudios.cashsense.core.data.util.ShortcutManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneBroadcastMonitor
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 
@@ -57,4 +59,9 @@ abstract class DataModule {
     internal abstract fun bindsNotificationAlarmScheduler(
         notificationAlarmScheduler: NotificationAlarmScheduler,
     ): AlarmScheduler
+
+    @Binds
+    internal abstract fun bindsShortcutManager(
+        shortcutManager: DynamicShortcutManager,
+    ): ShortcutManager
 }

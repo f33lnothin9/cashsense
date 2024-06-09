@@ -18,6 +18,7 @@ dependencies {
     api(projects.core.database)
     api(projects.core.datastore)
 
+    implementation(projects.core.designsystem)
     implementation(projects.core.notifications)
 
     implementation(libs.kotlinx.serialization.json)
