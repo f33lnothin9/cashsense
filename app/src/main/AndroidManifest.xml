@@ -28,12 +28,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <data
-                    android:host="www.resodostudios.ru"
-                    android:pathPrefix="/cashsense"
-                    android:scheme="https" />
-            </intent-filter>
         </activity>
 
         <meta-data
