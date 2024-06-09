@@ -23,15 +23,21 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import java.util.UUID
+
+private const val DEEP_LINK_SCHEME_AND_HOST = "cashsense://resodostudios.ru"
+private const val HOME_PATH = "home"
+private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH"
 
 @Serializable
 internal object WalletPlaceholderDestination
@@ -42,7 +48,11 @@ internal object DetailPaneNavHostDestination
 fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
-    composable<HomeRoute> {
+    composable<HomeRoute>(
+        deepLinks = listOf(
+            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/$WALLET_ID_KEY={$WALLET_ID_KEY}"),
+        ),
+    ) {
         HomeListDetailScreen(
             onShowSnackbar = onShowSnackbar,
         )
