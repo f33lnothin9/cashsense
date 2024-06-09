@@ -8,4 +8,5 @@
     <string name="feature_transaction_expense">Расход</string>
     <string name="feature_transaction_income">Доход</string>
     <string name="feature_transaction_deleted">Транзакция удалена</string>
+    <string name="feature_transaction_shortcut_long_label">Добавить новую транзакцию</string>
 </resources>

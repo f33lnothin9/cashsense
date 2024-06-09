@@ -115,7 +115,7 @@ class WalletDialogViewModel @Inject constructor(
             if (_walletDialogUiState.value.isPrimary) {
                 userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
                 val shortLabel = context.getString(transactionR.string.feature_transaction_new_transaction)
-                val longLabel = context.getString(transactionR.string.feature_transaction_new_transaction)
+                val longLabel = context.getString(transactionR.string.feature_transaction_shortcut_long_label)
                 shortcutManager.addTransactionShortcut(
                     walletId = _walletDialogUiState.value.id,
                     shortLabel = shortLabel,
