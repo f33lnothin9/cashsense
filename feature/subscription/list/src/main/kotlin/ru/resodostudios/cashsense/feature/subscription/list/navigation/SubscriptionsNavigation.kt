@@ -24,7 +24,7 @@ fun NavGraphBuilder.subscriptionsScreen(
     composable<SubscriptionsRoute>(
         deepLinks = listOf(
             navDeepLink<SubscriptionsRoute>(basePath = DEEP_LINK_BASE_PATH),
-        )
+        ),
     ) {
         SubscriptionsScreen(onShowSnackbar)
     }

@@ -1,8 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.data.util.ShortcutManager
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
@@ -23,11 +26,14 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
+import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
+    private val shortcutManager: ShortcutManager,
 ) : ViewModel() {
 
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
@@ -108,8 +114,16 @@ class WalletDialogViewModel @Inject constructor(
         viewModelScope.launch {
             if (_walletDialogUiState.value.isPrimary) {
                 userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
+                val shortLabel = context.getString(transactionR.string.feature_transaction_new_transaction)
+                val longLabel = context.getString(transactionR.string.feature_transaction_new_transaction)
+                shortcutManager.addTransactionShortcut(
+                    walletId = _walletDialogUiState.value.id,
+                    shortLabel = shortLabel,
+                    longLabel = longLabel,
+                )
             } else if (_walletDialogUiState.value.currentPrimaryWalletId == _walletDialogUiState.value.id) {
                 userDataRepository.setPrimaryWalletId("")
+                shortcutManager.removeShortcuts()
             }
         }
     }
