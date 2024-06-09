@@ -30,12 +30,12 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val TARGET_ACTIVITY_NAME = "ru.resodostudios.cashsense.MainActivity"
 private const val SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE = 0
 private const val SUBSCRIPTIONS_NOTIFICATION_SUMMARY_ID = 1
 private const val SUBSCRIPTIONS_NOTIFICATION_CHANNEL_ID = ""
 private const val SUBSCRIPTIONS_NOTIFICATION_GROUP = "SUBSCRIPTIONS_NOTIFICATIONS"
-const val DEEP_LINK_SCHEME_AND_HOST = "https://www.resodostudios.ru/cashsense"
+const val TARGET_ACTIVITY_NAME = "ru.resodostudios.cashsense.MainActivity"
+const val DEEP_LINK_SCHEME_AND_HOST = "cashsense://resodostudios.ru"
 const val SUBSCRIPTIONS_PATH = "subscriptions"
 
 /**
