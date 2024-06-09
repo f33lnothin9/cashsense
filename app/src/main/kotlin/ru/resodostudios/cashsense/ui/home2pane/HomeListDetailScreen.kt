@@ -41,10 +41,10 @@ private const val HOME_PATH = "home"
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH"
 
 @Serializable
-internal object WalletPlaceholderDestination
+internal object WalletPlaceholderRoute
 
 @Serializable
-internal object DetailPaneNavHostDestination
+internal object DetailPaneNavHostRoute
 
 fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
@@ -99,7 +99,7 @@ internal fun HomeListDetailScreen(
     }
 
     var nestedNavHostStartRoute by remember {
-        val route = selectedWalletId?.let { WalletRoute(id = it) } ?: WalletPlaceholderDestination
+        val route = selectedWalletId?.let { WalletRoute(id = it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
@@ -116,7 +116,7 @@ internal fun HomeListDetailScreen(
             onWalletClick(walletId)
             if (listDetailNavigator.isDetailPaneVisible()) {
                 nestedNavController.navigateToWallet(walletId) {
-                    popUpTo<DetailPaneNavHostDestination>()
+                    popUpTo<DetailPaneNavHostRoute>()
                 }
             } else {
                 nestedNavHostStartRoute = WalletRoute(id = walletId)
@@ -124,7 +124,7 @@ internal fun HomeListDetailScreen(
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         } else if (listDetailNavigator.isDetailPaneVisible()) {
-            nestedNavController.navigate(WalletPlaceholderDestination)
+            nestedNavController.navigate(WalletPlaceholderRoute)
         }
     }
 
@@ -146,7 +146,7 @@ internal fun HomeListDetailScreen(
                     NavHost(
                         navController = nestedNavController,
                         startDestination = nestedNavHostStartRoute,
-                        route = DetailPaneNavHostDestination::class,
+                        route = DetailPaneNavHostRoute::class,
                     ) {
                         walletScreen(
                             showDetailActions = !listDetailNavigator.isListPaneVisible(),
@@ -155,7 +155,7 @@ internal fun HomeListDetailScreen(
                             openTransactionDialog = openTransactionDialog,
                             onTransactionDialogDismiss = onTransactionDialogDismiss,
                         )
-                        composable<WalletPlaceholderDestination> {
+                        composable<WalletPlaceholderRoute> {
                             EmptyState(
                                 messageRes = R.string.feature_wallet_detail_select_wallet,
                                 animationRes = R.raw.anim_select_wallet,

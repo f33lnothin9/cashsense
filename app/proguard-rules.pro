@@ -3,7 +3,6 @@
 # is used.
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
--keep class ru.resodostudios.cashsense.ui.home2pane.WalletPlaceholderDestination
--keep class ru.resodostudios.cashsense.ui.home2pane.DetailPaneNavHostDestination
--keep class ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsDestination
--keep class ru.resodostudios.cashsense.feature.home.navigation.HomeDestination
+-keep class ru.resodostudios.cashsense.ui.home2pane.WalletPlaceholderRoute
+-keep class ru.resodostudios.cashsense.ui.home2pane.DetailPaneNavHostRoute
+-keep class ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
