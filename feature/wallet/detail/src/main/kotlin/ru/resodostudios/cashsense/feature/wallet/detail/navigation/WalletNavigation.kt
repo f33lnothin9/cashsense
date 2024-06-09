@@ -23,12 +23,16 @@ fun NavGraphBuilder.walletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    openTransactionDialog: Boolean,
+    onTransactionDialogDismiss: () -> Unit = {},
 ) {
     composable<WalletRoute> {
         WalletScreen(
             showDetailActions = showDetailActions,
             onBackClick = onBackClick,
             onShowSnackbar = onShowSnackbar,
+            openTransactionDialog = openTransactionDialog,
+            onTransactionDialogDismiss = onTransactionDialogDismiss,
         )
     }
 }

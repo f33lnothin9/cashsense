@@ -70,6 +70,9 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
@@ -86,6 +89,8 @@ internal fun WalletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    openTransactionDialog: Boolean,
+    onTransactionDialogDismiss: () -> Unit,
     walletViewModel: WalletViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
@@ -97,6 +102,8 @@ internal fun WalletScreen(
         showDetailActions = showDetailActions,
         onBackClick = onBackClick,
         onShowSnackbar = onShowSnackbar,
+        openTransactionDialog = openTransactionDialog,
+        onTransactionDialogDismiss = onTransactionDialogDismiss,
         onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
         addToSelectedCategories = walletViewModel::addToSelectedCategories,
@@ -116,6 +123,8 @@ internal fun WalletScreen(
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    openTransactionDialog: Boolean,
+    onTransactionDialogDismiss: () -> Unit,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     addToSelectedCategories: (Category) -> Unit,
@@ -156,6 +165,14 @@ internal fun WalletScreen(
                 clearUndoState()
             }
 
+            LaunchedEffect(openTransactionDialog) {
+                if (openTransactionDialog) {
+                    onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                    onTransactionEvent(UpdateTransactionId(""))
+                    showTransactionDialog = true
+                }
+            }
+
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
                     TopAppBar(
@@ -192,12 +209,8 @@ internal fun WalletScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    onTransactionEvent(
-                                        TransactionDialogEvent.UpdateWalletId(
-                                            walletState.wallet.id
-                                        )
-                                    )
-                                    onTransactionEvent(TransactionDialogEvent.UpdateId(""))
+                                    onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                                    onTransactionEvent(UpdateTransactionId(""))
                                     showTransactionDialog = true
                                 }
                             ) {
@@ -238,9 +251,9 @@ internal fun WalletScreen(
                         transactionsCategories = walletState.transactionsCategories,
                         currency = walletState.wallet.currency,
                         onTransactionClick = {
-                            onTransactionEvent(TransactionDialogEvent.UpdateWalletId(walletState.wallet.id))
-                            onTransactionEvent(TransactionDialogEvent.UpdateId(it))
-                            onTransactionEvent(TransactionDialogEvent.UpdateCurrency(walletState.wallet.currency))
+                            onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                            onTransactionEvent(UpdateTransactionId(it))
+                            onTransactionEvent(UpdateCurrency(walletState.wallet.currency))
                             showTransactionBottomSheet = true
                         },
                     )
@@ -266,7 +279,12 @@ internal fun WalletScreen(
                 )
             }
             if (showTransactionDialog) {
-                TransactionDialog(onDismiss = { showTransactionDialog = false })
+                TransactionDialog(
+                    onDismiss = {
+                        showTransactionDialog = false
+                        onTransactionDialogDismiss()
+                    }
+                )
             }
         }
     }

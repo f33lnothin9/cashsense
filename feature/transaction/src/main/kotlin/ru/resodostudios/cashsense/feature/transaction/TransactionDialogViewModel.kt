@@ -44,7 +44,7 @@ class TransactionDialogViewModel @Inject constructor(
                 }
             }
 
-            is TransactionDialogEvent.UpdateId -> {
+            is TransactionDialogEvent.UpdateTransactionId -> {
                 _transactionDialogUiState.update {
                     it.copy(transactionId = event.id)
                 }

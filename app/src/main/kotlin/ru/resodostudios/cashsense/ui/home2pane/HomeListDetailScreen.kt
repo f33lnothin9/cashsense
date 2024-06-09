@@ -28,6 +28,7 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.home.navigation.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
@@ -50,7 +51,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 ) {
     composable<HomeRoute>(
         deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/$WALLET_ID_KEY={$WALLET_ID_KEY}"),
+            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"),
         ),
     ) {
         HomeListDetailScreen(
@@ -65,10 +66,13 @@ internal fun HomeListDetailScreen(
     viewModel: Home2PaneViewModel = hiltViewModel(),
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
+    val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
+        openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
+        onTransactionDialogDismiss = viewModel::onTransactionDialogDismiss,
         onShowSnackbar = onShowSnackbar,
     )
 }
@@ -77,7 +81,9 @@ internal fun HomeListDetailScreen(
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
+    openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
+    onTransactionDialogDismiss: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator(
@@ -146,6 +152,8 @@ internal fun HomeListDetailScreen(
                             showDetailActions = !listDetailNavigator.isListPaneVisible(),
                             onBackClick = listDetailNavigator::navigateBack,
                             onShowSnackbar = onShowSnackbar,
+                            openTransactionDialog = openTransactionDialog,
+                            onTransactionDialogDismiss = onTransactionDialogDismiss,
                         )
                         composable<WalletPlaceholderDestination> {
                             EmptyState(

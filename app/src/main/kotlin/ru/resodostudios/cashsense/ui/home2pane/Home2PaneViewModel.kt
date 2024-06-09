@@ -6,6 +6,7 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.home.navigation.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_KEY
 import javax.inject.Inject
 
@@ -20,8 +21,16 @@ class Home2PaneViewModel @Inject constructor(
         key = WALLET_ID_KEY,
         initialValue = route.initialWalletId,
     )
+    val openTransactionDialog: StateFlow<Boolean> = savedStateHandle.getStateFlow(
+        key = OPEN_TRANSACTION_DIALOG_KEY,
+        initialValue = route.openTransactionDialog,
+    )
 
     fun onWalletClick(walletId: String?) {
         savedStateHandle[WALLET_ID_KEY] = walletId
+    }
+
+    fun onTransactionDialogDismiss() {
+        savedStateHandle[OPEN_TRANSACTION_DIALOG_KEY] = false
     }
 }

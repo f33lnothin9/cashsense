@@ -5,7 +5,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 
 sealed interface TransactionDialogEvent {
 
-    data class UpdateId(val id: String) : TransactionDialogEvent
+    data class UpdateTransactionId(val id: String) : TransactionDialogEvent
 
     data class UpdateWalletId(val id: String) : TransactionDialogEvent
 

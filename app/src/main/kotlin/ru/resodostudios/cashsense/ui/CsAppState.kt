@@ -87,7 +87,7 @@ class CsAppState(
             }
 
             when (topLevelDestination) {
-                HOME -> navController.navigateToHome(null, topLevelNavOptions)
+                HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
             }
