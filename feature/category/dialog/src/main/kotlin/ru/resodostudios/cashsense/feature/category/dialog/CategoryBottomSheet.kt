@@ -64,7 +64,7 @@ fun CategoryBottomSheet(
                         Icon(
                             imageVector = ImageVector.vectorResource(
                                 StoredIcon.asRes(
-                                    categoryDialogState.icon
+                                    categoryDialogState.iconId
                                 )
                             ),
                             contentDescription = null,

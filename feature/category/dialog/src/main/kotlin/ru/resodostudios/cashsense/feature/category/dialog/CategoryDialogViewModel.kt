@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.Save
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateIcon
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateTitle
 import java.util.UUID
 import javax.inject.Inject
 
@@ -25,38 +29,43 @@ class CategoryDialogViewModel @Inject constructor(
 
     fun onCategoryEvent(event: CategoryDialogEvent) {
         when (event) {
-            CategoryDialogEvent.Save -> {
-                val category = Category(
-                    id = _categoryDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
-                    title = _categoryDialogUiState.value.title,
-                    iconId = _categoryDialogUiState.value.icon,
-                )
-                viewModelScope.launch {
-                    categoriesRepository.upsertCategory(category)
-                }
-                _categoryDialogUiState.update {
-                    CategoryDialogUiState()
-                }
-            }
+            Save -> saveCategory()
+            is UpdateCategoryId -> updateCategoryId(event.id)
+            is UpdateTitle -> updateTitle(event.title)
+            is UpdateIcon -> updateIcon(event.iconId)
+        }
+    }
 
-            is CategoryDialogEvent.UpdateId -> {
-                _categoryDialogUiState.update {
-                    it.copy(id = event.id)
-                }
-                loadCategory()
-            }
+    private fun saveCategory() {
+        val category = Category(
+            id = _categoryDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+            title = _categoryDialogUiState.value.title,
+            iconId = _categoryDialogUiState.value.iconId,
+        )
+        viewModelScope.launch {
+            categoriesRepository.upsertCategory(category)
+        }
+        _categoryDialogUiState.update {
+            CategoryDialogUiState()
+        }
+    }
 
-            is CategoryDialogEvent.UpdateTitle -> {
-                _categoryDialogUiState.update {
-                    it.copy(title = event.title)
-                }
-            }
+    private fun updateCategoryId(id: String) {
+        _categoryDialogUiState.update {
+            it.copy(id = id)
+        }
+        loadCategory()
+    }
 
-            is CategoryDialogEvent.UpdateIcon -> {
-                _categoryDialogUiState.update {
-                    it.copy(icon = event.icon)
-                }
-            }
+    private fun updateTitle(title: String) {
+        _categoryDialogUiState.update {
+            it.copy(title = title)
+        }
+    }
+
+    private fun updateIcon(iconId: Int) {
+        _categoryDialogUiState.update {
+            it.copy(iconId = iconId)
         }
     }
 
@@ -70,7 +79,7 @@ class CategoryDialogViewModel @Inject constructor(
                     _categoryDialogUiState.value = CategoryDialogUiState(
                         id = it.id.toString(),
                         title = it.title.toString(),
-                        icon = it.iconId ?: 0,
+                        iconId = it.iconId ?: 0,
                     )
                 }
         }
@@ -80,6 +89,6 @@ class CategoryDialogViewModel @Inject constructor(
 data class CategoryDialogUiState(
     val id: String = "",
     val title: String = "",
-    val icon: Int = 0,
+    val iconId: Int = 0,
     val isLoading: Boolean = false,
 )

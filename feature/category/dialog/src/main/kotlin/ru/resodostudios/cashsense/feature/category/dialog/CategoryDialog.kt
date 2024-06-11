@@ -84,7 +84,7 @@ fun CategoryDialog(
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(
-                        currentIconId = categoryDialogState.icon,
+                        currentIconId = categoryDialogState.iconId,
                         onSelectedIconClick = { onCategoryEvent(UpdateIcon(it)) },
                         onClick = { focusManager.clearFocus() },
                     )

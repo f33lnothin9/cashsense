@@ -92,7 +92,7 @@ internal fun CategoriesScreen(
                     categories(
                         categoriesState = categoriesState,
                         onCategoryClick = {
-                            onCategoryEvent(CategoryDialogEvent.UpdateId(it))
+                            onCategoryEvent(CategoryDialogEvent.UpdateCategoryId(it))
                             showCategoryBottomSheet = true
                         },
                     )
