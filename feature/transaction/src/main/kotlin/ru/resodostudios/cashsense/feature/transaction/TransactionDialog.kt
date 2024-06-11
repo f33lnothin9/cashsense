@@ -51,13 +51,15 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState
+import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Loading
+import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Success
 import ru.resodostudios.cashsense.feature.category.list.CategoriesViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateFinancialType
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
 
@@ -101,12 +103,12 @@ fun TransactionDialog(
         onDismiss = onDismiss,
     ) {
         when (categoriesState) {
-            CategoriesUiState.Loading -> LoadingState(
+            Loading -> LoadingState(
                 Modifier
                     .height(200.dp)
                     .fillMaxWidth()
             )
-            is CategoriesUiState.Success -> {
+            is Success -> {
                 val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
                 Column(
@@ -192,10 +194,10 @@ private fun FinancialTypeChoiceRow(
                     index = index,
                     count = financialTypes.size,
                 ),
-                onClick = { onTransactionEvent(UpdateFinancialType(FinancialType.entries[index])) },
-                selected = transactionState.financialType == FinancialType.entries[index],
+                onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[index])) },
+                selected = transactionState.transactionType == TransactionType.entries[index],
                 icon = {
-                    SegmentedButtonDefaults.Icon(active = transactionState.financialType == FinancialType.entries[index]) {
+                    SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
                             imageVector = ImageVector.vectorResource(financialIcons[index]),
                             contentDescription = null,
