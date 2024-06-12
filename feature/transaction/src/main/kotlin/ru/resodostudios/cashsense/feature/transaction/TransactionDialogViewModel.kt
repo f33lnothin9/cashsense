@@ -75,25 +75,17 @@ class TransactionDialogViewModel @Inject constructor(
             },
             timestamp = _transactionDialogUiState.value.date,
         )
-        val transactionCategoryCrossRef = _transactionDialogUiState.value.category?.id?.let {
+        val transactionCategoryCrossRef = _transactionDialogUiState.value.category?.id?.let { categoryId ->
             TransactionCategoryCrossRef(
                 transactionId = transaction.id,
-                categoryId = it,
+                categoryId = categoryId,
             )
         }
         viewModelScope.launch {
-            launch {
-                transactionsRepository.upsertTransaction(transaction)
-            }.join()
-            launch {
-                transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
-            }.join()
+            transactionsRepository.upsertTransaction(transaction)
+            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
             if (transactionCategoryCrossRef != null) {
-                launch {
-                    transactionsRepository.upsertTransactionCategoryCrossRef(
-                        transactionCategoryCrossRef
-                    )
-                }
+                transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
         }
         _transactionDialogUiState.value = TransactionDialogUiState()
