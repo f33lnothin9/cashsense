@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.category.dialog
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,14 +48,14 @@ fun CategoryBottomSheet(
     onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
-        AnimatedVisibility(categoryDialogState.isLoading) {
+        if (categoryDialogState.isLoading) {
             LoadingState(
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth(),
             )
         }
-        AnimatedVisibility(!categoryDialogState.isLoading) {
+        if (!categoryDialogState.isLoading) {
             Column {
                 CsListItem(
                     headlineContent = { Text(categoryDialogState.title) },

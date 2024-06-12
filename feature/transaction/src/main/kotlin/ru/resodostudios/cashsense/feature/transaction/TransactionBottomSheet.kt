@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -57,14 +56,14 @@ fun TransactionBottomSheet(
     onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss = onDismiss) {
-        AnimatedVisibility(transactionDialogState.isLoading) {
+        if (transactionDialogState.isLoading) {
             LoadingState(
                 Modifier
                     .height(100.dp)
                     .fillMaxWidth()
             )
         }
-        AnimatedVisibility(!transactionDialogState.isLoading) {
+        if (!transactionDialogState.isLoading) {
             Column {
                 CsListItem(
                     headlineContent = {

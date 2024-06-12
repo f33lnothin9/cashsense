@@ -55,14 +55,14 @@ fun SubscriptionBottomSheet(
     onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
-        AnimatedVisibility(subscriptionDialogState.isLoading) {
+        if (subscriptionDialogState.isLoading) {
             LoadingState(
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth(),
             )
         }
-        AnimatedVisibility(!subscriptionDialogState.isLoading) {
+        if (!subscriptionDialogState.isLoading) {
             Column {
                 CsListItem(
                     headlineContent = { Text(subscriptionDialogState.title) },

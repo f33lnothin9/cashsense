@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,14 +55,14 @@ fun WalletBottomSheet(
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
-        AnimatedVisibility(walletDialogState.isLoading) {
+        if (walletDialogState.isLoading) {
             LoadingState(
                 modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth(),
             )
         }
-        AnimatedVisibility(!walletDialogState.isLoading) {
+        if (!walletDialogState.isLoading) {
             Column {
                 CsListItem(
                     headlineContent = { Text(walletDialogState.title) },
