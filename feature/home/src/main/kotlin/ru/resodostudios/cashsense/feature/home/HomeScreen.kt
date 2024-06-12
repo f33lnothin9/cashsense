@@ -172,11 +172,7 @@ private fun LazyStaggeredGridScope.wallets(
                 contentType = { "wallet" },
             ) { walletPopulated ->
                 val isSelected = highlightSelectedWallet && walletPopulated.wallet.id == walletsState.selectedWalletId
-                var isPrimary by rememberSaveable {
-                    mutableStateOf(walletPopulated.wallet.id == walletsState.primaryWalletId)
-                }
-
-                isPrimary = walletPopulated.wallet.id == walletsState.primaryWalletId
+                val isPrimary = walletPopulated.wallet.id == walletsState.primaryWalletId
 
                 WalletCard(
                     wallet = walletPopulated.wallet,

@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(
 
     private val selectedWalletId = savedStateHandle.getStateFlow(
         key = WALLET_ID_KEY,
-        initialValue = homeDestination.initialWalletId,
+        initialValue = homeDestination.walletId,
     )
 
     private val shouldDisplayUndoWalletState = MutableStateFlow(false)

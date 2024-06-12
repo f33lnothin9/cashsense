@@ -19,7 +19,7 @@ class Home2PaneViewModel @Inject constructor(
 
     val selectedWalletId: StateFlow<String?> = savedStateHandle.getStateFlow(
         key = WALLET_ID_KEY,
-        initialValue = route.initialWalletId,
+        initialValue = route.walletId,
     )
     val openTransactionDialog: StateFlow<Boolean> = savedStateHandle.getStateFlow(
         key = OPEN_TRANSACTION_DIALOG_KEY,

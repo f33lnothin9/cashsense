@@ -9,15 +9,15 @@ const val OPEN_TRANSACTION_DIALOG_KEY = "openTransactionDialog"
 
 @Serializable
 data class HomeRoute(
-    val initialWalletId: String? = null,
+    val walletId: String? = null,
     val openTransactionDialog: Boolean = false,
 )
 
 fun NavController.navigateToHome(
-    initialWalletId: String? = null,
+    walletId: String? = null,
     openTransactionDialog: Boolean = false,
     navOptions: NavOptions? = null,
 ) = navigate(
-    route = HomeRoute(initialWalletId, openTransactionDialog),
+    route = HomeRoute(walletId, openTransactionDialog),
     navOptions = navOptions,
 )

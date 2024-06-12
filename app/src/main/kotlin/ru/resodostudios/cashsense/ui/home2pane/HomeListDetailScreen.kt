@@ -51,7 +51,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 ) {
     composable<HomeRoute>(
         deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"),
+            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/$WALLET_ID_KEY={$WALLET_ID_KEY}/$OPEN_TRANSACTION_DIALOG_KEY={$OPEN_TRANSACTION_DIALOG_KEY}"),
         ),
     ) {
         HomeListDetailScreen(
@@ -99,7 +99,7 @@ internal fun HomeListDetailScreen(
     }
 
     var nestedNavHostStartRoute by remember {
-        val route = selectedWalletId?.let { WalletRoute(id = it) } ?: WalletPlaceholderRoute
+        val route = selectedWalletId?.let { WalletRoute(walletId = it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
@@ -119,7 +119,7 @@ internal fun HomeListDetailScreen(
                     popUpTo<DetailPaneNavHostRoute>()
                 }
             } else {
-                nestedNavHostStartRoute = WalletRoute(id = walletId)
+                nestedNavHostStartRoute = WalletRoute(walletId = walletId)
                 nestedNavKey = UUID.randomUUID()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)

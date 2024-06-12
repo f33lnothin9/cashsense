@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletScreen
 
 @Serializable
-data class WalletRoute(val id: String)
+data class WalletRoute(val walletId: String)
 
 fun NavController.navigateToWallet(
     walletId: String,
