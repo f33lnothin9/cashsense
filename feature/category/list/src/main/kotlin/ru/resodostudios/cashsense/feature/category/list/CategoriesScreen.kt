@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.category.list
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -15,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,7 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryBottomSheet
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent
+import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogViewModel
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Success
@@ -37,6 +40,7 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 @Composable
 internal fun CategoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    modifier: Modifier = Modifier,
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
     categoryDialogViewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
@@ -45,6 +49,7 @@ internal fun CategoriesScreen(
     CategoriesScreen(
         categoriesState = categoriesState,
         onShowSnackbar = onShowSnackbar,
+        modifier = modifier,
         onCategoryEvent = categoryDialogViewModel::onCategoryEvent,
         hideCategory = categoriesViewModel::hideCategory,
         undoCategoryRemoval = categoriesViewModel::undoCategoryRemoval,
@@ -57,15 +62,13 @@ internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
+    modifier: Modifier = Modifier,
     hideCategory: (String) -> Unit = {},
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
-    var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
-
     when (categoriesState) {
-        Loading -> LoadingState(Modifier.fillMaxSize())
+        Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
             val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
@@ -85,18 +88,15 @@ internal fun CategoriesScreen(
             }
 
             if (categoriesState.categories.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    categories(
-                        categoriesState = categoriesState,
-                        onCategoryClick = {
-                            onCategoryEvent(CategoryDialogEvent.UpdateCategoryId(it))
-                            showCategoryBottomSheet = true
-                        },
-                    )
-                }
+                var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
+                var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
+
+                CategoriesGrid(
+                    categoriesState = categoriesState,
+                    onCategoryEvent = onCategoryEvent,
+                    onShowCategoryBottomSheetChange = { showCategoryBottomSheet = true },
+                    modifier = modifier,
+                )
                 if (showCategoryBottomSheet) {
                     CategoryBottomSheet(
                         onDismiss = { showCategoryBottomSheet = false },
@@ -111,9 +111,36 @@ internal fun CategoriesScreen(
                 EmptyState(
                     messageRes = R.string.feature_category_list_empty,
                     animationRes = R.raw.anim_categories_empty,
+                    modifier = modifier,
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun CategoriesGrid(
+    categoriesState: CategoriesUiState,
+    onCategoryEvent: (CategoryDialogEvent) -> Unit,
+    onShowCategoryBottomSheetChange: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(300.dp),
+        contentPadding = PaddingValues(
+            bottom = 88.dp,
+        ),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("categories:list"),
+    ) {
+        categories(
+            categoriesState = categoriesState,
+            onCategoryClick = {
+                onCategoryEvent(UpdateCategoryId(it))
+                onShowCategoryBottomSheetChange()
+            },
+        )
     }
 }
 
