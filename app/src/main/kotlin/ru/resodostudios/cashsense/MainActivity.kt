@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -79,10 +78,6 @@ class MainActivity : ComponentActivity() {
                     ) { darkTheme },
                 )
                 onDispose {}
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                window.isNavigationBarContrastEnforced = false
             }
 
             val appState = rememberCsAppState(

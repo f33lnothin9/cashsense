@@ -17,14 +17,17 @@ fun CsModalBottomSheet(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+        skipPartiallyExpanded = true,
     )
 
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = sheetState,
     ) {
-        Column(Modifier.verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+        ) {
             content()
         }
     }

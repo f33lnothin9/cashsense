@@ -69,6 +69,7 @@ fun SettingsBottomSheet(
                     .height(100.dp)
                     .fillMaxWidth(),
             )
+
             is Success -> {
                 Text(
                     text = stringResource(R.string.feature_settings_title),
