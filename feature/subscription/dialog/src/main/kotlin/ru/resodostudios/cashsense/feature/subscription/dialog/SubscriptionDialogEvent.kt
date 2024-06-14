@@ -16,7 +16,7 @@ sealed interface SubscriptionDialogEvent {
 
     data class UpdateReminderSwitch(val isReminderActive: Boolean) : SubscriptionDialogEvent
 
-    data class UpdateRepeatingInterval(val repeatingInterval: RepeatingInterval) : SubscriptionDialogEvent
+    data class UpdateRepeatingInterval(val repeatingInterval: RepeatingIntervalType) : SubscriptionDialogEvent
 
     data object Save : SubscriptionDialogEvent
 }

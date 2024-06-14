@@ -43,6 +43,7 @@ object CsIcons {
     val Monitoring = R.drawable.ic_outlined_monitoring
     val MusicNote = R.drawable.ic_outlined_music_note
     val Notifications = R.drawable.ic_outlined_notifications
+    val NotificationsActive = R.drawable.ic_outlined_notifications_active
     val Payments = R.drawable.ic_outlined_payments
     val Pets = R.drawable.ic_outlined_pets
     val Phishing = R.drawable.ic_outlined_phishing

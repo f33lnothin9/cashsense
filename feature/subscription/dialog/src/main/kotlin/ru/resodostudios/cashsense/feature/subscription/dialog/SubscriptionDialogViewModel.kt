@@ -22,7 +22,7 @@ import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingInterval.NONE
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.NONE
 import java.util.UUID
 import javax.inject.Inject
 
@@ -129,18 +129,18 @@ class SubscriptionDialogViewModel @Inject constructor(
                         paymentDate = it.paymentDate,
                         currency = it.currency,
                         isReminderEnabled = it.reminder != null,
-                        repeatingInterval = getRepeatingIntervalEnum(it.reminder?.repeatingInterval ?: 0),
+                        repeatingInterval = getRepeatingIntervalType(it.reminder?.repeatingInterval ?: 0),
                         isLoading = false,
                     )
                 }
         }
     }
-
-    private fun getRepeatingIntervalEnum(repeatingInterval: Long): RepeatingInterval =
-        RepeatingInterval.entries.firstOrNull { it.period == repeatingInterval } ?: NONE
 }
 
-enum class RepeatingInterval(val period: Long) {
+fun getRepeatingIntervalType(repeatingInterval: Long): RepeatingIntervalType =
+    RepeatingIntervalType.entries.firstOrNull { it.period == repeatingInterval } ?: NONE
+
+enum class RepeatingIntervalType(val period: Long) {
     NONE(0L),
     DAILY(INTERVAL_DAY),
     WEEKLY(7 * INTERVAL_DAY),
@@ -155,6 +155,6 @@ data class SubscriptionDialogUiState(
     val paymentDate: Instant = Clock.System.now(),
     val currency: String = "USD",
     val isReminderEnabled: Boolean = false,
-    val repeatingInterval: RepeatingInterval = NONE,
+    val repeatingInterval: RepeatingIntervalType = NONE,
     val isLoading: Boolean = false,
 )

@@ -27,6 +27,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.DAILY
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.WEEKLY
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -81,10 +85,19 @@ fun SubscriptionBottomSheet(
                         text = subscriptionDialogState.paymentDate.formatDate(DATE),
                         iconId = CsIcons.Calendar,
                     )
-                    AnimatedVisibility(visible = subscriptionDialogState.isReminderEnabled) {
+                    AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
+                        val repeatingIntervalType =
+                            getRepeatingIntervalType(subscriptionDialogState.repeatingInterval.period)
+                        val reminderTitle = when (repeatingIntervalType) {
+                            DAILY -> stringResource(R.string.feature_subscription_dialog_repeat_daily)
+                            WEEKLY -> stringResource(R.string.feature_subscription_dialog_repeat_weekly)
+                            MONTHLY -> stringResource(R.string.feature_subscription_dialog_repeat_monthly)
+                            YEARLY -> stringResource(R.string.feature_subscription_dialog_repeat_yearly)
+                            else -> stringResource(R.string.feature_subscription_dialog_reminder)
+                        }
                         CsTag(
-                            text = stringResource(R.string.feature_subscription_dialog_reminder),
-                            iconId = CsIcons.Check,
+                            text = reminderTitle,
+                            iconId = CsIcons.NotificationsActive,
                         )
                     }
                 }

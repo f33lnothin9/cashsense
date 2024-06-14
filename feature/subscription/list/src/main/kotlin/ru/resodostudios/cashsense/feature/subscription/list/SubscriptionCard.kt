@@ -31,6 +31,11 @@ import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.subscription.dialog.R
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.DAILY
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.WEEKLY
+import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.YEARLY
+import ru.resodostudios.cashsense.feature.subscription.dialog.getRepeatingIntervalType
 import java.math.BigDecimal
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -78,9 +83,19 @@ fun SubscriptionCard(
                     enter = fadeIn() + scaleIn(),
                     exit = fadeOut() + scaleOut(),
                 ) {
+                    val repeatingIntervalType = subscription.reminder?.repeatingInterval?.let {
+                        getRepeatingIntervalType(it)
+                    }
+                    val reminderTitle = when (repeatingIntervalType) {
+                        DAILY -> stringResource(R.string.feature_subscription_dialog_repeat_daily)
+                        WEEKLY -> stringResource(R.string.feature_subscription_dialog_repeat_weekly)
+                        MONTHLY -> stringResource(R.string.feature_subscription_dialog_repeat_monthly)
+                        YEARLY -> stringResource(R.string.feature_subscription_dialog_repeat_yearly)
+                        else -> stringResource(R.string.feature_subscription_dialog_reminder)
+                    }
                     CsTag(
-                        text = stringResource(R.string.feature_subscription_dialog_reminder),
-                        iconId = CsIcons.Check,
+                        text = reminderTitle,
+                        iconId = CsIcons.NotificationsActive,
                     )
                 }
             }

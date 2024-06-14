@@ -191,8 +191,8 @@ fun SubscriptionDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepeatingIntervalDropdownMenu(
-    interval: RepeatingInterval,
-    onIntervalChange: (RepeatingInterval) -> Unit,
+    interval: RepeatingIntervalType,
+    onIntervalChange: (RepeatingIntervalType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val intervalNames = listOf(
@@ -229,7 +229,7 @@ fun RepeatingIntervalDropdownMenu(
                 DropdownMenuItem(
                     text = { Text(label) },
                     onClick = {
-                        onIntervalChange(RepeatingInterval.entries[index])
+                        onIntervalChange(RepeatingIntervalType.entries[index])
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
