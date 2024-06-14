@@ -1,7 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -75,13 +76,14 @@ fun WalletDialog(
         val (titleTextField, initialBalanceTextField) = remember { FocusRequester.createRefs() }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.verticalScroll(rememberScrollState()),
         ) {
             OutlinedTextField(
                 value = walletDialogState.title,
                 onValueChange = { onWalletDialogEvent(UpdateTitle(it)) },
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
                     .focusRequester(titleTextField)
                     .focusProperties { next = initialBalanceTextField },
                 label = { Text(stringResource(uiR.string.title)) },
@@ -96,7 +98,10 @@ fun WalletDialog(
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
                 onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.validateAmount().first)) },
-                modifier = Modifier.focusRequester(initialBalanceTextField),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .focusRequester(initialBalanceTextField),
                 label = { Text(stringResource(R.string.feature_wallet_dialog_initial_balance)) },
                 placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(
@@ -108,6 +113,9 @@ fun WalletDialog(
             CurrencyDropdownMenu(
                 currencyName = walletDialogState.currency,
                 onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.currencyCode)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
             )
             CsListItem(
                 headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
