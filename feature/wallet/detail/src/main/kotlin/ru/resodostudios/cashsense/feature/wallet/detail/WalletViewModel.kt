@@ -34,6 +34,8 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSe
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
 import java.time.temporal.WeekFields
@@ -59,15 +61,12 @@ class WalletViewModel @Inject constructor(
         shouldDisplayUndoTransactionState,
         lastRemovedTransactionIdState,
     ) { walletTransactionsCategories, walletFilter, shouldDisplayUndoTransaction, lastRemovedTransactionId ->
-        val wallet = walletTransactionsCategories.wallet
-        val transactionsCategories = walletTransactionsCategories.transactionsWithCategories
-
-        val currentBalance = wallet.initialBalance.plus(
-            transactionsCategories.sumOf { it.transaction.amount }
+        val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
+            walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount }
         )
-        val sortedTransactions =
-            transactionsCategories.sortedByDescending { it.transaction.timestamp }
-        val filteredTransactionsCategories = when (walletFilter.financeType) {
+        val sortedTransactions = walletTransactionsCategories.transactionsWithCategories
+            .sortedByDescending { it.transaction.timestamp }
+        val financeTypeTransactions = when (walletFilter.financeType) {
             NONE -> sortedTransactions
             EXPENSES -> calculateTransactionsCategories(
                 sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
@@ -77,39 +76,40 @@ class WalletViewModel @Inject constructor(
                 sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
             )
         }
-            .run {
-                when (walletFilter.dateType) {
-                    ALL -> this
-                    WEEK -> filter {
-                        it.transaction.timestamp
-                            .getZonedDateTime()
-                            .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
-                                getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
-                    }
-
-                    MONTH -> filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
-                    YEAR -> filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
-                }
-
+        val dateTypeTransactions = when (walletFilter.dateType) {
+            ALL -> financeTypeTransactions
+            WEEK -> financeTypeTransactions.filter {
+                it.transaction.timestamp
+                    .getZonedDateTime()
+                    .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
+                        getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
             }
+
+            MONTH -> financeTypeTransactions
+                .filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
+
+            YEAR -> financeTypeTransactions
+                .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+        }
+        val filteredTransactionsCategories = dateTypeTransactions
             .filterNot { it.transaction.id == lastRemovedTransactionId }
 
-        WalletUiState.Success(
+        Success(
             currentBalance = currentBalance,
             availableCategories = walletFilter.availableCategories.minus(Category()),
             selectedCategories = walletFilter.selectedCategories,
             financeSectionType = walletFilter.financeType,
             dateType = walletFilter.dateType,
-            wallet = wallet,
+            wallet = walletTransactionsCategories.wallet,
             transactionsCategories = filteredTransactionsCategories,
             shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
         )
     }
-        .catch { WalletUiState.Loading }
+        .catch { Loading }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = WalletUiState.Loading,
+            initialValue = Loading,
         )
 
     private fun calculateTransactionsCategories(transactionsCategories: List<TransactionWithCategory>): List<TransactionWithCategory> {
@@ -123,9 +123,7 @@ class WalletViewModel @Inject constructor(
             }
         return if (walletFilterState.value.selectedCategories.isNotEmpty()) {
             transactionsCategories
-                .filter {
-                    walletFilterState.value.selectedCategories.contains(it.category)
-                }
+                .filter { walletFilterState.value.selectedCategories.contains(it.category) }
                 .apply {
                     if (this.isEmpty()) {
                         walletFilterState.update {
