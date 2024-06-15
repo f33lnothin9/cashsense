@@ -209,7 +209,9 @@ internal fun WalletScreen(
                         EmptyState(
                             messageRes = transactionR.string.feature_transaction_transactions_empty,
                             animationRes = transactionR.raw.anim_transactions_empty,
-                            modifier = Modifier.fillParentMaxHeight(0.7f),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(32.dp),
                         )
                     }
                 }
