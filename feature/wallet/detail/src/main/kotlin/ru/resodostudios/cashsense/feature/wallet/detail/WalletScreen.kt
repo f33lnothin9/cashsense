@@ -3,6 +3,10 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -312,6 +316,7 @@ private fun WalletTopBar(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun FinancePanel(
     walletState: WalletUiState,
@@ -353,67 +358,73 @@ private fun FinancePanel(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                AnimatedContent(
-                    targetState = walletState.financeSectionType,
-                    label = "FinancePanel",
-                ) { financeType ->
-                    when (financeType) {
-                        NONE -> {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                FinanceCard(
+                SharedTransitionLayout {
+                    AnimatedContent(
+                        targetState = walletState.financeSectionType,
+                        label = "FinancePanel",
+                    ) { financeType ->
+                        when (financeType) {
+                            NONE -> {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                ) {
+                                    FinanceCard(
+                                        title = expensesAnimated
+                                            .toBigDecimal()
+                                            .formatAmount(walletState.wallet.currency),
+                                        supportingTextId = R.string.feature_wallet_detail_expenses,
+                                        indicatorProgress = expensesProgress,
+                                        modifier = Modifier.weight(1f),
+                                        onClick = { onWalletEvent(UpdateFinanceType(EXPENSES)) },
+                                        enabled = expenses != BigDecimal.ZERO,
+                                        animatedVisibilityScope = this@AnimatedContent,
+                                    )
+                                    FinanceCard(
+                                        title = incomeAnimated
+                                            .toBigDecimal()
+                                            .formatAmount(walletState.wallet.currency),
+                                        supportingTextId = R.string.feature_wallet_detail_income,
+                                        indicatorProgress = 1.0f - expensesProgress,
+                                        modifier = Modifier.weight(1f),
+                                        onClick = { onWalletEvent(UpdateFinanceType(INCOME)) },
+                                        enabled = income != BigDecimal.ZERO,
+                                        animatedVisibilityScope = this@AnimatedContent,
+                                    )
+                                }
+                            }
+
+                            EXPENSES -> {
+                                DetailedFinanceCard(
                                     title = expensesAnimated
                                         .toBigDecimal()
                                         .formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
-                                    indicatorProgress = expensesProgress,
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { onWalletEvent(UpdateFinanceType(EXPENSES)) },
-                                    enabled = expenses != BigDecimal.ZERO,
+                                    availableCategories = walletState.availableCategories,
+                                    selectedCategories = walletState.selectedCategories,
+                                    onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
+                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    animatedVisibilityScope = this@AnimatedContent,
                                 )
-                                FinanceCard(
+                            }
+
+                            INCOME -> {
+                                DetailedFinanceCard(
                                     title = incomeAnimated
                                         .toBigDecimal()
                                         .formatAmount(walletState.wallet.currency),
                                     supportingTextId = R.string.feature_wallet_detail_income,
-                                    indicatorProgress = 1.0f - expensesProgress,
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { onWalletEvent(UpdateFinanceType(INCOME)) },
-                                    enabled = income != BigDecimal.ZERO,
+                                    availableCategories = walletState.availableCategories,
+                                    selectedCategories = walletState.selectedCategories,
+                                    onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
+                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    animatedVisibilityScope = this@AnimatedContent,
                                 )
                             }
-                        }
-
-                        EXPENSES -> {
-                            DetailedFinanceCard(
-                                title = expensesAnimated
-                                    .toBigDecimal()
-                                    .formatAmount(walletState.wallet.currency),
-                                supportingTextId = R.string.feature_wallet_detail_expenses,
-                                availableCategories = walletState.availableCategories,
-                                selectedCategories = walletState.selectedCategories,
-                                onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                                removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-
-                        INCOME -> {
-                            DetailedFinanceCard(
-                                title = incomeAnimated
-                                    .toBigDecimal()
-                                    .formatAmount(walletState.wallet.currency),
-                                supportingTextId = R.string.feature_wallet_detail_income,
-                                availableCategories = walletState.availableCategories,
-                                selectedCategories = walletState.selectedCategories,
-                                onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                                removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
                         }
                     }
                 }
@@ -449,11 +460,13 @@ private fun FinancePanel(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun FinanceCard(
+private fun SharedTransitionScope.FinanceCard(
     title: String,
     @StringRes supportingTextId: Int,
     indicatorProgress: Float,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
@@ -472,10 +485,18 @@ private fun FinanceCard(
                 text = title,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
+                modifier = Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = title),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
             )
             Text(
                 text = stringResource(supportingTextId),
                 style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = supportingTextId),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
             )
             LinearProgressIndicator(
                 progress = { if (enabled) indicatorProgress else 0f },
@@ -485,8 +506,9 @@ private fun FinanceCard(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun DetailedFinanceCard(
+private fun SharedTransitionScope.DetailedFinanceCard(
     title: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
@@ -494,6 +516,7 @@ private fun DetailedFinanceCard(
     onBackClick: () -> Unit,
     addToSelectedCategories: (Category) -> Unit,
     removeFromSelectedCategories: (Category) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
@@ -511,6 +534,10 @@ private fun DetailedFinanceCard(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
+                modifier = Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = title),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
             )
             IconButton(onClick = onBackClick) {
                 Icon(
@@ -521,7 +548,12 @@ private fun DetailedFinanceCard(
         }
         Text(
             text = stringResource(supportingTextId),
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = supportingTextId),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
             style = MaterialTheme.typography.labelLarge,
         )
         CategoryFilterPanel(
