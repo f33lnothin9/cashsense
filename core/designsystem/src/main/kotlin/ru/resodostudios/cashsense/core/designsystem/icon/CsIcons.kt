@@ -12,7 +12,6 @@ object CsIcons {
     val Subscriptions = R.drawable.ic_outlined_subscriptions
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
     val Settings = R.drawable.ic_outlined_settings
-    val Transaction = R.drawable.ic_outlined_receipt_long
     val Calendar = R.drawable.ic_outlined_calendar
     val Delete = R.drawable.ic_outlined_delete
     val TrendingUp = R.drawable.ic_outlined_trending_up
@@ -49,6 +48,7 @@ object CsIcons {
     val Phishing = R.drawable.ic_outlined_phishing
     val Pill = R.drawable.ic_outlined_pill
     val Policy = R.drawable.ic_outlined_policy
+    val ReceiptLong = R.drawable.ic_outlined_receipt_long
     val Restaurant = R.drawable.ic_outlined_restaurant
     val School = R.drawable.ic_outlined_school
     val SelfCare = R.drawable.ic_outlined_self_care

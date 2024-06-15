@@ -85,7 +85,7 @@ enum class StoredIcon(
     PETS(CsIcons.Pets, 13),
     PHISHING(CsIcons.Phishing, 14),
     PILL(CsIcons.Pill, 15),
-    TRANSACTION(CsIcons.Transaction, 16),
+    TRANSACTION(CsIcons.ReceiptLong, 16),
     RESTAURANT(CsIcons.Restaurant, 17),
     SCHOOL(CsIcons.School, 18),
     SELF_CARE(CsIcons.SelfCare, 19),

@@ -94,7 +94,7 @@ fun TransactionDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        iconRes = CsIcons.Transaction,
+        iconRes = CsIcons.ReceiptLong,
         onConfirm = {
             onTransactionEvent(Save)
             onDismiss()

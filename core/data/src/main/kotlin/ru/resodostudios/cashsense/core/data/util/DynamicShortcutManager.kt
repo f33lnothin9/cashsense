@@ -30,7 +30,7 @@ internal class DynamicShortcutManager @Inject constructor(
         val shortcutInfo = ShortcutInfoCompat.Builder(context, DYNAMIC_TRANSACTION_SHORTCUT_ID)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)
-            .setIcon(IconCompat.createWithResource(context, CsIcons.Transaction))
+            .setIcon(IconCompat.createWithResource(context, CsIcons.ReceiptLong))
             .setIntent(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
