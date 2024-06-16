@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -38,6 +39,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -65,6 +67,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -644,12 +647,13 @@ private fun LazyListScope.transactions(
             key = { it.transaction.id },
             contentType = { "transactionCategory" },
         ) { transactionCategory ->
+            val transaction = transactionCategory.transaction
             val category = transactionCategory.category
 
             CsListItem(
                 headlineContent = {
                     Text(
-                        text = transactionCategory.transaction.amount.formatAmount(
+                        text = transaction.amount.formatAmount(
                             currencyCode = currency,
                             withPlus = true,
                         ),
@@ -659,11 +663,28 @@ private fun LazyListScope.transactions(
                 },
                 supportingContent = {
                     Text(
-                        text = category?.title
-                            ?: stringResource(ru.resodostudios.cashsense.core.ui.R.string.none),
+                        text = category?.title ?: stringResource(uiR.string.none),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+                },
+                trailingContent = {
+                    AnimatedVisibility(transaction.status == PENDING) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Text(
+                                text = stringResource(transactionR.string.feature_transaction_status_pending),
+                                modifier = Modifier.padding(
+                                    start = 6.dp,
+                                    top = 3.dp,
+                                    end = 6.dp,
+                                    bottom = 3.dp,
+                                ),
+                            )
+                        }
+                    }
                 },
                 leadingContent = {
                     Icon(
@@ -676,9 +697,7 @@ private fun LazyListScope.transactions(
                     )
                 },
                 modifier = Modifier.animateItem(),
-                onClick = {
-                    onTransactionClick(transactionCategory.transaction.id)
-                },
+                onClick = { onTransactionClick(transaction.id) },
             )
         }
     }

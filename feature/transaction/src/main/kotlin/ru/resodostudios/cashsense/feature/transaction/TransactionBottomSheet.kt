@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,12 +24,14 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
+import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.R
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 fun TransactionBottomSheet(
@@ -83,6 +86,19 @@ fun TransactionBottomSheet(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
+                    val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
+                        COMPLETED -> stringResource(R.string.feature_transaction_status_completed) to CsIcons.CheckCircle
+                        PENDING -> stringResource(R.string.feature_transaction_status_pending) to CsIcons.Pending
+                    }
+                    CsTag(
+                        text = statusTag.first,
+                        iconId = statusTag.second,
+                        color = if (transactionDialogState.status == PENDING) {
+                            MaterialTheme.colorScheme.tertiaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.secondaryContainer
+                        }
+                    )
                     if (transactionDialogState.category != null) {
                         CsTag(
                             text = transactionDialogState.category.title.toString(),
@@ -96,7 +112,7 @@ fun TransactionBottomSheet(
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    headlineContent = { Text(stringResource(uiR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -109,7 +125,7 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    headlineContent = { Text(stringResource(uiR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

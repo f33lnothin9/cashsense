@@ -176,6 +176,7 @@ class TransactionDialogViewModel @Inject constructor(
                         transactionType = if (it.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
                         date = it.transaction.timestamp,
                         category = it.category,
+                        status = it.transaction.status,
                     )
                 }
         }
