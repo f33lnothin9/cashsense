@@ -6,8 +6,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
-import ru.resodostudios.cashsense.core.notifications.DEEP_LINK_SCHEME_AND_HOST
-import ru.resodostudios.cashsense.core.notifications.SUBSCRIPTIONS_PATH
+import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
+import ru.resodostudios.cashsense.core.util.Constants.SUBSCRIPTIONS_PATH
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsScreen
 
 @Serializable

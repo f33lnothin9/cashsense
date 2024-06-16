@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.shortcuts)
 
     implementation(projects.feature.transaction)
     implementation(projects.feature.category.list)

@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.util
+package ru.resodostudios.cashsense.core.shortcuts
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,9 +8,8 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.notifications.DEEP_LINK_SCHEME_AND_HOST
-import ru.resodostudios.cashsense.core.notifications.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
+import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import javax.inject.Inject
 
 private const val HOME_PATH = "home"
@@ -30,7 +29,7 @@ internal class DynamicShortcutManager @Inject constructor(
         val shortcutInfo = ShortcutInfoCompat.Builder(context, DYNAMIC_TRANSACTION_SHORTCUT_ID)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)
-            .setIcon(IconCompat.createWithResource(context, CsIcons.ReceiptLong))
+            .setIcon(IconCompat.createWithResource(context, R.drawable.ic_shortcut_receipt_long))
             .setIntent(
                 Intent().apply {
                     action = Intent.ACTION_VIEW

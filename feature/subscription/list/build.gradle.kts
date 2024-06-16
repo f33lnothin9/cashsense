@@ -9,7 +9,6 @@ android {
 
 dependencies {
     implementation(projects.core.data)
-    implementation(projects.core.notifications)
 
     implementation(projects.feature.subscription.dialog)
 }

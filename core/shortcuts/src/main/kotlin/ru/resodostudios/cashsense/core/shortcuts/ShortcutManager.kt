@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.util
+package ru.resodostudios.cashsense.core.shortcuts
 
 interface ShortcutManager {
 

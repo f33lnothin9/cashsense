@@ -12,7 +12,7 @@ import ru.resodostudios.cashsense.core.notifications.SystemTrayNotifier
 internal abstract class NotificationsModule {
 
     @Binds
-    abstract fun bindNotifier(
+    internal abstract fun bindsNotifier(
         notifier: SystemTrayNotifier,
     ): Notifier
 }

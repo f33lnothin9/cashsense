@@ -24,6 +24,9 @@ import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
+import ru.resodostudios.cashsense.core.util.Constants.SUBSCRIPTIONS_PATH
+import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -34,9 +37,6 @@ private const val SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE = 0
 private const val SUBSCRIPTIONS_NOTIFICATION_SUMMARY_ID = 1
 private const val SUBSCRIPTIONS_NOTIFICATION_CHANNEL_ID = ""
 private const val SUBSCRIPTIONS_NOTIFICATION_GROUP = "SUBSCRIPTIONS_NOTIFICATIONS"
-const val TARGET_ACTIVITY_NAME = "ru.resodostudios.cashsense.MainActivity"
-const val DEEP_LINK_SCHEME_AND_HOST = "cashsense://resodostudios.ru"
-const val SUBSCRIPTIONS_PATH = "subscriptions"
 
 /**
  * Implementation of [Notifier] that displays notifications in the system tray.

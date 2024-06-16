@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.core.ui.EmptyState
+import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.OPEN_TRANSACTION_DIALOG_KEY
@@ -36,7 +37,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWal
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import java.util.UUID
 
-private const val DEEP_LINK_SCHEME_AND_HOST = "cashsense://resodostudios.ru"
 private const val HOME_PATH = "home"
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH"
 
