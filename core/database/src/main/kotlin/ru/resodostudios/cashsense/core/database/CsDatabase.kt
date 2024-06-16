@@ -15,6 +15,7 @@ import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.util.BigDecimalConverter
 import ru.resodostudios.cashsense.core.database.util.InstantConverter
+import ru.resodostudios.cashsense.core.database.util.StatusTypeConverter
 
 @Database(
     entities = [
@@ -24,17 +25,19 @@ import ru.resodostudios.cashsense.core.database.util.InstantConverter
         SubscriptionEntity::class,
         TransactionCategoryCrossRefEntity::class,
     ],
-    version = 4,
+    version = 5,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
         AutoMigration(from = 3, to = 4, spec = DatabaseMigrations.Schema3to4::class),
+        AutoMigration(from = 4, to = 5),
     ],
     exportSchema = true,
 )
 @TypeConverters(
     InstantConverter::class,
     BigDecimalConverter::class,
+    StatusTypeConverter::class,
 )
 internal abstract class CsDatabase : RoomDatabase() {
 

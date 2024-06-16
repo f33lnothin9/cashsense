@@ -15,6 +15,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.StatusType
+import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Delete
@@ -74,6 +76,7 @@ class TransactionDialogViewModel @Inject constructor(
                 _transactionDialogUiState.value.amount.toBigDecimal().abs()
             },
             timestamp = _transactionDialogUiState.value.date,
+            status = _transactionDialogUiState.value.status,
         )
         val transactionCategoryCrossRef = _transactionDialogUiState.value.category?.id?.let { categoryId ->
             TransactionCategoryCrossRef(
@@ -183,6 +186,7 @@ data class TransactionDialogUiState(
     val date: Instant = Clock.System.now(),
     val category: Category? = Category(),
     val transactionType: TransactionType = EXPENSE,
+    val status: StatusType = COMPLETED,
     val isLoading: Boolean = false,
 )
 

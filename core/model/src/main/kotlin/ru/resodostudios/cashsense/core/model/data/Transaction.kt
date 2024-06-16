@@ -9,4 +9,5 @@ data class Transaction(
     val description: String?,
     val amount: BigDecimal,
     val timestamp: Instant,
+    val status: StatusType,
 )

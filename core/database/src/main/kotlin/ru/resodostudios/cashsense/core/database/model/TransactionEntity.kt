@@ -4,11 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
+import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
 
 @Entity(
-    tableName = "transactions"
+    tableName = "transactions",
 )
 data class TransactionEntity(
     @PrimaryKey
@@ -18,6 +19,8 @@ data class TransactionEntity(
     val description: String?,
     val amount: BigDecimal,
     val timestamp: Instant,
+    @ColumnInfo(defaultValue = "COMPLETED")
+    val status: StatusType,
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(
@@ -26,4 +29,5 @@ fun TransactionEntity.asExternalModel() = Transaction(
     description = description,
     amount = amount,
     timestamp = timestamp,
+    status = status,
 )
