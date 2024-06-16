@@ -9,4 +9,6 @@
     <string name="feature_transaction_income">Income</string>
     <string name="feature_transaction_deleted">Transaction deleted</string>
     <string name="feature_transaction_shortcut_long_label">Add a new transaction</string>
+    <string name="feature_transaction_status_completed">Completed</string>
+    <string name="feature_transaction_status_pending">Pending</string>
 </resources>

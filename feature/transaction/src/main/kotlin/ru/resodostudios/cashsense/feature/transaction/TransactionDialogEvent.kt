@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.transaction
 
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.StatusType
 
 sealed interface TransactionDialogEvent {
 
@@ -12,6 +13,8 @@ sealed interface TransactionDialogEvent {
     data class UpdateAmount(val amount: String) : TransactionDialogEvent
 
     data class UpdateTransactionType(val type: TransactionType) : TransactionDialogEvent
+
+    data class UpdateStatus(val status: StatusType) : TransactionDialogEvent
 
     data class UpdateCurrency(val currency: String) : TransactionDialogEvent
 

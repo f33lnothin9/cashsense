@@ -27,6 +27,7 @@ object CsIcons {
     val Apparel = R.drawable.ic_outlined_apparel
     val Chair = R.drawable.ic_outlined_chair
     val Check = R.drawable.ic_outlined_check
+    val CheckCircle = R.drawable.ic_outlined_check_circle
     val DarkMode = R.drawable.ic_outlined_dark_mode
     val DirectionsBus = R.drawable.ic_outlined_directions_bus
     val Exercise = R.drawable.ic_outlined_exercise
@@ -44,6 +45,7 @@ object CsIcons {
     val Notifications = R.drawable.ic_outlined_notifications
     val NotificationsActive = R.drawable.ic_outlined_notifications_active
     val Payments = R.drawable.ic_outlined_payments
+    val Pending = R.drawable.ic_outlined_pending
     val Pets = R.drawable.ic_outlined_pets
     val Phishing = R.drawable.ic_outlined_phishing
     val Pill = R.drawable.ic_outlined_pill

@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
@@ -56,6 +57,7 @@ class TransactionDialogViewModel @Inject constructor(
             is UpdateDate -> updateDate(event.date)
             is UpdateAmount -> updateAmount(event.amount)
             is UpdateTransactionType -> updateTransactionType(event.type)
+            is UpdateStatus -> updateStatus(event.status)
             is UpdateCategory -> updateCategory(event.category)
             is UpdateDescription -> updateDescription(event.description)
         }
@@ -68,22 +70,23 @@ class TransactionDialogViewModel @Inject constructor(
             },
             walletOwnerId = walletId.value,
             description = _transactionDialogUiState.value.description,
-            amount = if (_transactionDialogUiState.value.transactionType == EXPENSE) {
-                _transactionDialogUiState.value.amount.toBigDecimal().run {
-                    if (this > BigDecimal.ZERO) this.negate() else this
+            amount = when (_transactionDialogUiState.value.transactionType) {
+                EXPENSE -> _transactionDialogUiState.value.amount.toBigDecimal().let {
+                    if (it > BigDecimal.ZERO) it.negate() else it
                 }
-            } else {
-                _transactionDialogUiState.value.amount.toBigDecimal().abs()
+
+                INCOME -> _transactionDialogUiState.value.amount.toBigDecimal().abs()
             },
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
         )
-        val transactionCategoryCrossRef = _transactionDialogUiState.value.category?.id?.let { categoryId ->
-            TransactionCategoryCrossRef(
-                transactionId = transaction.id,
-                categoryId = categoryId,
-            )
-        }
+        val transactionCategoryCrossRef =
+            _transactionDialogUiState.value.category?.id?.let { categoryId ->
+                TransactionCategoryCrossRef(
+                    transactionId = transaction.id,
+                    categoryId = categoryId,
+                )
+            }
         viewModelScope.launch {
             transactionsRepository.upsertTransaction(transaction)
             transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
@@ -138,6 +141,12 @@ class TransactionDialogViewModel @Inject constructor(
     private fun updateTransactionType(type: TransactionType) {
         _transactionDialogUiState.update {
             it.copy(transactionType = type)
+        }
+    }
+
+    private fun updateStatus(status: StatusType) {
+        _transactionDialogUiState.update {
+            it.copy(status = status)
         }
     }
 

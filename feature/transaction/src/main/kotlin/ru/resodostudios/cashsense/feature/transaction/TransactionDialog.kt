@@ -45,6 +45,7 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -59,6 +60,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
@@ -115,6 +117,10 @@ fun TransactionDialog(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.verticalScroll(rememberScrollState()),
                 ) {
+                    TransactionTypeChoiceRow(
+                        onTransactionEvent = onTransactionEvent,
+                        transactionState = transactionDialogState,
+                    )
                     OutlinedTextField(
                         value = transactionDialogState.amount,
                         onValueChange = { onTransactionEvent(UpdateAmount(it.validateAmount().first)) },
@@ -131,14 +137,22 @@ fun TransactionDialog(
                             .focusRequester(amountTextField)
                             .focusProperties { next = descTextField },
                     )
-                    TransactionTypeChoiceRow(
-                        onTransactionEvent = onTransactionEvent,
-                        transactionState = transactionDialogState,
-                    )
                     CategoryExposedDropdownMenuBox(
                         currentCategory = transactionDialogState.category,
                         categories = categoriesState.categories,
                         onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
+                    )
+                    TransactionStatusChoiceRow(
+                        onTransactionEvent = onTransactionEvent,
+                        transactionState = transactionDialogState,
+                    )
+                    DatePickerTextField(
+                        value = transactionDialogState.date.formatDate(),
+                        labelTextId = uiR.string.core_ui_date,
+                        iconId = CsIcons.Calendar,
+                        modifier = Modifier.fillMaxWidth(),
+                        initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
+                        onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
                     )
                     OutlinedTextField(
                         value = transactionDialogState.description,
@@ -152,14 +166,6 @@ fun TransactionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(descTextField),
-                    )
-                    DatePickerTextField(
-                        value = transactionDialogState.date.formatDate(),
-                        labelTextId = uiR.string.core_ui_date,
-                        iconId = CsIcons.Calendar,
-                        modifier = Modifier.fillMaxWidth(),
-                        initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
-                        onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
                     )
                 }
                 LaunchedEffect(Unit) {
@@ -200,6 +206,53 @@ private fun TransactionTypeChoiceRow(
                     SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
                             imageVector = ImageVector.vectorResource(chartDirectionIcons[index]),
+                            contentDescription = null,
+                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
+                        )
+                    }
+                },
+                colors = SegmentedButtonDefaults.colors(
+                    inactiveContainerColor = Color.Transparent,
+                ),
+            ) {
+                Text(
+                    text = label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TransactionStatusChoiceRow(
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
+    transactionState: TransactionDialogUiState,
+) {
+    val statusTypes = listOf(
+        stringResource(R.string.feature_transaction_status_completed),
+        stringResource(R.string.feature_transaction_status_pending),
+    )
+    val statusIcons = listOf(
+        CsIcons.CheckCircle,
+        CsIcons.Pending,
+    )
+    SingleChoiceSegmentedButtonRow(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        statusTypes.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = statusTypes.size,
+                ),
+                onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[index])) },
+                selected = transactionState.status == StatusType.entries[index],
+                icon = {
+                    SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(statusIcons[index]),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
