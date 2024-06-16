@@ -131,7 +131,7 @@ fun TransactionDialog(
                             .focusRequester(amountTextField)
                             .focusProperties { next = descTextField },
                     )
-                    FinancialTypeChoiceRow(
+                    TransactionTypeChoiceRow(
                         onTransactionEvent = onTransactionEvent,
                         transactionState = transactionDialogState,
                     )
@@ -173,33 +173,33 @@ fun TransactionDialog(
 }
 
 @Composable
-private fun FinancialTypeChoiceRow(
+private fun TransactionTypeChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    val financialTypes = listOf(
+    val transactionTypes = listOf(
         stringResource(R.string.feature_transaction_expense),
         stringResource(R.string.feature_transaction_income),
     )
-    val financialIcons = listOf(
+    val chartDirectionIcons = listOf(
         CsIcons.TrendingDown,
         CsIcons.TrendingUp,
     )
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        financialTypes.forEachIndexed { index, label ->
+        transactionTypes.forEachIndexed { index, label ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
-                    count = financialTypes.size,
+                    count = transactionTypes.size,
                 ),
                 onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[index])) },
                 selected = transactionState.transactionType == TransactionType.entries[index],
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(financialIcons[index]),
+                            imageVector = ImageVector.vectorResource(chartDirectionIcons[index]),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
