@@ -493,7 +493,7 @@ private fun SharedTransitionScope.FinanceCard(
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = title),
+                    sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
@@ -542,7 +542,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = title),
+                    sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
