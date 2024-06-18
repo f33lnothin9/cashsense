@@ -3,7 +3,6 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -11,10 +10,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +38,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -67,11 +61,9 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -85,6 +77,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
+import ru.resodostudios.cashsense.feature.transaction.TransactionItem
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
@@ -654,58 +647,16 @@ private fun LazyListScope.transactions(
             val transaction = transactionCategory.transaction
             val category = transactionCategory.category
 
-            CsListItem(
-                headlineContent = {
-                    Text(
-                        text = transaction.amount.formatAmount(
-                            currencyCode = currency,
-                            withPlus = true,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                supportingContent = {
-                    Text(
-                        text = category?.title ?: stringResource(uiR.string.none),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                trailingContent = {
-                    AnimatedVisibility(
-                        visible = transaction.status == PENDING,
-                        enter = fadeIn() + scaleIn(),
-                        exit = fadeOut() + scaleOut(),
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            shape = RoundedCornerShape(16.dp),
-                        ) {
-                            Text(
-                                text = stringResource(transactionR.string.feature_transaction_status_pending),
-                                modifier = Modifier.padding(
-                                    start = 6.dp,
-                                    top = 3.dp,
-                                    end = 6.dp,
-                                    bottom = 3.dp,
-                                ),
-                            )
-                        }
-                    }
-                },
-                leadingContent = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            StoredIcon.asRes(
-                                category?.iconId ?: StoredIcon.TRANSACTION.storedId
-                            )
-                        ),
-                        contentDescription = null,
-                    )
-                },
-                modifier = Modifier.animateItem(),
+            TransactionItem(
+                amount = transaction.amount.formatAmount(
+                    currencyCode = currency,
+                    withPlus = true,
+                ),
+                icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
+                categoryTitle = category?.title ?: stringResource(uiR.string.none),
+                transactionStatus = transaction.status,
                 onClick = { onTransactionClick(transaction.id) },
+                modifier = Modifier.animateItem(),
             )
         }
     }
