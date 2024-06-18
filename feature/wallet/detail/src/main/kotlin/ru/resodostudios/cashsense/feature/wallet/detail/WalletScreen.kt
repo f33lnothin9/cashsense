@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -54,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -63,6 +65,7 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -149,7 +152,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage =
+                stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -403,8 +407,16 @@ private fun FinancePanel(
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                                    addToSelectedCategories = {
+                                        onWalletEvent(
+                                            AddToSelectedCategories(it)
+                                        )
+                                    },
+                                    removeFromSelectedCategories = {
+                                        onWalletEvent(
+                                            RemoveFromSelectedCategories(it)
+                                        )
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -419,8 +431,16 @@ private fun FinancePanel(
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                                    addToSelectedCategories = {
+                                        onWalletEvent(
+                                            AddToSelectedCategories(it)
+                                        )
+                                    },
+                                    removeFromSelectedCategories = {
+                                        onWalletEvent(
+                                            RemoveFromSelectedCategories(it)
+                                        )
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -556,7 +576,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
-        CategoryFilterPanel(
+        CategoryFilterRow(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
             addToSelectedCategories = addToSelectedCategories,
@@ -568,7 +588,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun CategoryFilterPanel(
+private fun CategoryFilterRow(
     availableCategories: List<Category>,
     selectedCategories: List<Category>,
     addToSelectedCategories: (Category) -> Unit,
@@ -583,8 +603,9 @@ private fun CategoryFilterPanel(
     ) {
         availableCategories.forEach { category ->
             selected = selectedCategories.contains(category)
-            FilterChip(
+            CategoryChip(
                 selected = selected,
+                category = category,
                 onClick = {
                     if (selectedCategories.contains(category)) {
                         removeFromSelectedCategories(category)
@@ -592,25 +613,38 @@ private fun CategoryFilterPanel(
                         addToSelectedCategories(category)
                     }
                 },
-                label = { Text(category.title.toString()) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = if (selected) {
-                            ImageVector.vectorResource(CsIcons.Check)
-                        } else {
-                            ImageVector.vectorResource(
-                                StoredIcon.asRes(
-                                    category.iconId ?: StoredIcon.CATEGORY.storedId
-                                )
-                            )
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                    )
-                }
             )
         }
     }
+}
+
+@Composable
+private fun CategoryChip(
+    selected: Boolean,
+    category: Category,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(category.title.toString()) },
+        leadingIcon = {
+            Icon(
+                imageVector = if (selected) {
+                    ImageVector.vectorResource(CsIcons.Check)
+                } else {
+                    ImageVector.vectorResource(
+                        StoredIcon.asRes(
+                            category.iconId ?: StoredIcon.CATEGORY.storedId
+                        )
+                    )
+                },
+                contentDescription = null,
+                modifier = modifier.size(FilterChipDefaults.IconSize),
+            )
+        }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -657,6 +691,24 @@ private fun LazyListScope.transactions(
                 transactionStatus = transaction.status,
                 onClick = { onTransactionClick(transaction.id) },
                 modifier = Modifier.animateItem(),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun CategoryChipPreview() {
+    CsTheme {
+        Surface {
+            CategoryChip(
+                selected = false,
+                category = Category(
+                    id = "",
+                    title = "Fastfood",
+                    iconId = StoredIcon.FASTFOOD.storedId,
+                ),
+                onClick = {},
             )
         }
     }
