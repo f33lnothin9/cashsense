@@ -10,6 +10,7 @@
     <application
         android:name=".CsApplication"
         android:allowBackup="true"
+        android:allowCrossUidActivitySwitchFromBelow="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cs.Splash"
-        tools:targetApi="tiramisu">
+        tools:targetApi="35">
 
         <activity
             android:name=".MainActivity"
