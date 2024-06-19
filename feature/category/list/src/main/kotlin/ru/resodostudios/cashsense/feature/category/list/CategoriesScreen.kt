@@ -30,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon

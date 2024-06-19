@@ -56,6 +56,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -68,9 +69,11 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
@@ -407,16 +410,8 @@ private fun FinancePanel(
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = {
-                                        onWalletEvent(
-                                            AddToSelectedCategories(it)
-                                        )
-                                    },
-                                    removeFromSelectedCategories = {
-                                        onWalletEvent(
-                                            RemoveFromSelectedCategories(it)
-                                        )
-                                    },
+                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -431,16 +426,8 @@ private fun FinancePanel(
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = {
-                                        onWalletEvent(
-                                            AddToSelectedCategories(it)
-                                        )
-                                    },
-                                    removeFromSelectedCategories = {
-                                        onWalletEvent(
-                                            RemoveFromSelectedCategories(it)
-                                        )
-                                    },
+                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -698,17 +685,67 @@ private fun LazyListScope.transactions(
 
 @Preview
 @Composable
-fun CategoryChipPreview() {
+fun FinancePanelDefaultPreview(
+    @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
+    transactionsCategories: List<TransactionWithCategory>,
+) {
     CsTheme {
         Surface {
-            CategoryChip(
-                selected = false,
-                category = Category(
-                    id = "",
-                    title = "Fastfood",
-                    iconId = StoredIcon.FASTFOOD.storedId,
+            val categories = transactionsCategories.mapNotNull { it.category }
+            FinancePanel(
+                walletState = Success(
+                    wallet = Wallet(
+                        id = "1",
+                        title = "Debit",
+                        currency = "USD",
+                        initialBalance = BigDecimal.ZERO,
+                    ),
+                    currentBalance = BigDecimal.valueOf(100),
+                    availableCategories = categories,
+                    selectedCategories = categories.take(3),
+                    transactionsCategories = transactionsCategories,
+                    financeSectionType = NONE,
+                    dateType = DateType.ALL,
+                    shouldDisplayUndoTransaction = false,
                 ),
-                onClick = {},
+                onWalletEvent = {},
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FinancePanelOpenedPreview(
+    @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
+    transactionsCategories: List<TransactionWithCategory>,
+) {
+    CsTheme {
+        Surface {
+            val categories = transactionsCategories
+                .mapNotNull { it.category }
+                .toSet()
+                .toList()
+
+            FinancePanel(
+                walletState = Success(
+                    wallet = Wallet(
+                        id = "1",
+                        title = "Debit",
+                        currency = "USD",
+                        initialBalance = BigDecimal.ZERO,
+                    ),
+                    currentBalance = BigDecimal.valueOf(100),
+                    availableCategories = categories,
+                    selectedCategories = categories.take(2),
+                    transactionsCategories = transactionsCategories,
+                    financeSectionType = EXPENSES,
+                    dateType = DateType.ALL,
+                    shouldDisplayUndoTransaction = false,
+                ),
+                onWalletEvent = {},
+                modifier = Modifier.padding(16.dp),
             )
         }
     }

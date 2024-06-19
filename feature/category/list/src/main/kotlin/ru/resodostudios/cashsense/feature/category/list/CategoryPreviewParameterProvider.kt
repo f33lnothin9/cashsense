@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.ui
+package ru.resodostudios.cashsense.feature.category.list
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.resodostudios.cashsense.core.model.data.Category
