@@ -85,6 +85,7 @@ fun TransactionBottomSheet(
                 FlowRow(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
                         COMPLETED -> stringResource(R.string.feature_transaction_status_completed) to CsIcons.CheckCircle
