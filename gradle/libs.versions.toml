@@ -12,6 +12,7 @@ androidxCore = "1.13.1"
 androidxCoreSplashscreen = "1.2.0-alpha01"
 androidxDataStore = "1.1.1"
 androidxEspresso = "3.5.1"
+androidxGlance = "1.1.0"
 androidxHiltNavigationCompose = "1.2.0"
 androidxLifecycle = "2.8.2"
 androidxMacroBenchmark = "1.3.0-beta01"
@@ -63,6 +64,8 @@ androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util", ve
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "androidxGlance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "androidxGlance" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
