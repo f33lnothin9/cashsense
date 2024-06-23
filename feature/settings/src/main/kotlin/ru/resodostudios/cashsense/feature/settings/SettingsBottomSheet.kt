@@ -181,7 +181,7 @@ private fun ColumnScope.SettingsPanel(
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
-        supportingContent = { packageInfo.versionName?.let { Text(it) } },
+        supportingContent = { Text(packageInfo.versionName) },
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.Info),
