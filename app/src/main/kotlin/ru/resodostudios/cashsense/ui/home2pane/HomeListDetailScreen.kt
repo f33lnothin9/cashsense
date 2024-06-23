@@ -51,7 +51,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 ) {
     composable<HomeRoute>(
         deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"),
+            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/$WALLET_ID_KEY={$WALLET_ID_KEY}/$OPEN_TRANSACTION_DIALOG_KEY={$OPEN_TRANSACTION_DIALOG_KEY}"),
         ),
     ) {
         HomeListDetailScreen(

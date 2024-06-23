@@ -13,6 +13,8 @@ import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import javax.inject.Inject
 
 private const val HOME_PATH = "home"
+private const val WALLET_ID_KEY = "walletId"
+private const val OPEN_TRANSACTION_DIALOG_KEY = "openTransactionDialog"
 private const val DYNAMIC_TRANSACTION_SHORTCUT_ID = "dynamic_new_transaction"
 
 internal class DynamicShortcutManager @Inject constructor(
@@ -31,7 +33,7 @@ internal class DynamicShortcutManager @Inject constructor(
             .setIntent(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/true".toUri()
+                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$WALLET_ID_KEY=$walletId/$OPEN_TRANSACTION_DIALOG_KEY=true".toUri()
                     component = ComponentName(
                         context.packageName,
                         TARGET_ACTIVITY_NAME,
