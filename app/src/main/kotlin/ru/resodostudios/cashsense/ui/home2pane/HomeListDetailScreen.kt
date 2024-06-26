@@ -112,7 +112,7 @@ internal fun HomeListDetailScreen(
     }
 
     fun onWalletClickShowDetailPane(walletId: String?) {
-        if (!walletId.isNullOrEmpty()) {
+        if (walletId != null) {
             onWalletClick(walletId)
             if (listDetailNavigator.isDetailPaneVisible()) {
                 nestedNavController.navigateToWallet(walletId) {
