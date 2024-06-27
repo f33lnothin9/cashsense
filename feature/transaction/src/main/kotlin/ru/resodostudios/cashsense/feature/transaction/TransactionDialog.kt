@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,15 +47,14 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.validateAmount
-import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState
-import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Loading
-import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Success
-import ru.resodostudios.cashsense.feature.category.list.CategoriesViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
@@ -63,22 +63,20 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.ui.R as uiR
-import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
 
 @Composable
 fun TransactionDialog(
     onDismiss: () -> Unit,
-    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
-    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
+    viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
-    val transactionDialogState by transactionDialogViewModel.transactionDialogUiState.collectAsStateWithLifecycle()
-    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val transactionDialogState by viewModel.transactionDialogUiState.collectAsStateWithLifecycle()
+    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     TransactionDialog(
         transactionDialogState = transactionDialogState,
         categoriesState = categoriesState,
         onDismiss = onDismiss,
-        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
+        onTransactionEvent = viewModel::onTransactionEvent,
     )
 }
 
@@ -89,8 +87,13 @@ fun TransactionDialog(
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
+    val isTransactionLoading = transactionDialogState.isLoading
+    val isCategoriesLoading = categoriesState is Loading
+
     val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
     val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.save else uiR.string.add
+
+    ReportDrawnWhen { !isTransactionLoading && !isCategoriesLoading }
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -104,74 +107,69 @@ fun TransactionDialog(
         isConfirmEnabled = transactionDialogState.amount.validateAmount().second,
         onDismiss = onDismiss,
     ) {
-        when (categoriesState) {
-            Loading -> LoadingState(
-                Modifier
-                    .height(200.dp)
-                    .fillMaxWidth()
-            )
-            is Success -> {
-                val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
+        if (isTransactionLoading || isCategoriesLoading) {
+            LoadingState(Modifier.fillMaxWidth().height(250.dp))
+        } else {
+            val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                ) {
-                    TransactionTypeChoiceRow(
-                        onTransactionEvent = onTransactionEvent,
-                        transactionState = transactionDialogState,
-                    )
-                    OutlinedTextField(
-                        value = transactionDialogState.amount,
-                        onValueChange = { onTransactionEvent(UpdateAmount(it.validateAmount().first)) },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Next,
-                        ),
-                        label = { Text(stringResource(uiR.string.amount)) },
-                        placeholder = { Text(stringResource(uiR.string.amount) + "*") },
-                        supportingText = { Text(stringResource(uiR.string.required)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(amountTextField)
-                            .focusProperties { next = descTextField },
-                    )
-                    CategoryExposedDropdownMenuBox(
-                        currentCategory = transactionDialogState.category,
-                        categories = categoriesState.categories,
-                        onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
-                    )
-                    TransactionStatusChoiceRow(
-                        onTransactionEvent = onTransactionEvent,
-                        transactionState = transactionDialogState,
-                    )
-                    DatePickerTextField(
-                        value = transactionDialogState.date.formatDate(),
-                        labelTextId = uiR.string.core_ui_date,
-                        iconId = CsIcons.Calendar,
-                        modifier = Modifier.fillMaxWidth(),
-                        initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
-                        onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
-                    )
-                    OutlinedTextField(
-                        value = transactionDialogState.description,
-                        onValueChange = { onTransactionEvent(UpdateDescription(it)) },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done,
-                        ),
-                        label = { Text(stringResource(uiR.string.description)) },
-                        maxLines = 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(descTextField),
-                    )
-                }
-                LaunchedEffect(Unit) {
-                    if (transactionDialogState.transactionId.isEmpty()) {
-                        amountTextField.requestFocus()
-                    }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
+                TransactionTypeChoiceRow(
+                    onTransactionEvent = onTransactionEvent,
+                    transactionState = transactionDialogState,
+                )
+                OutlinedTextField(
+                    value = transactionDialogState.amount,
+                    onValueChange = { onTransactionEvent(UpdateAmount(it.validateAmount().first)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next,
+                    ),
+                    label = { Text(stringResource(uiR.string.amount)) },
+                    placeholder = { Text(stringResource(uiR.string.amount) + "*") },
+                    supportingText = { Text(stringResource(uiR.string.required)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(amountTextField)
+                        .focusProperties { next = descTextField },
+                )
+                CategoryExposedDropdownMenuBox(
+                    currentCategory = transactionDialogState.category,
+                    categoriesState = categoriesState,
+                    onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
+                )
+                TransactionStatusChoiceRow(
+                    onTransactionEvent = onTransactionEvent,
+                    transactionState = transactionDialogState,
+                )
+                DatePickerTextField(
+                    value = transactionDialogState.date.formatDate(),
+                    labelTextId = uiR.string.core_ui_date,
+                    iconId = CsIcons.Calendar,
+                    modifier = Modifier.fillMaxWidth(),
+                    initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
+                    onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
+                )
+                OutlinedTextField(
+                    value = transactionDialogState.description,
+                    onValueChange = { onTransactionEvent(UpdateDescription(it)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done,
+                    ),
+                    label = { Text(stringResource(uiR.string.description)) },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(descTextField),
+                )
+            }
+            LaunchedEffect(Unit) {
+                if (transactionDialogState.transactionId.isEmpty()) {
+                    amountTextField.requestFocus()
                 }
             }
         }
@@ -276,83 +274,88 @@ private fun TransactionStatusChoiceRow(
 @Composable
 private fun CategoryExposedDropdownMenuBox(
     currentCategory: Category?,
-    categories: List<Category>,
+    categoriesState: CategoriesUiState,
     onCategoryClick: (Category) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-    ) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryEditable),
-            readOnly = true,
-            value = currentCategory?.title ?: stringResource(uiR.string.none),
-            onValueChange = {},
-            label = { Text(stringResource(categoryDialogR.string.feature_category_dialog_title)) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            leadingIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(StoredIcon.asRes(iconId)),
-                    contentDescription = null,
-                )
-            },
-            maxLines = 1,
-            singleLine = true,
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = stringResource(uiR.string.none),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                onClick = {
-                    onCategoryClick(Category())
-                    iconId = 0
-                    expanded = false
-                },
-                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Category),
-                        contentDescription = null
-                    )
-                },
-            )
-            categories.forEach { category ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = category.title.toString(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    onClick = {
-                        onCategoryClick(category)
-                        iconId = category.iconId ?: 0
-                        expanded = false
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+    when (categoriesState) {
+        Loading -> Unit
+        is Success -> {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(MenuAnchorType.PrimaryEditable),
+                    readOnly = true,
+                    value = currentCategory?.title ?: stringResource(uiR.string.none),
+                    onValueChange = {},
+                    label = { Text(stringResource(R.string.feature_transaction_category_title)) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(
-                                StoredIcon.asRes(category.iconId ?: 0)
-                            ),
+                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(iconId)),
                             contentDescription = null,
                         )
                     },
+                    maxLines = 1,
+                    singleLine = true,
                 )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = stringResource(uiR.string.none),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        onClick = {
+                            onCategoryClick(Category())
+                            iconId = 0
+                            expanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Category),
+                                contentDescription = null
+                            )
+                        },
+                    )
+                    categoriesState.categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = category.title.toString(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            onClick = {
+                                onCategoryClick(category)
+                                iconId = category.iconId ?: 0
+                                expanded = false
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(
+                                        StoredIcon.asRes(category.iconId ?: 0)
+                                    ),
+                                    contentDescription = null,
+                                )
+                            },
+                        )
+                    }
+                }
             }
         }
     }
