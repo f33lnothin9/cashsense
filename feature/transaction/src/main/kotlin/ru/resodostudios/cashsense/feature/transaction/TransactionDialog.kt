@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction
 
-import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -90,10 +89,10 @@ fun TransactionDialog(
     val isTransactionLoading = transactionDialogState.isLoading
     val isCategoriesLoading = categoriesState is Loading
 
-    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
-    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.save else uiR.string.add
-
-    ReportDrawnWhen { !isTransactionLoading && !isCategoriesLoading }
+    val dialogTitle =
+        if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
+    val dialogConfirmText =
+        if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.save else uiR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -108,7 +107,11 @@ fun TransactionDialog(
         onDismiss = onDismiss,
     ) {
         if (isTransactionLoading || isCategoriesLoading) {
-            LoadingState(Modifier.fillMaxWidth().height(250.dp))
+            LoadingState(
+                Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
         } else {
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 

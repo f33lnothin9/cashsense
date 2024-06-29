@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.data)
+
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
 }
