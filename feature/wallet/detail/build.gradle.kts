@@ -16,4 +16,5 @@ dependencies {
 
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.ycharts)
 }
