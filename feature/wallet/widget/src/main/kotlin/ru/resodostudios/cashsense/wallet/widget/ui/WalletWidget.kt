@@ -15,7 +15,7 @@ import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
-import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.Row
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import dagger.hilt.EntryPoint
@@ -30,6 +30,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.widget.R
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 class WalletWidget : GlanceAppWidget() {
 
@@ -72,21 +73,35 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
             )
         },
     ) {
+        WalletItem(
+            title = walletPopulated?.wallet?.title ?: context.getString(uiR.string.none),
+            currentBalance = currentBalance?.formatAmount(walletPopulated.wallet.currency) ?: context.getString(uiR.string.none),
+        )
+    }
+}
+
+@Composable
+fun WalletItem(
+    title: String,
+    currentBalance: String,
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    Row {
         Column(
-            modifier = GlanceModifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start,
+            modifier = modifier,
         ) {
             Text(
-                text = walletPopulated?.wallet?.title ?: "Hello, World!",
+                text = title,
                 style = TextStyle(GlanceTheme.colors.onBackground),
+                maxLines = 1,
             )
-            currentBalance?.let {
-                Text(
-                    text = it.formatAmount(walletPopulated.wallet.currency),
-                    style = TextStyle(GlanceTheme.colors.onBackground),
-                )
-            }
+            Text(
+                text = currentBalance,
+                style = TextStyle(GlanceTheme.colors.onBackground),
+                maxLines = 1,
+            )
         }
     }
 }
