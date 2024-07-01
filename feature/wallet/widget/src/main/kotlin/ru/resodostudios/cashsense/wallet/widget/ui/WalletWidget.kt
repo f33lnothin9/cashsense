@@ -1,21 +1,27 @@
 package ru.resodostudios.cashsense.wallet.widget.ui
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import dagger.hilt.android.EntryPointAccessors
@@ -25,6 +31,11 @@ import kotlinx.coroutines.withContext
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
+import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
+import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
+import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -71,23 +82,30 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
         },
     ) {
         WalletItem(
+            walletId = walletPopulated?.wallet?.id ?: "",
             title = walletPopulated?.wallet?.title ?: context.getString(uiR.string.none),
             currentBalance = currentBalance?.formatAmount(walletPopulated.wallet.currency) ?: context.getString(uiR.string.none),
+            context = context,
         )
     }
 }
 
 @Composable
 fun WalletItem(
+    walletId: String,
     title: String,
     currentBalance: String,
+    context: Context,
     modifier: GlanceModifier = GlanceModifier,
 ) {
-    Row {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth(),
+    ) {
         Column(
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.Start,
-            modifier = modifier,
+            modifier = GlanceModifier.defaultWeight(),
         ) {
             Text(
                 text = title,
@@ -100,5 +118,19 @@ fun WalletItem(
                 maxLines = 1,
             )
         }
+        CircleIconButton(
+            imageProvider = ImageProvider(CsIcons.Add),
+            onClick = actionStartActivity(
+                Intent().apply {
+                    action = Intent.ACTION_VIEW
+                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$WALLET_ID_KEY=$walletId/$OPEN_TRANSACTION_DIALOG_KEY=true".toUri()
+                    component = ComponentName(
+                        context.packageName,
+                        TARGET_ACTIVITY_NAME,
+                    )
+                }
+            ),
+            contentDescription = context.getString(uiR.string.add),
+        )
     }
 }

@@ -9,12 +9,12 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
+import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
+import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import javax.inject.Inject
 
-private const val HOME_PATH = "home"
-private const val WALLET_ID_KEY = "walletId"
-private const val OPEN_TRANSACTION_DIALOG_KEY = "openTransactionDialog"
 private const val DYNAMIC_TRANSACTION_SHORTCUT_ID = "dynamic_new_transaction"
 
 internal class DynamicShortcutManager @Inject constructor(
