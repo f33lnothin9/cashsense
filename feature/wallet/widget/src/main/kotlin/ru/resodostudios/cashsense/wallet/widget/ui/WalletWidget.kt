@@ -18,18 +18,15 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.widget.R
+import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 class WalletWidget : GlanceAppWidget() {
@@ -38,7 +35,7 @@ class WalletWidget : GlanceAppWidget() {
         val walletsEntryPoint =
             EntryPointAccessors.fromApplication(
                 context.applicationContext,
-                WalletsProviderEntryPoint::class.java,
+                WalletWidgetEntryPoint::class.java,
             )
         val walletsRepository = walletsEntryPoint.walletsRepository()
 
@@ -104,10 +101,4 @@ fun WalletItem(
             )
         }
     }
-}
-
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface WalletsProviderEntryPoint {
-    fun walletsRepository(): WalletsRepository
 }
