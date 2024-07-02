@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -21,7 +22,9 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import dagger.hilt.android.EntryPointAccessors
@@ -33,9 +36,7 @@ import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCateg
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
-import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -112,6 +113,7 @@ fun WalletItem(
                 style = TextStyle(GlanceTheme.colors.onBackground),
                 maxLines = 1,
             )
+            Spacer(GlanceModifier.height(4.dp))
             Text(
                 text = currentBalance,
                 style = TextStyle(GlanceTheme.colors.onBackground),
@@ -123,7 +125,7 @@ fun WalletItem(
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$WALLET_ID_KEY=$walletId/$OPEN_TRANSACTION_DIALOG_KEY=true".toUri()
+                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/true".toUri()
                     component = ComponentName(
                         context.packageName,
                         TARGET_ACTIVITY_NAME,

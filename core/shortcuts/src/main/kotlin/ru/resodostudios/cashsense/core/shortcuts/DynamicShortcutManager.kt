@@ -10,9 +10,7 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
-import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import javax.inject.Inject
 
 private const val DYNAMIC_TRANSACTION_SHORTCUT_ID = "dynamic_new_transaction"
@@ -33,7 +31,7 @@ internal class DynamicShortcutManager @Inject constructor(
             .setIntent(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$WALLET_ID_KEY=$walletId/$OPEN_TRANSACTION_DIALOG_KEY=true".toUri()
+                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/true".toUri()
                     component = ComponentName(
                         context.packageName,
                         TARGET_ACTIVITY_NAME,
