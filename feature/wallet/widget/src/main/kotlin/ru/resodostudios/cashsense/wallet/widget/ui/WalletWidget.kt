@@ -23,9 +23,11 @@ import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
@@ -83,18 +85,35 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
             )
         },
     ) {
-        LazyColumn {
-            items(wallets) { walletPopulated ->
-                val currentBalance = walletPopulated.wallet.initialBalance
-                    .plus(walletPopulated.transactionsWithCategories
-                        .sumOf { it.transaction.amount })
+        if (wallets.isNotEmpty()) {
+            LazyColumn {
+                items(wallets) { walletPopulated ->
+                    val currentBalance = walletPopulated.wallet.initialBalance
+                        .plus(walletPopulated.transactionsWithCategories
+                            .sumOf { it.transaction.amount })
 
-                WalletItem(
-                    walletId = walletPopulated.wallet.id,
-                    title = walletPopulated.wallet.title,
-                    currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                    context = context,
-                    modifier = GlanceModifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                    WalletItem(
+                        walletId = walletPopulated.wallet.id,
+                        title = walletPopulated.wallet.title,
+                        currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
+                        context = context,
+                        modifier = GlanceModifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                    )
+                }
+            }
+        } else {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = GlanceModifier.fillMaxSize(),
+            ) {
+                Text(
+                    text = context.getString(R.string.wallet_widget_empty),
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = GlanceTheme.colors.onBackground,
+                    ),
+                    maxLines = 1,
                 )
             }
         }
