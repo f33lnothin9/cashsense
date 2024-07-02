@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -18,6 +19,8 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
@@ -25,6 +28,8 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
+import androidx.glance.layout.padding
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import dagger.hilt.android.EntryPointAccessors
@@ -67,10 +72,6 @@ class WalletWidget : GlanceAppWidget() {
 
 @Composable
 private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategories>) {
-    val walletPopulated = wallets.firstOrNull()
-
-    val currentBalance =
-        walletPopulated?.wallet?.initialBalance?.plus(walletPopulated.transactionsWithCategories.sumOf { it.transaction.amount })
 
     val context = LocalContext.current
 
@@ -82,12 +83,21 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
             )
         },
     ) {
-        WalletItem(
-            walletId = walletPopulated?.wallet?.id ?: "",
-            title = walletPopulated?.wallet?.title ?: context.getString(uiR.string.none),
-            currentBalance = currentBalance?.formatAmount(walletPopulated.wallet.currency) ?: context.getString(uiR.string.none),
-            context = context,
-        )
+        LazyColumn {
+            items(wallets) { walletPopulated ->
+                val currentBalance = walletPopulated.wallet.initialBalance
+                    .plus(walletPopulated.transactionsWithCategories
+                        .sumOf { it.transaction.amount })
+
+                WalletItem(
+                    walletId = walletPopulated.wallet.id,
+                    title = walletPopulated.wallet.title,
+                    currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
+                    context = context,
+                    modifier = GlanceModifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                )
+            }
+        }
     }
 }
 
@@ -110,7 +120,11 @@ fun WalletItem(
         ) {
             Text(
                 text = title,
-                style = TextStyle(GlanceTheme.colors.onBackground),
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = GlanceTheme.colors.onBackground,
+                ),
                 maxLines = 1,
             )
             Spacer(GlanceModifier.height(4.dp))

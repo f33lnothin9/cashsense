@@ -6,6 +6,6 @@
     android:minWidth="110dp"
     android:minHeight="110dp"
     android:resizeMode="horizontal|vertical"
-    android:targetCellWidth="2"
+    android:targetCellWidth="3"
     android:targetCellHeight="2"
     tools:targetApi="31" />
