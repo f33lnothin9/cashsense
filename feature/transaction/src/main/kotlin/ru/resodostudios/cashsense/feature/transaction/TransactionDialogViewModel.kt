@@ -5,20 +5,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Delete
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
@@ -38,14 +44,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionDialogViewModel @Inject constructor(
-    private val transactionsRepository: TransactionsRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val transactionsRepository: TransactionsRepository,
+    categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
     private val walletId = savedStateHandle.getStateFlow(key = WALLET_ID, initialValue = "")
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
     val transactionDialogUiState = _transactionDialogUiState.asStateFlow()
+
+    val categoriesUiState: StateFlow<CategoriesUiState> =
+        categoriesRepository.getCategories()
+            .map { CategoriesUiState.Success(false, it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = CategoriesUiState.Loading,
+            )
 
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
@@ -107,13 +123,7 @@ class TransactionDialogViewModel @Inject constructor(
         _transactionDialogUiState.update {
             it.copy(transactionId = id)
         }
-        if (_transactionDialogUiState.value.transactionId.isEmpty()) {
-            _transactionDialogUiState.update {
-                TransactionDialogUiState()
-            }
-        } else {
-            loadTransaction()
-        }
+        loadTransaction()
     }
 
     private fun updateWalletId(id: String) {

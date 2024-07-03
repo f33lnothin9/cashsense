@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feature_transaction_category_title">Category</string>
     <string name="feature_transaction_transactions_empty">Nothing in Transactions</string>
     <string name="feature_transaction_add_transaction">Add transaction</string>
     <string name="feature_transaction_edit_transaction">Edit transaction</string>

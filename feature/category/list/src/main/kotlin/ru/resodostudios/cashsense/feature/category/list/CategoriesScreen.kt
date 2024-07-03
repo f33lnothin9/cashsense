@@ -30,6 +30,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -38,8 +41,6 @@ import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogViewModel
-import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Loading
-import ru.resodostudios.cashsense.feature.category.list.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable

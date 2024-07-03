@@ -4,9 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import kotlinx.serialization.Serializable
 
-const val WALLET_ID_KEY = "walletId"
-const val OPEN_TRANSACTION_DIALOG_KEY = "openTransactionDialog"
-
 @Serializable
 data class HomeRoute(
     val walletId: String? = null,

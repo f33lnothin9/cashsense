@@ -9,7 +9,4 @@ android {
 
 dependencies {
     implementation(projects.core.data)
-
-    implementation(projects.feature.category.list)
-    implementation(projects.feature.category.dialog)
 }
