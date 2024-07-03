@@ -8,7 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.getString
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -79,13 +78,11 @@ class WalletWidget : GlanceAppWidget() {
 @Composable
 private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategories>) {
 
-    val context = LocalContext.current
-
     Scaffold(
         titleBar = {
             TitleBar(
                 startIcon = ImageProvider(CsIcons.Wallet),
-                title = getString(context, R.string.wallet_widget_title),
+                title = LocalContext.current.getString(R.string.wallet_widget_title),
             )
         },
     ) {
@@ -108,7 +105,6 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                         walletId = walletPopulated.wallet.id,
                         title = walletPopulated.wallet.title,
                         currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                        context = context,
                         modifier = GlanceModifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
                     )
                 }
@@ -119,7 +115,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                 modifier = GlanceModifier.fillMaxSize(),
             ) {
                 Text(
-                    text = getString(context, R.string.wallet_widget_empty),
+                    text = LocalContext.current.getString(R.string.wallet_widget_empty),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -137,7 +133,6 @@ fun WalletItem(
     walletId: String,
     title: String,
     currentBalance: String,
-    context: Context,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Row(
@@ -172,18 +167,18 @@ fun WalletItem(
                     action = Intent.ACTION_VIEW
                     data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/true".toUri()
                     component = ComponentName(
-                        context.packageName,
+                        LocalContext.current.packageName,
                         TARGET_ACTIVITY_NAME,
                     )
                 }
             ),
-            contentDescription = getString(context, uiR.string.add),
+            contentDescription = LocalContext.current.getString(uiR.string.add),
         )
     }
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 110, heightDp = 110)
+@Preview(widthDp = 250, heightDp = 200)
 @Composable
 fun WalletWidgetPreview() {
     GlanceTheme {
