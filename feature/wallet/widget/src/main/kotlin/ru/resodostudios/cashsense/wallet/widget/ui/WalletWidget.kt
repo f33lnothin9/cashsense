@@ -31,8 +31,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.preview.ExperimentalGlancePreviewApi
-import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -174,14 +172,5 @@ fun WalletItem(
             ),
             contentDescription = LocalContext.current.getString(uiR.string.add),
         )
-    }
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 250, heightDp = 200)
-@Composable
-fun WalletWidgetPreview() {
-    CsGlanceTheme {
-        WalletWidgetContent(wallets = emptyList())
     }
 }
