@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feature_transaction_category_title">Категория</string>
     <string name="feature_transaction_transactions_empty">Здесь будут ваши транзакции</string>
     <string name="feature_transaction_add_transaction">Добавить транзакцию</string>
     <string name="feature_transaction_edit_transaction">Изменение транзакции</string>

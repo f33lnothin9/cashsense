@@ -34,7 +34,6 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import ru.resodostudios.cashsense.core.ui.R as uiR
-import ru.resodostudios.cashsense.feature.wallet.detail.R as walletDetailR
 
 @Composable
 fun HomeScreen(
@@ -127,8 +126,8 @@ internal fun HomeScreen(
                 }
             } else {
                 EmptyState(
-                    messageRes = walletDetailR.string.feature_wallet_detail_wallets_empty,
-                    animationRes = walletDetailR.raw.anim_wallets_empty,
+                    messageRes = R.string.feature_home_empty,
+                    animationRes = R.raw.anim_wallets_empty,
                 )
             }
 

@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
+import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
+import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.home.navigation.OPEN_TRANSACTION_DIALOG_KEY
-import ru.resodostudios.cashsense.feature.home.navigation.WALLET_ID_KEY
 import javax.inject.Inject
 
 @HiltViewModel

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,14 +60,4 @@ class CategoriesViewModel @Inject constructor(
         lastRemovedCategoryIdState.value?.let(::deleteCategory)
         undoCategoryRemoval()
     }
-}
-
-sealed interface CategoriesUiState {
-
-    data object Loading : CategoriesUiState
-
-    data class Success(
-        val shouldDisplayUndoCategory: Boolean,
-        val categories: List<Category>,
-    ) : CategoriesUiState
 }
