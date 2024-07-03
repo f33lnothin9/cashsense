@@ -68,7 +68,7 @@ class WalletWidget : GlanceAppWidget() {
             val wallets by walletsRepository.getWalletsWithTransactions()
                 .collectAsState(initialWallets)
 
-            GlanceTheme {
+            CsGlanceTheme {
                 WalletWidgetContent(wallets)
             }
         }
@@ -181,7 +181,7 @@ fun WalletItem(
 @Preview(widthDp = 250, heightDp = 200)
 @Composable
 fun WalletWidgetPreview() {
-    GlanceTheme {
+    CsGlanceTheme {
         WalletWidgetContent(wallets = emptyList())
     }
 }
