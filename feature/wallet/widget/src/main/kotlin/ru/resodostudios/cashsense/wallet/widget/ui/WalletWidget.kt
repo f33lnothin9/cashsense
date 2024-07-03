@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getString
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -31,6 +32,8 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -63,7 +66,8 @@ class WalletWidget : GlanceAppWidget() {
         }
 
         provideContent {
-            val wallets by walletsRepository.getWalletsWithTransactions().collectAsState(initialWallets)
+            val wallets by walletsRepository.getWalletsWithTransactions()
+                .collectAsState(initialWallets)
 
             GlanceTheme {
                 WalletWidgetContent(wallets)
@@ -81,7 +85,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
         titleBar = {
             TitleBar(
                 startIcon = ImageProvider(CsIcons.Wallet),
-                title = context.getString(R.string.wallet_widget_title),
+                title = getString(context, R.string.wallet_widget_title),
             )
         },
     ) {
@@ -107,7 +111,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                 modifier = GlanceModifier.fillMaxSize(),
             ) {
                 Text(
-                    text = context.getString(R.string.wallet_widget_empty),
+                    text = getString(context, R.string.wallet_widget_empty),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -165,7 +169,16 @@ fun WalletItem(
                     )
                 }
             ),
-            contentDescription = context.getString(uiR.string.add),
+            contentDescription = getString(context, uiR.string.add),
         )
+    }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 110, heightDp = 110)
+@Composable
+fun WalletWidgetPreview() {
+    GlanceTheme {
+        WalletWidgetContent(wallets = emptyList())
     }
 }

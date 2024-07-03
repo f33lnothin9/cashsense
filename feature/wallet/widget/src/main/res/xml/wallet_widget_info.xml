@@ -8,4 +8,5 @@
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="3"
     android:targetCellHeight="2"
+    android:updatePeriodMillis="0"
     tools:targetApi="31" />
