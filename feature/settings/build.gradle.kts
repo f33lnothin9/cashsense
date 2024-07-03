@@ -13,7 +13,4 @@ dependencies {
 
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.android.material)
-    implementation(libs.google.oss.licenses)
 }

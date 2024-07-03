@@ -1,15 +1,3 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath(libs.google.oss.licenses.plugin) {
-            exclude(group = "com.google.protobuf")
-        }
-    }
-}
-
 plugins {
     alias(libs.plugins.aboutlibraries) apply false
     alias(libs.plugins.android.application) apply false
