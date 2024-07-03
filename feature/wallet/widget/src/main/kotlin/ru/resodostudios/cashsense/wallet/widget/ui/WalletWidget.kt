@@ -91,7 +91,15 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
     ) {
         if (wallets.isNotEmpty()) {
             LazyColumn {
-                items(wallets) { walletPopulated ->
+                items(
+                    items = wallets,
+                    itemId = { walletPopulated ->
+                        walletPopulated.wallet.id
+                            .filter { it.isDigit() }
+                            .take(9)
+                            .toLong()
+                    }
+                ) { walletPopulated ->
                     val currentBalance = walletPopulated.wallet.initialBalance
                         .plus(walletPopulated.transactionsWithCategories
                             .sumOf { it.transaction.amount })
