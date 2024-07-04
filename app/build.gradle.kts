@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.cashsense.android.application.compose)
     alias(libs.plugins.cashsense.android.hilt)
     alias(libs.plugins.cashsense.android.application.firebase)
+    alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
 }

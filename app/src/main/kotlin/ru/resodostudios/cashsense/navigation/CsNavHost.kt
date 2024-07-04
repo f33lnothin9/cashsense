@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.settingsScreen
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
 import ru.resodostudios.cashsense.ui.CsAppState
 import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
@@ -39,5 +40,6 @@ fun CsNavHost(
         subscriptionsScreen(
             onShowSnackbar = onShowSnackbar,
         )
+        settingsScreen()
     }
 }

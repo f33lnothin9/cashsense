@@ -21,11 +21,14 @@ import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRou
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
+import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettings
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 
 @Composable
@@ -63,6 +66,7 @@ class CsAppState(
                 if (this?.hasRoute<HomeRoute>() == true) return HOME
                 if (this?.hasRoute<CategoriesRoute>() == true) return CATEGORIES
                 if (this?.hasRoute<SubscriptionsRoute>() == true) return SUBSCRIPTIONS
+                if (this?.hasRoute<SettingsRoute>() == true) return SETTINGS
             }
             return null
         }
@@ -90,6 +94,7 @@ class CsAppState(
                 HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
+                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
             }
         }
     }

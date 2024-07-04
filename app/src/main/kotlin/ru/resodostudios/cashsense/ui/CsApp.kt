@@ -112,24 +112,27 @@ fun CsApp(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton = {
                 if (destination != null) {
-                    CsFloatingActionButton(
-                        titleRes = destination.fabTitle,
-                        iconRes = destination.fabIcon,
-                        onClick = {
-                            when (destination) {
-                                HOME -> showWalletDialog = true
-                                CATEGORIES -> showCategoryDialog = true
-                                SUBSCRIPTIONS -> showSubscriptionDialog = true
-                            }
-                        },
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing.only(
-                                    WindowInsetsSides.Horizontal,
+                    if (destination.fabTitle != null && destination.fabIcon != null) {
+                        CsFloatingActionButton(
+                            titleRes = destination.fabTitle,
+                            iconRes = destination.fabIcon,
+                            onClick = {
+                                when (destination) {
+                                    HOME -> showWalletDialog = true
+                                    CATEGORIES -> showCategoryDialog = true
+                                    SUBSCRIPTIONS -> showSubscriptionDialog = true
+                                    else -> {}
+                                }
+                            },
+                            modifier = Modifier
+                                .navigationBarsPadding()
+                                .windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(
+                                        WindowInsetsSides.Horizontal,
+                                    ),
                                 ),
-                            ),
-                    )
+                        )
+                    }
                 }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
