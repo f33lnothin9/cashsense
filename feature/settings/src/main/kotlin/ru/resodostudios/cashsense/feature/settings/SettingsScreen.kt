@@ -1,11 +1,11 @@
 package ru.resodostudios.cashsense.feature.settings
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
@@ -36,14 +35,12 @@ import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
 
 @Composable
-fun SettingsBottomSheet(
-    onDismiss: () -> Unit,
+fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
 
-    SettingsBottomSheet(
-        onDismiss = onDismiss,
+    SettingsScreen(
         settingsUiState = settingsUiState,
         onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
         onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
@@ -51,48 +48,37 @@ fun SettingsBottomSheet(
 }
 
 @Composable
-fun SettingsBottomSheet(
-    onDismiss: () -> Unit,
+private fun SettingsScreen(
     settingsUiState: SettingsUiState,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    CsModalBottomSheet(
-        onDismiss = { onDismiss() },
-    ) {
-        when (settingsUiState) {
-            Loading -> LoadingState(
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth(),
-            )
-
-            is Success -> {
-                Text(
-                    text = stringResource(R.string.feature_settings_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                )
-                SettingsPanel(
-                    settings = settingsUiState.settings,
-                    supportDynamicColor = supportDynamicColor,
-                    onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                    onChangeDarkThemeConfig = onChangeDarkThemeConfig,
-                )
+    when (settingsUiState) {
+        Loading -> LoadingState(Modifier.fillMaxSize())
+        is Success -> {
+            LazyColumn {
+                item {
+                    SettingsPanel(
+                        settings = settingsUiState.settings,
+                        supportDynamicColor = supportDynamicColor,
+                        onChangeDynamicColorPreference = onChangeDynamicColorPreference,
+                        onChangeDarkThemeConfig = onChangeDarkThemeConfig,
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.SettingsPanel(
+private fun SettingsPanel(
     settings: UserEditableSettings,
     supportDynamicColor: Boolean,
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_theme))
+    SettingsScreenSectionTitle(stringResource(R.string.feature_settings_theme))
     AnimatedVisibility(supportDynamicColor) {
         CsListItem(
             headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
@@ -153,7 +139,7 @@ private fun ColumnScope.SettingsPanel(
         }
     }
 
-    SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_about))
+    SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about))
     val uriHandler = LocalUriHandler.current
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
@@ -174,7 +160,7 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = {},
+        onClick = { TODO() },
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     CsListItem(
@@ -190,7 +176,7 @@ private fun ColumnScope.SettingsPanel(
 }
 
 @Composable
-private fun SettingsBottomSheetSectionTitle(text: String) {
+private fun SettingsScreenSectionTitle(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
@@ -199,4 +185,5 @@ private fun SettingsBottomSheetSectionTitle(text: String) {
     )
 }
 
-private const val PRIVACY_POLICY_URL = "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"
+private const val PRIVACY_POLICY_URL =
+    "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"

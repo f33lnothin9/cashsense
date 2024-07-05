@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
+import ru.resodostudios.cashsense.feature.settings.SettingsScreen
 
 @Serializable
 data object SettingsRoute
@@ -14,6 +15,6 @@ fun NavController.navigateToSettings(navOptions: NavOptions) =
 
 fun NavGraphBuilder.settingsScreen() {
     composable<SettingsRoute> {
-
+        SettingsScreen()
     }
 }

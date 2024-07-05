@@ -40,7 +40,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
-import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
@@ -55,14 +54,10 @@ fun CsApp(
     appState: CsAppState,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    var showSettingsBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
     var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
-    if (showSettingsBottomSheet) {
-        SettingsBottomSheet(onDismiss = { showSettingsBottomSheet = false })
-    }
     if (showCategoryDialog) {
         CategoryDialog(onDismiss = { showCategoryDialog = false })
     }
