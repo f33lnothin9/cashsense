@@ -26,9 +26,9 @@ fun CsNavHost(
         navController = navController,
         startDestination = HomeRoute(),
         enterTransition = { slideInVertically { it / 16 } + fadeIn() },
-        exitTransition = { fadeOut(tween(25)) },
+        exitTransition = { fadeOut(tween(0)) },
         popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
-        popExitTransition = { fadeOut(tween(25)) },
+        popExitTransition = { fadeOut(tween(0)) },
         modifier = modifier,
     ) {
         homeListDetailScreen(

@@ -37,10 +37,8 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
@@ -154,9 +152,6 @@ fun CsApp(
                 if (destination != null) {
                     CsTopAppBar(
                         titleRes = destination.titleTextId,
-                        actionIconRes = CsIcons.Settings,
-                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                        onActionClick = { showSettingsBottomSheet = true },
                     )
                 }
 
