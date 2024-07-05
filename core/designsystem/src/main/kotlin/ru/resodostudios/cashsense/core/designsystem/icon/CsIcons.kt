@@ -11,7 +11,7 @@ object CsIcons {
     val CreditCard = R.drawable.ic_outlined_credit_card
     val Subscriptions = R.drawable.ic_outlined_subscriptions
     val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
-    val Settings = R.drawable.ic_outlined_settings
+
     val Calendar = R.drawable.ic_outlined_calendar
     val Delete = R.drawable.ic_outlined_delete
     val TrendingUp = R.drawable.ic_outlined_trending_up
@@ -54,6 +54,8 @@ object CsIcons {
     val Restaurant = R.drawable.ic_outlined_restaurant
     val School = R.drawable.ic_outlined_school
     val SelfCare = R.drawable.ic_outlined_self_care
+    val Settings = R.drawable.ic_outlined_settings
+    val SettingsFilled = R.drawable.ic_filled_settings
     val ShoppingCart = R.drawable.ic_outlined_shopping_cart
     val SimCard = R.drawable.ic_outlined_sim_card
     val SmokingRooms = R.drawable.ic_outlined_smoking_rooms

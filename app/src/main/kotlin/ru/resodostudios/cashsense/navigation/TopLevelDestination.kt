@@ -52,7 +52,7 @@ enum class TopLevelDestination(
         route = SubscriptionsRoute::class,
     ),
     SETTINGS(
-        selectedIcon = CsIcons.Settings,
+        selectedIcon = CsIcons.SettingsFilled,
         unselectedIcon = CsIcons.Settings,
         iconTextId = settingsR.string.feature_settings_title,
         titleTextId = settingsR.string.feature_settings_title,
