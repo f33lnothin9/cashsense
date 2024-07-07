@@ -36,12 +36,14 @@ import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
 
 @Composable
 fun SettingsScreen(
+    onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
 
     SettingsScreen(
         settingsUiState = settingsUiState,
+        onLicensesClick = onLicensesClick,
         onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
         onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
     )
@@ -50,6 +52,7 @@ fun SettingsScreen(
 @Composable
 private fun SettingsScreen(
     settingsUiState: SettingsUiState,
+    onLicensesClick: () -> Unit,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
@@ -64,6 +67,7 @@ private fun SettingsScreen(
                         supportDynamicColor = supportDynamicColor,
                         onChangeDynamicColorPreference = onChangeDynamicColorPreference,
                         onChangeDarkThemeConfig = onChangeDarkThemeConfig,
+                        onLicensesClick = onLicensesClick,
                     )
                 }
             }
@@ -77,6 +81,7 @@ private fun SettingsPanel(
     supportDynamicColor: Boolean,
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
+    onLicensesClick: () -> Unit,
 ) {
     SettingsScreenSectionTitle(stringResource(R.string.feature_settings_theme))
     AnimatedVisibility(supportDynamicColor) {
@@ -160,7 +165,7 @@ private fun SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = { TODO() },
+        onClick = onLicensesClick,
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     CsListItem(

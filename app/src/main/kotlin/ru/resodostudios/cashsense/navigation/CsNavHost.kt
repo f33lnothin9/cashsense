@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.licensesRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
 import ru.resodostudios.cashsense.ui.CsAppState
@@ -41,7 +43,10 @@ fun CsNavHost(
             onShowSnackbar = onShowSnackbar,
         )
         settingsGraph(
-
+            onLicensesClick = { navController.navigateToLicenses() },
+            nestedGraphs = {
+                licensesRoute()
+            }
         )
     }
 }
