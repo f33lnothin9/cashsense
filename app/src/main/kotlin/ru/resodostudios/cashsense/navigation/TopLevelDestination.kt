@@ -4,7 +4,7 @@ import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
@@ -58,6 +58,6 @@ enum class TopLevelDestination(
         titleTextId = settingsR.string.feature_settings_title,
         fabIcon = null,
         fabTitle = null,
-        route = SettingsRoute::class,
+        route = SettingsGraph::class,
     )
 }

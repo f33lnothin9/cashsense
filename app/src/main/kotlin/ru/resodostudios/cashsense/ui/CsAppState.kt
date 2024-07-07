@@ -22,7 +22,7 @@ import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCat
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettings
+import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
@@ -94,7 +94,7 @@ class CsAppState(
                 HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
-                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
+                SETTINGS -> navController.navigateToSettingsGraph(topLevelNavOptions)
             }
         }
     }
