@@ -1,8 +1,6 @@
 package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -57,11 +55,6 @@ fun WalletCard(
     isPrimary: Boolean = false,
 ) {
     val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
-    val currentBalanceAnimated by animateFloatAsState(
-        targetValue = currentBalance.toFloat(),
-        label = "CurrentBalanceAnimation",
-        animationSpec = tween(durationMillis = 400),
-    )
 
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
@@ -83,9 +76,7 @@ fun WalletCard(
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = currentBalanceAnimated
-                    .toBigDecimal()
-                    .formatAmount(wallet.currency),
+                text = currentBalance.formatAmount(wallet.currency),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,
@@ -146,17 +137,6 @@ private fun TagsSection(
         }
     }
 
-    val expensesAnimated by animateFloatAsState(
-        targetValue = expenses.toFloat(),
-        label = "ExpensesAnimation",
-        animationSpec = tween(durationMillis = 400),
-    )
-    val incomeAnimated by animateFloatAsState(
-        targetValue = income.toFloat(),
-        label = "IncomeAnimation",
-        animationSpec = tween(durationMillis = 400),
-    )
-
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -174,9 +154,7 @@ private fun TagsSection(
             exit = fadeOut() + scaleOut(),
         ) {
             CsTag(
-                text = expensesAnimated
-                    .toBigDecimal()
-                    .formatAmount(currency),
+                text = expenses.formatAmount(currency),
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
@@ -187,9 +165,7 @@ private fun TagsSection(
             exit = fadeOut() + scaleOut(),
         ) {
             CsTag(
-                text = incomeAnimated
-                    .toBigDecimal()
-                    .formatAmount(currency),
+                text = income.formatAmount(currency),
                 color = MaterialTheme.colorScheme.tertiaryContainer,
                 iconId = CsIcons.TrendingUp,
             )
