@@ -1,8 +1,7 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -29,6 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -40,6 +42,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -57,11 +60,6 @@ fun WalletCard(
     isPrimary: Boolean = false,
 ) {
     val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
-    val currentBalanceAnimated by animateFloatAsState(
-        targetValue = currentBalance.toFloat(),
-        label = "CurrentBalanceAnimation",
-        animationSpec = tween(durationMillis = 400),
-    )
 
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
@@ -82,13 +80,17 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
             )
-            Text(
-                text = currentBalanceAnimated
-                    .toBigDecimal()
-                    .formatAmount(wallet.currency),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge,
+            AnimatedAmount(
+                targetState = currentBalance,
+                label = "wallet_balance",
+                content = {
+                    Text(
+                        text = it.formatAmount(wallet.currency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                },
             )
             TagsSection(
                 transactions = transactions,
@@ -146,17 +148,6 @@ private fun TagsSection(
         }
     }
 
-    val expensesAnimated by animateFloatAsState(
-        targetValue = expenses.toFloat(),
-        label = "ExpensesAnimation",
-        animationSpec = tween(durationMillis = 400),
-    )
-    val incomeAnimated by animateFloatAsState(
-        targetValue = income.toFloat(),
-        label = "IncomeAnimation",
-        animationSpec = tween(durationMillis = 400),
-    )
-
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -173,10 +164,9 @@ private fun TagsSection(
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
-            CsTag(
-                text = expensesAnimated
-                    .toBigDecimal()
-                    .formatAmount(currency),
+            CsAnimatedTag(
+                amount = expenses,
+                currency = currency,
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
@@ -186,12 +176,59 @@ private fun TagsSection(
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
-            CsTag(
-                text = incomeAnimated
-                    .toBigDecimal()
-                    .formatAmount(currency),
+            CsAnimatedTag(
+                amount = income,
+                currency = currency,
                 color = MaterialTheme.colorScheme.tertiaryContainer,
                 iconId = CsIcons.TrendingUp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CsAnimatedTag(
+    amount: BigDecimal,
+    currency: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.secondaryContainer,
+    shape: Shape = RoundedCornerShape(16.dp),
+    @DrawableRes
+    iconId: Int? = null,
+) {
+    Surface(
+        color = color,
+        shape = shape,
+        modifier = modifier,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(
+                start = 8.dp,
+                top = 4.dp,
+                end = 8.dp,
+                bottom = 4.dp,
+            )
+        ) {
+            if (iconId != null) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(iconId),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            AnimatedAmount(
+                targetState = amount,
+                label = "animated_tag",
+                content = {
+                    Text(
+                        text = it.formatAmount(currency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
             )
         }
     }
