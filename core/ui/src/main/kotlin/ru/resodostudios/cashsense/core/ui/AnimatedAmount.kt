@@ -2,6 +2,8 @@ package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -20,9 +22,9 @@ fun AnimatedAmount(
         targetState = targetState,
         transitionSpec = {
             if (targetState > initialState) {
-                slideInVertically { -it } togetherWith slideOutVertically { it }
+                slideInVertically { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
             } else {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
+                slideInVertically { it } + fadeIn() togetherWith slideOutVertically { -it } + fadeOut()
             }
         },
         label = label,
