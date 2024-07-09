@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -27,6 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -78,7 +82,7 @@ fun WalletCard(
             )
             AnimatedAmount(
                 targetState = currentBalance,
-                label = "wallet_balance_animation",
+                label = "wallet_balance",
                 content = {
                     Text(
                         text = it.formatAmount(wallet.currency),
@@ -160,8 +164,9 @@ private fun TagsSection(
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
-            CsTag(
-                text = expenses.formatAmount(currency),
+            CsAnimatedTag(
+                amount = expenses,
+                currency = currency,
                 color = MaterialTheme.colorScheme.errorContainer,
                 iconId = CsIcons.TrendingDown,
             )
@@ -171,10 +176,59 @@ private fun TagsSection(
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
-            CsTag(
-                text = income.formatAmount(currency),
+            CsAnimatedTag(
+                amount = income,
+                currency = currency,
                 color = MaterialTheme.colorScheme.tertiaryContainer,
                 iconId = CsIcons.TrendingUp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CsAnimatedTag(
+    amount: BigDecimal,
+    currency: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.secondaryContainer,
+    shape: Shape = RoundedCornerShape(16.dp),
+    @DrawableRes
+    iconId: Int? = null,
+) {
+    Surface(
+        color = color,
+        shape = shape,
+        modifier = modifier,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(
+                start = 8.dp,
+                top = 4.dp,
+                end = 8.dp,
+                bottom = 4.dp,
+            )
+        ) {
+            if (iconId != null) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(iconId),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            AnimatedAmount(
+                targetState = amount,
+                label = "animated_tag",
+                content = {
+                    Text(
+                        text = it.formatAmount(currency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
             )
         }
     }
