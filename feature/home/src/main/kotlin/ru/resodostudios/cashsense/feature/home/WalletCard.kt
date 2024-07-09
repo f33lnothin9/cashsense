@@ -38,6 +38,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -75,11 +76,17 @@ fun WalletCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
             )
-            Text(
-                text = currentBalance.formatAmount(wallet.currency),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge,
+            AnimatedAmount(
+                targetState = currentBalance,
+                label = "wallet_balance_animation",
+                content = {
+                    Text(
+                        text = it.formatAmount(wallet.currency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                },
             )
             TagsSection(
                 transactions = transactions,
