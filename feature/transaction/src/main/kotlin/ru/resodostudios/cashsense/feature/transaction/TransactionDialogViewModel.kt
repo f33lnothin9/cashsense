@@ -95,6 +95,7 @@ class TransactionDialogViewModel @Inject constructor(
             },
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
+            ignored = _transactionDialogUiState.value.ignored,
         )
         val transactionCategoryCrossRef =
             _transactionDialogUiState.value.category?.id?.let { categoryId ->
@@ -187,6 +188,7 @@ class TransactionDialogViewModel @Inject constructor(
                         date = it.transaction.timestamp,
                         category = it.category,
                         status = it.transaction.status,
+                        ignored = it.transaction.ignored,
                     )
                 }
         }
@@ -207,6 +209,7 @@ data class TransactionDialogUiState(
     val category: Category? = Category(),
     val transactionType: TransactionType = EXPENSE,
     val status: StatusType = COMPLETED,
+    val ignored: Boolean = false,
     val isLoading: Boolean = false,
 )
 

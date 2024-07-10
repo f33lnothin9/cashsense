@@ -21,6 +21,8 @@ data class TransactionEntity(
     val timestamp: Instant,
     @ColumnInfo(defaultValue = "COMPLETED")
     val status: StatusType,
+    @ColumnInfo(defaultValue = "0")
+    val ignored: Boolean,
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(
@@ -30,4 +32,5 @@ fun TransactionEntity.asExternalModel() = Transaction(
     amount = amount,
     timestamp = timestamp,
     status = status,
+    ignored = ignored,
 )

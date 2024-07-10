@@ -10,4 +10,5 @@ data class Transaction(
     val amount: BigDecimal,
     val timestamp: Instant,
     val status: StatusType,
+    val ignored: Boolean,
 )
