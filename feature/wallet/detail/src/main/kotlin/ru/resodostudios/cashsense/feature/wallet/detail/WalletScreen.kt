@@ -708,6 +708,7 @@ private fun LazyListScope.transactions(
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
                 categoryTitle = category?.title ?: stringResource(uiR.string.none),
                 transactionStatus = transaction.status,
+                ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },
                 modifier = Modifier.animateItem(),
             )
