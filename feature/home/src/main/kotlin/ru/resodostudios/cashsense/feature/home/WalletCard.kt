@@ -134,7 +134,7 @@ private fun TagsSection(
     val expenses by remember(transactions) {
         derivedStateOf {
             transactions
-                .filter { it.amount < BigDecimal.ZERO }
+                .filter { it.amount < BigDecimal.ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
         }
@@ -142,7 +142,7 @@ private fun TagsSection(
     val income by remember(transactions) {
         derivedStateOf {
             transactions
-                .filter { it.amount > BigDecimal.ZERO }
+                .filter { it.amount > BigDecimal.ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
         }

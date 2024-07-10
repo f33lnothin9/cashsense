@@ -345,10 +345,10 @@ private fun FinancePanel(
         Loading -> Unit
         is Success -> {
             val expenses = walletState.transactionsCategories
-                .filter { it.transaction.amount < BigDecimal.ZERO }
+                .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount.abs() }
             val income = walletState.transactionsCategories
-                .filter { it.transaction.amount > BigDecimal.ZERO }
+                .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount }
 
             val expensesProgress by animateFloatAsState(
