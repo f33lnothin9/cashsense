@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
@@ -59,6 +61,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.ui.R as uiR
@@ -168,6 +171,21 @@ fun TransactionDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(descTextField),
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Block),
+                            contentDescription = null,
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = transactionDialogState.ignored,
+                            onCheckedChange = { onTransactionEvent(UpdateIgnoring(it)) },
+                        )
+                    },
                 )
             }
             LaunchedEffect(Unit) {

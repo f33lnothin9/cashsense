@@ -32,6 +32,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
@@ -76,6 +77,7 @@ class TransactionDialogViewModel @Inject constructor(
             is UpdateStatus -> updateStatus(event.status)
             is UpdateCategory -> updateCategory(event.category)
             is UpdateDescription -> updateDescription(event.description)
+            is UpdateIgnoring -> updateIgnoring(event.ignored)
         }
     }
 
@@ -170,6 +172,12 @@ class TransactionDialogViewModel @Inject constructor(
     private fun updateDescription(description: String) {
         _transactionDialogUiState.update {
             it.copy(description = description)
+        }
+    }
+
+    private fun updateIgnoring(ignored: Boolean) {
+        _transactionDialogUiState.update {
+            it.copy(ignored = ignored)
         }
     }
 
