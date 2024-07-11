@@ -113,7 +113,6 @@ class TransactionDialogViewModel @Inject constructor(
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
         }
-        _transactionDialogUiState.value = TransactionDialogUiState()
     }
 
     private fun deleteTransaction() {

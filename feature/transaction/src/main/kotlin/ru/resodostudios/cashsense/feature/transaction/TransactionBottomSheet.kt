@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +32,8 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -44,6 +47,7 @@ fun TransactionBottomSheet(
 
     TransactionBottomSheet(
         transactionDialogState = transactionDialogState,
+        onTransactionEvent = viewModel::onTransactionEvent,
         onDismiss = onDismiss,
         onEdit = onEdit,
         onDelete = onDelete,
@@ -54,24 +58,24 @@ fun TransactionBottomSheet(
 @Composable
 fun TransactionBottomSheet(
     transactionDialogState: TransactionDialogUiState,
+    onTransactionEvent: (TransactionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
     onDelete: (String) -> Unit,
 ) {
-    CsModalBottomSheet(onDismiss = onDismiss) {
+    CsModalBottomSheet(onDismiss) {
         if (transactionDialogState.isLoading) {
             LoadingState(
-                Modifier
+                modifier = Modifier
                     .height(100.dp)
                     .fillMaxWidth()
             )
-        }
-        if (!transactionDialogState.isLoading) {
+        } else {
             Column {
                 CsListItem(
                     headlineContent = {
                         Text(
-                            transactionDialogState.amount
+                            text = transactionDialogState.amount
                                 .toBigDecimal()
                                 .formatAmount(transactionDialogState.currency, true)
                         )
@@ -112,6 +116,24 @@ fun TransactionBottomSheet(
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
+                CsListItem(
+                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Block),
+                            contentDescription = null,
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = transactionDialogState.ignored,
+                            onCheckedChange = {
+                                onTransactionEvent(UpdateIgnoring(it))
+                                onTransactionEvent(Save)
+                            },
+                        )
+                    },
+                )
                 CsListItem(
                     headlineContent = { Text(stringResource(uiR.string.edit)) },
                     leadingContent = {
