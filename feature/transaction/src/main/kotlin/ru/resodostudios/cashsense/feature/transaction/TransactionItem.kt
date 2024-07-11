@@ -13,11 +13,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -33,6 +34,7 @@ fun TransactionItem(
     icon: Int,
     categoryTitle: String,
     transactionStatus: StatusType,
+    ignored: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -79,12 +81,12 @@ fun TransactionItem(
                 contentDescription = null,
             )
         },
-        modifier = modifier,
+        modifier = modifier.alpha(if (ignored) 0.38f else 1f),
         onClick = onClick,
     )
 }
 
-@PreviewLightDark
+@Preview
 @Composable
 fun TransactionItemPreview() {
     CsTheme {
@@ -98,6 +100,27 @@ fun TransactionItemPreview() {
                 categoryTitle = "Fastfood",
                 transactionStatus = PENDING,
                 onClick = {},
+                ignored = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TransactionItemIgnoredPreview() {
+    CsTheme {
+        Surface {
+            TransactionItem(
+                amount = BigDecimal(-199.99).formatAmount(
+                    currencyCode = "USD",
+                    withPlus = true,
+                ),
+                icon = StoredIcon.FASTFOOD.storedId,
+                categoryTitle = "Fastfood",
+                transactionStatus = PENDING,
+                onClick = {},
+                ignored = true,
             )
         }
     }

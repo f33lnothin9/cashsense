@@ -345,10 +345,10 @@ private fun FinancePanel(
         Loading -> Unit
         is Success -> {
             val expenses = walletState.transactionsCategories
-                .filter { it.transaction.amount < BigDecimal.ZERO }
+                .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount.abs() }
             val income = walletState.transactionsCategories
-                .filter { it.transaction.amount > BigDecimal.ZERO }
+                .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount }
 
             val expensesProgress by animateFloatAsState(
@@ -708,6 +708,7 @@ private fun LazyListScope.transactions(
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
                 categoryTitle = category?.title ?: stringResource(uiR.string.none),
                 transactionStatus = transaction.status,
+                ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },
                 modifier = Modifier.animateItem(),
             )

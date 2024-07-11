@@ -10,4 +10,5 @@ fun Transaction.asEntity() = TransactionEntity(
     timestamp = timestamp,
     description = description,
     status = status,
+    ignored = ignored,
 )

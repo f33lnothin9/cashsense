@@ -24,6 +24,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-25).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "1",
@@ -39,6 +40,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = 1000.toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "2",
@@ -54,6 +56,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-50).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "10",
@@ -69,6 +72,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-50).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "10",
@@ -84,6 +88,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-50).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "1",
@@ -99,6 +104,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-50).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "8",
@@ -114,6 +120,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-150).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "8",
@@ -129,6 +136,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = 100.toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "1",
@@ -144,6 +152,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-175).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "11",
@@ -159,6 +168,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         amount = (-150).toBigDecimal(),
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
+                        ignored = false,
                     ),
                     category = Category(
                         id = "11",
