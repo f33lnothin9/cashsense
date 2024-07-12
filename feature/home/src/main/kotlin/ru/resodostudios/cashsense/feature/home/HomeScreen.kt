@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +22,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
+import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
@@ -77,8 +78,8 @@ internal fun HomeScreen(
     var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
     when (walletsState) {
-        WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-        is WalletsUiState.Success -> {
+        Loading -> LoadingState(Modifier.fillMaxSize())
+        is Success -> {
             val walletDeletedMessage = stringResource(R.string.feature_home_wallet_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
@@ -163,26 +164,24 @@ private fun LazyStaggeredGridScope.wallets(
     highlightSelectedWallet: Boolean = false,
 ) {
     when (walletsState) {
-        WalletsUiState.Loading -> Unit
-        is WalletsUiState.Success -> {
-            items(
-                items = walletsState.walletsTransactionsCategories,
-                key = { it.wallet.id },
-                contentType = { "wallet" },
-            ) { walletPopulated ->
-                val isSelected = highlightSelectedWallet && walletPopulated.wallet.id == walletsState.selectedWalletId
-                val isPrimary = walletPopulated.wallet.id == walletsState.primaryWalletId
-
-                WalletCard(
-                    wallet = walletPopulated.wallet,
-                    transactions = walletPopulated.transactionsWithCategories.map { it.transaction },
-                    onWalletClick = onWalletClick,
-                    onTransactionCreate = onTransactionCreate,
-                    onWalletMenuClick = onWalletMenuClick,
-                    modifier = Modifier.animateItem(),
-                    selected = isSelected,
-                    isPrimary = isPrimary,
-                )
+        Loading -> Unit
+        is Success -> {
+            walletsState.walletsTransactionsCategories.forEach { walletTransactionsCategories ->
+                val walletId = walletTransactionsCategories.wallet.id
+                val isSelected = highlightSelectedWallet && walletId == walletsState.selectedWalletId
+                val isPrimary = walletId == walletsState.primaryWalletId
+                item(key = walletId) {
+                    WalletCard(
+                        wallet = walletTransactionsCategories.wallet,
+                        transactions = walletTransactionsCategories.transactionsWithCategories.map { it.transaction },
+                        onWalletClick = onWalletClick,
+                        onTransactionCreate = onTransactionCreate,
+                        onWalletMenuClick = onWalletMenuClick,
+                        modifier = Modifier.animateItem(),
+                        selected = isSelected,
+                        isPrimary = isPrimary,
+                    )
+                }
             }
         }
     }
