@@ -185,24 +185,29 @@ class TransactionDialogViewModel @Inject constructor(
     private fun loadTransaction() {
         viewModelScope.launch {
             if (_transactionDialogUiState.value.transactionId.isNotEmpty()) {
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
-                    .onStart { _transactionDialogUiState.update { it.copy(isLoading = true) } }
-                    .onCompletion { _transactionDialogUiState.update { it.copy(isLoading = false) } }
-                    .first()
-                _transactionDialogUiState.update {
-                    it.copy(
-                        transactionId = transactionCategory.transaction.id,
-                        description = transactionCategory.transaction.description.toString(),
-                        amount = transactionCategory.transaction.amount.toString(),
-                        transactionType = if (transactionCategory.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
-                        date = transactionCategory.transaction.timestamp,
-                        category = transactionCategory.category,
-                        status = transactionCategory.transaction.status,
-                        ignored = transactionCategory.transaction.ignored,
-                    )
-                }
+                val transactionCategory =
+                    transactionsRepository.getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
+                        .onStart {
+                            _transactionDialogUiState.value =
+                                _transactionDialogUiState.value.copy(isLoading = true)
+                        }
+                        .onCompletion {
+                            _transactionDialogUiState.value =
+                                _transactionDialogUiState.value.copy(isLoading = false)
+                        }
+                        .first()
+                _transactionDialogUiState.value = _transactionDialogUiState.value.copy(
+                    transactionId = transactionCategory.transaction.id,
+                    description = transactionCategory.transaction.description.toString(),
+                    amount = transactionCategory.transaction.amount.toString(),
+                    transactionType = if (transactionCategory.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
+                    date = transactionCategory.transaction.timestamp,
+                    category = transactionCategory.category,
+                    status = transactionCategory.transaction.status,
+                    ignored = transactionCategory.transaction.ignored,
+                )
             } else {
-                _transactionDialogUiState.update { TransactionDialogUiState() }
+                _transactionDialogUiState.value = TransactionDialogUiState()
             }
         }
     }
