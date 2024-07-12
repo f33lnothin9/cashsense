@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -178,7 +179,12 @@ internal fun WalletScreen(
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
-            LazyColumn(modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    bottom = 88.dp,
+                ),
+                modifier = modifier.fillMaxSize(),
+            ) {
                 item {
                     WalletTopBar(
                         title = walletState.wallet.title,
