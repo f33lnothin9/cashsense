@@ -354,7 +354,9 @@ private fun FinancePanel(
             val expensesProgress by animateFloatAsState(
                 targetValue = if (walletState.transactionsCategories.isNotEmpty()) expenses
                     .divide(
-                        walletState.transactionsCategories.sumOf { it.transaction.amount.abs() },
+                        walletState.transactionsCategories
+                            .filter { !it.transaction.ignored }
+                            .sumOf { it.transaction.amount.abs() },
                         MathContext.DECIMAL32,
                     )
                     .toFloat() else 0f,
