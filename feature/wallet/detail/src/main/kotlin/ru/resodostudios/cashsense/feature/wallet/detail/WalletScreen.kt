@@ -357,12 +357,12 @@ private fun FinancePanel(
                 .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount }
 
+            val notIgnoredTransactions = walletState.transactionsCategories
+                .filterNot { it.transaction.ignored }
             val expensesProgress by animateFloatAsState(
-                targetValue = if (walletState.transactionsCategories.isNotEmpty()) expenses
+                targetValue = if (notIgnoredTransactions.isNotEmpty()) expenses
                     .divide(
-                        walletState.transactionsCategories
-                            .filter { !it.transaction.ignored }
-                            .sumOf { it.transaction.amount.abs() },
+                        notIgnoredTransactions.sumOf { it.transaction.amount.abs() },
                         MathContext.DECIMAL32,
                     )
                     .toFloat() else 0f,
