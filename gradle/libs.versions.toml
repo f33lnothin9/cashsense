@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.35.1-alpha"
-androidGradlePlugin = "8.5.0"
+androidGradlePlugin = "8.5.1"
 androidDesugarJdkLibs = "2.0.4"
 androidMaterial = "1.12.0"
 androidxActivityCompose = "1.9.0"
