@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.cashsense.android.library)
-    alias(libs.plugins.cashsense.android.hilt)
+    alias(libs.plugins.cashsense.jvm.library)
+    alias(libs.plugins.cashsense.hilt)
 }
 
-android {
-    namespace = "ru.resodostudios.cashsense.core.common"
+dependencies {
+    implementation(libs.kotlinx.coroutines.core)
 }

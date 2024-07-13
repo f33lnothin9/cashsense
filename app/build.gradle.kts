@@ -3,8 +3,8 @@ import ru.resodostudios.cashsense.CsBuildType
 plugins {
     alias(libs.plugins.cashsense.android.application)
     alias(libs.plugins.cashsense.android.application.compose)
-    alias(libs.plugins.cashsense.android.hilt)
     alias(libs.plugins.cashsense.android.application.firebase)
+    alias(libs.plugins.cashsense.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
     id("com.google.android.gms.oss-licenses-plugin")

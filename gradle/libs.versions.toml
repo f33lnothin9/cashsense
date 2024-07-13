@@ -63,7 +63,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util", version.ref = "androidxCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
-androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "androidxGlance" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "androidxGlance" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
@@ -91,7 +91,9 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
@@ -126,9 +128,9 @@ cashsense-android-application = { id = "cashsense.android.application", version 
 cashsense-android-application-compose = { id = "cashsense.android.application.compose", version = "unspecified" }
 cashsense-android-application-firebase = { id = "cashsense.android.application.firebase", version = "unspecified" }
 cashsense-android-feature = { id = "cashsense.android.feature", version = "unspecified" }
-cashsense-android-hilt = { id = "cashsense.android.hilt", version = "unspecified" }
 cashsense-android-library = { id = "cashsense.android.library", version = "unspecified" }
 cashsense-android-library-compose = { id = "cashsense.android.library.compose", version = "unspecified" }
 cashsense-android-room = { id = "cashsense.android.room", version = "unspecified" }
 cashsense-android-test = { id = "cashsense.android.test", version = "unspecified" }
+cashsense-hilt = { id = "cashsense.hilt", version = "unspecified" }
 cashsense-jvm-library = { id = "cashsense.jvm.library", version = "unspecified" }

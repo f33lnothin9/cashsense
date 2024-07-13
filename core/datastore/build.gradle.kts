@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.cashsense.android.library)
-    alias(libs.plugins.cashsense.android.hilt)
+    alias(libs.plugins.cashsense.hilt)
 }
 
 android {
@@ -16,9 +16,9 @@ android {
 }
 
 dependencies {
-    api(libs.androidx.dataStore.core)
     api(projects.core.datastoreProto)
     api(projects.core.model)
+    api(libs.androidx.dataStore)
 
     implementation(projects.core.common)
 }
