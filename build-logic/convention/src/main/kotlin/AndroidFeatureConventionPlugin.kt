@@ -11,13 +11,11 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply {
                 apply("cashsense.android.library")
-                apply("cashsense.android.hilt")
+                apply("cashsense.hilt")
                 apply("org.jetbrains.kotlin.plugin.serialization")
             }
             extensions.configure<LibraryExtension> {
-                defaultConfig {
-                    testInstrumentationRunner = "ru.resodostudios.cashsense.core.testing.CsTestRunner"
-                }
+                testOptions.animationsDisabled = true
             }
 
             dependencies {

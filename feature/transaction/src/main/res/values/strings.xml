@@ -12,4 +12,5 @@
     <string name="feature_transaction_shortcut_long_label">Add a new transaction</string>
     <string name="feature_transaction_status_completed">Completed</string>
     <string name="feature_transaction_status_pending">Pending</string>
+    <string name="feature_transaction_ignore">Ignore in calculations</string>
 </resources>

@@ -25,12 +25,13 @@ import ru.resodostudios.cashsense.core.database.util.StatusTypeConverter
         SubscriptionEntity::class,
         TransactionCategoryCrossRefEntity::class,
     ],
-    version = 5,
+    version = 6,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
         AutoMigration(from = 3, to = 4, spec = DatabaseMigrations.Schema3to4::class),
         AutoMigration(from = 4, to = 5),
+        AutoMigration(from = 5, to = 6),
     ],
     exportSchema = true,
 )
