@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -79,8 +80,7 @@ fun CsApp(
         layoutType = layoutType,
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination
-                    .isTopLevelDestinationInHierarchy(destination)
+                val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
                 item(
                     selected = selected,
                     icon = {
@@ -93,7 +93,13 @@ fun CsApp(
                             contentDescription = null,
                         )
                     },
-                    label = { Text(stringResource(destination.iconTextId)) },
+                    label = {
+                        Text(
+                            text = stringResource(destination.iconTextId),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
                     onClick = { appState.navigateToTopLevelDestination(destination) },
                 )
             }
