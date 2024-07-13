@@ -27,7 +27,7 @@ fun NavController.navigateToLicenses() = navigate(LicensesRoute) {
 
 fun NavGraphBuilder.settingsGraph(
     onLicensesClick: () -> Unit,
-    nestedGraphs: NavGraphBuilder.() -> Unit = {},
+    nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
     navigation<SettingsGraph>(
         startDestination = SettingsRoute::class,
