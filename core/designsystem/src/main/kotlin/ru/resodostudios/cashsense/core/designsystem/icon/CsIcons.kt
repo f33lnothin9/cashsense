@@ -34,7 +34,6 @@ object CsIcons {
     val Fastfood = R.drawable.ic_outlined_fastfood
     val FormatPaint = R.drawable.ic_outlined_format_paint
     val Handyman = R.drawable.ic_outlined_handyman
-    val HistoryEdu = R.drawable.ic_outlined_history_edu
     val Language = R.drawable.ic_outlined_language
     val LightMode = R.drawable.ic_outlined_light_mode
     val LocalBar = R.drawable.ic_outlined_local_bar
