@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -97,7 +96,6 @@ fun CsApp(
                         Text(
                             text = stringResource(destination.iconTextId),
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
                         )
                     },
                     onClick = { appState.navigateToTopLevelDestination(destination) },
