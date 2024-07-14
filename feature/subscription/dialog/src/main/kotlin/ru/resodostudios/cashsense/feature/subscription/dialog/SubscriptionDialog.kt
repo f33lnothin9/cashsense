@@ -87,7 +87,7 @@ fun SubscriptionDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        iconRes = CsIcons.Subscriptions,
+        iconRes = CsIcons.AutoRenew,
         onConfirm = {
             onSubscriptionEvent(Save)
             onDismiss()

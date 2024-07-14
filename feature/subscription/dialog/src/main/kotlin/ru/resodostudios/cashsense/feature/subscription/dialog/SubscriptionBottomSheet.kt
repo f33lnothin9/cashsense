@@ -72,7 +72,7 @@ fun SubscriptionBottomSheet(
                     headlineContent = { Text(subscriptionDialogState.title) },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Subscriptions),
+                            imageVector = ImageVector.vectorResource(CsIcons.AutoRenew),
                             contentDescription = null,
                         )
                     },

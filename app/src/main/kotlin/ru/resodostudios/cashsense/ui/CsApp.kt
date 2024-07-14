@@ -72,8 +72,7 @@ fun CsApp(
 
     val currentDestination = appState.currentDestination
 
-    val layoutType = NavigationSuiteScaffoldDefaults
-        .calculateFromAdaptiveInfo(windowAdaptiveInfo)
+    val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     NavigationSuiteScaffold(
         layoutType = layoutType,
@@ -83,12 +82,10 @@ fun CsApp(
                 item(
                     selected = selected,
                     icon = {
+                        val navItemIcon =
+                            if (selected) destination.selectedIcon else destination.unselectedIcon
                         Icon(
-                            imageVector = if (selected) {
-                                ImageVector.vectorResource(destination.selectedIcon)
-                            } else {
-                                ImageVector.vectorResource(destination.unselectedIcon)
-                            },
+                            imageVector = ImageVector.vectorResource(navItemIcon),
                             contentDescription = null,
                         )
                     },

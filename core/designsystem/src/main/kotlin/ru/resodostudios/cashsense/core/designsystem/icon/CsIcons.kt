@@ -9,9 +9,6 @@ object CsIcons {
     val CategoryFilled = R.drawable.ic_filled_category
     val Close = R.drawable.ic_outlined_close
     val CreditCard = R.drawable.ic_outlined_credit_card
-    val Subscriptions = R.drawable.ic_outlined_subscriptions
-    val SubscriptionsFilled = R.drawable.ic_filled_subscriptions
-
     val Calendar = R.drawable.ic_outlined_calendar
     val Delete = R.drawable.ic_outlined_delete
     val TrendingUp = R.drawable.ic_outlined_trending_up
@@ -22,6 +19,7 @@ object CsIcons {
     val Android = R.drawable.ic_outlined_android
     val ArrowBack = R.drawable.ic_outlined_arrow_back
     val Attractions = R.drawable.ic_outlined_attractions
+    val AutoRenew = R.drawable.ic_outlined_autorenew
     val Block = R.drawable.ic_outlined_block
     val Apparel = R.drawable.ic_outlined_apparel
     val Chair = R.drawable.ic_outlined_chair

@@ -43,8 +43,8 @@ enum class TopLevelDestination(
         route = CategoriesRoute::class,
     ),
     SUBSCRIPTIONS(
-        selectedIcon = CsIcons.SubscriptionsFilled,
-        unselectedIcon = CsIcons.Subscriptions,
+        selectedIcon = CsIcons.AutoRenew,
+        unselectedIcon = CsIcons.AutoRenew,
         iconTextId = subscriptionListR.string.feature_subscription_list_title,
         titleTextId = subscriptionListR.string.feature_subscription_list_title,
         fabIcon = CsIcons.Add,
