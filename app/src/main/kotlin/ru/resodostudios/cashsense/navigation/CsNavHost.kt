@@ -45,7 +45,9 @@ fun CsNavHost(
         settingsGraph(
             onLicensesClick = { navController.navigateToLicenses() },
             nestedGraphs = {
-                licensesRoute()
+                licensesRoute(
+                    onBackClick = navController::navigateUp,
+                )
             }
         )
     }
