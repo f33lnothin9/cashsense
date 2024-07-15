@@ -59,10 +59,6 @@ gradlePlugin {
             id = "cashsense.android.test"
             implementationClass = "AndroidTestConventionPlugin"
         }
-        register("androidHilt") {
-            id = "cashsense.android.hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
-        }
         register("androidRoom") {
             id = "cashsense.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
@@ -70,6 +66,10 @@ gradlePlugin {
         register("androidFirebase") {
             id = "cashsense.android.application.firebase"
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"
+        }
+        register("hilt") {
+            id = "cashsense.hilt"
+            implementationClass = "HiltConventionPlugin"
         }
         register("jvmLibrary") {
             id = "cashsense.jvm.library"

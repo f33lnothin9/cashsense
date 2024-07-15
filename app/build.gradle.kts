@@ -3,18 +3,17 @@ import ru.resodostudios.cashsense.CsBuildType
 plugins {
     alias(libs.plugins.cashsense.android.application)
     alias(libs.plugins.cashsense.android.application.compose)
-    alias(libs.plugins.cashsense.android.hilt)
     alias(libs.plugins.cashsense.android.application.firebase)
+    alias(libs.plugins.cashsense.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
-    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 18
-        versionName = "0.5.2"
+        versionCode = 20
+        versionName = "0.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

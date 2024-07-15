@@ -12,4 +12,5 @@
     <string name="feature_transaction_shortcut_long_label">Добавить новую транзакцию</string>
     <string name="feature_transaction_status_completed">Завершена</string>
     <string name="feature_transaction_status_pending">В процeссе</string>
+    <string name="feature_transaction_ignore">Не учитывать в расчетах</string>
 </resources>

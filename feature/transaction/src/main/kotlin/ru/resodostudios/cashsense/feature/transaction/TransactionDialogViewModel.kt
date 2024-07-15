@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
@@ -25,6 +25,8 @@ import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Delete
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
@@ -32,6 +34,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
@@ -56,11 +59,11 @@ class TransactionDialogViewModel @Inject constructor(
 
     val categoriesUiState: StateFlow<CategoriesUiState> =
         categoriesRepository.getCategories()
-            .map { CategoriesUiState.Success(false, it) }
+            .map { Success(false, it) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = CategoriesUiState.Loading,
+                initialValue = Loading,
             )
 
     fun onTransactionEvent(event: TransactionDialogEvent) {
@@ -76,6 +79,7 @@ class TransactionDialogViewModel @Inject constructor(
             is UpdateStatus -> updateStatus(event.status)
             is UpdateCategory -> updateCategory(event.category)
             is UpdateDescription -> updateDescription(event.description)
+            is UpdateIgnoring -> updateIgnoring(event.ignored)
         }
     }
 
@@ -95,6 +99,7 @@ class TransactionDialogViewModel @Inject constructor(
             },
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
+            ignored = _transactionDialogUiState.value.ignored,
         )
         val transactionCategoryCrossRef =
             _transactionDialogUiState.value.category?.id?.let { categoryId ->
@@ -110,7 +115,6 @@ class TransactionDialogViewModel @Inject constructor(
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
         }
-        _transactionDialogUiState.value = TransactionDialogUiState()
     }
 
     private fun deleteTransaction() {
@@ -172,23 +176,39 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
+    private fun updateIgnoring(ignored: Boolean) {
+        _transactionDialogUiState.update {
+            it.copy(ignored = ignored)
+        }
+    }
+
     private fun loadTransaction() {
         viewModelScope.launch {
-            transactionsRepository.getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
-                .onStart { _transactionDialogUiState.update { it.copy(isLoading = true) } }
-                .onCompletion { _transactionDialogUiState.update { it.copy(isLoading = false) } }
-                .catch { _transactionDialogUiState.value = TransactionDialogUiState() }
-                .collect {
-                    _transactionDialogUiState.value = TransactionDialogUiState(
-                        transactionId = it.transaction.id,
-                        description = it.transaction.description.toString(),
-                        amount = it.transaction.amount.toString(),
-                        transactionType = if (it.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
-                        date = it.transaction.timestamp,
-                        category = it.category,
-                        status = it.transaction.status,
-                    )
-                }
+            if (_transactionDialogUiState.value.transactionId.isNotEmpty()) {
+                val transactionCategory =
+                    transactionsRepository.getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
+                        .onStart {
+                            _transactionDialogUiState.value =
+                                _transactionDialogUiState.value.copy(isLoading = true)
+                        }
+                        .onCompletion {
+                            _transactionDialogUiState.value =
+                                _transactionDialogUiState.value.copy(isLoading = false)
+                        }
+                        .first()
+                _transactionDialogUiState.value = _transactionDialogUiState.value.copy(
+                    transactionId = transactionCategory.transaction.id,
+                    description = transactionCategory.transaction.description.toString(),
+                    amount = transactionCategory.transaction.amount.toString(),
+                    transactionType = if (transactionCategory.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
+                    date = transactionCategory.transaction.timestamp,
+                    category = transactionCategory.category,
+                    status = transactionCategory.transaction.status,
+                    ignored = transactionCategory.transaction.ignored,
+                )
+            } else {
+                _transactionDialogUiState.value = TransactionDialogUiState()
+            }
         }
     }
 }
@@ -207,6 +227,7 @@ data class TransactionDialogUiState(
     val category: Category? = Category(),
     val transactionType: TransactionType = EXPENSE,
     val status: StatusType = COMPLETED,
+    val ignored: Boolean = false,
     val isLoading: Boolean = false,
 )
 

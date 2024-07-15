@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -58,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -70,6 +72,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -155,8 +158,7 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage =
-                stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -177,12 +179,17 @@ internal fun WalletScreen(
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
-            LazyColumn(modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    bottom = 88.dp,
+                ),
+                modifier = modifier.fillMaxSize(),
+            ) {
                 item {
                     WalletTopBar(
                         title = walletState.wallet.title,
-                        currentBalance = walletState.currentBalance
-                            .formatAmount(walletState.wallet.currency),
+                        currentBalance = walletState.currentBalance,
+                        currency = walletState.wallet.currency,
                         showDetailActions = showDetailActions,
                         onBackClick = onBackClick,
                         onWalletEvent = onWalletEvent,
@@ -261,7 +268,8 @@ internal fun WalletScreen(
 @Composable
 private fun WalletTopBar(
     title: String,
-    currentBalance: String,
+    currentBalance: BigDecimal,
+    currency: String,
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
@@ -270,17 +278,26 @@ private fun WalletTopBar(
 ) {
     TopAppBar(
         title = {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column {
                 Text(
                     text = title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Text(
-                    text = currentBalance,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.labelMedium,
+                AnimatedAmount(
+                    targetState = currentBalance,
+                    label = "wallet_balance",
+                    content = {
+                        Text(
+                            text = it.formatAmount(currency),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .zIndex(-1f),
                 )
             }
         },
@@ -334,29 +351,22 @@ private fun FinancePanel(
         Loading -> Unit
         is Success -> {
             val expenses = walletState.transactionsCategories
-                .filter { it.transaction.amount < BigDecimal.ZERO }
+                .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount.abs() }
-            val expensesAnimated by animateFloatAsState(
-                targetValue = expenses.toFloat(),
-                label = "ExpensesAnimation",
-                animationSpec = tween(durationMillis = 400),
-            )
             val income = walletState.transactionsCategories
-                .filter { it.transaction.amount > BigDecimal.ZERO }
+                .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
                 .sumOf { it.transaction.amount }
-            val incomeAnimated by animateFloatAsState(
-                targetValue = income.toFloat(),
-                label = "IncomeAnimation",
-                animationSpec = tween(durationMillis = 400),
-            )
+
+            val notIgnoredTransactions = walletState.transactionsCategories
+                .filterNot { it.transaction.ignored }
             val expensesProgress by animateFloatAsState(
-                targetValue = if (walletState.transactionsCategories.isNotEmpty()) expenses
+                targetValue = if (notIgnoredTransactions.isNotEmpty()) expenses
                     .divide(
-                        walletState.transactionsCategories.sumOf { it.transaction.amount.abs() },
+                        notIgnoredTransactions.sumOf { it.transaction.amount.abs() },
                         MathContext.DECIMAL32,
                     )
                     .toFloat() else 0f,
-                label = "ExpensesProgressAnimation",
+                label = "expenses_progress",
                 animationSpec = tween(durationMillis = 400),
             )
 
@@ -368,7 +378,7 @@ private fun FinancePanel(
                 SharedTransitionLayout {
                     AnimatedContent(
                         targetState = walletState.financeSectionType,
-                        label = "FinancePanel",
+                        label = "finance_panel",
                     ) { financeType ->
                         when (financeType) {
                             NONE -> {
@@ -377,9 +387,8 @@ private fun FinancePanel(
                                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 ) {
                                     FinanceCard(
-                                        title = expensesAnimated
-                                            .toBigDecimal()
-                                            .formatAmount(walletState.wallet.currency),
+                                        title = expenses,
+                                        currency = walletState.wallet.currency,
                                         supportingTextId = R.string.feature_wallet_detail_expenses,
                                         indicatorProgress = expensesProgress,
                                         modifier = Modifier.weight(1f),
@@ -388,9 +397,8 @@ private fun FinancePanel(
                                         animatedVisibilityScope = this@AnimatedContent,
                                     )
                                     FinanceCard(
-                                        title = incomeAnimated
-                                            .toBigDecimal()
-                                            .formatAmount(walletState.wallet.currency),
+                                        title = income,
+                                        currency = walletState.wallet.currency,
                                         supportingTextId = R.string.feature_wallet_detail_income,
                                         indicatorProgress = 1.0f - expensesProgress,
                                         modifier = Modifier.weight(1f),
@@ -403,15 +411,22 @@ private fun FinancePanel(
 
                             EXPENSES -> {
                                 DetailedFinanceCard(
-                                    title = expensesAnimated
-                                        .toBigDecimal()
-                                        .formatAmount(walletState.wallet.currency),
+                                    title = expenses,
+                                    currency = walletState.wallet.currency,
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                                    addToSelectedCategories = {
+                                        onWalletEvent(
+                                            AddToSelectedCategories(it)
+                                        )
+                                    },
+                                    removeFromSelectedCategories = {
+                                        onWalletEvent(
+                                            RemoveFromSelectedCategories(it)
+                                        )
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -419,15 +434,22 @@ private fun FinancePanel(
 
                             INCOME -> {
                                 DetailedFinanceCard(
-                                    title = incomeAnimated
-                                        .toBigDecimal()
-                                        .formatAmount(walletState.wallet.currency),
+                                    title = income,
+                                    currency = walletState.wallet.currency,
                                     supportingTextId = R.string.feature_wallet_detail_income,
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                                    removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                                    addToSelectedCategories = {
+                                        onWalletEvent(
+                                            AddToSelectedCategories(it)
+                                        )
+                                    },
+                                    removeFromSelectedCategories = {
+                                        onWalletEvent(
+                                            RemoveFromSelectedCategories(it)
+                                        )
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -470,7 +492,8 @@ private fun FinancePanel(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.FinanceCard(
-    title: String,
+    title: BigDecimal,
+    currency: String,
     @StringRes supportingTextId: Int,
     indicatorProgress: Float,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -488,10 +511,17 @@ private fun SharedTransitionScope.FinanceCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
+            AnimatedAmount(
+                targetState = title,
+                label = "finance_card_title",
+                content = {
+                    Text(
+                        text = it.formatAmount(currency),
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
@@ -516,7 +546,8 @@ private fun SharedTransitionScope.FinanceCard(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.DetailedFinanceCard(
-    title: String,
+    title: BigDecimal,
+    currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
     selectedCategories: List<Category>,
@@ -537,14 +568,23 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                 .padding(start = 16.dp, bottom = 4.dp)
                 .fillMaxWidth(),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                ),
+            AnimatedAmount(
+                targetState = title,
+                label = "detailed_finance_card",
+                content = {
+                    Text(
+                        text = title.formatAmount(currency),
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                modifier = Modifier
+                    .weight(1f, false)
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    ),
             )
             IconButton(onClick = onBackClick) {
                 Icon(
@@ -676,6 +716,7 @@ private fun LazyListScope.transactions(
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
                 categoryTitle = category?.title ?: stringResource(uiR.string.none),
                 transactionStatus = transaction.status,
+                ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },
                 modifier = Modifier.animateItem(),
             )

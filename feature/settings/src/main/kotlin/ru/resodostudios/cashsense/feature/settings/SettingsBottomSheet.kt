@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.settings
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +26,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -168,16 +166,6 @@ private fun ColumnScope.SettingsPanel(
         onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
     )
     val context = LocalContext.current
-    CsListItem(
-        headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
-        leadingContent = {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
-                contentDescription = null,
-            )
-        },
-        onClick = { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) },
-    )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_version)) },

@@ -10,6 +10,7 @@
     <application
         android:name=".CsApplication"
         android:allowBackup="true"
+        android:allowCrossUidActivitySwitchFromBelow="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,7 +18,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cs.Splash"
-        tools:targetApi="33">
+        tools:targetApi="35">
 
         <activity
             android:name=".MainActivity"
@@ -32,5 +33,9 @@
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
+
+        <property
+            android:name="android.adservices.AD_SERVICES_CONFIG"
+            tools:node="remove" />
     </application>
 </manifest>
