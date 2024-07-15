@@ -37,12 +37,9 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
-import ru.resodostudios.cashsense.feature.settings.SettingsBottomSheet
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
@@ -57,14 +54,10 @@ fun CsApp(
     appState: CsAppState,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    var showSettingsBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
     var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
-    if (showSettingsBottomSheet) {
-        SettingsBottomSheet(onDismiss = { showSettingsBottomSheet = false })
-    }
     if (showCategoryDialog) {
         CategoryDialog(onDismiss = { showCategoryDialog = false })
     }
@@ -79,28 +72,29 @@ fun CsApp(
 
     val currentDestination = appState.currentDestination
 
-    val layoutType = NavigationSuiteScaffoldDefaults
-        .calculateFromAdaptiveInfo(windowAdaptiveInfo)
+    val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     NavigationSuiteScaffold(
         layoutType = layoutType,
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination
-                    .isTopLevelDestinationInHierarchy(destination)
+                val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
                 item(
                     selected = selected,
                     icon = {
+                        val navItemIcon =
+                            if (selected) destination.selectedIcon else destination.unselectedIcon
                         Icon(
-                            imageVector = if (selected) {
-                                ImageVector.vectorResource(destination.selectedIcon)
-                            } else {
-                                ImageVector.vectorResource(destination.unselectedIcon)
-                            },
+                            imageVector = ImageVector.vectorResource(navItemIcon),
                             contentDescription = null,
                         )
                     },
-                    label = { Text(stringResource(destination.iconTextId)) },
+                    label = {
+                        Text(
+                            text = stringResource(destination.iconTextId),
+                            maxLines = 1,
+                        )
+                    },
                     onClick = { appState.navigateToTopLevelDestination(destination) },
                 )
             }
@@ -112,24 +106,27 @@ fun CsApp(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton = {
                 if (destination != null) {
-                    CsFloatingActionButton(
-                        titleRes = destination.fabTitle,
-                        iconRes = destination.fabIcon,
-                        onClick = {
-                            when (destination) {
-                                HOME -> showWalletDialog = true
-                                CATEGORIES -> showCategoryDialog = true
-                                SUBSCRIPTIONS -> showSubscriptionDialog = true
-                            }
-                        },
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing.only(
-                                    WindowInsetsSides.Horizontal,
+                    if (destination.fabTitle != null && destination.fabIcon != null) {
+                        CsFloatingActionButton(
+                            titleRes = destination.fabTitle,
+                            iconRes = destination.fabIcon,
+                            onClick = {
+                                when (destination) {
+                                    HOME -> showWalletDialog = true
+                                    CATEGORIES -> showCategoryDialog = true
+                                    SUBSCRIPTIONS -> showSubscriptionDialog = true
+                                    else -> {}
+                                }
+                            },
+                            modifier = Modifier
+                                .navigationBarsPadding()
+                                .windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(
+                                        WindowInsetsSides.Horizontal,
+                                    ),
                                 ),
-                            ),
-                    )
+                        )
+                    }
                 }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -151,9 +148,6 @@ fun CsApp(
                 if (destination != null) {
                     CsTopAppBar(
                         titleRes = destination.titleTextId,
-                        actionIconRes = CsIcons.Settings,
-                        actionIconContentDescription = stringResource(R.string.top_app_bar_action_icon_description),
-                        onActionClick = { showSettingsBottomSheet = true },
                     )
                 }
 
