@@ -46,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,8 +65,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -158,7 +173,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage =
+                stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -410,8 +426,17 @@ private fun FinancePanel(
                             }
 
                             EXPENSES -> {
+                                val data = walletState.transactionsCategories
+                                    .groupBy {
+                                        it.transaction.timestamp
+                                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                                            .monthNumber.toFloat()
+                                    }
+                                    .toSortedMap(compareBy { it })
+                                    .map { it.key to it.value.map { it.transaction.amount.abs().toFloat() } }
                                 DetailedFinanceCard(
                                     title = expenses,
+                                    data = data,
                                     currency = walletState.wallet.currency,
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
                                     availableCategories = walletState.availableCategories,
@@ -433,8 +458,17 @@ private fun FinancePanel(
                             }
 
                             INCOME -> {
+                                val data = walletState.transactionsCategories
+                                    .groupBy {
+                                        it.transaction.timestamp
+                                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                                            .monthNumber.toFloat()
+                                    }
+                                    .toSortedMap(compareBy { it })
+                                    .map { it.key to it.value.map { it.transaction.amount.toFloat() } }
                                 DetailedFinanceCard(
                                     title = income,
+                                    data = data,
                                     currency = walletState.wallet.currency,
                                     supportingTextId = R.string.feature_wallet_detail_income,
                                     availableCategories = walletState.availableCategories,
@@ -523,7 +557,7 @@ private fun SharedTransitionScope.FinanceCard(
                     )
                 },
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
+                    sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
@@ -531,7 +565,7 @@ private fun SharedTransitionScope.FinanceCard(
                 text = stringResource(supportingTextId),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = supportingTextId),
+                    sharedContentState = rememberSharedContentState(supportingTextId),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
@@ -547,6 +581,7 @@ private fun SharedTransitionScope.FinanceCard(
 @Composable
 private fun SharedTransitionScope.DetailedFinanceCard(
     title: BigDecimal,
+    data: List<Pair<Float, List<Float>>>,
     currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
@@ -582,11 +617,11 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                 modifier = Modifier
                     .weight(1f, false)
                     .sharedBounds(
-                        sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
+                        sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                         animatedVisibilityScope = animatedVisibilityScope,
                     ),
             )
-            IconButton(onClick = onBackClick) {
+            IconButton(onBackClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Close),
                     contentDescription = null,
@@ -598,11 +633,41 @@ private fun SharedTransitionScope.DetailedFinanceCard(
             modifier = Modifier
                 .padding(start = 16.dp)
                 .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = supportingTextId),
+                    sharedContentState = rememberSharedContentState(supportingTextId),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
+        val scrollState = rememberVicoScrollState()
+        val zoomState = rememberVicoZoomState()
+        val modelProducer = remember { CartesianChartModelProducer() }
+        val xToDateMapKey = ExtraStore.Key<Map<Float, List<Float>>>()
+        val xToDates = data.associate { it.first to it.second }
+        val y = xToDates.values.flatten()
+        LaunchedEffect(Unit) {
+            modelProducer.runTransaction {
+                columnSeries {
+                    xToDates.forEach {
+                        series(it.key, it.value.size)
+                    }
+                }
+                extras { it[xToDateMapKey] = xToDates }
+            }
+        }
+        ProvideVicoTheme(rememberM3VicoTheme()) {
+            CartesianChartHost(
+                chart = rememberCartesianChart(
+                    rememberColumnCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(
+                    ),
+                ),
+                modelProducer = modelProducer,
+                scrollState = scrollState,
+                zoomState = zoomState,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
         CategoryFilterRow(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
