@@ -430,10 +430,10 @@ private fun FinancePanel(
                                     .groupBy {
                                         it.transaction.timestamp
                                             .toLocalDateTime(TimeZone.currentSystemDefault())
-                                            .monthNumber.toFloat()
+                                            .monthNumber
                                     }
                                     .toSortedMap(compareBy { it })
-                                    .map { it.key to it.value.map { it.transaction.amount.abs().toFloat() } }
+                                    .map { it.key to it.value.map { it.transaction.amount }.sumOf { it.abs() } }
                                 DetailedFinanceCard(
                                     title = expenses,
                                     data = data,
@@ -442,16 +442,7 @@ private fun FinancePanel(
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = {
-                                        onWalletEvent(
-                                            AddToSelectedCategories(it)
-                                        )
-                                    },
-                                    removeFromSelectedCategories = {
-                                        onWalletEvent(
-                                            RemoveFromSelectedCategories(it)
-                                        )
-                                    },
+                                    onWalletEvent = onWalletEvent,
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -462,10 +453,10 @@ private fun FinancePanel(
                                     .groupBy {
                                         it.transaction.timestamp
                                             .toLocalDateTime(TimeZone.currentSystemDefault())
-                                            .monthNumber.toFloat()
+                                            .monthNumber
                                     }
                                     .toSortedMap(compareBy { it })
-                                    .map { it.key to it.value.map { it.transaction.amount.toFloat() } }
+                                    .map { it.key to it.value.map { it.transaction.amount }.sumOf { it } }
                                 DetailedFinanceCard(
                                     title = income,
                                     data = data,
@@ -474,16 +465,7 @@ private fun FinancePanel(
                                     availableCategories = walletState.availableCategories,
                                     selectedCategories = walletState.selectedCategories,
                                     onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = {
-                                        onWalletEvent(
-                                            AddToSelectedCategories(it)
-                                        )
-                                    },
-                                    removeFromSelectedCategories = {
-                                        onWalletEvent(
-                                            RemoveFromSelectedCategories(it)
-                                        )
-                                    },
+                                    onWalletEvent = onWalletEvent,
                                     modifier = Modifier.fillMaxWidth(),
                                     animatedVisibilityScope = this@AnimatedContent,
                                 )
@@ -581,14 +563,13 @@ private fun SharedTransitionScope.FinanceCard(
 @Composable
 private fun SharedTransitionScope.DetailedFinanceCard(
     title: BigDecimal,
-    data: List<Pair<Float, List<Float>>>,
+    data: List<Pair<Int, BigDecimal>>,
     currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
     selectedCategories: List<Category>,
     onBackClick: () -> Unit,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
+    onWalletEvent: (WalletEvent) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
@@ -641,16 +622,11 @@ private fun SharedTransitionScope.DetailedFinanceCard(
         val scrollState = rememberVicoScrollState()
         val zoomState = rememberVicoZoomState()
         val modelProducer = remember { CartesianChartModelProducer() }
-        val xToDateMapKey = ExtraStore.Key<Map<Float, List<Float>>>()
+        val xToDateMapKey = ExtraStore.Key<Map<Int, BigDecimal>>()
         val xToDates = data.associate { it.first to it.second }
-        val y = xToDates.values.flatten()
         LaunchedEffect(Unit) {
             modelProducer.runTransaction {
-                columnSeries {
-                    xToDates.forEach {
-                        series(it.key, it.value.size)
-                    }
-                }
+                columnSeries { series(xToDates.keys, xToDates.values) }
                 extras { it[xToDateMapKey] = xToDates }
             }
         }
@@ -671,8 +647,8 @@ private fun SharedTransitionScope.DetailedFinanceCard(
         CategoryFilterRow(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
-            addToSelectedCategories = addToSelectedCategories,
-            removeFromSelectedCategories = removeFromSelectedCategories,
+            addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+            removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
             modifier = Modifier.padding(start = 16.dp, bottom = 4.dp, end = 16.dp, top = 16.dp),
         )
     }
