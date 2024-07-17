@@ -77,10 +77,8 @@ import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
-import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -94,6 +92,8 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
+import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
@@ -120,7 +120,9 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.MathContext
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAdjusters
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -426,14 +428,23 @@ private fun FinancePanel(
                             }
 
                             EXPENSES -> {
-                                val data = walletState.transactionsCategories
+                                val data = notIgnoredTransactions
+                                    .asSequence()
+                                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                                    .filter { it.transaction.amount < BigDecimal.ZERO }
                                     .groupBy {
                                         it.transaction.timestamp
-                                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                                            .monthNumber
+                                            .getZonedDateTime()
+                                            .with(TemporalAdjusters.firstDayOfMonth())
+                                            .truncatedTo(ChronoUnit.DAYS)
+                                            .toLocalDate()
                                     }
-                                    .toSortedMap(compareBy { it })
-                                    .map { it.key to it.value.map { it.transaction.amount }.sumOf { it.abs() } }
+                                    .map {
+                                        it.key to it.value
+                                            .map { it.transaction.amount }
+                                            .sumOf { it.abs() }
+                                    }
+                                    .associate { it.first to it.second }
                                 DetailedFinanceCard(
                                     title = expenses,
                                     data = data,
@@ -449,14 +460,23 @@ private fun FinancePanel(
                             }
 
                             INCOME -> {
-                                val data = walletState.transactionsCategories
+                                val data = notIgnoredTransactions
+                                    .asSequence()
+                                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                                    .filter { it.transaction.amount > BigDecimal.ZERO }
                                     .groupBy {
                                         it.transaction.timestamp
-                                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                                            .monthNumber
+                                            .getZonedDateTime()
+                                            .with(TemporalAdjusters.firstDayOfMonth())
+                                            .truncatedTo(ChronoUnit.DAYS)
+                                            .toLocalDate()
                                     }
-                                    .toSortedMap(compareBy { it })
-                                    .map { it.key to it.value.map { it.transaction.amount }.sumOf { it } }
+                                    .map {
+                                        it.key to it.value
+                                            .map { it.transaction.amount }
+                                            .sumOf { it }
+                                    }
+                                    .associate { it.first to it.second }
                                 DetailedFinanceCard(
                                     title = income,
                                     data = data,
@@ -563,7 +583,7 @@ private fun SharedTransitionScope.FinanceCard(
 @Composable
 private fun SharedTransitionScope.DetailedFinanceCard(
     title: BigDecimal,
-    data: List<Pair<Int, BigDecimal>>,
+    data: Map<LocalDate, BigDecimal>,
     currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
@@ -622,11 +642,17 @@ private fun SharedTransitionScope.DetailedFinanceCard(
         val scrollState = rememberVicoScrollState()
         val zoomState = rememberVicoZoomState()
         val modelProducer = remember { CartesianChartModelProducer() }
-        val xToDateMapKey = ExtraStore.Key<Map<Int, BigDecimal>>()
-        val xToDates = data.associate { it.first to it.second }
+        val xToDateMapKey = ExtraStore.Key<Map<Float, LocalDate>>()
+        val xToDates = data.keys.associateBy { it.monthValue.toFloat() }
+
         LaunchedEffect(Unit) {
             modelProducer.runTransaction {
-                columnSeries { series(xToDates.keys, xToDates.values) }
+                columnSeries {
+                    series(
+                        xToDates.keys,
+                        data.values,
+                    )
+                }
                 extras { it[xToDateMapKey] = xToDates }
             }
         }
@@ -635,8 +661,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                 chart = rememberCartesianChart(
                     rememberColumnCartesianLayer(),
                     startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(
-                    ),
+                    bottomAxis = rememberBottomAxis(),
                 ),
                 modelProducer = modelProducer,
                 scrollState = scrollState,
