@@ -26,15 +26,11 @@ internal class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        val scope = CoroutineScope(Dispatchers.IO)
         val reminderId = intent?.getIntExtra(EXTRA_REMINDER_ID, 0)
 
-        scope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             findSubscriptionAndPostNotification(reminderId)
-        }
-
-        if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            scope.launch {
+            if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
                 rescheduleRemindersAfterRebooting()
             }
         }
