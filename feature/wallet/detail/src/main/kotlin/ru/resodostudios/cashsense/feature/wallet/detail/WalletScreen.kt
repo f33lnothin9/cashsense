@@ -403,6 +403,9 @@ private fun FinancePanel(
                         targetState = walletState.financeSectionType,
                         label = "finance_panel",
                     ) { financeType ->
+                        val groupedByMonth = notIgnoredTransactions
+                            .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                            .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
                         when (financeType) {
                             NONE -> {
                                 Row(
@@ -433,9 +436,7 @@ private fun FinancePanel(
                             }
 
                             EXPENSES -> {
-                                val data = notIgnoredTransactions
-                                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
-                                    .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
+                                val graphValues = groupedByMonth
                                     .map { monthTransactions ->
                                         monthTransactions.key to monthTransactions.value
                                             .map { transactionCategory -> transactionCategory.transaction.amount }
@@ -444,7 +445,7 @@ private fun FinancePanel(
                                     .associate { it.first to it.second }
                                 DetailedFinanceCard(
                                     title = expenses,
-                                    data = data,
+                                    graphValues = graphValues,
                                     currency = walletState.wallet.currency,
                                     supportingTextId = R.string.feature_wallet_detail_expenses,
                                     availableCategories = walletState.availableCategories,
@@ -457,9 +458,7 @@ private fun FinancePanel(
                             }
 
                             INCOME -> {
-                                val data = notIgnoredTransactions
-                                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
-                                    .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
+                                val graphValues = groupedByMonth
                                     .map { monthTransactions ->
                                         monthTransactions.key to monthTransactions.value
                                             .map { transactionCategory -> transactionCategory.transaction.amount }
@@ -468,7 +467,7 @@ private fun FinancePanel(
                                     .associate { it.first to it.second }
                                 DetailedFinanceCard(
                                     title = income,
-                                    data = data,
+                                    graphValues = graphValues,
                                     currency = walletState.wallet.currency,
                                     supportingTextId = R.string.feature_wallet_detail_income,
                                     availableCategories = walletState.availableCategories,
@@ -572,7 +571,7 @@ private fun SharedTransitionScope.FinanceCard(
 @Composable
 private fun SharedTransitionScope.DetailedFinanceCard(
     title: BigDecimal,
-    data: Map<Int, BigDecimal>,
+    graphValues: Map<Int, BigDecimal>,
     currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
@@ -628,50 +627,61 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
-        val scrollState = rememberVicoScrollState()
-        val zoomState = rememberVicoZoomState()
-        val modelProducer = remember { CartesianChartModelProducer() }
-        val xDateFormatter = CartesianValueFormatter { x, _, _ ->
-            val dateTimeFormatter = DateTimeFormatter.ofPattern("MMM")
-            val year = getCurrentZonedDateTime().year
-            val month = if (x.toInt().toString().length == 1) "0${x.toInt()}" else x.toInt()
-            val instant = LocalDate.parse("$year-$month-01")
-            dateTimeFormatter
-                .withLocale(Locale.getDefault())
-                .withZone(ZoneId.systemDefault())
-                .format(instant.toJavaLocalDate())
-        }
-        val marker = rememberDefaultCartesianMarker(
-            label = TextComponent(),
+        FinanceGraph(
+            graphValues = graphValues,
+            modifier = Modifier.padding(16.dp),
         )
-
-        LaunchedEffect(Unit) {
-            modelProducer.runTransaction {
-                columnSeries { series(data.keys, data.values) }
-            }
-        }
-        ProvideVicoTheme(rememberM3VicoTheme()) {
-            CartesianChartHost(
-                chart = rememberCartesianChart(
-                    rememberColumnCartesianLayer(),
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(
-                        valueFormatter = xDateFormatter,
-                    ),
-                    marker = marker,
-                ),
-                modelProducer = modelProducer,
-                scrollState = scrollState,
-                zoomState = zoomState,
-                modifier = Modifier.padding(16.dp),
-            )
-        }
         CategoryFilterRow(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
             addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
             removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
             modifier = Modifier.padding(start = 16.dp, bottom = 4.dp, end = 16.dp, top = 16.dp),
+        )
+    }
+}
+
+@Composable
+private fun FinanceGraph(
+    graphValues: Map<Int, BigDecimal>,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberVicoScrollState()
+    val zoomState = rememberVicoZoomState()
+    val modelProducer = remember { CartesianChartModelProducer() }
+    val xDateFormatter = CartesianValueFormatter { x, _, _ ->
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("MMM")
+        val year = getCurrentZonedDateTime().year
+        val month = if (x.toInt().toString().length == 1) "0${x.toInt()}" else x.toInt()
+        val instant = LocalDate.parse("$year-$month-01")
+        dateTimeFormatter
+            .withLocale(Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+            .format(instant.toJavaLocalDate())
+    }
+    val marker = rememberDefaultCartesianMarker(
+        label = TextComponent(),
+    )
+
+    LaunchedEffect(Unit) {
+        modelProducer.runTransaction {
+            columnSeries { series(graphValues.keys, graphValues.values) }
+        }
+    }
+    ProvideVicoTheme(rememberM3VicoTheme()) {
+        CartesianChartHost(
+            chart = rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(
+                    valueFormatter = xDateFormatter,
+                ),
+                marker = marker,
+            ),
+            modelProducer = modelProducer,
+            scrollState = scrollState,
+            zoomState = zoomState,
+            modifier = modifier,
         )
     }
 }
