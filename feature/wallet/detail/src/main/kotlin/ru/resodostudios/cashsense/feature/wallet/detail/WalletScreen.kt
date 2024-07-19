@@ -69,6 +69,7 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
@@ -77,10 +78,11 @@ import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.common.component.TextComponent
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinInstant
-import kotlinx.datetime.toKotlinLocalDate
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -633,22 +635,19 @@ private fun SharedTransitionScope.DetailedFinanceCard(
             val dateTimeFormatter = DateTimeFormatter.ofPattern("MMM")
             val year = getCurrentZonedDateTime().year
             val month = if (x.toInt().toString().length == 1) "0${x.toInt()}" else x.toInt()
-            val instant = java.time.LocalDate.parse("$year-$month-01")
-            val localDateTime = instant.toKotlinLocalDate()
+            val instant = LocalDate.parse("$year-$month-01")
             dateTimeFormatter
                 .withLocale(Locale.getDefault())
                 .withZone(ZoneId.systemDefault())
-                .format(localDateTime.toJavaLocalDate())
+                .format(instant.toJavaLocalDate())
         }
+        val marker = rememberDefaultCartesianMarker(
+            label = TextComponent(),
+        )
 
         LaunchedEffect(Unit) {
             modelProducer.runTransaction {
-                columnSeries {
-                    series(
-                        data.keys,
-                        data.values,
-                    )
-                }
+                columnSeries { series(data.keys, data.values) }
             }
         }
         ProvideVicoTheme(rememberM3VicoTheme()) {
@@ -659,6 +658,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                     bottomAxis = rememberBottomAxis(
                         valueFormatter = xDateFormatter,
                     ),
+                    marker = marker,
                 ),
                 modelProducer = modelProducer,
                 scrollState = scrollState,
