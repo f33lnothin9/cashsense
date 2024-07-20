@@ -71,6 +71,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
@@ -78,6 +79,7 @@ import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaInstant
@@ -629,6 +631,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
         )
         FinanceGraph(
             graphValues = graphValues,
+            currency = currency,
             modifier = Modifier.padding(16.dp),
         )
         CategoryFilterRow(
@@ -644,6 +647,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
 @Composable
 private fun FinanceGraph(
     graphValues: Map<Int, BigDecimal>,
+    currency: String,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberVicoScrollState()
@@ -659,24 +663,34 @@ private fun FinanceGraph(
             .withZone(ZoneId.systemDefault())
             .format(instant.toJavaLocalDate())
     }
+    val yAmountFormatter = CartesianValueFormatter { x, _, _ ->
+        x.toBigDecimal().formatAmount(currency)
+    }
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(),
+        labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(graphValues) {
         modelProducer.runTransaction {
-            columnSeries { series(graphValues.keys, graphValues.values) }
+            if (graphValues.isNotEmpty()) {
+                columnSeries { series(graphValues.keys, graphValues.values) }
+            }
         }
     }
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(),
-                startAxis = rememberStartAxis(),
+                startAxis = rememberStartAxis(
+                    valueFormatter = yAmountFormatter,
+                ),
                 bottomAxis = rememberBottomAxis(
                     valueFormatter = xDateFormatter,
+                    guideline = null,
                 ),
                 marker = marker,
+                fadingEdges = rememberFadingEdges(),
             ),
             modelProducer = modelProducer,
             scrollState = scrollState,
