@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +27,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.DAILY
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.MONTHLY
@@ -65,17 +67,31 @@ fun SubscriptionBottomSheet(
                     .height(100.dp)
                     .fillMaxWidth(),
             )
-        }
-        if (!subscriptionDialogState.isLoading) {
+        } else {
             Column {
                 CsListItem(
-                    headlineContent = { Text(subscriptionDialogState.title) },
+                    headlineContent = {
+                        Text(
+                            text = subscriptionDialogState.title,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                    },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.AutoRenew),
                             contentDescription = null,
                         )
                     },
+                    supportingContent = {
+                        Text(
+                            text = subscriptionDialogState.amount
+                                .toBigDecimal()
+                                .formatAmount(subscriptionDialogState.currency),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                    }
                 )
                 FlowRow(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
