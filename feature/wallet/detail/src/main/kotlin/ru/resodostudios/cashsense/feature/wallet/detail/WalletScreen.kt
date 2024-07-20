@@ -52,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -80,7 +81,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaLocalDate
@@ -182,8 +186,7 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage =
-                stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -667,7 +670,24 @@ private fun FinanceGraph(
         x.toBigDecimal().formatAmount(currency)
     }
     val marker = rememberDefaultCartesianMarker(
-        label = TextComponent(),
+        label = TextComponent(
+            padding = Dimensions(
+                startDp = 8f,
+                endDp = 8f,
+                topDp = 4f,
+                bottomDp = 8f,
+            ),
+            background = ShapeComponent(
+                color = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+                shape = Shape.Pill,
+                margins = Dimensions(
+                    startDp = 0f,
+                    endDp = 0f,
+                    topDp = 0f,
+                    bottomDp = 4f,
+                )
+            ),
+        ),
         labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
     )
 
