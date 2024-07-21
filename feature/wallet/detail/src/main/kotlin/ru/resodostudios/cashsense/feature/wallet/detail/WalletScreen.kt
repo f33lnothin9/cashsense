@@ -130,10 +130,8 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.MathContext
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -662,9 +660,9 @@ private fun FinanceGraph(
         val month = if (x.toInt().toString().length == 1) "0${x.toInt()}" else x.toInt()
         val instant = LocalDate.parse("$year-$month-01")
         dateTimeFormatter
-            .withLocale(Locale.getDefault())
-            .withZone(ZoneId.systemDefault())
             .format(instant.toJavaLocalDate())
+            .take(1)
+            .uppercase()
     }
     val yAmountFormatter = CartesianValueFormatter { x, _, _ ->
         x.toBigDecimal().formatAmount(currency)
