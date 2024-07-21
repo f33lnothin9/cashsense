@@ -35,7 +35,7 @@ import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
 
 @Composable
-fun SettingsScreen(
+internal fun SettingsScreen(
     onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -147,6 +147,16 @@ private fun SettingsPanel(
     SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about))
     val uriHandler = LocalUriHandler.current
     CsListItem(
+        headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
+        leadingContent = {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.Feedback),
+                contentDescription = null,
+            )
+        },
+        onClick = { uriHandler.openUri(FEEDBACK_URL) },
+    )
+    CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
         leadingContent = {
             Icon(
@@ -190,4 +200,5 @@ private fun SettingsScreenSectionTitle(text: String) {
     )
 }
 
+private const val FEEDBACK_URL = "https://forms.gle/kQcVkZHtgD6ZMTeX7"
 private const val PRIVACY_POLICY_URL = "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"

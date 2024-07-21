@@ -10,4 +10,5 @@
     <string name="feature_settings_privacy_policy">Политика конфиденциальности</string>
     <string name="feature_settings_licenses">Лицензии</string>
     <string name="feature_settings_version">Версия</string>
+    <string name="feature_settings_feedback">Обратная связь</string>
 </resources>
