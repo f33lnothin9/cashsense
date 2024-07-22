@@ -68,7 +68,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -632,7 +631,6 @@ private fun SharedTransitionScope.DetailedFinanceCard(
         )
         FinanceGraph(
             graphValues = graphValues,
-            currency = currency,
             modifier = Modifier.padding(16.dp),
         )
         CategoryFilterRow(
@@ -648,7 +646,6 @@ private fun SharedTransitionScope.DetailedFinanceCard(
 @Composable
 private fun FinanceGraph(
     graphValues: Map<Int, BigDecimal>,
-    currency: String,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberVicoScrollState()
@@ -663,9 +660,6 @@ private fun FinanceGraph(
             .format(instant.toJavaLocalDate())
             .take(1)
             .uppercase()
-    }
-    val yAmountFormatter = CartesianValueFormatter { x, _, _ ->
-        x.toBigDecimal().formatAmount(currency)
     }
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
@@ -700,9 +694,6 @@ private fun FinanceGraph(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(),
-                startAxis = rememberStartAxis(
-                    valueFormatter = yAmountFormatter,
-                ),
                 bottomAxis = rememberBottomAxis(
                     valueFormatter = xDateFormatter,
                     guideline = null,
