@@ -4,7 +4,7 @@
     <application>
         <receiver
             android:name="ru.resodostudios.cashsense.wallet.widget.WalletWidgetReceiver"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/wallet_widget_description">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
