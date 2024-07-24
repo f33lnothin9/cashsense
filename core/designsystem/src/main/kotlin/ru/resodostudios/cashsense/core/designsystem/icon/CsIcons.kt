@@ -32,6 +32,7 @@ object CsIcons {
     val Edit = R.drawable.ic_outlined_edit
     val Exercise = R.drawable.ic_outlined_exercise
     val Fastfood = R.drawable.ic_outlined_fastfood
+    val Feedback = R.drawable.ic_outlined_feedback
     val FormatPaint = R.drawable.ic_outlined_format_paint
     val Handyman = R.drawable.ic_outlined_handyman
     val Language = R.drawable.ic_outlined_language
