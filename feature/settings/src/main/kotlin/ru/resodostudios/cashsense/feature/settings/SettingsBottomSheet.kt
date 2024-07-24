@@ -1,5 +1,10 @@
 package ru.resodostudios.cashsense.feature.settings
 
+import android.content.Context
+import android.net.Uri
+import androidx.annotation.ColorInt
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,9 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -154,7 +159,8 @@ private fun ColumnScope.SettingsPanel(
     }
 
     SettingsBottomSheetSectionTitle(stringResource(R.string.feature_settings_about))
-    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
         leadingContent = {
@@ -163,7 +169,13 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = { uriHandler.openUri(FEEDBACK_URL) },
+        onClick = {
+            launchCustomChromeTab(
+                context = context,
+                uri = Uri.parse(FEEDBACK_URL),
+                toolbarColor = backgroundColor,
+            )
+        },
     )
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
@@ -173,9 +185,14 @@ private fun ColumnScope.SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
+        onClick = {
+            launchCustomChromeTab(
+                context = context,
+                uri = Uri.parse(PRIVACY_POLICY_URL),
+                toolbarColor = backgroundColor,
+            )
+        },
     )
-    val context = LocalContext.current
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
@@ -197,6 +214,16 @@ private fun SettingsBottomSheetSectionTitle(text: String) {
         modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+}
+
+private fun launchCustomChromeTab(context: Context, uri: Uri, @ColorInt toolbarColor: Int) {
+    val customTabBarColor = CustomTabColorSchemeParams.Builder()
+        .setToolbarColor(toolbarColor).build()
+    val customTabsIntent = CustomTabsIntent.Builder()
+        .setDefaultColorSchemeParams(customTabBarColor)
+        .build()
+
+    customTabsIntent.launchUrl(context, uri)
 }
 
 private const val FEEDBACK_URL = "https://forms.gle/kQcVkZHtgD6ZMTeX7"
