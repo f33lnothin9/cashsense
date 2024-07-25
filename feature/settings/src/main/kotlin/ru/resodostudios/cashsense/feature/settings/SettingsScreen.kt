@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -154,7 +153,6 @@ private fun SettingsPanel(
     SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about))
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
-    val uriHandler = LocalUriHandler.current
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
         leadingContent = {
@@ -179,7 +177,13 @@ private fun SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
+        onClick = {
+            launchCustomChromeTab(
+                context = context,
+                uri = Uri.parse(PRIVACY_POLICY_URL),
+                toolbarColor = backgroundColor,
+            )
+        },
     )
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
@@ -226,4 +230,4 @@ private fun launchCustomChromeTab(context: Context, uri: Uri, @ColorInt toolbarC
 }
 
 private const val FEEDBACK_URL = "https://forms.gle/kQcVkZHtgD6ZMTeX7"
-private const val PRIVACY_POLICY_URL = "https://docs.google.com/document/d/e/2PACX-1vRdzezAnxwQKj7BUQwE62sBFQ_jiRE2xv4aNZgAP9ZdFH30BC9VYNhxUuxAxKEBuedMMrrR2qQp-Z9i/pub"
+private const val PRIVACY_POLICY_URL = "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
