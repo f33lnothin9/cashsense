@@ -1,5 +1,10 @@
 package ru.resodostudios.cashsense.feature.settings
 
+import android.content.Context
+import android.net.Uri
+import androidx.annotation.ColorInt
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -33,6 +39,7 @@ import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
+import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
 internal fun SettingsScreen(
@@ -145,6 +152,8 @@ private fun SettingsPanel(
     }
 
     SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about))
+    val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
     val uriHandler = LocalUriHandler.current
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
@@ -154,7 +163,13 @@ private fun SettingsPanel(
                 contentDescription = null,
             )
         },
-        onClick = { uriHandler.openUri(FEEDBACK_URL) },
+        onClick = {
+            launchCustomChromeTab(
+                context = context,
+                uri = Uri.parse(FEEDBACK_URL),
+                toolbarColor = backgroundColor,
+            )
+        },
     )
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
@@ -166,7 +181,6 @@ private fun SettingsPanel(
         },
         onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
     )
-    val context = LocalContext.current
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
         leadingContent = {
@@ -178,9 +192,10 @@ private fun SettingsPanel(
         onClick = onLicensesClick,
     )
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionName = packageInfo.versionName ?: stringResource(uiR.string.none)
     CsListItem(
         headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
-        supportingContent = { Text(packageInfo.versionName ?: stringResource(ru.resodostudios.cashsense.core.ui.R.string.none)) },
+        supportingContent = { Text(versionName) },
         leadingContent = {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.Info),
@@ -198,6 +213,16 @@ private fun SettingsScreenSectionTitle(text: String) {
         modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+}
+
+private fun launchCustomChromeTab(context: Context, uri: Uri, @ColorInt toolbarColor: Int) {
+    val customTabBarColor = CustomTabColorSchemeParams.Builder()
+        .setToolbarColor(toolbarColor).build()
+    val customTabsIntent = CustomTabsIntent.Builder()
+        .setDefaultColorSchemeParams(customTabBarColor)
+        .build()
+
+    customTabsIntent.launchUrl(context, uri)
 }
 
 private const val FEEDBACK_URL = "https://forms.gle/kQcVkZHtgD6ZMTeX7"

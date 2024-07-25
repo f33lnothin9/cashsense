@@ -14,4 +14,5 @@ dependencies {
 
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose)
+    implementation(libs.androidx.browser)
 }
