@@ -108,30 +108,25 @@ private fun SettingsPanel(
         )
     }
 
-    val options = listOf(
-        stringResource(R.string.feature_settings_system),
-        stringResource(R.string.feature_settings_light),
-        stringResource(R.string.feature_settings_dark),
-    )
-    val optionIcons = listOf(
-        CsIcons.Android,
-        CsIcons.LightMode,
-        CsIcons.DarkMode,
+    val themeOptions = listOf(
+        stringResource(R.string.feature_settings_system) to CsIcons.Android,
+        stringResource(R.string.feature_settings_light) to CsIcons.LightMode,
+        stringResource(R.string.feature_settings_dark) to CsIcons.DarkMode,
     )
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
             .fillMaxWidth(),
     ) {
-        options.forEachIndexed { index, label ->
+        themeOptions.forEachIndexed { index, option ->
             SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = themeOptions.size),
                 onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
                 selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
                 icon = {
                     SegmentedButtonDefaults.Icon(settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(optionIcons[index]),
+                            imageVector = ImageVector.vectorResource(option.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -142,7 +137,7 @@ private fun SettingsPanel(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = option.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
