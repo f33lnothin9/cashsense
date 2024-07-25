@@ -51,7 +51,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -342,18 +341,14 @@ private fun WalletTopBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = onNewTransactionClick,
-            ) {
+            IconButton(onNewTransactionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                     contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
                 )
             }
             if (showDetailActions) {
-                IconButton(
-                    onClick = onEditWalletClick,
-                ) {
+                IconButton(onEditWalletClick) {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Edit),
                         contentDescription = null,
@@ -368,147 +363,139 @@ private fun WalletTopBar(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun FinancePanel(
-    walletState: WalletUiState,
+    walletState: Success,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (walletState) {
-        Loading -> Unit
-        is Success -> {
-            val expenses = walletState.transactionsCategories
-                .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
-                .sumOf { it.transaction.amount.abs() }
-            val income = walletState.transactionsCategories
-                .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
-                .sumOf { it.transaction.amount }
+    val expenses = walletState.transactionsCategories
+        .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
+        .sumOf { it.transaction.amount.abs() }
+    val income = walletState.transactionsCategories
+        .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
+        .sumOf { it.transaction.amount }
 
-            val notIgnoredTransactions = walletState.transactionsCategories
-                .filterNot { it.transaction.ignored }
-            val expensesProgress by animateFloatAsState(
-                targetValue = if (notIgnoredTransactions.isNotEmpty()) expenses
-                    .divide(
-                        notIgnoredTransactions.sumOf { it.transaction.amount.abs() },
-                        MathContext.DECIMAL32,
-                    )
-                    .toFloat() else 0f,
-                label = "expenses_progress",
-                animationSpec = tween(durationMillis = 400),
+    val notIgnoredTransactions = walletState.transactionsCategories
+        .filterNot { it.transaction.ignored }
+    val expensesProgress by animateFloatAsState(
+        targetValue = if (notIgnoredTransactions.isNotEmpty()) expenses
+            .divide(
+                notIgnoredTransactions.sumOf { it.transaction.amount.abs() },
+                MathContext.DECIMAL32,
             )
+            .toFloat() else 0f,
+        label = "expenses_progress",
+        animationSpec = tween(durationMillis = 400),
+    )
 
-            Column(
-                modifier = modifier.animateContentSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                SharedTransitionLayout {
-                    AnimatedContent(
-                        targetState = walletState.financeSectionType,
-                        label = "finance_panel",
-                    ) { financeType ->
-                        val groupedByMonth = notIgnoredTransactions
-                            .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
-                            .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
-                        when (financeType) {
-                            NONE -> {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                ) {
-                                    FinanceCard(
-                                        title = expenses,
-                                        currency = walletState.wallet.currency,
-                                        supportingTextId = R.string.feature_wallet_detail_expenses,
-                                        indicatorProgress = expensesProgress,
-                                        modifier = Modifier.weight(1f),
-                                        onClick = { onWalletEvent(UpdateFinanceType(EXPENSES)) },
-                                        enabled = expenses != BigDecimal.ZERO,
-                                        animatedVisibilityScope = this@AnimatedContent,
-                                    )
-                                    FinanceCard(
-                                        title = income,
-                                        currency = walletState.wallet.currency,
-                                        supportingTextId = R.string.feature_wallet_detail_income,
-                                        indicatorProgress = 1.0f - expensesProgress,
-                                        modifier = Modifier.weight(1f),
-                                        onClick = { onWalletEvent(UpdateFinanceType(INCOME)) },
-                                        enabled = income != BigDecimal.ZERO,
-                                        animatedVisibilityScope = this@AnimatedContent,
-                                    )
-                                }
-                            }
-
-                            EXPENSES -> {
-                                val graphValues = groupedByMonth
-                                    .map { monthTransactions ->
-                                        monthTransactions.key to monthTransactions.value
-                                            .map { transactionCategory -> transactionCategory.transaction.amount }
-                                            .sumOf { it.abs() }
-                                    }
-                                    .associate { it.first to it.second }
-                                DetailedFinanceCard(
-                                    title = expenses,
-                                    graphValues = graphValues,
-                                    currency = walletState.wallet.currency,
-                                    supportingTextId = R.string.feature_wallet_detail_expenses,
-                                    availableCategories = walletState.availableCategories,
-                                    selectedCategories = walletState.selectedCategories,
-                                    onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    onWalletEvent = onWalletEvent,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    animatedVisibilityScope = this@AnimatedContent,
-                                )
-                            }
-
-                            INCOME -> {
-                                val graphValues = groupedByMonth
-                                    .map { monthTransactions ->
-                                        monthTransactions.key to monthTransactions.value
-                                            .map { transactionCategory -> transactionCategory.transaction.amount }
-                                            .sumOf { it }
-                                    }
-                                    .associate { it.first to it.second }
-                                DetailedFinanceCard(
-                                    title = income,
-                                    graphValues = graphValues,
-                                    currency = walletState.wallet.currency,
-                                    supportingTextId = R.string.feature_wallet_detail_income,
-                                    availableCategories = walletState.availableCategories,
-                                    selectedCategories = walletState.selectedCategories,
-                                    onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    onWalletEvent = onWalletEvent,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    animatedVisibilityScope = this@AnimatedContent,
-                                )
-                            }
-                        }
-                    }
-                }
-                val dateTypes = listOf(
-                    stringResource(R.string.feature_wallet_detail_all),
-                    stringResource(R.string.feature_wallet_detail_week),
-                    stringResource(R.string.feature_wallet_detail_month),
-                    stringResource(R.string.feature_wallet_detail_year),
-                )
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    dateTypes.forEachIndexed { index, label ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = dateTypes.size,
-                            ),
-                            onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
-                            selected = walletState.dateType == DateType.entries[index],
-                            colors = SegmentedButtonDefaults.colors(
-                                inactiveContainerColor = Color.Transparent,
-                            ),
+    Column(
+        modifier = modifier.animateContentSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = walletState.financeSectionType,
+                label = "finance_panel",
+            ) { financeType ->
+                val groupedByMonth = notIgnoredTransactions
+                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                    .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
+                when (financeType) {
+                    NONE -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Text(
-                                text = label,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                            FinanceCard(
+                                title = expenses,
+                                currency = walletState.wallet.currency,
+                                supportingTextId = R.string.feature_wallet_detail_expenses,
+                                indicatorProgress = expensesProgress,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onWalletEvent(UpdateFinanceType(EXPENSES)) },
+                                enabled = expenses != BigDecimal.ZERO,
+                                animatedVisibilityScope = this@AnimatedContent,
+                            )
+                            FinanceCard(
+                                title = income,
+                                currency = walletState.wallet.currency,
+                                supportingTextId = R.string.feature_wallet_detail_income,
+                                indicatorProgress = 1.0f - expensesProgress,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onWalletEvent(UpdateFinanceType(INCOME)) },
+                                enabled = income != BigDecimal.ZERO,
+                                animatedVisibilityScope = this@AnimatedContent,
                             )
                         }
                     }
+
+                    EXPENSES -> {
+                        val graphValues = groupedByMonth
+                            .map { monthTransactions ->
+                                monthTransactions.key to monthTransactions.value
+                                    .map { transactionCategory -> transactionCategory.transaction.amount }
+                                    .sumOf { it.abs() }
+                            }
+                            .associate { it.first to it.second }
+                        DetailedFinanceCard(
+                            title = expenses,
+                            graphValues = graphValues,
+                            currency = walletState.wallet.currency,
+                            supportingTextId = R.string.feature_wallet_detail_expenses,
+                            availableCategories = walletState.availableCategories,
+                            selectedCategories = walletState.selectedCategories,
+                            onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
+                            onWalletEvent = onWalletEvent,
+                            modifier = Modifier.fillMaxWidth(),
+                            animatedVisibilityScope = this@AnimatedContent,
+                        )
+                    }
+
+                    INCOME -> {
+                        val graphValues = groupedByMonth
+                            .map { monthTransactions ->
+                                monthTransactions.key to monthTransactions.value
+                                    .map { transactionCategory -> transactionCategory.transaction.amount }
+                                    .sumOf { it }
+                            }
+                            .associate { it.first to it.second }
+                        DetailedFinanceCard(
+                            title = income,
+                            graphValues = graphValues,
+                            currency = walletState.wallet.currency,
+                            supportingTextId = R.string.feature_wallet_detail_income,
+                            availableCategories = walletState.availableCategories,
+                            selectedCategories = walletState.selectedCategories,
+                            onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
+                            onWalletEvent = onWalletEvent,
+                            modifier = Modifier.fillMaxWidth(),
+                            animatedVisibilityScope = this@AnimatedContent,
+                        )
+                    }
+                }
+            }
+        }
+        val dateTypes = listOf(
+            stringResource(R.string.feature_wallet_detail_all),
+            stringResource(R.string.feature_wallet_detail_week),
+            stringResource(R.string.feature_wallet_detail_month),
+            stringResource(R.string.feature_wallet_detail_year),
+        )
+        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+            dateTypes.forEachIndexed { index, label ->
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = dateTypes.size,
+                    ),
+                    onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
+                    selected = walletState.dateType == DateType.entries[index],
+                ) {
+                    Text(
+                        text = label,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
             }
         }
