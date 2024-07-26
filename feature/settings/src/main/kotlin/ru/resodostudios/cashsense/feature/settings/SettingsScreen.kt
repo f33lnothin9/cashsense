@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -66,138 +67,153 @@ private fun SettingsScreen(
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
             LazyColumn {
-                item {
-                    SettingsPanel(
-                        settings = settingsUiState.settings,
-                        supportDynamicColor = supportDynamicColor,
-                        onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                        onChangeDarkThemeConfig = onChangeDarkThemeConfig,
-                        onLicensesClick = onLicensesClick,
-                    )
-                }
+                settings(
+                    settings = settingsUiState.settings,
+                    supportDynamicColor = supportDynamicColor,
+                    onChangeDynamicColorPreference = onChangeDynamicColorPreference,
+                    onChangeDarkThemeConfig = onChangeDarkThemeConfig,
+                    onLicensesClick = onLicensesClick,
+                )
             }
         }
     }
 }
 
-@Composable
-private fun SettingsPanel(
+private fun LazyListScope.settings(
     settings: UserEditableSettings,
     supportDynamicColor: Boolean,
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
-    SettingsScreenSectionTitle(stringResource(R.string.feature_settings_theme))
-    AnimatedVisibility(supportDynamicColor) {
-        CsListItem(
-            headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
-            leadingContent = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
-                    contentDescription = null,
-                )
-            },
-            trailingContent = {
-                Switch(
-                    checked = settings.useDynamicColor,
-                    onCheckedChange = { onChangeDynamicColorPreference(it) },
-                )
-            },
-        )
+    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_theme)) }
+    item {
+        AnimatedVisibility(supportDynamicColor) {
+            CsListItem(
+                headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
+                leadingContent = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
+                        contentDescription = null,
+                    )
+                },
+                trailingContent = {
+                    Switch(
+                        checked = settings.useDynamicColor,
+                        onCheckedChange = { onChangeDynamicColorPreference(it) },
+                    )
+                },
+            )
+        }
     }
 
-    val themeOptions = listOf(
-        stringResource(R.string.feature_settings_system) to CsIcons.Android,
-        stringResource(R.string.feature_settings_light) to CsIcons.LightMode,
-        stringResource(R.string.feature_settings_dark) to CsIcons.DarkMode,
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
-            .fillMaxWidth(),
-    ) {
-        themeOptions.forEachIndexed { index, option ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = themeOptions.size),
-                onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
-                selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
-                icon = {
-                    SegmentedButtonDefaults.Icon(settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(option.second),
-                            contentDescription = null,
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                        )
-                    }
-                },
-            ) {
-                Text(
-                    text = option.first,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+    item {
+        val themeOptions = listOf(
+            stringResource(R.string.feature_settings_system) to CsIcons.Android,
+            stringResource(R.string.feature_settings_light) to CsIcons.LightMode,
+            stringResource(R.string.feature_settings_dark) to CsIcons.DarkMode,
+        )
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            themeOptions.forEachIndexed { index, option ->
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = themeOptions.size
+                    ),
+                    onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
+                    selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
+                    icon = {
+                        SegmentedButtonDefaults.Icon(settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(option.second),
+                                contentDescription = null,
+                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
+                            )
+                        }
+                    },
+                ) {
+                    Text(
+                        text = option.first,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
 
-    SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about))
-    val context = LocalContext.current
-    val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
-    CsListItem(
-        headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
-        leadingContent = {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.Feedback),
-                contentDescription = null,
-            )
-        },
-        onClick = {
-            launchCustomChromeTab(
-                context = context,
-                uri = Uri.parse(FEEDBACK_URL),
-                toolbarColor = backgroundColor,
-            )
-        },
-    )
-    CsListItem(
-        headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
-        leadingContent = {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.Policy),
-                contentDescription = null,
-            )
-        },
-        onClick = {
-            launchCustomChromeTab(
-                context = context,
-                uri = Uri.parse(PRIVACY_POLICY_URL),
-                toolbarColor = backgroundColor,
-            )
-        },
-    )
-    CsListItem(
-        headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
-        leadingContent = {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
-                contentDescription = null,
-            )
-        },
-        onClick = onLicensesClick,
-    )
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val versionName = packageInfo.versionName ?: stringResource(uiR.string.none)
-    CsListItem(
-        headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
-        supportingContent = { Text(versionName) },
-        leadingContent = {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.Info),
-                contentDescription = null,
-            )
-        },
-    )
+    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about)) }
+    item {
+        val context = LocalContext.current
+        val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+        CsListItem(
+            headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Feedback),
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                launchCustomChromeTab(
+                    context = context,
+                    uri = Uri.parse(FEEDBACK_URL),
+                    toolbarColor = backgroundColor,
+                )
+            },
+        )
+    }
+    item {
+        val context = LocalContext.current
+        val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+        CsListItem(
+            headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Policy),
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                launchCustomChromeTab(
+                    context = context,
+                    uri = Uri.parse(PRIVACY_POLICY_URL),
+                    toolbarColor = backgroundColor,
+                )
+            },
+        )
+    }
+    item {
+        CsListItem(
+            headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
+                    contentDescription = null,
+                )
+            },
+            onClick = onLicensesClick,
+        )
+    }
+    item {
+        val context = LocalContext.current
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo.versionName ?: stringResource(uiR.string.none)
+        CsListItem(
+            headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
+            supportingContent = { Text(versionName) },
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Info),
+                    contentDescription = null,
+                )
+            },
+        )
+    }
 }
 
 @Composable
