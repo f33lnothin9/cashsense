@@ -7,27 +7,24 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -86,7 +83,7 @@ private fun LazyListScope.settings(
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
-    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_theme)) }
+    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_appearance)) }
     item {
         AnimatedVisibility(supportDynamicColor) {
             CsListItem(
@@ -109,40 +106,31 @@ private fun LazyListScope.settings(
 
     item {
         val themeOptions = listOf(
-            stringResource(R.string.feature_settings_system) to CsIcons.Android,
-            stringResource(R.string.feature_settings_light) to CsIcons.LightMode,
-            stringResource(R.string.feature_settings_dark) to CsIcons.DarkMode,
+            stringResource(R.string.feature_settings_system_default),
+            stringResource(R.string.feature_settings_light),
+            stringResource(R.string.feature_settings_dark),
         )
-        SingleChoiceSegmentedButtonRow(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
-                .fillMaxWidth(),
-        ) {
-            themeOptions.forEachIndexed { index, option ->
-                SegmentedButton(
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = themeOptions.size
-                    ),
-                    onClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[index]) },
-                    selected = settings.darkThemeConfig == DarkThemeConfig.entries[index],
-                    icon = {
-                        SegmentedButtonDefaults.Icon(settings.darkThemeConfig == DarkThemeConfig.entries[index]) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(option.second),
-                                contentDescription = null,
-                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                            )
-                        }
-                    },
-                ) {
-                    Text(
-                        text = option.first,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
+        var showThemeDialog by rememberSaveable { mutableStateOf(false) }
+
+        CsListItem(
+            headlineContent = { Text(stringResource(R.string.feature_settings_theme)) },
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Palette),
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text(themeOptions.elementAt(settings.darkThemeConfig.ordinal)) },
+            onClick = { showThemeDialog = true },
+        )
+
+        if (showThemeDialog) {
+            ThemeDialog(
+                themeConfig = settings.darkThemeConfig,
+                themeOptions = themeOptions,
+                onThemeClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[it]) },
+                onDismiss = { showThemeDialog = false },
+            )
         }
     }
 

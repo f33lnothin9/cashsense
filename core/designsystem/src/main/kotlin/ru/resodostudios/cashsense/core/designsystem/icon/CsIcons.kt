@@ -16,7 +16,6 @@ object CsIcons {
     val Wallet = R.drawable.ic_outlined_wallet
     val AccountBalance = R.drawable.ic_outlined_account_balance
     val Add = R.drawable.ic_outlined_add
-    val Android = R.drawable.ic_outlined_android
     val ArrowBack = R.drawable.ic_outlined_arrow_back
     val Attractions = R.drawable.ic_outlined_attractions
     val AutoRenew = R.drawable.ic_outlined_autorenew
@@ -25,7 +24,6 @@ object CsIcons {
     val Chair = R.drawable.ic_outlined_chair
     val Check = R.drawable.ic_outlined_check
     val CheckCircle = R.drawable.ic_outlined_check_circle
-    val DarkMode = R.drawable.ic_outlined_dark_mode
     val DirectionsBus = R.drawable.ic_outlined_directions_bus
     val Edit = R.drawable.ic_outlined_edit
     val Exercise = R.drawable.ic_outlined_exercise
@@ -35,7 +33,6 @@ object CsIcons {
     val Handyman = R.drawable.ic_outlined_handyman
     val HistoryEdu = R.drawable.ic_outlined_history_edu
     val Language = R.drawable.ic_outlined_language
-    val LightMode = R.drawable.ic_outlined_light_mode
     val LocalBar = R.drawable.ic_outlined_local_bar
     val LocalGasStation = R.drawable.ic_outlined_local_gas_station
     val Memory = R.drawable.ic_outlined_memory
@@ -44,6 +41,7 @@ object CsIcons {
     val MusicNote = R.drawable.ic_outlined_music_note
     val Notifications = R.drawable.ic_outlined_notifications
     val NotificationsActive = R.drawable.ic_outlined_notifications_active
+    val Palette = R.drawable.ic_outlined_palette
     val Payments = R.drawable.ic_outlined_payments
     val Pending = R.drawable.ic_outlined_pending
     val Pets = R.drawable.ic_outlined_pets
