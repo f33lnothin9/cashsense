@@ -85,26 +85,6 @@ private fun LazyListScope.settings(
 ) {
     item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_appearance)) }
     item {
-        AnimatedVisibility(supportDynamicColor) {
-            CsListItem(
-                headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
-                leadingContent = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
-                        contentDescription = null,
-                    )
-                },
-                trailingContent = {
-                    Switch(
-                        checked = settings.useDynamicColor,
-                        onCheckedChange = { onChangeDynamicColorPreference(it) },
-                    )
-                },
-            )
-        }
-    }
-
-    item {
         val themeOptions = listOf(
             stringResource(R.string.feature_settings_system_default),
             stringResource(R.string.feature_settings_light),
@@ -130,6 +110,25 @@ private fun LazyListScope.settings(
                 themeOptions = themeOptions,
                 onThemeClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[it]) },
                 onDismiss = { showThemeDialog = false },
+            )
+        }
+    }
+    item {
+        AnimatedVisibility(supportDynamicColor) {
+            CsListItem(
+                headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
+                leadingContent = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
+                        contentDescription = null,
+                    )
+                },
+                trailingContent = {
+                    Switch(
+                        checked = settings.useDynamicColor,
+                        onCheckedChange = { onChangeDynamicColorPreference(it) },
+                    )
+                },
             )
         }
     }
