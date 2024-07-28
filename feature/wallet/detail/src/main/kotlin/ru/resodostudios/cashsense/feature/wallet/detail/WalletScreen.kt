@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -389,7 +390,7 @@ private fun FinancePanel(
 
     Column(
         modifier = modifier.animateContentSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SharedTransitionLayout {
@@ -437,7 +438,7 @@ private fun FinancePanel(
                                     .sumOf { it.abs() }
                             }
                             .associate { it.first to it.second }
-                        DetailedFinanceCard(
+                        DetailedFinanceSection(
                             title = expenses,
                             graphValues = graphValues,
                             currency = walletState.wallet.currency,
@@ -459,7 +460,7 @@ private fun FinancePanel(
                                     .sumOf { it }
                             }
                             .associate { it.first to it.second }
-                        DetailedFinanceCard(
+                        DetailedFinanceSection(
                             title = income,
                             graphValues = graphValues,
                             currency = walletState.wallet.currency,
@@ -558,7 +559,7 @@ private fun SharedTransitionScope.FinanceCard(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SharedTransitionScope.DetailedFinanceCard(
+private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     graphValues: Map<Int, BigDecimal>,
     currency: String,
@@ -570,16 +571,11 @@ private fun SharedTransitionScope.DetailedFinanceCard(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
-    ) {
+    Column(modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .padding(start = 16.dp, bottom = 4.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             AnimatedAmount(
                 targetState = title,
@@ -599,7 +595,7 @@ private fun SharedTransitionScope.DetailedFinanceCard(
                         animatedVisibilityScope = animatedVisibilityScope,
                     ),
             )
-            IconButton(onBackClick) {
+            FilledTonalIconButton(onBackClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Close),
                     contentDescription = null,
@@ -609,23 +605,19 @@ private fun SharedTransitionScope.DetailedFinanceCard(
         Text(
             text = stringResource(supportingTextId),
             modifier = Modifier
-                .padding(start = 16.dp)
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(supportingTextId),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
-        FinanceGraph(
-            graphValues = graphValues,
-            modifier = Modifier.padding(16.dp),
-        )
+        FinanceGraph(graphValues)
         CategoryFilterRow(
             availableCategories = availableCategories,
             selectedCategories = selectedCategories,
             addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
             removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-            modifier = Modifier.padding(start = 16.dp, bottom = 4.dp, end = 16.dp, top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp),
         )
     }
 }
