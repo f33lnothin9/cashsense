@@ -390,7 +390,6 @@ private fun FinancePanel(
 
     Column(
         modifier = modifier.animateContentSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SharedTransitionLayout {
@@ -406,6 +405,7 @@ private fun FinancePanel(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.padding(bottom = 8.dp),
                         ) {
                             FinanceCard(
                                 title = expenses,
@@ -476,6 +476,7 @@ private fun FinancePanel(
                 }
             }
         }
+        Spacer(Modifier.height(8.dp))
         val dateTypes = listOf(
             stringResource(R.string.feature_wallet_detail_all),
             stringResource(R.string.feature_wallet_detail_week),
@@ -589,11 +590,11 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     )
                 },
                 modifier = Modifier
-                    .weight(1f, false)
                     .sharedBounds(
                         sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                         animatedVisibilityScope = animatedVisibilityScope,
-                    ),
+                    )
+                    .weight(1f, false),
             )
             FilledTonalIconButton(onBackClick) {
                 Icon(
