@@ -169,7 +169,7 @@ fun WalletItem(
                     )
                 }
             ),
-            contentDescription = LocalContext.current.getString(uiR.string.add),
+            contentDescription = LocalContext.current.getString(uiR.string.core_ui_add),
         )
     }
 }

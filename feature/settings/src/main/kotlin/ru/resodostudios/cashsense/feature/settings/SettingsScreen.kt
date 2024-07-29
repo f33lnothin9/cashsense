@@ -189,7 +189,7 @@ private fun LazyListScope.settings(
     item {
         val context = LocalContext.current
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo.versionName ?: stringResource(uiR.string.none)
+        val versionName = packageInfo.versionName ?: stringResource(uiR.string.core_ui_none)
         CsListItem(
             headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
             supportingContent = { Text(versionName) },

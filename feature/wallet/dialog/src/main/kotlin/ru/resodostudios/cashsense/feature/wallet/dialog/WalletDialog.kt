@@ -59,7 +59,7 @@ fun WalletDialog(
     onDismiss: () -> Unit,
 ) {
     val dialogTitle = if (walletDialogState.id.isNotEmpty()) R.string.feature_wallet_dialog_edit_wallet else R.string.feature_wallet_dialog_new_wallet
-    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
+    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -86,9 +86,9 @@ fun WalletDialog(
                     .padding(bottom = 16.dp)
                     .focusRequester(titleTextField)
                     .focusProperties { next = initialBalanceTextField },
-                label = { Text(stringResource(uiR.string.title)) },
-                placeholder = { Text(stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.required)) },
+                label = { Text(stringResource(uiR.string.core_ui_title)) },
+                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
+                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,

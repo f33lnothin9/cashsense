@@ -72,7 +72,7 @@ fun CategoryBottomSheet(
                 )
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.edit)) },
+                    headlineContent = { Text(stringResource(R.string.core_ui_edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -85,7 +85,7 @@ fun CategoryBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.delete)) },
+                    headlineContent = { Text(stringResource(R.string.core_ui_delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

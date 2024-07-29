@@ -7,13 +7,13 @@
     <string name="core_ui_date">Дата</string>
     <string name="core_ui_undo">Вернуть</string>
     <string name="core_ui_navigation_back_icon_description">Назад</string>
-    <string name="save">Сохранить</string>
-    <string name="add">Добавить</string>
-    <string name="title">Название</string>
-    <string name="description">Описание</string>
-    <string name="edit">Изменить</string>
-    <string name="delete">Удалить</string>
-    <string name="required">*обязательно</string>
-    <string name="none">Отсутствует</string>
-    <string name="amount">Сумма</string>
+    <string name="core_ui_save">Сохранить</string>
+    <string name="core_ui_add">Добавить</string>
+    <string name="core_ui_title">Название</string>
+    <string name="core_ui_description">Описание</string>
+    <string name="core_ui_edit">Изменить</string>
+    <string name="core_ui_delete">Удалить</string>
+    <string name="core_ui_required">*обязательно</string>
+    <string name="core_ui_none">Отсутствует</string>
+    <string name="core_ui_amount">Сумма</string>
 </resources>
