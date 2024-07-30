@@ -405,7 +405,6 @@ private fun FinancePanel(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.padding(bottom = 8.dp),
                         ) {
                             FinanceCard(
                                 title = expenses,
@@ -441,6 +440,7 @@ private fun FinancePanel(
                         DetailedFinanceSection(
                             title = expenses,
                             graphValues = graphValues,
+                            dateType = walletState.dateType,
                             currency = walletState.wallet.currency,
                             supportingTextId = R.string.feature_wallet_detail_expenses,
                             availableCategories = walletState.availableCategories,
@@ -463,6 +463,7 @@ private fun FinancePanel(
                         DetailedFinanceSection(
                             title = income,
                             graphValues = graphValues,
+                            dateType = walletState.dateType,
                             currency = walletState.wallet.currency,
                             supportingTextId = R.string.feature_wallet_detail_income,
                             availableCategories = walletState.availableCategories,
@@ -473,31 +474,6 @@ private fun FinancePanel(
                             animatedVisibilityScope = this@AnimatedContent,
                         )
                     }
-                }
-            }
-        }
-        Spacer(Modifier.height(8.dp))
-        val dateTypes = listOf(
-            stringResource(R.string.feature_wallet_detail_all),
-            stringResource(R.string.feature_wallet_detail_week),
-            stringResource(R.string.feature_wallet_detail_month),
-            stringResource(R.string.feature_wallet_detail_year),
-        )
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            dateTypes.forEachIndexed { index, label ->
-                SegmentedButton(
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = dateTypes.size,
-                    ),
-                    onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
-                    selected = walletState.dateType == DateType.entries[index],
-                ) {
-                    Text(
-                        text = label,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
                 }
             }
         }
@@ -563,6 +539,7 @@ private fun SharedTransitionScope.FinanceCard(
 private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     graphValues: Map<Int, BigDecimal>,
+    dateType: DateType,
     currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
@@ -605,11 +582,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         }
         Text(
             text = stringResource(supportingTextId),
-            modifier = Modifier
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(supportingTextId),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                ),
+            modifier = Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState(supportingTextId),
+                animatedVisibilityScope = animatedVisibilityScope,
+            ),
             style = MaterialTheme.typography.labelLarge,
         )
         FinanceGraph(graphValues)
@@ -618,7 +594,14 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             selectedCategories = selectedCategories,
             addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
             removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 8.dp),
+        )
+        DateFilterRow(
+            dateType = dateType,
+            onWalletEvent = onWalletEvent,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
         )
     }
 }
@@ -748,6 +731,38 @@ private fun CategoryChip(
             )
         }
     )
+}
+
+@Composable
+private fun DateFilterRow(
+    dateType: DateType,
+    onWalletEvent: (WalletEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val dateTypes = listOf(
+        stringResource(R.string.feature_wallet_detail_all),
+        stringResource(R.string.feature_wallet_detail_week),
+        stringResource(R.string.feature_wallet_detail_month),
+        stringResource(R.string.feature_wallet_detail_year),
+    )
+    SingleChoiceSegmentedButtonRow(modifier) {
+        dateTypes.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = dateTypes.size,
+                ),
+                onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
+                selected = dateType == DateType.entries[index],
+            ) {
+                Text(
+                    text = label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
