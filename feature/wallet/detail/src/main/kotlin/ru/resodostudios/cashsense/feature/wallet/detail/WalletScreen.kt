@@ -111,6 +111,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
@@ -740,7 +741,6 @@ private fun DateFilterRow(
     modifier: Modifier = Modifier,
 ) {
     val dateTypes = listOf(
-        stringResource(R.string.feature_wallet_detail_all),
         stringResource(R.string.feature_wallet_detail_week),
         stringResource(R.string.feature_wallet_detail_month),
         stringResource(R.string.feature_wallet_detail_year),
@@ -837,7 +837,7 @@ fun FinancePanelDefaultPreview(
                     selectedCategories = categories.take(3),
                     transactionsCategories = transactionsCategories,
                     financeSectionType = NONE,
-                    dateType = DateType.ALL,
+                    dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
                 ),
                 onWalletEvent = {},
@@ -873,7 +873,7 @@ fun FinancePanelOpenedPreview(
                     selectedCategories = categories.take(2),
                     transactionsCategories = transactionsCategories,
                     financeSectionType = EXPENSES,
-                    dateType = DateType.ALL,
+                    dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
                 ),
                 onWalletEvent = {},
