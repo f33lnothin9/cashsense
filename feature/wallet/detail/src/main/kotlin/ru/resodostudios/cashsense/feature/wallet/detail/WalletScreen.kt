@@ -184,7 +184,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage =
+                stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -446,7 +447,10 @@ private fun FinancePanel(
                             supportingTextId = R.string.feature_wallet_detail_expenses,
                             availableCategories = walletState.availableCategories,
                             selectedCategories = walletState.selectedCategories,
-                            onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
+                            onBackClick = {
+                                onWalletEvent(UpdateFinanceType(NONE))
+                                onWalletEvent(UpdateDateType(YEAR))
+                            },
                             onWalletEvent = onWalletEvent,
                             modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
@@ -469,7 +473,10 @@ private fun FinancePanel(
                             supportingTextId = R.string.feature_wallet_detail_income,
                             availableCategories = walletState.availableCategories,
                             selectedCategories = walletState.selectedCategories,
-                            onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
+                            onBackClick = {
+                                onWalletEvent(UpdateFinanceType(NONE))
+                                onWalletEvent(UpdateDateType(YEAR))
+                            },
                             onWalletEvent = onWalletEvent,
                             modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
@@ -554,25 +561,16 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
         ) {
-            AnimatedAmount(
-                targetState = title,
-                label = "detailed_finance_card",
-                content = {
-                    Text(
-                        text = title.formatAmount(currency),
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
+            DateFilterRow(
+                dateType = dateType,
+                onWalletEvent = onWalletEvent,
                 modifier = Modifier
-                    .sharedBounds(
-                        sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                    .weight(1f, false),
+                    .padding(end = 12.dp)
+                    .weight(1f),
             )
             FilledTonalIconButton(onBackClick) {
                 Icon(
@@ -581,6 +579,22 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
+        AnimatedAmount(
+            targetState = title,
+            label = "detailed_finance_card",
+            content = {
+                Text(
+                    text = title.formatAmount(currency),
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            modifier = Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
+                animatedVisibilityScope = animatedVisibilityScope,
+            ),
+        )
         Text(
             text = stringResource(supportingTextId),
             modifier = Modifier.sharedBounds(
@@ -596,13 +610,6 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
             removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
             modifier = Modifier.padding(top = 8.dp),
-        )
-        DateFilterRow(
-            dateType = dateType,
-            onWalletEvent = onWalletEvent,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
         )
     }
 }
