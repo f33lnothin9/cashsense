@@ -20,6 +20,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
@@ -88,6 +89,8 @@ class WalletViewModel @Inject constructor(
 
             YEAR -> financeTypeTransactions
                 .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+
+            ALL -> financeTypeTransactions
         }
         val filteredTransactionsCategories = dateTypeTransactions
             .filterNot { it.transaction.id == lastRemovedTransactionId }
@@ -203,13 +206,14 @@ enum class DateType {
     WEEK,
     MONTH,
     YEAR,
+    ALL,
 }
 
 data class WalletFilterState(
     val selectedCategories: List<Category> = emptyList(),
     val availableCategories: List<Category> = emptyList(),
     val financeType: FinanceSectionType = NONE,
-    val dateType: DateType = YEAR,
+    val dateType: DateType = ALL,
 )
 
 sealed interface WalletUiState {

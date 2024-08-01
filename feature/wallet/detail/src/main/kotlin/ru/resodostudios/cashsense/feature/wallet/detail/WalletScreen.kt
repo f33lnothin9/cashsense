@@ -111,6 +111,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
@@ -414,7 +415,10 @@ private fun FinancePanel(
                                 supportingTextId = R.string.feature_wallet_detail_expenses,
                                 indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
-                                onClick = { onWalletEvent(UpdateFinanceType(EXPENSES)) },
+                                onClick = {
+                                    onWalletEvent(UpdateFinanceType(EXPENSES))
+                                    onWalletEvent(UpdateDateType(YEAR))
+                                },
                                 enabled = expenses != BigDecimal.ZERO,
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
@@ -424,7 +428,10 @@ private fun FinancePanel(
                                 supportingTextId = R.string.feature_wallet_detail_income,
                                 indicatorProgress = 1.0f - expensesProgress,
                                 modifier = Modifier.weight(1f),
-                                onClick = { onWalletEvent(UpdateFinanceType(INCOME)) },
+                                onClick = {
+                                    onWalletEvent(UpdateFinanceType(INCOME))
+                                    onWalletEvent(UpdateDateType(YEAR))
+                                },
                                 enabled = income != BigDecimal.ZERO,
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
@@ -449,7 +456,7 @@ private fun FinancePanel(
                             selectedCategories = walletState.selectedCategories,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
-                                onWalletEvent(UpdateDateType(YEAR))
+                                onWalletEvent(UpdateDateType(ALL))
                             },
                             onWalletEvent = onWalletEvent,
                             modifier = Modifier.fillMaxWidth(),
@@ -475,7 +482,7 @@ private fun FinancePanel(
                             selectedCategories = walletState.selectedCategories,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
-                                onWalletEvent(UpdateDateType(YEAR))
+                                onWalletEvent(UpdateDateType(ALL))
                             },
                             onWalletEvent = onWalletEvent,
                             modifier = Modifier.fillMaxWidth(),
