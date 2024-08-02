@@ -185,8 +185,7 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage =
-                stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -208,9 +207,7 @@ internal fun WalletScreen(
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
             LazyColumn(
-                contentPadding = PaddingValues(
-                    bottom = 88.dp,
-                ),
+                contentPadding = PaddingValues(bottom = 88.dp),
                 modifier = modifier.fillMaxSize(),
             ) {
                 item {
@@ -726,21 +723,18 @@ private fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val categoryIconRes = if (selected) {
+        CsIcons.Check
+    } else {
+        StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)
+    }
     FilterChip(
         selected = selected,
         onClick = onClick,
         label = { Text(category.title.toString()) },
         leadingIcon = {
             Icon(
-                imageVector = if (selected) {
-                    ImageVector.vectorResource(CsIcons.Check)
-                } else {
-                    ImageVector.vectorResource(
-                        StoredIcon.asRes(
-                            category.iconId ?: StoredIcon.CATEGORY.storedId
-                        )
-                    )
-                },
+                imageVector = ImageVector.vectorResource(categoryIconRes),
                 contentDescription = null,
                 modifier = modifier.size(FilterChipDefaults.IconSize),
             )

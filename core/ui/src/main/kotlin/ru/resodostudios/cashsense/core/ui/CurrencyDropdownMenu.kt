@@ -28,6 +28,7 @@ fun CurrencyDropdownMenu(
     modifier: Modifier = Modifier,
 ) {
     val currencies = Currency.getAvailableCurrencies()
+        .filterNot { it.displayName.contains("""\d+""".toRegex()) }
         .sortedBy { it.currencyCode }
     var expanded by remember { mutableStateOf(false) }
 
@@ -49,7 +50,7 @@ fun CurrencyDropdownMenu(
             onDismissRequest = { expanded = false },
         ) {
             currencies.forEach { selectionOption ->
-                val currencyText = "${selectionOption.symbol} - ${selectionOption.displayName}"
+                val currencyText = "${selectionOption.currencyCode} - ${selectionOption.displayName}"
                 DropdownMenuItem(
                     text = { Text(currencyText) },
                     onClick = {
