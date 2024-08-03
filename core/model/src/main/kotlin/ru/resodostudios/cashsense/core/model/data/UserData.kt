@@ -4,4 +4,5 @@ data class UserData(
     val darkThemeConfig: DarkThemeConfig,
     val useDynamicColor: Boolean,
     val primaryWalletId: String,
+    val currency: String,
 )

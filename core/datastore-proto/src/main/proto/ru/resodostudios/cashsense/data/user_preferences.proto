@@ -13,5 +13,5 @@ message UserPreferences {
 
     string primary_wallet_id = 3;
 
-    // NEXT AVAILABLE ID: 4
+    string currency = 4;
 }

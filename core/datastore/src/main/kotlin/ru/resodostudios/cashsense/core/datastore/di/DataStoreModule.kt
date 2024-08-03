@@ -33,7 +33,5 @@ object DataStoreModule {
         DataStoreFactory.create(
             serializer = userPreferencesSerializer,
             scope = CoroutineScope(scope.coroutineContext + ioDispatcher)
-        ) {
-            context.dataStoreFile("user_preferences.pb")
-        }
+        ) { context.dataStoreFile("user_preferences.pb") }
 }
