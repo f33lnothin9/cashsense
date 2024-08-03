@@ -85,6 +85,9 @@ private fun LazyListScope.settings(
 ) {
     item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_general)) }
     item {
+        val supportingText = settings.currency.ifEmpty {
+            stringResource(R.string.feature_settings_choose_currency)
+        }
         CsListItem(
             headlineContent = { Text(stringResource(uiR.string.core_ui_currency)) },
             leadingContent = {
@@ -93,7 +96,7 @@ private fun LazyListScope.settings(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text("Choose your default currency") },
+            supportingContent = { Text(supportingText) },
         )
     }
     item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_appearance)) }

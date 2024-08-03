@@ -13,4 +13,5 @@
     <string name="feature_settings_licenses">Licenses</string>
     <string name="feature_settings_version">Version</string>
     <string name="feature_settings_feedback">Feedback</string>
+    <string name="feature_settings_choose_currency">Choose your default currency</string>
 </resources>

@@ -24,6 +24,7 @@ class SettingsViewModel @Inject constructor(
                     settings = UserEditableSettings(
                         useDynamicColor = userData.useDynamicColor,
                         darkThemeConfig = userData.darkThemeConfig,
+                        currency = userData.currency,
                     )
                 )
             }
@@ -55,6 +56,7 @@ class SettingsViewModel @Inject constructor(
 data class UserEditableSettings(
     val useDynamicColor: Boolean,
     val darkThemeConfig: DarkThemeConfig,
+    val currency: String,
 )
 
 sealed interface SettingsUiState {
