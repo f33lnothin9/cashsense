@@ -44,6 +44,12 @@ class SettingsViewModel @Inject constructor(
             userDataRepository.setDynamicColorPreference(useDynamicColor)
         }
     }
+
+    fun updateCurrency(currency: String) {
+        viewModelScope.launch {
+            userDataRepository.setCurrency(currency)
+        }
+    }
 }
 
 data class UserEditableSettings(

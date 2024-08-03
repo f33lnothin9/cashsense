@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feature_settings_general">General</string>
     <string name="feature_settings_appearance">Appearance</string>
     <string name="feature_settings_title">Settings</string>
     <string name="feature_settings_about">About</string>

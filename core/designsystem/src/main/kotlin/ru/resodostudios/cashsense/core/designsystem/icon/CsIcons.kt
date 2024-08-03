@@ -11,9 +11,6 @@ object CsIcons {
     val CreditCard = R.drawable.ic_outlined_credit_card
     val Calendar = R.drawable.ic_outlined_calendar
     val Delete = R.drawable.ic_outlined_delete
-    val TrendingUp = R.drawable.ic_outlined_trending_up
-    val TrendingDown = R.drawable.ic_outlined_trending_down
-    val Wallet = R.drawable.ic_outlined_wallet
     val AccountBalance = R.drawable.ic_outlined_account_balance
     val Add = R.drawable.ic_outlined_add
     val ArrowBack = R.drawable.ic_outlined_arrow_back
@@ -32,6 +29,7 @@ object CsIcons {
     val FormatPaint = R.drawable.ic_outlined_format_paint
     val Handyman = R.drawable.ic_outlined_handyman
     val HistoryEdu = R.drawable.ic_outlined_history_edu
+    val Info = R.drawable.ic_outlined_info
     val Language = R.drawable.ic_outlined_language
     val LocalBar = R.drawable.ic_outlined_local_bar
     val LocalGasStation = R.drawable.ic_outlined_local_gas_station
@@ -60,6 +58,9 @@ object CsIcons {
     val SportsEsports = R.drawable.ic_outlined_sports_esports
     val Star = R.drawable.ic_outlined_star
     val Travel = R.drawable.ic_outlined_travel
-    val Info = R.drawable.ic_outlined_info
+    val TrendingDown = R.drawable.ic_outlined_trending_down
+    val TrendingUp = R.drawable.ic_outlined_trending_up
+    val UniversalCurrencyAlt = R.drawable.ic_outlined_universal_currency_alt
+    val Wallet = R.drawable.ic_outlined_wallet
     val Work = R.drawable.ic_outlined_work
 }

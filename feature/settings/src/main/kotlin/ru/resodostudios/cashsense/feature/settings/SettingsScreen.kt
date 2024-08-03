@@ -83,6 +83,19 @@ private fun LazyListScope.settings(
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
+    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_general)) }
+    item {
+        CsListItem(
+            headlineContent = { Text(stringResource(uiR.string.core_ui_currency)) },
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.UniversalCurrencyAlt),
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text("Choose your default currency") },
+        )
+    }
     item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_appearance)) }
     item {
         val themeOptions = listOf(

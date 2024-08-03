@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feature_settings_general">Основные</string>
     <string name="feature_settings_appearance">Оформление</string>
     <string name="feature_settings_title">Настройки</string>
     <string name="feature_settings_about">О приложении</string>
