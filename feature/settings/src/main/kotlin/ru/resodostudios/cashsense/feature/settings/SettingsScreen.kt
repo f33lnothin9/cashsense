@@ -49,6 +49,7 @@ internal fun SettingsScreen(
         onLicensesClick = onLicensesClick,
         onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
         onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
+        onChangeCurrency = viewModel::updateCurrency,
     )
 }
 
@@ -59,6 +60,7 @@ private fun SettingsScreen(
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
+    onChangeCurrency: (currency: String) -> Unit,
 ) {
     when (settingsUiState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -69,6 +71,7 @@ private fun SettingsScreen(
                     supportDynamicColor = supportDynamicColor,
                     onChangeDynamicColorPreference = onChangeDynamicColorPreference,
                     onChangeDarkThemeConfig = onChangeDarkThemeConfig,
+                    onChangeCurrency = onChangeCurrency,
                     onLicensesClick = onLicensesClick,
                 )
             }
@@ -81,10 +84,12 @@ private fun LazyListScope.settings(
     supportDynamicColor: Boolean,
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
     onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
+    onChangeCurrency: (currency: String) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
     item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_general)) }
     item {
+        var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
         val supportingText = settings.currency.ifEmpty {
             stringResource(R.string.feature_settings_choose_currency)
         }
@@ -97,7 +102,15 @@ private fun LazyListScope.settings(
                 )
             },
             supportingContent = { Text(supportingText) },
+            onClick = { showCurrencyDialog = true },
         )
+        if (showCurrencyDialog) {
+            CurrencyDialog(
+                currencyCode = settings.currency,
+                onCurrencyClick = { onChangeCurrency(it) },
+                onDismiss = { showCurrencyDialog = false },
+            )
+        }
     }
     item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_appearance)) }
     item {
