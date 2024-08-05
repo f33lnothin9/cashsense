@@ -40,6 +40,10 @@ class WalletDialogViewModel @Inject constructor(
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
     val walletDialogUiState = _walletDialogUiState.asStateFlow()
 
+    init {
+       if (_walletDialogUiState.value.id.isEmpty()) clearWalletDialogState()
+    }
+
     fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
             Save -> saveWallet()
@@ -151,6 +155,20 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
+    private fun clearWalletDialogState() {
+        viewModelScope.launch {
+            userDataRepository.userData
+                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
+                .collect {
+                    _walletDialogUiState.value = _walletDialogUiState.value.copy(
+                        id = "",
+                        currency = it.currency,
+                        isLoading = false,
+                    )
+                }
+        }
+    }
+
     private fun upsertWallet(wallet: Wallet) {
         viewModelScope.launch {
             walletsRepository.upsertWallet(wallet)
@@ -164,7 +182,7 @@ data class WalletDialogUiState(
     val initialBalance: String = "",
     val currentBalance: String = "",
     val currentPrimaryWalletId: String = "",
-    val currency: String = "USD",
+    val currency: String = "",
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
 )
