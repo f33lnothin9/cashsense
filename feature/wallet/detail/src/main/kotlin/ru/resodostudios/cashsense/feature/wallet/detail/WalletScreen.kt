@@ -565,11 +565,9 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            DateFilterRow(
+            FilterDateTypeSelectorRow(
                 dateType = dateType,
                 onWalletEvent = onWalletEvent,
                 modifier = Modifier
@@ -583,6 +581,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
+        FilterBySelectedDateTypeRow(Modifier.padding(bottom = 8.dp, top = 8.dp))
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
@@ -743,7 +742,7 @@ private fun CategoryChip(
 }
 
 @Composable
-private fun DateFilterRow(
+private fun FilterDateTypeSelectorRow(
     dateType: DateType,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -769,6 +768,35 @@ private fun DateFilterRow(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun FilterBySelectedDateTypeRow(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        IconButton(
+            onClick = {},
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.ChevronLeft),
+                contentDescription = null,
+            )
+        }
+        Text("2024")
+        IconButton(
+            onClick = {},
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
+                contentDescription = null,
+            )
         }
     }
 }

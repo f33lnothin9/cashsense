@@ -21,6 +21,8 @@ object CsIcons {
     val Chair = R.drawable.ic_outlined_chair
     val Check = R.drawable.ic_outlined_check
     val CheckCircle = R.drawable.ic_outlined_check_circle
+    val ChevronLeft = R.drawable.ic_outlined_chevron_left
+    val ChevronRight = R.drawable.ic_outlined_chevron_right
     val DirectionsBus = R.drawable.ic_outlined_directions_bus
     val Edit = R.drawable.ic_outlined_edit
     val Exercise = R.drawable.ic_outlined_exercise
