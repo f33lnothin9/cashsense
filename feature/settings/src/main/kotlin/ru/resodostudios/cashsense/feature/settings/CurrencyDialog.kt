@@ -16,6 +16,10 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +40,8 @@ internal fun CurrencyDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var currencyCodeState by remember { mutableStateOf(currencyCode) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = {
@@ -52,8 +58,18 @@ internal fun CurrencyDialog(
             )
         },
         confirmButton = {
-            TextButton(onDismiss) {
+            TextButton(
+                onClick = {
+                    onCurrencyClick(currencyCodeState)
+                    onDismiss()
+                }
+            ) {
                 Text(stringResource(uiR.string.core_ui_ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onDismiss) {
+                Text(stringResource(uiR.string.core_ui_cancel))
             }
         },
         modifier = modifier,
@@ -64,14 +80,15 @@ internal fun CurrencyDialog(
             LazyColumn(Modifier.selectableGroup()) {
                 currencies.forEach { currency ->
                     item {
-                        val selected = currencyCode == currency.currencyCode
+                        val selected = currencyCodeState == currency.currencyCode
                         Box(Modifier.clip(RoundedCornerShape(18.dp))) {
                             Row(
-                                Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .height(56.dp)
                                     .selectable(
                                         selected = selected,
-                                        onClick = { onCurrencyClick(currency.currencyCode) },
+                                        onClick = { currencyCodeState = currency.currencyCode },
                                         role = Role.RadioButton,
                                     )
                                     .padding(horizontal = 16.dp),
@@ -81,9 +98,8 @@ internal fun CurrencyDialog(
                                     selected = selected,
                                     onClick = null,
                                 )
-                                val currencyText = "${currency.currencyCode} - ${currency.displayName}"
                                 Text(
-                                    text = currencyText,
+                                    text = "${currency.currencyCode} - ${currency.displayName}",
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.padding(start = 16.dp),
                                 )
