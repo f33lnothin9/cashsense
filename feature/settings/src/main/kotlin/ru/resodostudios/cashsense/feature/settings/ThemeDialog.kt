@@ -54,7 +54,7 @@ internal fun ThemeDialog(
         },
         confirmButton = {
             TextButton(onDismiss) {
-                Text(stringResource(uiR.string.core_ui_ok))
+                Text(stringResource(uiR.string.core_ui_cancel))
             }
         },
         modifier = modifier,
@@ -64,11 +64,15 @@ internal fun ThemeDialog(
                     val selected = themeConfig == DarkThemeConfig.entries[index]
                     Box(Modifier.clip(RoundedCornerShape(18.dp))) {
                         Row(
-                            Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .height(56.dp)
                                 .selectable(
                                     selected = selected,
-                                    onClick = { onThemeClick(index) },
+                                    onClick = {
+                                        onThemeClick(index)
+                                        onDismiss()
+                                    },
                                     role = Role.RadioButton,
                                 )
                                 .padding(horizontal = 16.dp),
