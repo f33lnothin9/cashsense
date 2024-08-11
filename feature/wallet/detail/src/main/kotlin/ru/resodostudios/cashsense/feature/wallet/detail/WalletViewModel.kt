@@ -24,9 +24,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
@@ -99,7 +99,7 @@ class WalletViewModel @Inject constructor(
             currentBalance = currentBalance,
             availableCategories = walletFilter.availableCategories.minus(Category()),
             selectedCategories = walletFilter.selectedCategories,
-            financeSectionType = walletFilter.financeType,
+            financeType = walletFilter.financeType,
             dateType = walletFilter.dateType,
             wallet = walletTransactionsCategories.wallet,
             transactionsCategories = filteredTransactionsCategories,
@@ -165,7 +165,7 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun updateFinanceType(financeType: FinanceSectionType) {
+    private fun updateFinanceType(financeType: FinanceType) {
         walletFilterState.update {
             it.copy(financeType = financeType)
         }
@@ -196,7 +196,7 @@ class WalletViewModel @Inject constructor(
     }
 }
 
-enum class FinanceSectionType {
+enum class FinanceType {
     NONE,
     EXPENSES,
     INCOME,
@@ -212,7 +212,7 @@ enum class DateType {
 data class WalletFilterState(
     val selectedCategories: List<Category> = emptyList(),
     val availableCategories: List<Category> = emptyList(),
-    val financeType: FinanceSectionType = NONE,
+    val financeType: FinanceType = NONE,
     val dateType: DateType = ALL,
 )
 
@@ -224,7 +224,7 @@ sealed interface WalletUiState {
         val currentBalance: BigDecimal,
         val availableCategories: List<Category>,
         val selectedCategories: List<Category>,
-        val financeSectionType: FinanceSectionType,
+        val financeType: FinanceType,
         val dateType: DateType,
         val wallet: Wallet,
         val shouldDisplayUndoTransaction: Boolean,

@@ -113,9 +113,9 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
@@ -394,7 +394,7 @@ private fun FinancePanel(
     ) {
         SharedTransitionLayout {
             AnimatedContent(
-                targetState = walletState.financeSectionType,
+                targetState = walletState.financeType,
                 label = "finance_panel",
             ) { financeType ->
                 val groupedByMonth = notIgnoredTransactions
@@ -581,7 +581,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        FilterBySelectedDateTypeRow(Modifier.padding(bottom = 8.dp, top = 8.dp))
+        FilterBySelectedDateTypeRow(Modifier.padding(bottom = 6.dp, top = 6.dp))
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
@@ -872,7 +872,7 @@ fun FinancePanelDefaultPreview(
                     availableCategories = categories,
                     selectedCategories = categories.take(3),
                     transactionsCategories = transactionsCategories,
-                    financeSectionType = NONE,
+                    financeType = NONE,
                     dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
                 ),
@@ -908,7 +908,7 @@ fun FinancePanelOpenedPreview(
                     availableCategories = categories,
                     selectedCategories = categories.take(2),
                     transactionsCategories = transactionsCategories,
-                    financeSectionType = EXPENSES,
+                    financeType = EXPENSES,
                     dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
                 ),
