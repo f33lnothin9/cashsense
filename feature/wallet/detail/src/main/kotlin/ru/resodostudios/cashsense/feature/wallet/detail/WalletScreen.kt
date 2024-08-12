@@ -84,9 +84,8 @@ import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -131,8 +130,9 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.MathContext
-import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -626,14 +626,7 @@ private fun FinanceGraph(
     val zoomState = rememberVicoZoomState()
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { x, _, _ ->
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("MMM")
-        val year = getCurrentZonedDateTime().year
-        val month = if (x.toInt().toString().length == 1) "0${x.toInt()}" else x.toInt()
-        val instant = LocalDate.parse("$year-$month-01")
-        dateTimeFormatter
-            .format(instant.toJavaLocalDate())
-            .take(1)
-            .uppercase()
+        Month(x.toInt()).getDisplayName(TextStyle.SHORT, Locale.getDefault())
     }
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
