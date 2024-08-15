@@ -87,8 +87,18 @@ class WalletViewModel @Inject constructor(
             MONTH -> financeTypeTransactions
                 .filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
 
-            YEAR -> financeTypeTransactions
-                .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+            YEAR -> {
+                walletFilterState.update {
+                    it.copy(
+                        availableDates = financeTypeTransactions
+                            .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
+                            .toSet()
+                            .toList()
+                    )
+                }
+                financeTypeTransactions
+                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+            }
 
             ALL -> financeTypeTransactions
         }
@@ -101,6 +111,7 @@ class WalletViewModel @Inject constructor(
             selectedCategories = walletFilter.selectedCategories,
             financeType = walletFilter.financeType,
             dateType = walletFilter.dateType,
+            availableDates = walletFilter.availableDates,
             wallet = walletTransactionsCategories.wallet,
             transactionsCategories = filteredTransactionsCategories,
             shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
@@ -214,6 +225,7 @@ data class WalletFilterState(
     val availableCategories: List<Category> = emptyList(),
     val financeType: FinanceType = NONE,
     val dateType: DateType = ALL,
+    val availableDates: List<Int> = emptyList(),
 )
 
 sealed interface WalletUiState {
@@ -226,6 +238,7 @@ sealed interface WalletUiState {
         val selectedCategories: List<Category>,
         val financeType: FinanceType,
         val dateType: DateType,
+        val availableDates: List<Int>,
         val wallet: Wallet,
         val shouldDisplayUndoTransaction: Boolean,
         val transactionsCategories: List<TransactionWithCategory>,

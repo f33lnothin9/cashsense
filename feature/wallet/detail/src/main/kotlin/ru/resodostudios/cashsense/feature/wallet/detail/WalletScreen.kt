@@ -447,6 +447,7 @@ private fun FinancePanel(
                             title = expenses,
                             graphValues = graphValues,
                             dateType = walletState.dateType,
+                            availableDates = walletState.availableDates,
                             currency = walletState.wallet.currency,
                             supportingTextId = R.string.feature_wallet_detail_expenses,
                             availableCategories = walletState.availableCategories,
@@ -473,6 +474,7 @@ private fun FinancePanel(
                             title = income,
                             graphValues = graphValues,
                             dateType = walletState.dateType,
+                            availableDates = walletState.availableDates,
                             currency = walletState.wallet.currency,
                             supportingTextId = R.string.feature_wallet_detail_income,
                             availableCategories = walletState.availableCategories,
@@ -552,6 +554,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     graphValues: Map<Int, BigDecimal>,
     dateType: DateType,
+    availableDates: List<Int>,
     currency: String,
     @StringRes supportingTextId: Int,
     availableCategories: List<Category>,
@@ -581,7 +584,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        FilterBySelectedDateTypeRow(Modifier.padding(bottom = 6.dp, top = 6.dp))
+        FilterBySelectedDateTypeRow(
+            availableDates = availableDates,
+            modifier = Modifier.padding(bottom = 6.dp, top = 6.dp)
+        )
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
@@ -767,6 +773,7 @@ private fun FilterDateTypeSelectorRow(
 
 @Composable
 private fun FilterBySelectedDateTypeRow(
+    availableDates: List<Int>,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -782,7 +789,8 @@ private fun FilterBySelectedDateTypeRow(
                 contentDescription = null,
             )
         }
-        Text("2024")
+        val text = if (availableDates.isNotEmpty()) availableDates.random().toString() else "1999"
+        Text(text)
         IconButton(
             onClick = {},
         ) {
@@ -868,6 +876,7 @@ fun FinancePanelDefaultPreview(
                     financeType = NONE,
                     dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
+                    availableDates = emptyList(),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
@@ -904,6 +913,7 @@ fun FinancePanelOpenedPreview(
                     financeType = EXPENSES,
                     dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
+                    availableDates = emptyList(),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
