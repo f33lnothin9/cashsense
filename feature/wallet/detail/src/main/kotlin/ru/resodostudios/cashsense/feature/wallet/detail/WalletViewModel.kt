@@ -92,12 +92,13 @@ class WalletViewModel @Inject constructor(
                     it.copy(
                         availableDates = financeTypeTransactions
                             .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
-                            .toSet()
+                            .toSortedSet()
                             .toList()
                     )
                 }
-                financeTypeTransactions
-                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                financeTypeTransactions.filter {
+                    it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year
+                }
             }
 
             ALL -> financeTypeTransactions

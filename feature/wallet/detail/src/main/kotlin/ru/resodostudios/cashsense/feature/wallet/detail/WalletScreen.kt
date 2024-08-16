@@ -789,7 +789,7 @@ private fun FilterBySelectedDateTypeRow(
                 contentDescription = null,
             )
         }
-        val text = if (availableDates.isNotEmpty()) availableDates.random().toString() else "1999"
+        val text = if (availableDates.isNotEmpty()) availableDates.last().toString() else "???"
         Text(text)
         IconButton(
             onClick = {},
