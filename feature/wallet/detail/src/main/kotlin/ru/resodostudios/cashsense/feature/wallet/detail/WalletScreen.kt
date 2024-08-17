@@ -394,7 +394,7 @@ private fun FinancePanel(
     ) {
         SharedTransitionLayout {
             AnimatedContent(
-                targetState = walletState.financeType,
+                targetState = walletState.walletFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
                 val groupedByMonth = notIgnoredTransactions
@@ -446,12 +446,9 @@ private fun FinancePanel(
                         DetailedFinanceSection(
                             title = expenses,
                             graphValues = graphValues,
-                            dateType = walletState.dateType,
-                            availableDates = walletState.availableDates,
+                            walletFilter = walletState.walletFilter,
                             currency = walletState.wallet.currency,
                             supportingTextId = R.string.feature_wallet_detail_expenses,
-                            availableCategories = walletState.availableCategories,
-                            selectedCategories = walletState.selectedCategories,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
                                 onWalletEvent(UpdateDateType(ALL))
@@ -473,12 +470,9 @@ private fun FinancePanel(
                         DetailedFinanceSection(
                             title = income,
                             graphValues = graphValues,
-                            dateType = walletState.dateType,
-                            availableDates = walletState.availableDates,
+                            walletFilter = walletState.walletFilter,
                             currency = walletState.wallet.currency,
                             supportingTextId = R.string.feature_wallet_detail_income,
-                            availableCategories = walletState.availableCategories,
-                            selectedCategories = walletState.selectedCategories,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
                                 onWalletEvent(UpdateDateType(ALL))
@@ -553,12 +547,9 @@ private fun SharedTransitionScope.FinanceCard(
 private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     graphValues: Map<Int, BigDecimal>,
-    dateType: DateType,
-    availableDates: List<Int>,
+    walletFilter: WalletFilter,
     currency: String,
     @StringRes supportingTextId: Int,
-    availableCategories: List<Category>,
-    selectedCategories: List<Category>,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -571,7 +562,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             modifier = Modifier.fillMaxWidth(),
         ) {
             FilterDateTypeSelectorRow(
-                dateType = dateType,
+                dateType = walletFilter.dateType,
                 onWalletEvent = onWalletEvent,
                 modifier = Modifier
                     .padding(end = 12.dp)
@@ -585,7 +576,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             }
         }
         FilterBySelectedDateTypeRow(
-            availableDates = availableDates,
+            availableDates = walletFilter.availableDates,
             modifier = Modifier.padding(bottom = 6.dp, top = 6.dp)
         )
         AnimatedAmount(
@@ -614,8 +605,8 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         )
         FinanceGraph(graphValues)
         CategoryFilterRow(
-            availableCategories = availableCategories,
-            selectedCategories = selectedCategories,
+            availableCategories = walletFilter.availableCategories,
+            selectedCategories = walletFilter.selectedCategories,
             addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
             removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
             modifier = Modifier.padding(top = 8.dp),
@@ -870,13 +861,15 @@ fun FinancePanelDefaultPreview(
                         initialBalance = BigDecimal.ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
-                    availableCategories = categories,
-                    selectedCategories = categories.take(3),
+                    walletFilter = WalletFilter(
+                        availableCategories = categories,
+                        selectedCategories = categories.take(3),
+                        financeType = NONE,
+                        dateType = YEAR,
+                        availableDates = emptyList(),
+                    ),
                     transactionsCategories = transactionsCategories,
-                    financeType = NONE,
-                    dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
-                    availableDates = emptyList(),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
@@ -907,13 +900,16 @@ fun FinancePanelOpenedPreview(
                         initialBalance = BigDecimal.ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
-                    availableCategories = categories,
-                    selectedCategories = categories.take(2),
+                    walletFilter = WalletFilter(
+                        availableCategories = categories,
+                        selectedCategories = categories.take(2),
+                        financeType = EXPENSES,
+                        dateType = YEAR,
+                        availableDates = emptyList(),
+                    ),
                     transactionsCategories = transactionsCategories,
-                    financeType = EXPENSES,
-                    dateType = YEAR,
                     shouldDisplayUndoTransaction = false,
-                    availableDates = emptyList(),
+
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),

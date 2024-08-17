@@ -53,7 +53,15 @@ class WalletViewModel @Inject constructor(
     private val shouldDisplayUndoTransactionState = MutableStateFlow(false)
     private val lastRemovedTransactionIdState = MutableStateFlow<String?>(null)
 
-    private val walletFilterState = MutableStateFlow(WalletFilterState())
+    private val walletFilterState = MutableStateFlow(
+        WalletFilter(
+            selectedCategories = emptyList(),
+            availableCategories = emptyList(),
+            financeType = NONE,
+            dateType = ALL,
+            availableDates = emptyList(),
+        )
+    )
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         walletsRepository.getWalletWithTransactions(walletRoute.walletId),
@@ -78,14 +86,15 @@ class WalletViewModel @Inject constructor(
         }
         val dateTypeTransactions = when (walletFilter.dateType) {
             WEEK -> financeTypeTransactions.filter {
-                it.transaction.timestamp
+                val weekOfTransaction = it.transaction.timestamp
                     .getZonedDateTime()
-                    .get(WeekFields.ISO.weekOfWeekBasedYear()) ==
-                        getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
+                    .get(WeekFields.ISO.weekOfWeekBasedYear())
+                weekOfTransaction == getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
             }
 
-            MONTH -> financeTypeTransactions
-                .filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
+            MONTH -> financeTypeTransactions.filter {
+                it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month
+            }
 
             YEAR -> {
                 walletFilterState.update {
@@ -108,11 +117,13 @@ class WalletViewModel @Inject constructor(
 
         Success(
             currentBalance = currentBalance,
-            availableCategories = walletFilter.availableCategories.minus(Category()),
-            selectedCategories = walletFilter.selectedCategories,
-            financeType = walletFilter.financeType,
-            dateType = walletFilter.dateType,
-            availableDates = walletFilter.availableDates,
+            walletFilter = WalletFilter(
+                availableCategories = walletFilter.availableCategories.minus(Category()),
+                selectedCategories = walletFilter.selectedCategories,
+                financeType = walletFilter.financeType,
+                dateType = walletFilter.dateType,
+                availableDates = walletFilter.availableDates,
+            ),
             wallet = walletTransactionsCategories.wallet,
             transactionsCategories = filteredTransactionsCategories,
             shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
@@ -221,12 +232,12 @@ enum class DateType {
     ALL,
 }
 
-data class WalletFilterState(
-    val selectedCategories: List<Category> = emptyList(),
-    val availableCategories: List<Category> = emptyList(),
-    val financeType: FinanceType = NONE,
-    val dateType: DateType = ALL,
-    val availableDates: List<Int> = emptyList(),
+data class WalletFilter(
+    val selectedCategories: List<Category>,
+    val availableCategories: List<Category>,
+    val financeType: FinanceType,
+    val dateType: DateType,
+    val availableDates: List<Int>,
 )
 
 sealed interface WalletUiState {
@@ -235,11 +246,7 @@ sealed interface WalletUiState {
 
     data class Success(
         val currentBalance: BigDecimal,
-        val availableCategories: List<Category>,
-        val selectedCategories: List<Category>,
-        val financeType: FinanceType,
-        val dateType: DateType,
-        val availableDates: List<Int>,
+        val walletFilter: WalletFilter,
         val wallet: Wallet,
         val shouldDisplayUndoTransaction: Boolean,
         val transactionsCategories: List<TransactionWithCategory>,
