@@ -577,6 +577,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         }
         FilterBySelectedDateTypeRow(
             availableDates = walletFilter.availableDates,
+            selectedDate = walletFilter.selectedDate,
             modifier = Modifier.padding(bottom = 6.dp, top = 6.dp)
         )
         AnimatedAmount(
@@ -765,6 +766,7 @@ private fun FilterDateTypeSelectorRow(
 @Composable
 private fun FilterBySelectedDateTypeRow(
     availableDates: List<Int>,
+    selectedDate: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -772,18 +774,21 @@ private fun FilterBySelectedDateTypeRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
+        val isPreviousActive = if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
         IconButton(
             onClick = {},
+            enabled = isPreviousActive,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronLeft),
                 contentDescription = null,
             )
         }
-        val text = if (availableDates.isNotEmpty()) availableDates.last().toString() else "???"
-        Text(text)
+        Text(selectedDate.toString())
+        val isNextActive = if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
         IconButton(
             onClick = {},
+            enabled = isNextActive,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
@@ -867,6 +872,7 @@ fun FinancePanelDefaultPreview(
                         financeType = NONE,
                         dateType = YEAR,
                         availableDates = emptyList(),
+                        selectedDate = 0,
                     ),
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,
@@ -906,6 +912,7 @@ fun FinancePanelOpenedPreview(
                         financeType = EXPENSES,
                         dateType = YEAR,
                         availableDates = emptyList(),
+                        selectedDate = 0,
                     ),
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,
