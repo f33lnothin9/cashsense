@@ -12,6 +12,10 @@ sealed interface WalletEvent {
 
     data class UpdateDateType(val dateType: DateType) : WalletEvent
 
+    data object IncrementSelectedDate : WalletEvent
+
+    data object DecrementSelectedDate : WalletEvent
+
     data class HideTransaction(val id: String) : WalletEvent
 
     data object UndoTransactionRemoval : WalletEvent

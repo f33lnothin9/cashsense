@@ -29,7 +29,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
@@ -85,6 +87,17 @@ class WalletViewModel @Inject constructor(
                 sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
             )
         }
+        val availableDates = financeTypeTransactions
+            .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
+            .toSortedSet()
+            .toList()
+        val selectedDate = availableDates.last()
+        walletFilterState.update {
+            it.copy(
+                availableDates = availableDates,
+                selectedDate = selectedDate,
+            )
+        }
         val dateTypeTransactions = when (walletFilter.dateType) {
             WEEK -> financeTypeTransactions.filter {
                 val weekOfTransaction = it.transaction.timestamp
@@ -98,18 +111,8 @@ class WalletViewModel @Inject constructor(
             }
 
             YEAR -> {
-                val availableDates = financeTypeTransactions
-                    .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
-                    .toSortedSet()
-                    .toList()
-                walletFilterState.update {
-                    it.copy(
-                        availableDates = availableDates,
-                        selectedDate = availableDates.last(),
-                    )
-                }
                 financeTypeTransactions.filter {
-                    it.transaction.timestamp.getZonedDateTime().year == availableDates.last()
+                    it.transaction.timestamp.getZonedDateTime().year == selectedDate
                 }
             }
 
@@ -171,6 +174,8 @@ class WalletViewModel @Inject constructor(
             is HideTransaction -> hideTransaction(event.id)
             ClearUndoState -> clearUndoState()
             UndoTransactionRemoval -> undoTransactionRemoval()
+            DecrementSelectedDate -> decrementSelectedDate()
+            IncrementSelectedDate -> incrementSelectedDate()
         }
     }
 
@@ -201,6 +206,24 @@ class WalletViewModel @Inject constructor(
     private fun updateDateType(dateType: DateType) {
         walletFilterState.update {
             it.copy(dateType = dateType)
+        }
+    }
+
+    private fun incrementSelectedDate() {
+        val currentIndex = walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
+        if (currentIndex in 0 until walletFilterState.value.availableDates.size - 1) {
+            walletFilterState.update {
+                it.copy(selectedDate = walletFilterState.value.availableDates[currentIndex + 1])
+            }
+        }
+    }
+
+    private fun decrementSelectedDate() {
+        val currentIndex = walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
+        if (currentIndex in 1 until walletFilterState.value.availableDates.size) {
+            walletFilterState.update {
+                it.copy(selectedDate = walletFilterState.value.availableDates[currentIndex - 1])
+            }
         }
     }
 

@@ -117,7 +117,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
@@ -576,6 +578,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             }
         }
         FilterBySelectedDateTypeRow(
+            onWalletEvent = onWalletEvent,
             availableDates = walletFilter.availableDates,
             selectedDate = walletFilter.selectedDate,
             modifier = Modifier.padding(bottom = 6.dp, top = 6.dp)
@@ -765,6 +768,7 @@ private fun FilterDateTypeSelectorRow(
 
 @Composable
 private fun FilterBySelectedDateTypeRow(
+    onWalletEvent: (WalletEvent) -> Unit,
     availableDates: List<Int>,
     selectedDate: Int,
     modifier: Modifier = Modifier,
@@ -776,7 +780,7 @@ private fun FilterBySelectedDateTypeRow(
     ) {
         val isPreviousActive = if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
         IconButton(
-            onClick = {},
+            onClick = { onWalletEvent(DecrementSelectedDate) },
             enabled = isPreviousActive,
         ) {
             Icon(
@@ -787,7 +791,7 @@ private fun FilterBySelectedDateTypeRow(
         Text(selectedDate.toString())
         val isNextActive = if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
         IconButton(
-            onClick = {},
+            onClick = { onWalletEvent(IncrementSelectedDate) },
             enabled = isNextActive,
         ) {
             Icon(
