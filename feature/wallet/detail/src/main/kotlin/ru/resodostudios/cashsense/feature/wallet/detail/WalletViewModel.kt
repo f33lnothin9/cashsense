@@ -91,12 +91,8 @@ class WalletViewModel @Inject constructor(
             .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
             .toSortedSet()
             .toList()
-        val selectedDate = availableDates.last()
         walletFilterState.update {
-            it.copy(
-                availableDates = availableDates,
-                selectedDate = selectedDate,
-            )
+            it.copy(availableDates = availableDates)
         }
         val dateTypeTransactions = when (walletFilter.dateType) {
             WEEK -> financeTypeTransactions.filter {
@@ -112,7 +108,7 @@ class WalletViewModel @Inject constructor(
 
             YEAR -> {
                 financeTypeTransactions.filter {
-                    it.transaction.timestamp.getZonedDateTime().year == selectedDate
+                    it.transaction.timestamp.getZonedDateTime().year == walletFilterState.value.selectedDate
                 }
             }
 
@@ -204,8 +200,12 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateDateType(dateType: DateType) {
+        val selectedDate = walletFilterState.value.availableDates.last()
         walletFilterState.update {
-            it.copy(dateType = dateType)
+            it.copy(
+                dateType = dateType,
+                selectedDate = selectedDate,
+            )
         }
     }
 
