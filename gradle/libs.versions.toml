@@ -1,5 +1,5 @@
 [versions]
-aboutLibraries = "11.2.2"
+aboutLibraries = "11.2.3"
 accompanist = "0.35.2-beta"
 androidGradlePlugin = "8.5.2"
 androidxActivityCompose = "1.9.1"
