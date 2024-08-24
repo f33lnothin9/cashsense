@@ -22,7 +22,7 @@ fun NavGraphBuilder.settingsGraph(
     nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
     navigation<SettingsGraph>(
-        startDestination = SettingsRoute::class,
+        startDestination = SettingsRoute,
     ) {
         composable<SettingsRoute> {
             SettingsScreen(onLicensesClick)
