@@ -161,7 +161,7 @@ class WalletDialogViewModel @Inject constructor(
                 .onStart { _walletDialogUiState.value = WalletDialogUiState(isLoading = true) }
                 .collect {
                     _walletDialogUiState.value = WalletDialogUiState(
-                        currency = it.currency,
+                        currency = it.currency.ifEmpty { "USD" },
                     )
                 }
         }

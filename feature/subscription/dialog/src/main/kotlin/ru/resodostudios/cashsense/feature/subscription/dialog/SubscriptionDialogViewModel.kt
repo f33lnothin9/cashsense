@@ -148,7 +148,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                 .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
                 .collect {
                     _subscriptionDialogUiState.value = SubscriptionDialogUiState(
-                        currency = it.currency,
+                        currency = it.currency.ifEmpty { "USD" },
                     )
                 }
         }
