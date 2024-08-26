@@ -188,7 +188,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage =
+                stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -381,13 +382,13 @@ private fun FinancePanel(
     val notIgnoredTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
     val expensesProgress by animateFloatAsState(
-        targetValue = if (notIgnoredTransactions.isNotEmpty()) expenses
-            .divide(
-                notIgnoredTransactions.sumOf { it.transaction.amount.abs() },
-                MathContext.DECIMAL32,
-            )
-            .toFloat() else 0f,
+        targetValue = getFinanceProgress(expenses, notIgnoredTransactions),
         label = "expenses_progress",
+        animationSpec = tween(durationMillis = 400),
+    )
+    val incomeProgress by animateFloatAsState(
+        targetValue = getFinanceProgress(income, notIgnoredTransactions),
+        label = "income_progress",
         animationSpec = tween(durationMillis = 400),
     )
 
@@ -425,7 +426,7 @@ private fun FinancePanel(
                                 title = income,
                                 currency = walletState.wallet.currency,
                                 supportingTextId = R.string.feature_wallet_detail_income,
-                                indicatorProgress = 1.0f - expensesProgress,
+                                indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onWalletEvent(UpdateFinanceType(INCOME))
@@ -777,7 +778,8 @@ private fun FilterBySelectedDateTypeRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
-        val isPreviousActive = if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
+        val isPreviousActive =
+            if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
         IconButton(
             onClick = { onWalletEvent(DecrementSelectedDate) },
             enabled = isPreviousActive,
@@ -788,7 +790,8 @@ private fun FilterBySelectedDateTypeRow(
             )
         }
         Text(selectedDate.toString())
-        val isNextActive = if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
+        val isNextActive =
+            if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
         IconButton(
             onClick = { onWalletEvent(IncrementSelectedDate) },
             enabled = isNextActive,
@@ -850,6 +853,14 @@ private fun LazyListScope.transactions(
         }
     }
 }
+
+private fun getFinanceProgress(value: BigDecimal, transactions: List<TransactionWithCategory>) =
+    if (transactions.isNotEmpty()) value
+        .divide(
+            transactions.sumOf { it.transaction.amount.abs() },
+            MathContext.DECIMAL32,
+        )
+        .toFloat() else 0f
 
 @Preview
 @Composable
@@ -920,7 +931,7 @@ fun FinancePanelOpenedPreview(
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,
 
-                ),
+                    ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
             )
