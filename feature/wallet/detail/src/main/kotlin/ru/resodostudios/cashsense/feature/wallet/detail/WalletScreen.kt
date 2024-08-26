@@ -111,6 +111,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
@@ -416,9 +417,8 @@ private fun FinancePanel(
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onWalletEvent(UpdateFinanceType(EXPENSES))
-                                    onWalletEvent(UpdateDateType(YEAR))
+                                    onWalletEvent(UpdateDateType(MONTH))
                                 },
-                                enabled = expenses != BigDecimal.ZERO,
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
                             FinanceCard(
@@ -429,9 +429,8 @@ private fun FinancePanel(
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onWalletEvent(UpdateFinanceType(INCOME))
-                                    onWalletEvent(UpdateDateType(YEAR))
+                                    onWalletEvent(UpdateDateType(MONTH))
                                 },
-                                enabled = income != BigDecimal.ZERO,
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
                         }

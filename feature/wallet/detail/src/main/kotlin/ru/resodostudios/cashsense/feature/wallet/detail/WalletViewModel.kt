@@ -103,7 +103,8 @@ class WalletViewModel @Inject constructor(
             }
 
             MONTH -> financeTypeTransactions.filter {
-                it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month
+                val transactionDateTime = it.transaction.timestamp.getZonedDateTime()
+                transactionDateTime.year == getCurrentZonedDateTime().year && transactionDateTime.month == getCurrentZonedDateTime().month
             }
 
             YEAR -> {
@@ -200,17 +201,20 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateDateType(dateType: DateType) {
-        val selectedDate = walletFilterState.value.availableDates.last()
-        walletFilterState.update {
-            it.copy(
-                dateType = dateType,
-                selectedDate = selectedDate,
-            )
+        if (walletFilterState.value.availableDates.isNotEmpty()) {
+            val selectedDate =  walletFilterState.value.availableDates.last()
+            walletFilterState.update {
+                it.copy(
+                    dateType = dateType,
+                    selectedDate = selectedDate,
+                )
+            }
         }
     }
 
     private fun incrementSelectedDate() {
-        val currentIndex = walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
+        val currentIndex =
+            walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
         if (currentIndex in 0 until walletFilterState.value.availableDates.size - 1) {
             walletFilterState.update {
                 it.copy(selectedDate = walletFilterState.value.availableDates[currentIndex + 1])
@@ -219,7 +223,8 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun decrementSelectedDate() {
-        val currentIndex = walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
+        val currentIndex =
+            walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
         if (currentIndex in 1 until walletFilterState.value.availableDates.size) {
             walletFilterState.update {
                 it.copy(selectedDate = walletFilterState.value.availableDates[currentIndex - 1])
