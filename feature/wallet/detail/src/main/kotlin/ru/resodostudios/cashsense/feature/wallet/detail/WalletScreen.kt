@@ -372,15 +372,17 @@ private fun FinancePanel(
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val expenses = walletState.transactionsCategories
-        .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
-        .sumOf { it.transaction.amount.abs() }
-    val income = walletState.transactionsCategories
-        .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
-        .sumOf { it.transaction.amount }
-
     val notIgnoredTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
+        .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+        .filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
+    val expenses = notIgnoredTransactions
+        .filter { it.transaction.amount < BigDecimal.ZERO }
+        .sumOf { it.transaction.amount.abs() }
+    val income = notIgnoredTransactions
+        .filter { it.transaction.amount > BigDecimal.ZERO }
+        .sumOf { it.transaction.amount }
+
     val expensesProgress by animateFloatAsState(
         targetValue = getFinanceProgress(expenses, notIgnoredTransactions),
         label = "expenses_progress",
