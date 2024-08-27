@@ -102,6 +102,7 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
@@ -372,27 +373,21 @@ private fun FinancePanel(
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val notIgnoredTransactions = walletState.transactionsCategories
+    val validTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
-        .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
-        .filter { it.transaction.timestamp.getZonedDateTime().month == getCurrentZonedDateTime().month }
-    val expenses = notIgnoredTransactions
+    val currentMonthTransactions = when (walletState.walletFilter.dateType) {
+        ALL -> validTransactions.filter {
+            it.transaction.timestamp.getZonedDateTime().isInCurrentMonthAndYear()
+        }
+
+        else -> validTransactions
+    }
+    val expenses = currentMonthTransactions
         .filter { it.transaction.amount < BigDecimal.ZERO }
         .sumOf { it.transaction.amount.abs() }
-    val income = notIgnoredTransactions
+    val income = currentMonthTransactions
         .filter { it.transaction.amount > BigDecimal.ZERO }
         .sumOf { it.transaction.amount }
-
-    val expensesProgress by animateFloatAsState(
-        targetValue = getFinanceProgress(expenses, notIgnoredTransactions),
-        label = "expenses_progress",
-        animationSpec = tween(durationMillis = 400),
-    )
-    val incomeProgress by animateFloatAsState(
-        targetValue = getFinanceProgress(income, notIgnoredTransactions),
-        label = "income_progress",
-        animationSpec = tween(durationMillis = 400),
-    )
 
     Column(
         modifier = modifier.animateContentSize(),
@@ -403,7 +398,7 @@ private fun FinancePanel(
                 targetState = walletState.walletFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
-                val groupedByMonth = notIgnoredTransactions
+                val groupedByMonth = currentMonthTransactions
                     .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
                     .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
                 when (financeType) {
@@ -412,6 +407,16 @@ private fun FinancePanel(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
+                            val expensesProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(expenses, currentMonthTransactions),
+                                label = "expenses_progress",
+                                animationSpec = tween(durationMillis = 400),
+                            )
+                            val incomeProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(income, currentMonthTransactions),
+                                label = "income_progress",
+                                animationSpec = tween(durationMillis = 400),
+                            )
                             FinanceCard(
                                 title = expenses,
                                 currency = walletState.wallet.currency,
