@@ -20,6 +20,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
@@ -103,8 +104,9 @@ class WalletViewModel @Inject constructor(
             }
 
             MONTH -> financeTypeTransactions.filter {
-                val transactionDateTime = it.transaction.timestamp.getZonedDateTime()
-                transactionDateTime.year == getCurrentZonedDateTime().year && transactionDateTime.month == getCurrentZonedDateTime().month
+                it.transaction.timestamp
+                    .getZonedDateTime()
+                    .isInCurrentMonthAndYear()
             }
 
             YEAR -> {

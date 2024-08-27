@@ -1,13 +1,9 @@
 package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.runtime.Composable
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toJavaZoneId
-import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.FormatDateType.TIME
@@ -37,12 +33,6 @@ fun Instant.formatDate(formatDateType: FormatDateType = DATE): String = when (fo
     .withLocale(Locale.getDefault())
     .withZone(LocalTimeZone.current.toJavaZoneId())
     .format(toJavaInstant())
-
-fun Instant.getZonedDateTime() =
-    toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime()
-
-fun getCurrentZonedDateTime() =
-    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime()
 
 enum class FormatDateType {
     DATE_TIME,
