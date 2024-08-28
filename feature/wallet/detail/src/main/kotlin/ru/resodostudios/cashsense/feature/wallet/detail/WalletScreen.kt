@@ -100,7 +100,6 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
@@ -399,7 +398,7 @@ private fun FinancePanel(
                 label = "finance_panel",
             ) { financeType ->
                 val groupedByMonth = currentMonthTransactions
-                    .filter { it.transaction.timestamp.getZonedDateTime().year == getCurrentZonedDateTime().year }
+                    .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedDate }
                     .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
                 when (financeType) {
                     NONE -> {
