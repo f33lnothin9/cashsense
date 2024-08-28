@@ -633,7 +633,10 @@ private fun FinanceGraph(
     val zoomState = rememberVicoZoomState()
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { x, _, _ ->
-        Month(x.toInt()).getDisplayName(TextStyle.SHORT, Locale.getDefault())
+        Month(x.toInt())
+            .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+            .first()
+            .uppercase()
     }
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
