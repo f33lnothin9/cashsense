@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -567,7 +568,9 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(bottom = 6.dp)
+                .fillMaxWidth(),
         ) {
             FilterDateTypeSelectorRow(
                 dateType = walletFilter.dateType,
@@ -583,12 +586,14 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        FilterBySelectedDateTypeRow(
-            onWalletEvent = onWalletEvent,
-            availableDates = walletFilter.availableDates,
-            selectedDate = walletFilter.selectedDate,
-            modifier = Modifier.padding(bottom = 6.dp, top = 6.dp)
-        )
+        AnimatedVisibility(walletFilter.dateType == YEAR) {
+            FilterBySelectedDateTypeRow(
+                onWalletEvent = onWalletEvent,
+                availableDates = walletFilter.availableDates,
+                selectedDate = walletFilter.selectedDate,
+                modifier = Modifier.padding(bottom = 6.dp),
+            )
+        }
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
@@ -613,14 +618,18 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        FinanceGraph(graphValues)
-        CategoryFilterRow(
-            availableCategories = walletFilter.availableCategories,
-            selectedCategories = walletFilter.selectedCategories,
-            addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-            removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-            modifier = Modifier.padding(top = 8.dp),
-        )
+        if (walletFilter.dateType == YEAR) {
+            FinanceGraph(graphValues)
+        }
+        if (walletFilter.dateType != ALL) {
+            CategoryFilterRow(
+                availableCategories = walletFilter.availableCategories,
+                selectedCategories = walletFilter.selectedCategories,
+                addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+                removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
     }
 }
 
