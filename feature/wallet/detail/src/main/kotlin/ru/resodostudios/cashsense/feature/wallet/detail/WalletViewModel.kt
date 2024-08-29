@@ -41,6 +41,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.time.temporal.WeekFields
 import javax.inject.Inject
 
@@ -80,13 +81,8 @@ class WalletViewModel @Inject constructor(
             .sortedByDescending { it.transaction.timestamp }
         val financeTypeTransactions = when (walletFilter.financeType) {
             NONE -> sortedTransactions
-            EXPENSES -> calculateTransactionsCategories(
-                sortedTransactions.filter { it.transaction.amount < BigDecimal.ZERO }
-            )
-
-            INCOME -> calculateTransactionsCategories(
-                sortedTransactions.filter { it.transaction.amount > BigDecimal.ZERO }
-            )
+            EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
+            INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
         }
         val availableDates = financeTypeTransactions
             .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
@@ -117,8 +113,22 @@ class WalletViewModel @Inject constructor(
 
             ALL -> financeTypeTransactions
         }
+
         val filteredTransactionsCategories = dateTypeTransactions
             .filterNot { it.transaction.id == lastRemovedTransactionId }
+
+        calculateAvailableCategories(filteredTransactionsCategories)
+        val filteredByCategories = if (walletFilterState.value.selectedCategories.isNotEmpty()) {
+            filteredTransactionsCategories
+                .filter { walletFilterState.value.selectedCategories.contains(it.category) }
+                .apply {
+                    if (this.isEmpty()) {
+                        walletFilterState.update {
+                            it.copy(selectedCategories = emptyList())
+                        }
+                    }
+                }
+        } else filteredTransactionsCategories
 
         Success(
             currentBalance = currentBalance,
@@ -131,7 +141,7 @@ class WalletViewModel @Inject constructor(
                 selectedDate = walletFilter.selectedDate,
             ),
             wallet = walletTransactionsCategories.wallet,
-            transactionsCategories = filteredTransactionsCategories,
+            transactionsCategories = filteredByCategories,
             shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
         )
     }
@@ -142,7 +152,7 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    private fun calculateTransactionsCategories(transactionsCategories: List<TransactionWithCategory>): List<TransactionWithCategory> {
+    private fun calculateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
         transactionsCategories
             .map { it.category }
             .toSet()
@@ -151,17 +161,6 @@ class WalletViewModel @Inject constructor(
                     it.copy(availableCategories = categories.filterNotNull())
                 }
             }
-        return if (walletFilterState.value.selectedCategories.isNotEmpty()) {
-            transactionsCategories
-                .filter { walletFilterState.value.selectedCategories.contains(it.category) }
-                .apply {
-                    if (this.isEmpty()) {
-                        walletFilterState.update {
-                            it.copy(selectedCategories = emptyList())
-                        }
-                    }
-                }
-        } else transactionsCategories
     }
 
     fun onWalletEvent(event: WalletEvent) {
@@ -204,7 +203,7 @@ class WalletViewModel @Inject constructor(
 
     private fun updateDateType(dateType: DateType) {
         if (walletFilterState.value.availableDates.isNotEmpty()) {
-            val selectedDate =  walletFilterState.value.availableDates.last()
+            val selectedDate = walletFilterState.value.availableDates.last()
             walletFilterState.update {
                 it.copy(
                     dateType = dateType,
