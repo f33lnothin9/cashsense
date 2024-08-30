@@ -133,6 +133,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
@@ -383,10 +384,10 @@ private fun FinancePanel(
         else -> validTransactions
     }
     val expenses = currentMonthTransactions
-        .filter { it.transaction.amount < BigDecimal.ZERO }
+        .filter { it.transaction.amount < ZERO }
         .sumOf { it.transaction.amount.abs() }
     val income = currentMonthTransactions
-        .filter { it.transaction.amount > BigDecimal.ZERO }
+        .filter { it.transaction.amount > ZERO }
         .sumOf { it.transaction.amount }
 
     Column(
@@ -895,7 +896,7 @@ fun FinancePanelDefaultPreview(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
-                        initialBalance = BigDecimal.ZERO,
+                        initialBalance = ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(
@@ -935,7 +936,7 @@ fun FinancePanelOpenedPreview(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
-                        initialBalance = BigDecimal.ZERO,
+                        initialBalance = ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(

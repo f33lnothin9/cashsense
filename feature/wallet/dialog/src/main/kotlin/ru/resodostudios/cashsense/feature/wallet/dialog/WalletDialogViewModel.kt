@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.util.UUID
 import javax.inject.Inject
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -64,7 +65,7 @@ class WalletDialogViewModel @Inject constructor(
             id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
             title = _walletDialogUiState.value.title,
             initialBalance = if (_walletDialogUiState.value.initialBalance.isEmpty()) {
-                BigDecimal.ZERO
+                ZERO
             } else {
                 _walletDialogUiState.value.initialBalance.toBigDecimal()
             },

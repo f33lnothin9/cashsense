@@ -25,7 +25,7 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
-import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import ru.resodostudios.cashsense.core.ui.R as uiR
 
 @Composable
@@ -75,7 +75,7 @@ fun WalletBottomSheet(
                     supportingContent = {
                         Text(
                             text = walletDialogState.currentBalance.ifEmpty {
-                                BigDecimal(0).formatAmount(walletDialogState.currency)
+                                ZERO.formatAmount(walletDialogState.currency)
                             },
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

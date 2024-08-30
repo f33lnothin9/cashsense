@@ -47,6 +47,7 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
@@ -142,7 +143,7 @@ private fun TagsSection(
         derivedStateOf {
             transactions
                 .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount < BigDecimal.ZERO && !it.ignored }
+                .filter { it.amount < ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
         }
@@ -151,7 +152,7 @@ private fun TagsSection(
         derivedStateOf {
             transactions
                 .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount > BigDecimal.ZERO && !it.ignored }
+                .filter { it.amount > ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
         }
@@ -173,7 +174,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = expenses != BigDecimal.ZERO,
+            visible = expenses != ZERO,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -185,7 +186,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = income != BigDecimal.ZERO,
+            visible = income != ZERO,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
