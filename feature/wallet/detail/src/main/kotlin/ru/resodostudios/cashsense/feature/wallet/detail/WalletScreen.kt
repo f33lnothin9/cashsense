@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -29,6 +30,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -46,11 +48,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -64,6 +67,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
+import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.shape.Shape
+import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
@@ -79,6 +101,8 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
@@ -87,12 +111,17 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.EXPENSES
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.INCOME
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceSectionType.NONE
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
+import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
@@ -105,7 +134,9 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.MathContext
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 import ru.resodostudios.cashsense.core.ui.R as uiR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
@@ -158,7 +189,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage =
+                stringResource(transactionR.string.feature_transaction_deleted)
             val undoText = stringResource(uiR.string.core_ui_undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -180,9 +212,7 @@ internal fun WalletScreen(
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
             LazyColumn(
-                contentPadding = PaddingValues(
-                    bottom = 88.dp,
-                ),
+                contentPadding = PaddingValues(bottom = 88.dp),
                 modifier = modifier.fillMaxSize(),
             ) {
                 item {
@@ -317,18 +347,14 @@ private fun WalletTopBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = onNewTransactionClick,
-            ) {
+            IconButton(onNewTransactionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                     contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
                 )
             }
             if (showDetailActions) {
-                IconButton(
-                    onClick = onEditWalletClick,
-                ) {
+                IconButton(onEditWalletClick) {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Edit),
                         contentDescription = null,
@@ -343,145 +369,127 @@ private fun WalletTopBar(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun FinancePanel(
-    walletState: WalletUiState,
+    walletState: Success,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (walletState) {
-        Loading -> Unit
-        is Success -> {
-            val expenses = walletState.transactionsCategories
-                .filter { it.transaction.amount < BigDecimal.ZERO && !it.transaction.ignored }
-                .sumOf { it.transaction.amount.abs() }
-            val income = walletState.transactionsCategories
-                .filter { it.transaction.amount > BigDecimal.ZERO && !it.transaction.ignored }
-                .sumOf { it.transaction.amount }
+    val validTransactions = walletState.transactionsCategories
+        .filterNot { it.transaction.ignored }
+    val currentMonthTransactions = when (walletState.walletFilter.dateType) {
+        ALL -> validTransactions.filter {
+            it.transaction.timestamp.getZonedDateTime().isInCurrentMonthAndYear()
+        }
 
-            val notIgnoredTransactions = walletState.transactionsCategories
-                .filterNot { it.transaction.ignored }
-            val expensesProgress by animateFloatAsState(
-                targetValue = if (notIgnoredTransactions.isNotEmpty()) expenses
-                    .divide(
-                        notIgnoredTransactions.sumOf { it.transaction.amount.abs() },
-                        MathContext.DECIMAL32,
-                    )
-                    .toFloat() else 0f,
-                label = "expenses_progress",
-                animationSpec = tween(durationMillis = 400),
-            )
+        else -> validTransactions
+    }
+    val expenses = currentMonthTransactions
+        .filter { it.transaction.amount < BigDecimal.ZERO }
+        .sumOf { it.transaction.amount.abs() }
+    val income = currentMonthTransactions
+        .filter { it.transaction.amount > BigDecimal.ZERO }
+        .sumOf { it.transaction.amount }
 
-            Column(
-                modifier = modifier.animateContentSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                SharedTransitionLayout {
-                    AnimatedContent(
-                        targetState = walletState.financeSectionType,
-                        label = "finance_panel",
-                    ) { financeType ->
-                        when (financeType) {
-                            NONE -> {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                ) {
-                                    FinanceCard(
-                                        title = expenses,
-                                        currency = walletState.wallet.currency,
-                                        supportingTextId = R.string.feature_wallet_detail_expenses,
-                                        indicatorProgress = expensesProgress,
-                                        modifier = Modifier.weight(1f),
-                                        onClick = { onWalletEvent(UpdateFinanceType(EXPENSES)) },
-                                        enabled = expenses != BigDecimal.ZERO,
-                                        animatedVisibilityScope = this@AnimatedContent,
-                                    )
-                                    FinanceCard(
-                                        title = income,
-                                        currency = walletState.wallet.currency,
-                                        supportingTextId = R.string.feature_wallet_detail_income,
-                                        indicatorProgress = 1.0f - expensesProgress,
-                                        modifier = Modifier.weight(1f),
-                                        onClick = { onWalletEvent(UpdateFinanceType(INCOME)) },
-                                        enabled = income != BigDecimal.ZERO,
-                                        animatedVisibilityScope = this@AnimatedContent,
-                                    )
-                                }
-                            }
-
-                            EXPENSES -> {
-                                DetailedFinanceCard(
-                                    title = expenses,
-                                    currency = walletState.wallet.currency,
-                                    supportingTextId = R.string.feature_wallet_detail_expenses,
-                                    availableCategories = walletState.availableCategories,
-                                    selectedCategories = walletState.selectedCategories,
-                                    onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = {
-                                        onWalletEvent(
-                                            AddToSelectedCategories(it)
-                                        )
-                                    },
-                                    removeFromSelectedCategories = {
-                                        onWalletEvent(
-                                            RemoveFromSelectedCategories(it)
-                                        )
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    animatedVisibilityScope = this@AnimatedContent,
-                                )
-                            }
-
-                            INCOME -> {
-                                DetailedFinanceCard(
-                                    title = income,
-                                    currency = walletState.wallet.currency,
-                                    supportingTextId = R.string.feature_wallet_detail_income,
-                                    availableCategories = walletState.availableCategories,
-                                    selectedCategories = walletState.selectedCategories,
-                                    onBackClick = { onWalletEvent(UpdateFinanceType(NONE)) },
-                                    addToSelectedCategories = {
-                                        onWalletEvent(
-                                            AddToSelectedCategories(it)
-                                        )
-                                    },
-                                    removeFromSelectedCategories = {
-                                        onWalletEvent(
-                                            RemoveFromSelectedCategories(it)
-                                        )
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    animatedVisibilityScope = this@AnimatedContent,
-                                )
-                            }
-                        }
-                    }
-                }
-                val dateTypes = listOf(
-                    stringResource(R.string.feature_wallet_detail_all),
-                    stringResource(R.string.feature_wallet_detail_week),
-                    stringResource(R.string.feature_wallet_detail_month),
-                    stringResource(R.string.feature_wallet_detail_year),
-                )
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    dateTypes.forEachIndexed { index, label ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = dateTypes.size,
-                            ),
-                            onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
-                            selected = walletState.dateType == DateType.entries[index],
-                            colors = SegmentedButtonDefaults.colors(
-                                inactiveContainerColor = Color.Transparent,
-                            ),
+    Column(
+        modifier = modifier.animateContentSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = walletState.walletFilter.financeType,
+                label = "finance_panel",
+            ) { financeType ->
+                val groupedByMonth = currentMonthTransactions
+                    .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedDate }
+                    .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
+                when (financeType) {
+                    NONE -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Text(
-                                text = label,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                            val expensesProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(expenses, currentMonthTransactions),
+                                label = "expenses_progress",
+                                animationSpec = tween(durationMillis = 400),
+                            )
+                            val incomeProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(income, currentMonthTransactions),
+                                label = "income_progress",
+                                animationSpec = tween(durationMillis = 400),
+                            )
+                            FinanceCard(
+                                title = expenses,
+                                currency = walletState.wallet.currency,
+                                supportingTextId = R.string.feature_wallet_detail_expenses,
+                                indicatorProgress = expensesProgress,
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    onWalletEvent(UpdateFinanceType(EXPENSES))
+                                    onWalletEvent(UpdateDateType(MONTH))
+                                },
+                                animatedVisibilityScope = this@AnimatedContent,
+                            )
+                            FinanceCard(
+                                title = income,
+                                currency = walletState.wallet.currency,
+                                supportingTextId = R.string.feature_wallet_detail_income,
+                                indicatorProgress = incomeProgress,
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    onWalletEvent(UpdateFinanceType(INCOME))
+                                    onWalletEvent(UpdateDateType(MONTH))
+                                },
+                                animatedVisibilityScope = this@AnimatedContent,
                             )
                         }
+                    }
+
+                    EXPENSES -> {
+                        val graphValues = groupedByMonth
+                            .map { monthTransactions ->
+                                monthTransactions.key to monthTransactions.value
+                                    .map { transactionCategory -> transactionCategory.transaction.amount }
+                                    .sumOf { it.abs() }
+                            }
+                            .associate { it.first to it.second }
+                        DetailedFinanceSection(
+                            title = expenses,
+                            graphValues = graphValues,
+                            walletFilter = walletState.walletFilter,
+                            currency = walletState.wallet.currency,
+                            supportingTextId = R.string.feature_wallet_detail_expenses,
+                            onBackClick = {
+                                onWalletEvent(UpdateFinanceType(NONE))
+                                onWalletEvent(UpdateDateType(ALL))
+                            },
+                            onWalletEvent = onWalletEvent,
+                            modifier = Modifier.fillMaxWidth(),
+                            animatedVisibilityScope = this@AnimatedContent,
+                        )
+                    }
+
+                    INCOME -> {
+                        val graphValues = groupedByMonth
+                            .map { monthTransactions ->
+                                monthTransactions.key to monthTransactions.value
+                                    .map { transactionCategory -> transactionCategory.transaction.amount }
+                                    .sumOf { it }
+                            }
+                            .associate { it.first to it.second }
+                        DetailedFinanceSection(
+                            title = income,
+                            graphValues = graphValues,
+                            walletFilter = walletState.walletFilter,
+                            currency = walletState.wallet.currency,
+                            supportingTextId = R.string.feature_wallet_detail_income,
+                            onBackClick = {
+                                onWalletEvent(UpdateFinanceType(NONE))
+                                onWalletEvent(UpdateDateType(ALL))
+                            },
+                            onWalletEvent = onWalletEvent,
+                            modifier = Modifier.fillMaxWidth(),
+                            animatedVisibilityScope = this@AnimatedContent,
+                        )
                     }
                 }
             }
@@ -523,7 +531,7 @@ private fun SharedTransitionScope.FinanceCard(
                     )
                 },
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
+                    sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
@@ -531,7 +539,7 @@ private fun SharedTransitionScope.FinanceCard(
                 text = stringResource(supportingTextId),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = supportingTextId),
+                    sharedContentState = rememberSharedContentState(supportingTextId),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
@@ -545,70 +553,144 @@ private fun SharedTransitionScope.FinanceCard(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SharedTransitionScope.DetailedFinanceCard(
+private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
+    graphValues: Map<Int, BigDecimal>,
+    walletFilter: WalletFilter,
     currency: String,
     @StringRes supportingTextId: Int,
-    availableCategories: List<Category>,
-    selectedCategories: List<Category>,
     onBackClick: () -> Unit,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
+    onWalletEvent: (WalletEvent) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
-    ) {
+    Column(modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(start = 16.dp, bottom = 4.dp)
+                .padding(bottom = 6.dp)
                 .fillMaxWidth(),
         ) {
-            AnimatedAmount(
-                targetState = title,
-                label = "detailed_finance_card",
-                content = {
-                    Text(
-                        text = title.formatAmount(currency),
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
+            FilterDateTypeSelectorRow(
+                dateType = walletFilter.dateType,
+                onWalletEvent = onWalletEvent,
                 modifier = Modifier
-                    .weight(1f, false)
-                    .sharedBounds(
-                        sharedContentState = rememberSharedContentState(key = "$title/$supportingTextId"),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    ),
+                    .padding(end = 12.dp)
+                    .weight(1f),
             )
-            IconButton(onClick = onBackClick) {
+            FilledTonalIconButton(onBackClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Close),
                     contentDescription = null,
                 )
             }
         }
+        AnimatedVisibility(walletFilter.dateType == YEAR) {
+            FilterBySelectedDateTypeRow(
+                onWalletEvent = onWalletEvent,
+                availableDates = walletFilter.availableDates,
+                selectedDate = walletFilter.selectedDate,
+                modifier = Modifier.padding(bottom = 6.dp),
+            )
+        }
+        AnimatedAmount(
+            targetState = title,
+            label = "detailed_finance_card",
+            content = {
+                Text(
+                    text = title.formatAmount(currency),
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            modifier = Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
+                animatedVisibilityScope = animatedVisibilityScope,
+            ),
+        )
         Text(
             text = stringResource(supportingTextId),
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = supportingTextId),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                ),
+            modifier = Modifier.sharedBounds(
+                sharedContentState = rememberSharedContentState(supportingTextId),
+                animatedVisibilityScope = animatedVisibilityScope,
+            ),
             style = MaterialTheme.typography.labelLarge,
         )
-        CategoryFilterRow(
-            availableCategories = availableCategories,
-            selectedCategories = selectedCategories,
-            addToSelectedCategories = addToSelectedCategories,
-            removeFromSelectedCategories = removeFromSelectedCategories,
-            modifier = Modifier.padding(start = 16.dp, bottom = 4.dp, end = 16.dp, top = 16.dp),
+        if (walletFilter.dateType == YEAR) {
+            FinanceGraph(graphValues)
+        }
+        if (walletFilter.dateType != ALL) {
+            CategoryFilterRow(
+                availableCategories = walletFilter.availableCategories,
+                selectedCategories = walletFilter.selectedCategories,
+                addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
+                removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun FinanceGraph(
+    graphValues: Map<Int, BigDecimal>,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberVicoScrollState()
+    val zoomState = rememberVicoZoomState()
+    val modelProducer = remember { CartesianChartModelProducer() }
+    val xDateFormatter = CartesianValueFormatter { x, _, _ ->
+        Month(x.toInt())
+            .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+            .first()
+            .uppercase()
+    }
+    val marker = rememberDefaultCartesianMarker(
+        label = TextComponent(
+            padding = Dimensions(
+                startDp = 8f,
+                endDp = 8f,
+                topDp = 4f,
+                bottomDp = 8f,
+            ),
+            background = ShapeComponent(
+                color = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+                shape = Shape.Pill,
+                margins = Dimensions(
+                    startDp = 0f,
+                    endDp = 0f,
+                    topDp = 0f,
+                    bottomDp = 4f,
+                )
+            ),
+        ),
+        labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
+    )
+
+    LaunchedEffect(graphValues) {
+        modelProducer.runTransaction {
+            if (graphValues.isNotEmpty()) {
+                columnSeries { series(graphValues.keys, graphValues.values) }
+            }
+        }
+    }
+    ProvideVicoTheme(rememberM3VicoTheme()) {
+        CartesianChartHost(
+            chart = rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                bottomAxis = rememberBottomAxis(
+                    valueFormatter = xDateFormatter,
+                    guideline = null,
+                ),
+                marker = marker,
+                fadingEdges = rememberFadingEdges(),
+            ),
+            modelProducer = modelProducer,
+            scrollState = scrollState,
+            zoomState = zoomState,
+            modifier = modifier,
         )
     }
 }
@@ -652,26 +734,92 @@ private fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val categoryIconRes = if (selected) {
+        CsIcons.Check
+    } else {
+        StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)
+    }
     FilterChip(
         selected = selected,
         onClick = onClick,
         label = { Text(category.title.toString()) },
         leadingIcon = {
             Icon(
-                imageVector = if (selected) {
-                    ImageVector.vectorResource(CsIcons.Check)
-                } else {
-                    ImageVector.vectorResource(
-                        StoredIcon.asRes(
-                            category.iconId ?: StoredIcon.CATEGORY.storedId
-                        )
-                    )
-                },
+                imageVector = ImageVector.vectorResource(categoryIconRes),
                 contentDescription = null,
                 modifier = modifier.size(FilterChipDefaults.IconSize),
             )
         }
     )
+}
+
+@Composable
+private fun FilterDateTypeSelectorRow(
+    dateType: DateType,
+    onWalletEvent: (WalletEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val dateTypes = listOf(
+        stringResource(R.string.feature_wallet_detail_week),
+        stringResource(R.string.feature_wallet_detail_month),
+        stringResource(R.string.feature_wallet_detail_year),
+    )
+    SingleChoiceSegmentedButtonRow(modifier) {
+        dateTypes.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = dateTypes.size,
+                ),
+                onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
+                selected = dateType == DateType.entries[index],
+            ) {
+                Text(
+                    text = label,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilterBySelectedDateTypeRow(
+    onWalletEvent: (WalletEvent) -> Unit,
+    availableDates: List<Int>,
+    selectedDate: Int,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        val isPreviousActive =
+            if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
+        IconButton(
+            onClick = { onWalletEvent(DecrementSelectedDate) },
+            enabled = isPreviousActive,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.ChevronLeft),
+                contentDescription = null,
+            )
+        }
+        Text(selectedDate.toString())
+        val isNextActive =
+            if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
+        IconButton(
+            onClick = { onWalletEvent(IncrementSelectedDate) },
+            enabled = isNextActive,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
+                contentDescription = null,
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -714,7 +862,7 @@ private fun LazyListScope.transactions(
                     withPlus = true,
                 ),
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
-                categoryTitle = category?.title ?: stringResource(uiR.string.none),
+                categoryTitle = category?.title ?: stringResource(uiR.string.core_ui_none),
                 transactionStatus = transaction.status,
                 ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },
@@ -723,6 +871,14 @@ private fun LazyListScope.transactions(
         }
     }
 }
+
+private fun getFinanceProgress(value: BigDecimal, transactions: List<TransactionWithCategory>) =
+    if (transactions.isNotEmpty()) value
+        .divide(
+            transactions.sumOf { it.transaction.amount.abs() },
+            MathContext.DECIMAL32,
+        )
+        .toFloat() else 0f
 
 @Preview
 @Composable
@@ -742,11 +898,15 @@ fun FinancePanelDefaultPreview(
                         initialBalance = BigDecimal.ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
-                    availableCategories = categories,
-                    selectedCategories = categories.take(3),
+                    walletFilter = WalletFilter(
+                        availableCategories = categories,
+                        selectedCategories = categories.take(3),
+                        financeType = NONE,
+                        dateType = YEAR,
+                        availableDates = emptyList(),
+                        selectedDate = 0,
+                    ),
                     transactionsCategories = transactionsCategories,
-                    financeSectionType = NONE,
-                    dateType = DateType.ALL,
                     shouldDisplayUndoTransaction = false,
                 ),
                 onWalletEvent = {},
@@ -778,13 +938,18 @@ fun FinancePanelOpenedPreview(
                         initialBalance = BigDecimal.ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
-                    availableCategories = categories,
-                    selectedCategories = categories.take(2),
+                    walletFilter = WalletFilter(
+                        availableCategories = categories,
+                        selectedCategories = categories.take(2),
+                        financeType = EXPENSES,
+                        dateType = YEAR,
+                        availableDates = emptyList(),
+                        selectedDate = 0,
+                    ),
                     transactionsCategories = transactionsCategories,
-                    financeSectionType = EXPENSES,
-                    dateType = DateType.ALL,
                     shouldDisplayUndoTransaction = false,
-                ),
+
+                    ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
             )

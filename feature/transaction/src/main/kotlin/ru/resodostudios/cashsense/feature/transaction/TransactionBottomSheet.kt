@@ -135,7 +135,7 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.edit)) },
+                    headlineContent = { Text(stringResource(uiR.string.core_ui_edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -148,7 +148,7 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.delete)) },
+                    headlineContent = { Text(stringResource(uiR.string.core_ui_delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

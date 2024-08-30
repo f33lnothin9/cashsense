@@ -74,7 +74,6 @@ class WalletWidget : GlanceAppWidget() {
 
 @Composable
 private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategories>) {
-
     Scaffold(
         titleBar = {
             TitleBar(
@@ -170,7 +169,7 @@ fun WalletItem(
                     )
                 }
             ),
-            contentDescription = LocalContext.current.getString(uiR.string.add),
+            contentDescription = LocalContext.current.getString(uiR.string.core_ui_add),
         )
     }
 }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.cashsense.android.feature)
     alias(libs.plugins.cashsense.android.library.compose)
+
 }
 
 android {
@@ -9,6 +10,9 @@ android {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.ui)
 
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.browser)
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -38,7 +39,12 @@ class WalletDialogViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _walletDialogUiState = MutableStateFlow(WalletDialogUiState())
-    val walletDialogUiState = _walletDialogUiState.asStateFlow()
+    val walletDialogUiState: StateFlow<WalletDialogUiState>
+        get() = _walletDialogUiState.asStateFlow()
+
+    init {
+       if (_walletDialogUiState.value.id.isEmpty()) clearWalletDialogState()
+    }
 
     fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
@@ -69,9 +75,7 @@ class WalletDialogViewModel @Inject constructor(
         }
         updatePrimaryWalletId()
         upsertWallet(wallet)
-        _walletDialogUiState.update {
-            WalletDialogUiState()
-        }
+        clearWalletDialogState()
     }
 
     private fun updateId(id: String) {
@@ -151,6 +155,18 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
+    private fun clearWalletDialogState() {
+        viewModelScope.launch {
+            userDataRepository.userData
+                .onStart { _walletDialogUiState.value = WalletDialogUiState(isLoading = true) }
+                .collect {
+                    _walletDialogUiState.value = WalletDialogUiState(
+                        currency = it.currency.ifEmpty { "USD" },
+                    )
+                }
+        }
+    }
+
     private fun upsertWallet(wallet: Wallet) {
         viewModelScope.launch {
             walletsRepository.upsertWallet(wallet)
@@ -164,7 +180,7 @@ data class WalletDialogUiState(
     val initialBalance: String = "",
     val currentBalance: String = "",
     val currentPrimaryWalletId: String = "",
-    val currency: String = "USD",
+    val currency: String = "",
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
 )

@@ -81,13 +81,13 @@ fun SubscriptionDialog(
     val dialogTitle =
         if (subscriptionDialogState.id.isNotEmpty()) R.string.feature_subscription_dialog_edit else R.string.feature_subscription_dialog_new
     val dialogConfirmText =
-        if (subscriptionDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
+        if (subscriptionDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = uiR.string.core_ui_cancel,
-        iconRes = CsIcons.Subscriptions,
+        iconRes = CsIcons.AutoRenew,
         onConfirm = {
             onSubscriptionEvent(Save)
             onDismiss()
@@ -108,9 +108,9 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
-                label = { Text(stringResource(uiR.string.title)) },
-                placeholder = { Text(stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.required)) },
+                label = { Text(stringResource(uiR.string.core_ui_title)) },
+                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
+                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
                 maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,9 +125,9 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
-                label = { Text(stringResource(uiR.string.amount)) },
-                placeholder = { Text(stringResource(uiR.string.amount) + "*") },
-                supportingText = { Text(stringResource(uiR.string.required)) },
+                label = { Text(stringResource(uiR.string.core_ui_amount)) },
+                placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
+                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
                 maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()

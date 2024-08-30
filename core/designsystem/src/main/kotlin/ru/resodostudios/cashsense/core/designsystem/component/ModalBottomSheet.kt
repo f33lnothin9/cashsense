@@ -24,10 +24,7 @@ fun CsModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = sheetState,
     ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-        ) {
+        Column(Modifier.verticalScroll(rememberScrollState())) {
             content()
         }
     }

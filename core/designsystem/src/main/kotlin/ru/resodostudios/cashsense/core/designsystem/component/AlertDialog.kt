@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -21,9 +22,10 @@ fun CsAlertDialog(
     @StringRes dismissButtonTextRes: Int,
     @DrawableRes iconRes: Int,
     onConfirm: () -> Unit,
-    isConfirmEnabled: Boolean,
     onDismiss: () -> Unit,
-    content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    isConfirmEnabled: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = {},
@@ -50,11 +52,10 @@ fun CsAlertDialog(
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
+            TextButton(onDismiss) {
                 Text(text = stringResource(dismissButtonTextRes))
             }
-        }
+        },
+        modifier = modifier,
     )
 }

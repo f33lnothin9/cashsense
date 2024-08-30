@@ -6,13 +6,14 @@
     <string name="core_ui_icon_and_title">Icon &amp; Title</string>
     <string name="core_ui_date">Date</string>
     <string name="core_ui_undo">Undo</string>
-    <string name="save">Save</string>
-    <string name="add">Add</string>
-    <string name="title">Title</string>
-    <string name="description">Description</string>
-    <string name="edit">Edit</string>
-    <string name="delete">Delete</string>
-    <string name="required">*required</string>
-    <string name="none">None</string>
-    <string name="amount">Amount</string>
+    <string name="core_ui_navigation_back_icon_description">Back</string>
+    <string name="core_ui_save">Save</string>
+    <string name="core_ui_add">Add</string>
+    <string name="core_ui_title">Title</string>
+    <string name="core_ui_description">Description</string>
+    <string name="core_ui_edit">Edit</string>
+    <string name="core_ui_delete">Delete</string>
+    <string name="core_ui_required">*required</string>
+    <string name="core_ui_none">None</string>
+    <string name="core_ui_amount">Amount</string>
 </resources>

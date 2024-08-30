@@ -22,4 +22,7 @@ internal class OfflineUserDataRepository @Inject constructor(
 
     override suspend fun setPrimaryWalletId(id: String) =
         csPreferencesDataSource.setPrimaryWalletId(id)
+
+    override suspend fun setCurrency(currency: String) =
+        csPreferencesDataSource.setCurrency(currency)
 }

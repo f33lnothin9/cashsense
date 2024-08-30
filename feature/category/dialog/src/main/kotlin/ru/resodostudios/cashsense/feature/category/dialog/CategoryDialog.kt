@@ -50,7 +50,7 @@ fun CategoryDialog(
     onDismiss: () -> Unit,
 ) {
     val dialogTitle = if (categoryDialogState.id.isNotEmpty()) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
-    val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) uiR.string.save else uiR.string.add
+    val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -79,8 +79,8 @@ fun CategoryDialog(
                     imeAction = ImeAction.Done,
                 ),
                 label = { Text(stringResource(uiR.string.core_ui_icon_and_title)) },
-                placeholder = { Text(stringResource(uiR.string.title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.required)) },
+                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
+                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(

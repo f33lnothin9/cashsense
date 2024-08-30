@@ -1,5 +1,3 @@
 <resources>
     <string name="app_name" translatable="false">Cash Sense</string>
-
-    <string name="top_app_bar_action_icon_description">Settings</string>
 </resources>

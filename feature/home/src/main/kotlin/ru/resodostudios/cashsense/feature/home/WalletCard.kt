@@ -44,6 +44,8 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.ui.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
@@ -112,7 +114,12 @@ fun WalletCard(
                 Text(stringResource(transactionR.string.feature_transaction_add_transaction))
             }
             IconButton(
-                onClick = { onWalletMenuClick(wallet.id, currentBalance.formatAmount(wallet.currency)) },
+                onClick = {
+                    onWalletMenuClick(
+                        wallet.id,
+                        currentBalance.formatAmount(wallet.currency),
+                    )
+                },
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
@@ -134,6 +141,7 @@ private fun TagsSection(
     val expenses by remember(transactions) {
         derivedStateOf {
             transactions
+                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
                 .filter { it.amount < BigDecimal.ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
@@ -142,6 +150,7 @@ private fun TagsSection(
     val income by remember(transactions) {
         derivedStateOf {
             transactions
+                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
                 .filter { it.amount > BigDecimal.ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
@@ -253,7 +262,7 @@ fun WalletCardPreview() {
                 transactions = emptyList(),
                 onWalletClick = {},
                 onTransactionCreate = {},
-                onWalletMenuClick = { _, _ ->},
+                onWalletMenuClick = { _, _ -> },
                 modifier = Modifier.padding(16.dp),
                 isPrimary = true,
             )

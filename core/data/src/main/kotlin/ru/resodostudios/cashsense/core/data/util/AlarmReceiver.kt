@@ -6,6 +6,7 @@ import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.notifications.Notifier
@@ -29,34 +30,25 @@ internal class AlarmReceiver : BroadcastReceiver() {
 
         CoroutineScope(Dispatchers.IO).launch {
             findSubscriptionAndPostNotification(reminderId)
-        }
-
-        if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            CoroutineScope(Dispatchers.IO).launch {
+            if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
                 rescheduleRemindersAfterRebooting()
             }
         }
     }
 
     private suspend fun rescheduleRemindersAfterRebooting() {
-        subscriptionsRepository.getSubscriptions().collect { subscriptions ->
-            subscriptions
-                .filter { it.reminder != null }
-                .forEach { subscription ->
-                    subscription.reminder?.let {
-                        notificationAlarmScheduler.schedule(it)
-                    }
+        subscriptionsRepository.getSubscriptions().firstOrNull()
+            ?.filter { it.reminder != null }
+            ?.forEach { subscription ->
+                subscription.reminder?.let {
+                    notificationAlarmScheduler.schedule(it)
                 }
-        }
+            }
     }
 
     private suspend fun findSubscriptionAndPostNotification(reminderId: Int?) {
-        subscriptionsRepository.getSubscriptions().collect { subscriptions ->
-            val subscription = subscriptions.firstOrNull { it.id.hashCode() == reminderId }
-
-            subscription?.let {
-                notifier.postSubscriptionNotification(it)
-            }
-        }
+        subscriptionsRepository.getSubscriptions().firstOrNull()
+            ?.firstOrNull { it.id.hashCode() == reminderId }
+            ?.let { notifier.postSubscriptionNotification(it) }
     }
 }

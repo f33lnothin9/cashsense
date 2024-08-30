@@ -27,6 +27,7 @@ class CsPreferencesDataSource @Inject constructor(
                 },
                 useDynamicColor = it.useDynamicColor,
                 primaryWalletId = it.primaryWalletId,
+                currency = it.currency,
             )
         }
 
@@ -51,6 +52,12 @@ class CsPreferencesDataSource @Inject constructor(
     suspend fun setPrimaryWalletId(id: String) {
         userPreferences.updateData {
             it.copy { this.primaryWalletId = id }
+        }
+    }
+
+    suspend fun setCurrency(currency: String) {
+        userPreferences.updateData {
+            it.copy { this.currency = currency }
         }
     }
 }

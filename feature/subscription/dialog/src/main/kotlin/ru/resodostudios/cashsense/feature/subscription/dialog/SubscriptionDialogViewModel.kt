@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -20,6 +21,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
+import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.NONE
@@ -28,11 +30,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubscriptionDialogViewModel @Inject constructor(
+    private val userDataRepository: UserDataRepository,
     private val subscriptionsRepository: SubscriptionsRepository,
 ) : ViewModel() {
 
     private val _subscriptionDialogUiState = MutableStateFlow(SubscriptionDialogUiState())
-    val subscriptionDialogUiState = _subscriptionDialogUiState.asStateFlow()
+    val subscriptionDialogUiState: StateFlow<SubscriptionDialogUiState>
+        get() = _subscriptionDialogUiState.asStateFlow()
+
+    init {
+        if (_subscriptionDialogUiState.value.id.isEmpty()) clearSubscriptionDialogState()
+    }
 
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
@@ -66,9 +74,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                 viewModelScope.launch {
                     subscriptionsRepository.upsertSubscription(subscription)
                 }
-                _subscriptionDialogUiState.update {
-                    SubscriptionDialogUiState()
-                }
+                clearSubscriptionDialogState()
             }
 
             is SubscriptionDialogEvent.UpdateId -> {
@@ -135,6 +141,18 @@ class SubscriptionDialogViewModel @Inject constructor(
                 }
         }
     }
+
+    private fun clearSubscriptionDialogState() {
+        viewModelScope.launch {
+            userDataRepository.userData
+                .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
+                .collect {
+                    _subscriptionDialogUiState.value = SubscriptionDialogUiState(
+                        currency = it.currency.ifEmpty { "USD" },
+                    )
+                }
+        }
+    }
 }
 
 fun getRepeatingIntervalType(repeatingInterval: Long): RepeatingIntervalType =
@@ -153,7 +171,7 @@ data class SubscriptionDialogUiState(
     val title: String = "",
     val amount: String = "",
     val paymentDate: Instant = Clock.System.now(),
-    val currency: String = "USD",
+    val currency: String = "",
     val isReminderEnabled: Boolean = false,
     val repeatingInterval: RepeatingIntervalType = NONE,
     val isLoading: Boolean = false,
