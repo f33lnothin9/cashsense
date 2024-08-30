@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
         versionCode = 22
-        versionName = "1.0.0"
+        versionName = "1.0.0-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
