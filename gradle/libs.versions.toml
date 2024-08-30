@@ -1,48 +1,52 @@
 [versions]
-accompanist = "0.35.1-alpha"
-androidGradlePlugin = "8.5.1"
-androidDesugarJdkLibs = "2.0.4"
-androidxActivityCompose = "1.9.0"
-androidxCompose = "1.7.0-beta05"
-androidxComposeMaterial3 = "1.3.0-beta04"
-androidxComposeMaterial3Adaptive = "1.0.0-beta04"
+aboutLibraries = "11.2.3"
+accompanist = "0.35.2-beta"
+androidGradlePlugin = "8.6.0"
+androidxActivityCompose = "1.9.1"
+androidxBrowser = "1.8.0"
+androidxCompose = "1.7.0-rc01"
+androidxComposeMaterial3 = "1.3.0-rc01"
+androidxComposeMaterial3Adaptive = "1.0.0-rc01"
 androidxCore = "1.13.1"
 androidxCoreSplashscreen = "1.2.0-alpha01"
 androidxDataStore = "1.1.1"
 androidxGlance = "1.1.0"
 androidxHiltNavigationCompose = "1.2.0"
-androidxLifecycle = "2.8.3"
-androidxMacroBenchmark = "1.3.0-beta02"
-androidxNavigation = "2.8.0-beta05"
-androidxProfileinstaller = "1.3.1"
+androidxLifecycle = "2.8.4"
+androidxMacroBenchmark = "1.3.0"
+androidxNavigation = "2.8.0-rc01"
+androidxProfileinstaller = "1.4.0-beta01"
 androidxTestCore = "1.6.1"
 androidxTestEspresso = "3.6.1"
 androidxTestExt = "1.2.1"
 androidxTestRules = "1.6.1"
-androidxTestRunner = "1.6.1"
+androidxTestRunner = "1.6.2"
 androidxTestUiAutomator = "2.3.0"
 androidxTracing = "1.3.0-alpha02"
-composeBom = "2024.06.00"
-firebaseBom = "33.1.2"
+composeBom = "2024.08.00"
+firebaseBom = "33.2.0"
 firebaseCrashlyticsPlugin = "3.0.2"
 firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.4.2"
-hilt = "2.51.1"
-kotlin = "2.0.0"
-kotlinxCoroutines = "1.9.0-RC"
-kotlinxDatetime = "0.6.0"
-kotlinxSerializationJson = "1.7.1"
-ksp = "2.0.0-1.0.23"
-lottie = "6.4.0"
+kotlin = "2.0.20"
+hilt = "2.52"
+kotlinxCoroutines = "1.9.0-RC.2"
+kotlinxDatetime = "0.6.1"
+kotlinxSerializationJson = "1.7.2"
+ksp = "2.0.20-1.0.24"
+lottie = "6.5.0"
 protobuf = "4.26.1"
 protobufPlugin = "0.9.4"
-room = "2.7.0-alpha05"
+room = "2.7.0-alpha07"
+vico = "2.0.0-alpha.28"
 
 [libraries]
+aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
+aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
-android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivityCompose" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
@@ -91,6 +95,9 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "vico" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -102,6 +109,7 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 [plugins]
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }

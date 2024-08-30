@@ -112,8 +112,8 @@ fun SubscriptionCardPreview() {
                 subscription = Subscription(
                     id = "",
                     title = "Spotify Premium",
-                    amount = BigDecimal(399),
-                    currency = "TRY",
+                    amount = BigDecimal(14.99),
+                    currency = "USD",
                     paymentDate = Clock.System.now(),
                     reminder = null,
                 ),

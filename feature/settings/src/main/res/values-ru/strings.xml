@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feature_settings_general">Основные</string>
+    <string name="feature_settings_appearance">Оформление</string>
     <string name="feature_settings_title">Настройки</string>
     <string name="feature_settings_about">О приложении</string>
     <string name="feature_settings_dynamic_color">Динамический цвет</string>
     <string name="feature_settings_theme">Тема</string>
-    <string name="feature_settings_system">Системная</string>
+    <string name="feature_settings_system_default">Как в системе</string>
     <string name="feature_settings_light">Светлая</string>
     <string name="feature_settings_dark">Тёмная</string>
     <string name="feature_settings_privacy_policy">Политика конфиденциальности</string>
     <string name="feature_settings_licenses">Лицензии</string>
     <string name="feature_settings_version">Версия</string>
+    <string name="feature_settings_feedback">Обратная связь</string>
+    <string name="feature_settings_choose_currency">Выберите валюту по умолчанию</string>
 </resources>

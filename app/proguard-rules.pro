@@ -5,4 +5,3 @@
 
 -keep class ru.resodostudios.cashsense.ui.home2pane.WalletPlaceholderRoute
 -keep class ru.resodostudios.cashsense.ui.home2pane.DetailPaneNavHostRoute
--keep class ru.resodostudios.cashsense.feature.home.navigation.HomeRoute

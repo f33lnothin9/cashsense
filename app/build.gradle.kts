@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.cashsense.android.application.compose)
     alias(libs.plugins.cashsense.android.application.firebase)
     alias(libs.plugins.cashsense.hilt)
+    alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -12,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 20
-        versionName = "0.6.1"
+        versionCode = 22
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

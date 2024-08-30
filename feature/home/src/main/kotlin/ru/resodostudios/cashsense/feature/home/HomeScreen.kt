@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
@@ -115,6 +116,7 @@ internal fun HomeScreen(
                         onWalletClick = onWalletClick,
                         onTransactionCreate = {
                             onTransactionEvent(UpdateWalletId(it))
+                            onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
                         onWalletMenuClick = { walletId, currentWalletBalance ->

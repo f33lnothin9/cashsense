@@ -21,9 +21,7 @@ fun CsListItem(
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
-    Box(
-        modifier = modifier.clip(RoundedCornerShape(18.dp)),
-    ) {
+    Box(modifier.clip(RoundedCornerShape(18.dp))) {
         ListItem(
             headlineContent = headlineContent,
             modifier = if (onClick != null) Modifier.clickable { onClick() } else Modifier,

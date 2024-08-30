@@ -95,7 +95,7 @@ fun TransactionDialog(
     val dialogTitle =
         if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
     val dialogConfirmText =
-        if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.save else uiR.string.add
+        if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -133,9 +133,9 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    label = { Text(stringResource(uiR.string.amount)) },
-                    placeholder = { Text(stringResource(uiR.string.amount) + "*") },
-                    supportingText = { Text(stringResource(uiR.string.required)) },
+                    label = { Text(stringResource(uiR.string.core_ui_amount)) },
+                    placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
+                    supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -166,7 +166,7 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(stringResource(uiR.string.description)) },
+                    label = { Text(stringResource(uiR.string.core_ui_description)) },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -313,7 +313,7 @@ private fun CategoryExposedDropdownMenuBox(
                         .fillMaxWidth()
                         .menuAnchor(MenuAnchorType.PrimaryEditable),
                     readOnly = true,
-                    value = currentCategory?.title ?: stringResource(uiR.string.none),
+                    value = currentCategory?.title ?: stringResource(uiR.string.core_ui_none),
                     onValueChange = {},
                     label = { Text(stringResource(R.string.feature_transaction_category_title)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -333,7 +333,7 @@ private fun CategoryExposedDropdownMenuBox(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(uiR.string.none),
+                                text = stringResource(uiR.string.core_ui_none),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

@@ -8,9 +8,13 @@ sealed interface WalletEvent {
 
     data class RemoveFromSelectedCategories(val category: Category) : WalletEvent
 
-    data class UpdateFinanceType(val financeType: FinanceSectionType) : WalletEvent
+    data class UpdateFinanceType(val financeType: FinanceType) : WalletEvent
 
     data class UpdateDateType(val dateType: DateType) : WalletEvent
+
+    data object IncrementSelectedDate : WalletEvent
+
+    data object DecrementSelectedDate : WalletEvent
 
     data class HideTransaction(val id: String) : WalletEvent
 

@@ -19,6 +19,7 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
@@ -53,11 +54,10 @@ import ru.resodostudios.cashsense.core.ui.R as uiR
 class WalletWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val walletsEntryPoint =
-            EntryPointAccessors.fromApplication(
-                context.applicationContext,
-                WalletWidgetEntryPoint::class.java,
-            )
+        val walletsEntryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            WalletWidgetEntryPoint::class.java,
+        )
         val walletsRepository = walletsEntryPoint.walletsRepository()
 
         val initialWallets = withContext(Dispatchers.IO) {
@@ -65,8 +65,7 @@ class WalletWidget : GlanceAppWidget() {
         }
 
         provideContent {
-            val wallets by walletsRepository.getWalletsWithTransactions()
-                .collectAsState(initialWallets)
+            val wallets by walletsRepository.getWalletsWithTransactions().collectAsState(initialWallets)
 
             CsGlanceTheme {
                 WalletWidgetContent(wallets)
@@ -77,7 +76,6 @@ class WalletWidget : GlanceAppWidget() {
 
 @Composable
 private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategories>) {
-
     Scaffold(
         titleBar = {
             TitleBar(
@@ -85,6 +83,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                 title = LocalContext.current.getString(R.string.wallet_widget_title),
             )
         },
+        modifier = GlanceModifier.cornerRadius(16.dp),
     ) {
         if (wallets.isNotEmpty()) {
             LazyColumn {
@@ -172,7 +171,7 @@ fun WalletItem(
                     )
                 }
             ),
-            contentDescription = LocalContext.current.getString(uiR.string.add),
+            contentDescription = LocalContext.current.getString(uiR.string.core_ui_add),
         )
     }
 }
