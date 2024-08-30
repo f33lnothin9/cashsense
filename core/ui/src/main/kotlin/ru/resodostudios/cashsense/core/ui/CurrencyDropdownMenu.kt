@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import java.util.Currency
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +43,7 @@ fun CurrencyDropdownMenu(
             readOnly = true,
             value = currencyName,
             onValueChange = {},
-            label = { Text(stringResource(R.string.core_ui_currency)) },
+            label = { Text(stringResource(localesR.string.currency)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
         ExposedDropdownMenu(

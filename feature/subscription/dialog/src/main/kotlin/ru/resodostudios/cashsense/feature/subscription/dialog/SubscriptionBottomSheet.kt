@@ -33,7 +33,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalT
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.MONTHLY
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.WEEKLY
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.YEARLY
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun SubscriptionBottomSheet(
@@ -119,7 +119,7 @@ fun SubscriptionBottomSheet(
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_edit)) },
+                    headlineContent = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -132,7 +132,7 @@ fun SubscriptionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_delete)) },
+                    headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

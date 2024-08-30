@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="currency">Currency</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="icon_and_title">Icon &amp; Title</string>
+    <string name="date">Date</string>
+    <string name="undo">Undo</string>
+    <string name="navigation_back_icon_description">Back</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="required">*required</string>
+    <string name="none">None</string>
+    <string name="amount">Amount</string>
+    <string name="subscriptions_notification_channel_name">Subscription reminders</string>
+    <string name="subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
+    <string name="subscriptions_content_text">You need to pay %1$s for a subscription on %2$s</string>
+    <string name="subscriptions_summary_title">Subscriptions</string>
+</resources>

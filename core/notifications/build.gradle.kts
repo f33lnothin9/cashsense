@@ -12,5 +12,6 @@ dependencies {
     api(projects.core.model)
 
     implementation(projects.core.designsystem)
+    implementation(projects.core.locales)
     implementation(projects.core.ui)
 }

@@ -27,7 +27,7 @@ import ru.resodostudios.cashsense.core.ui.IconPickerDropdownMenu
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.Save
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateIcon
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateTitle
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun CategoryDialog(
@@ -50,12 +50,12 @@ fun CategoryDialog(
     onDismiss: () -> Unit,
 ) {
     val dialogTitle = if (categoryDialogState.id.isNotEmpty()) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
-    val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+    val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Category,
         onConfirm = {
             onCategoryEvent(Save)
@@ -78,9 +78,9 @@ fun CategoryDialog(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done,
                 ),
-                label = { Text(stringResource(uiR.string.core_ui_icon_and_title)) },
-                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
+                label = { Text(stringResource(localesR.string.icon_and_title)) },
+                placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                supportingText = { Text(stringResource(localesR.string.required)) },
                 maxLines = 1,
                 leadingIcon = {
                     IconPickerDropdownMenu(

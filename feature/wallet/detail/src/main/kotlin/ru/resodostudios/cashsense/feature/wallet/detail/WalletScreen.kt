@@ -138,7 +138,7 @@ import java.math.MathContext
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -190,9 +190,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage =
-                stringResource(transactionR.string.feature_transaction_deleted)
-            val undoText = stringResource(uiR.string.core_ui_undo)
+            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
                 if (walletState.shouldDisplayUndoTransaction) {
@@ -863,7 +862,7 @@ private fun LazyListScope.transactions(
                     withPlus = true,
                 ),
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
-                categoryTitle = category?.title ?: stringResource(uiR.string.core_ui_none),
+                categoryTitle = category?.title ?: stringResource(localesR.string.none),
                 transactionStatus = transaction.status,
                 ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },

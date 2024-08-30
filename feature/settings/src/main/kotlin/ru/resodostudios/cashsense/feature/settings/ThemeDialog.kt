@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun ThemeDialog(
@@ -54,7 +54,7 @@ internal fun ThemeDialog(
         },
         confirmButton = {
             TextButton(onDismiss) {
-                Text(stringResource(uiR.string.core_ui_cancel))
+                Text(stringResource(localesR.string.cancel))
             }
         },
         modifier = modifier,

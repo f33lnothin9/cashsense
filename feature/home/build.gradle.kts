@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.locales)
 
     implementation(projects.feature.transaction)
     implementation(projects.feature.wallet.dialog)

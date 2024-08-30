@@ -46,7 +46,7 @@ import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 class WalletWidget : GlanceAppWidget() {
 
@@ -169,7 +169,7 @@ fun WalletItem(
                     )
                 }
             ),
-            contentDescription = LocalContext.current.getString(uiR.string.core_ui_add),
+            contentDescription = LocalContext.current.getString(localesR.string.add),
         )
     }
 }

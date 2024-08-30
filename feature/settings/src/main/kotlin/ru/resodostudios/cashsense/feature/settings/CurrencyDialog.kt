@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import java.util.Currency
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun CurrencyDialog(
@@ -52,7 +52,7 @@ internal fun CurrencyDialog(
         },
         title = {
             Text(
-                text = stringResource(uiR.string.core_ui_currency),
+                text = stringResource(localesR.string.currency),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -64,12 +64,12 @@ internal fun CurrencyDialog(
                     onDismiss()
                 }
             ) {
-                Text(stringResource(uiR.string.core_ui_ok))
+                Text(stringResource(localesR.string.ok))
             }
         },
         dismissButton = {
             TextButton(onDismiss) {
-                Text(stringResource(uiR.string.core_ui_cancel))
+                Text(stringResource(localesR.string.cancel))
             }
         },
         modifier = modifier,

@@ -56,7 +56,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateReminderSwitch
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateRepeatingInterval
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateTitle
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun SubscriptionDialog(
@@ -81,12 +81,12 @@ fun SubscriptionDialog(
     val dialogTitle =
         if (subscriptionDialogState.id.isNotEmpty()) R.string.feature_subscription_dialog_edit else R.string.feature_subscription_dialog_new
     val dialogConfirmText =
-        if (subscriptionDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+        if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.AutoRenew,
         onConfirm = {
             onSubscriptionEvent(Save)
@@ -108,9 +108,9 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
-                label = { Text(stringResource(uiR.string.core_ui_title)) },
-                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
+                label = { Text(stringResource(localesR.string.title)) },
+                placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                supportingText = { Text(stringResource(localesR.string.required)) },
                 maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,9 +125,9 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
-                label = { Text(stringResource(uiR.string.core_ui_amount)) },
-                placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
-                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
+                label = { Text(stringResource(localesR.string.amount)) },
+                placeholder = { Text(stringResource(localesR.string.amount) + "*") },
+                supportingText = { Text(stringResource(localesR.string.required)) },
                 maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()

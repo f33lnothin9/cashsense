@@ -35,7 +35,7 @@ import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun SettingsScreen(
@@ -94,7 +94,7 @@ private fun LazyListScope.settings(
             stringResource(R.string.feature_settings_choose_currency)
         }
         CsListItem(
-            headlineContent = { Text(stringResource(uiR.string.core_ui_currency)) },
+            headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.UniversalCurrencyAlt),
@@ -218,7 +218,7 @@ private fun LazyListScope.settings(
     item {
         val context = LocalContext.current
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo.versionName ?: stringResource(uiR.string.core_ui_none)
+        val versionName = packageInfo.versionName ?: stringResource(localesR.string.none)
         CsListItem(
             headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
             supportingContent = { Text(versionName) },

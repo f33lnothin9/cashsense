@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="currency">Валюта</string>
+    <string name="ok">ОК</string>
+    <string name="cancel">Отменить</string>
+    <string name="icon_and_title">Иконка и название</string>
+    <string name="date">Дата</string>
+    <string name="undo">Вернуть</string>
+    <string name="navigation_back_icon_description">Назад</string>
+    <string name="save">Сохранить</string>
+    <string name="add">Добавить</string>
+    <string name="title">Название</string>
+    <string name="description">Описание</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="required">*обязательно</string>
+    <string name="none">Отсутствует</string>
+    <string name="amount">Сумма</string>
+    <string name="subscriptions_notification_channel_name">Напоминания о подписках</string>
+    <string name="subscriptions_notification_channel_description">Напоминания об истекающих подписках</string>
+    <string name="subscriptions_content_text">%2$s вам необходимо заплатить %1$s за подписку </string>
+    <string name="subscriptions_summary_title">Подписки</string>
+</resources>

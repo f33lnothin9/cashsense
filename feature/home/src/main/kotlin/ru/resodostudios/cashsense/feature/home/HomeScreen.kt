@@ -35,7 +35,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun HomeScreen(
@@ -82,7 +82,7 @@ internal fun HomeScreen(
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
             val walletDeletedMessage = stringResource(R.string.feature_home_wallet_deleted)
-            val undoText = stringResource(uiR.string.core_ui_undo)
+            val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(walletsState.shouldDisplayUndoWallet) {
                 if (walletsState.shouldDisplayUndoWallet) {

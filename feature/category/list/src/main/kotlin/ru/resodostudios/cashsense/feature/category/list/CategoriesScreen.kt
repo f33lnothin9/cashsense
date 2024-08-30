@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogViewModel
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun CategoriesScreen(
@@ -77,7 +77,7 @@ internal fun CategoriesScreen(
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
             val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
-            val undoText = stringResource(uiR.string.core_ui_undo)
+            val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(categoriesState.shouldDisplayUndoCategory) {
                 if (categoriesState.shouldDisplayUndoCategory) {

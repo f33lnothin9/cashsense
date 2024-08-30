@@ -64,7 +64,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionDialog(
@@ -95,12 +95,12 @@ fun TransactionDialog(
     val dialogTitle =
         if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
     val dialogConfirmText =
-        if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+        if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.ReceiptLong,
         onConfirm = {
             onTransactionEvent(Save)
@@ -133,9 +133,9 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    label = { Text(stringResource(uiR.string.core_ui_amount)) },
-                    placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
-                    supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
+                    label = { Text(stringResource(localesR.string.amount)) },
+                    placeholder = { Text(stringResource(localesR.string.amount) + "*") },
+                    supportingText = { Text(stringResource(localesR.string.required)) },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -153,7 +153,7 @@ fun TransactionDialog(
                 )
                 DatePickerTextField(
                     value = transactionDialogState.date.formatDate(),
-                    labelTextId = uiR.string.core_ui_date,
+                    labelTextId = localesR.string.date,
                     iconId = CsIcons.Calendar,
                     modifier = Modifier.fillMaxWidth(),
                     initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
@@ -166,7 +166,7 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(stringResource(uiR.string.core_ui_description)) },
+                    label = { Text(stringResource(localesR.string.description)) },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -313,7 +313,7 @@ private fun CategoryExposedDropdownMenuBox(
                         .fillMaxWidth()
                         .menuAnchor(MenuAnchorType.PrimaryEditable),
                     readOnly = true,
-                    value = currentCategory?.title ?: stringResource(uiR.string.core_ui_none),
+                    value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},
                     label = { Text(stringResource(R.string.feature_transaction_category_title)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -333,7 +333,7 @@ private fun CategoryExposedDropdownMenuBox(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(uiR.string.core_ui_none),
+                                text = stringResource(localesR.string.none),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

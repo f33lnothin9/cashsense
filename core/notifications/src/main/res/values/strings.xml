@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="core_notifications_subscriptions_notification_channel_name">Subscription reminders</string>
-    <string name="core_notifications_subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
-    <string name="core_notifications_subscriptions_content_text">You need to pay %1$s for a subscription on %2$s</string>
-    <string name="core_notifications_subscriptions_summary_title">Subscriptions</string>
-</resources>
