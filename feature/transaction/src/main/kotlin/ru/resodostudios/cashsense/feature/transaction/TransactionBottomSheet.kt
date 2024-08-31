@@ -34,7 +34,7 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionBottomSheet(
@@ -92,8 +92,8 @@ fun TransactionBottomSheet(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
-                        COMPLETED -> stringResource(R.string.feature_transaction_status_completed) to CsIcons.CheckCircle
-                        PENDING -> stringResource(R.string.feature_transaction_status_pending) to CsIcons.Pending
+                        COMPLETED -> stringResource(localesR.string.completed) to CsIcons.CheckCircle
+                        PENDING -> stringResource(localesR.string.pending) to CsIcons.Pending
                     }
                     CsTag(
                         text = statusTag.first,
@@ -117,7 +117,7 @@ fun TransactionBottomSheet(
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Block),
@@ -135,7 +135,7 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_edit)) },
+                    headlineContent = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -148,7 +148,7 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_delete)) },
+                    headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

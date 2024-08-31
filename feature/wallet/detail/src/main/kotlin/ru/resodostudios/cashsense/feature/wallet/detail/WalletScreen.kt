@@ -133,11 +133,12 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
@@ -189,9 +190,8 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage =
-                stringResource(transactionR.string.feature_transaction_deleted)
-            val undoText = stringResource(uiR.string.core_ui_undo)
+            val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
+            val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
                 if (walletState.shouldDisplayUndoTransaction) {
@@ -255,7 +255,7 @@ internal fun WalletScreen(
                 } else {
                     item {
                         EmptyState(
-                            messageRes = transactionR.string.feature_transaction_transactions_empty,
+                            messageRes = localesR.string.transactions_empty,
                             animationRes = transactionR.raw.anim_transactions_empty,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -350,7 +350,7 @@ private fun WalletTopBar(
             IconButton(onNewTransactionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Add),
-                    contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
+                    contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
             if (showDetailActions) {
@@ -383,10 +383,10 @@ private fun FinancePanel(
         else -> validTransactions
     }
     val expenses = currentMonthTransactions
-        .filter { it.transaction.amount < BigDecimal.ZERO }
+        .filter { it.transaction.amount < ZERO }
         .sumOf { it.transaction.amount.abs() }
     val income = currentMonthTransactions
-        .filter { it.transaction.amount > BigDecimal.ZERO }
+        .filter { it.transaction.amount > ZERO }
         .sumOf { it.transaction.amount }
 
     Column(
@@ -420,7 +420,7 @@ private fun FinancePanel(
                             FinanceCard(
                                 title = expenses,
                                 currency = walletState.wallet.currency,
-                                supportingTextId = R.string.feature_wallet_detail_expenses,
+                                supportingTextId = localesR.string.expenses,
                                 indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -432,7 +432,7 @@ private fun FinancePanel(
                             FinanceCard(
                                 title = income,
                                 currency = walletState.wallet.currency,
-                                supportingTextId = R.string.feature_wallet_detail_income,
+                                supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -457,7 +457,7 @@ private fun FinancePanel(
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
                             currency = walletState.wallet.currency,
-                            supportingTextId = R.string.feature_wallet_detail_expenses,
+                            supportingTextId = localesR.string.expenses,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
                                 onWalletEvent(UpdateDateType(ALL))
@@ -481,7 +481,7 @@ private fun FinancePanel(
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
                             currency = walletState.wallet.currency,
-                            supportingTextId = R.string.feature_wallet_detail_income,
+                            supportingTextId = localesR.string.income_plural,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
                                 onWalletEvent(UpdateDateType(ALL))
@@ -760,9 +760,9 @@ private fun FilterDateTypeSelectorRow(
     modifier: Modifier = Modifier,
 ) {
     val dateTypes = listOf(
-        stringResource(R.string.feature_wallet_detail_week),
-        stringResource(R.string.feature_wallet_detail_month),
-        stringResource(R.string.feature_wallet_detail_year),
+        stringResource(localesR.string.week),
+        stringResource(localesR.string.month),
+        stringResource(localesR.string.year),
     )
     SingleChoiceSegmentedButtonRow(modifier) {
         dateTypes.forEachIndexed { index, label ->
@@ -862,7 +862,7 @@ private fun LazyListScope.transactions(
                     withPlus = true,
                 ),
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
-                categoryTitle = category?.title ?: stringResource(uiR.string.core_ui_none),
+                categoryTitle = category?.title ?: stringResource(localesR.string.none),
                 transactionStatus = transaction.status,
                 ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },
@@ -895,7 +895,7 @@ fun FinancePanelDefaultPreview(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
-                        initialBalance = BigDecimal.ZERO,
+                        initialBalance = ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(
@@ -935,7 +935,7 @@ fun FinancePanelOpenedPreview(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
-                        initialBalance = BigDecimal.ZERO,
+                        initialBalance = ZERO,
                     ),
                     currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(

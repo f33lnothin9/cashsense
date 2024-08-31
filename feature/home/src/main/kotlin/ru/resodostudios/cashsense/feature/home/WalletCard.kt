@@ -47,8 +47,8 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
-import ru.resodostudios.cashsense.feature.transaction.R as transactionR
-import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
+import java.math.BigDecimal.ZERO
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun WalletCard(
@@ -111,7 +111,7 @@ fun WalletCard(
             Button(
                 onClick = { onTransactionCreate(wallet.id) },
             ) {
-                Text(stringResource(transactionR.string.feature_transaction_add_transaction))
+                Text(stringResource(localesR.string.add_transaction))
             }
             IconButton(
                 onClick = {
@@ -123,7 +123,7 @@ fun WalletCard(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                    contentDescription = stringResource(R.string.feature_home_wallet_menu_icon_description),
+                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                 )
             }
         }
@@ -142,7 +142,7 @@ private fun TagsSection(
         derivedStateOf {
             transactions
                 .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount < BigDecimal.ZERO && !it.ignored }
+                .filter { it.amount < ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
         }
@@ -151,7 +151,7 @@ private fun TagsSection(
         derivedStateOf {
             transactions
                 .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount > BigDecimal.ZERO && !it.ignored }
+                .filter { it.amount > ZERO && !it.ignored }
                 .sumOf { it.amount }
                 .abs()
         }
@@ -168,12 +168,12 @@ private fun TagsSection(
             exit = fadeOut() + scaleOut(),
         ) {
             CsTag(
-                text = stringResource(walletDialogR.string.feature_wallet_dialog_primary),
+                text = stringResource(localesR.string.primary),
                 iconId = CsIcons.Star,
             )
         }
         AnimatedVisibility(
-            visible = expenses != BigDecimal.ZERO,
+            visible = expenses != ZERO,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -185,7 +185,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = income != BigDecimal.ZERO,
+            visible = income != ZERO,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {

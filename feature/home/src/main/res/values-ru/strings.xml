@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="feature_home_title">Главная</string>
-    <string name="feature_home_wallet_deleted">Кошелёк удалён</string>
-    <string name="feature_home_wallet_menu_icon_description">Меню кошелька</string>
-    <string name="feature_home_empty">Здесь будут ваши кошельки</string>
-</resources>

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,14 +79,14 @@ fun DatePickerTextField(
                     },
                     enabled = confirmEnabled.value,
                 ) {
-                    Text(stringResource(R.string.core_ui_ok))
+                    Text(stringResource(localesR.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { openDialog = false }
                 ) {
-                    Text(stringResource(R.string.core_ui_cancel))
+                    Text(stringResource(localesR.string.cancel))
                 }
             },
         ) {

@@ -12,6 +12,7 @@ android {
 
 dependencies {
     api(projects.core.designsystem)
+    api(projects.core.locales)
     api(projects.core.model)
 
     implementation(libs.lottie.compose)

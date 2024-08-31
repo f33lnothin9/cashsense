@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.INCOME
-import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.util.UUID
 import javax.inject.Inject
 
@@ -92,7 +92,7 @@ class TransactionDialogViewModel @Inject constructor(
             description = _transactionDialogUiState.value.description,
             amount = when (_transactionDialogUiState.value.transactionType) {
                 EXPENSE -> _transactionDialogUiState.value.amount.toBigDecimal().let {
-                    if (it > BigDecimal.ZERO) it.negate() else it
+                    if (it > ZERO) it.negate() else it
                 }
 
                 INCOME -> _transactionDialogUiState.value.amount.toBigDecimal().abs()
@@ -200,7 +200,7 @@ class TransactionDialogViewModel @Inject constructor(
                     transactionId = transactionCategory.transaction.id,
                     description = transactionCategory.transaction.description.toString(),
                     amount = transactionCategory.transaction.amount.toString(),
-                    transactionType = if (transactionCategory.transaction.amount < BigDecimal.ZERO) EXPENSE else INCOME,
+                    transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
                     date = transactionCategory.transaction.timestamp,
                     category = transactionCategory.category,
                     status = transactionCategory.transaction.status,

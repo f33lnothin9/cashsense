@@ -30,6 +30,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE = 0
 private const val SUBSCRIPTIONS_NOTIFICATION_SUMMARY_ID = 1
@@ -52,7 +53,7 @@ internal class SystemTrayNotifier @Inject constructor(
         val subscriptionNotification = createSubscriptionNotification {
             val price = subscription.amount.formatAmount(subscription.currency)
             val date = subscription.paymentDate.formatDate()
-            val contentText = getString(R.string.core_notifications_subscriptions_content_text, price, date)
+            val contentText = getString(localesR.string.subscriptions_notification_content_text, price, date)
             setSmallIcon(CsIcons.Payments)
                 .setContentTitle(subscription.title)
                 .setContentText(contentText)
@@ -61,7 +62,7 @@ internal class SystemTrayNotifier @Inject constructor(
                 .setAutoCancel(true)
         }
         val summaryNotification = createSubscriptionNotification {
-            val title = getString(R.string.core_notifications_subscriptions_summary_title)
+            val title = getString(localesR.string.subscriptions_notification_summary_title)
             setContentTitle(title)
                 .setContentText(title)
                 .setSmallIcon(CsIcons.Payments)
@@ -116,10 +117,10 @@ private fun Context.ensureNotificationChannelExists() {
 
     val channel = NotificationChannel(
         SUBSCRIPTIONS_NOTIFICATION_CHANNEL_ID,
-        getString(R.string.core_notifications_subscriptions_notification_channel_name),
+        getString(localesR.string.subscriptions_notification_channel_name),
         NotificationManager.IMPORTANCE_DEFAULT,
     ).apply {
-        description = getString(R.string.core_notifications_subscriptions_notification_channel_description)
+        description = getString(localesR.string.subscriptions_notification_channel_description)
     }
     // Register the channel with the system
     NotificationManagerCompat.from(this).createNotificationChannel(channel)

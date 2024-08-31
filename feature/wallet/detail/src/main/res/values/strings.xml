@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="feature_wallet_detail_income">Income</string>
-    <string name="feature_wallet_detail_expenses">Expenses</string>
-    <string name="feature_wallet_detail_week">Week</string>
-    <string name="feature_wallet_detail_month">Month</string>
-    <string name="feature_wallet_detail_year">Year</string>
-    <string name="feature_wallet_detail_select_wallet">Select a Wallet</string>
-</resources>

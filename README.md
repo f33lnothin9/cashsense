@@ -1,5 +1,5 @@
 <div style="display:flex">
-<a href='https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+<a href='https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense'>
     <img alt="Get it on Google Play" src="docs/images/badges/google-play-badge.png" height="80"/>
   </a>
   <a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense">

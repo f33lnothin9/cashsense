@@ -35,7 +35,7 @@ import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun SettingsScreen(
@@ -87,14 +87,14 @@ private fun LazyListScope.settings(
     onChangeCurrency: (currency: String) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
-    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_general)) }
+    item { SettingsScreenSectionTitle(stringResource(localesR.string.settings_general)) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
         val supportingText = settings.currency.ifEmpty {
-            stringResource(R.string.feature_settings_choose_currency)
+            stringResource(localesR.string.choose_currency)
         }
         CsListItem(
-            headlineContent = { Text(stringResource(uiR.string.core_ui_currency)) },
+            headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.UniversalCurrencyAlt),
@@ -112,17 +112,17 @@ private fun LazyListScope.settings(
             )
         }
     }
-    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_appearance)) }
+    item { SettingsScreenSectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
         val themeOptions = listOf(
-            stringResource(R.string.feature_settings_system_default),
-            stringResource(R.string.feature_settings_light),
-            stringResource(R.string.feature_settings_dark),
+            stringResource(localesR.string.theme_system_default),
+            stringResource(localesR.string.theme_light),
+            stringResource(localesR.string.theme_dark),
         )
         var showThemeDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItem(
-            headlineContent = { Text(stringResource(R.string.feature_settings_theme)) },
+            headlineContent = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Palette),
@@ -145,7 +145,7 @@ private fun LazyListScope.settings(
     item {
         AnimatedVisibility(supportDynamicColor) {
             CsListItem(
-                headlineContent = { Text(stringResource(R.string.feature_settings_dynamic_color)) },
+                headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
@@ -162,12 +162,12 @@ private fun LazyListScope.settings(
         }
     }
 
-    item { SettingsScreenSectionTitle(stringResource(R.string.feature_settings_about)) }
+    item { SettingsScreenSectionTitle(stringResource(localesR.string.about)) }
     item {
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
         CsListItem(
-            headlineContent = { Text(stringResource(R.string.feature_settings_feedback)) },
+            headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Feedback),
@@ -187,7 +187,7 @@ private fun LazyListScope.settings(
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
         CsListItem(
-            headlineContent = { Text(stringResource(R.string.feature_settings_privacy_policy)) },
+            headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Policy),
@@ -205,7 +205,7 @@ private fun LazyListScope.settings(
     }
     item {
         CsListItem(
-            headlineContent = { Text(stringResource(R.string.feature_settings_licenses)) },
+            headlineContent = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
@@ -218,9 +218,9 @@ private fun LazyListScope.settings(
     item {
         val context = LocalContext.current
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo.versionName ?: stringResource(uiR.string.core_ui_none)
+        val versionName = packageInfo.versionName ?: stringResource(localesR.string.none)
         CsListItem(
-            headlineContent = { Text(stringResource(R.string.feature_settings_version)) },
+            headlineContent = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text(versionName) },
             leadingContent = {
                 Icon(

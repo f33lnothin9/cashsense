@@ -36,7 +36,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun WalletDialog(
@@ -58,13 +58,13 @@ fun WalletDialog(
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (walletDialogState.id.isNotEmpty()) R.string.feature_wallet_dialog_edit_wallet else R.string.feature_wallet_dialog_new_wallet
-    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+    val dialogTitle = if (walletDialogState.id.isNotEmpty()) localesR.string.edit_wallet else localesR.string.new_wallet
+    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
             onWalletDialogEvent(Save)
@@ -86,9 +86,9 @@ fun WalletDialog(
                     .padding(bottom = 16.dp)
                     .focusRequester(titleTextField)
                     .focusProperties { next = initialBalanceTextField },
-                label = { Text(stringResource(uiR.string.core_ui_title)) },
-                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
+                label = { Text(stringResource(localesR.string.title)) },
+                placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                supportingText = { Text(stringResource(localesR.string.required)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
@@ -102,7 +102,7 @@ fun WalletDialog(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
                     .focusRequester(initialBalanceTextField),
-                label = { Text(stringResource(R.string.feature_wallet_dialog_initial_balance)) },
+                label = { Text(stringResource(localesR.string.initial_balance)) },
                 placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
@@ -118,7 +118,7 @@ fun WalletDialog(
                     .padding(bottom = 8.dp),
             )
             CsListItem(
-                headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
+                headlineContent = { Text(stringResource(localesR.string.primary)) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Star),

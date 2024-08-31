@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="feature_category_list_title">Категории</string>
-    <string name="feature_category_list_empty">Здесь будут ваши категории</string>
-    <string name="feature_category_list_deleted">Категория удалена</string>
-</resources>

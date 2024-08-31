@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="feature_wallet_detail_income">Доходы</string>
-    <string name="feature_wallet_detail_expenses">Расходы</string>
-    <string name="feature_wallet_detail_week">Неделя</string>
-    <string name="feature_wallet_detail_month">Месяц</string>
-    <string name="feature_wallet_detail_year">Год</string>
-    <string name="feature_wallet_detail_select_wallet">Выберите кошелёк</string>
-</resources>

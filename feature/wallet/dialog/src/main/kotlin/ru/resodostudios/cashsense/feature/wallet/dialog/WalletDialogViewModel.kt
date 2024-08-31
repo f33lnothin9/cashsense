@@ -25,10 +25,10 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
-import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.util.UUID
 import javax.inject.Inject
-import ru.resodostudios.cashsense.feature.transaction.R as transactionR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
@@ -64,7 +64,7 @@ class WalletDialogViewModel @Inject constructor(
             id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
             title = _walletDialogUiState.value.title,
             initialBalance = if (_walletDialogUiState.value.initialBalance.isEmpty()) {
-                BigDecimal.ZERO
+                ZERO
             } else {
                 _walletDialogUiState.value.initialBalance.toBigDecimal()
             },
@@ -119,8 +119,8 @@ class WalletDialogViewModel @Inject constructor(
         viewModelScope.launch {
             if (_walletDialogUiState.value.isPrimary) {
                 userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
-                val shortLabel = context.getString(transactionR.string.feature_transaction_new_transaction)
-                val longLabel = context.getString(transactionR.string.feature_transaction_shortcut_long_label)
+                val shortLabel = context.getString(localesR.string.new_transaction)
+                val longLabel = context.getString(localesR.string.transaction_shortcut_long_label)
                 shortcutManager.addTransactionShortcut(
                     walletId = _walletDialogUiState.value.id,
                     shortLabel = shortLabel,

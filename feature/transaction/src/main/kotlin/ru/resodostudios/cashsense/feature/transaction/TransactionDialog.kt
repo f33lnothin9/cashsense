@@ -64,7 +64,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionDialog(
@@ -92,15 +92,13 @@ fun TransactionDialog(
     val isTransactionLoading = transactionDialogState.isLoading
     val isCategoriesLoading = categoriesState is Loading
 
-    val dialogTitle =
-        if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
-    val dialogConfirmText =
-        if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.edit_transaction else localesR.string.new_transaction
+    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.ReceiptLong,
         onConfirm = {
             onTransactionEvent(Save)
@@ -133,9 +131,9 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    label = { Text(stringResource(uiR.string.core_ui_amount)) },
-                    placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
-                    supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
+                    label = { Text(stringResource(localesR.string.amount)) },
+                    placeholder = { Text(stringResource(localesR.string.amount) + "*") },
+                    supportingText = { Text(stringResource(localesR.string.required)) },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -153,7 +151,7 @@ fun TransactionDialog(
                 )
                 DatePickerTextField(
                     value = transactionDialogState.date.formatDate(),
-                    labelTextId = uiR.string.core_ui_date,
+                    labelTextId = localesR.string.date,
                     iconId = CsIcons.Calendar,
                     modifier = Modifier.fillMaxWidth(),
                     initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
@@ -166,14 +164,14 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(stringResource(uiR.string.core_ui_description)) },
+                    label = { Text(stringResource(localesR.string.description)) },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(descTextField),
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Block),
@@ -203,8 +201,8 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        stringResource(R.string.feature_transaction_expense),
-        stringResource(R.string.feature_transaction_income),
+        stringResource(localesR.string.expense),
+        stringResource(localesR.string.income_singular),
     )
     val chartDirectionIcons = listOf(
         CsIcons.TrendingDown,
@@ -250,8 +248,8 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        stringResource(R.string.feature_transaction_status_completed),
-        stringResource(R.string.feature_transaction_status_pending),
+        stringResource(localesR.string.completed),
+        stringResource(localesR.string.pending),
     )
     val statusIcons = listOf(
         CsIcons.CheckCircle,
@@ -313,9 +311,9 @@ private fun CategoryExposedDropdownMenuBox(
                         .fillMaxWidth()
                         .menuAnchor(MenuAnchorType.PrimaryEditable),
                     readOnly = true,
-                    value = currentCategory?.title ?: stringResource(uiR.string.core_ui_none),
+                    value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},
-                    label = { Text(stringResource(R.string.feature_transaction_category_title)) },
+                    label = { Text(stringResource(localesR.string.category_title)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     leadingIcon = {
                         Icon(
@@ -333,7 +331,7 @@ private fun CategoryExposedDropdownMenuBox(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(uiR.string.core_ui_none),
+                                text = stringResource(localesR.string.none),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

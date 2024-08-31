@@ -37,6 +37,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import java.util.UUID
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH"
 
@@ -157,7 +158,7 @@ internal fun HomeListDetailScreen(
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(
-                                messageRes = R.string.feature_wallet_detail_select_wallet,
+                                messageRes = localesR.string.select_wallet,
                                 animationRes = R.raw.anim_select_wallet,
                             )
                         }
