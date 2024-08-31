@@ -1,2 +1,12 @@
-bundles:
-  - 8
+"project_id": "CROWDIN_PROJECT_ID"
+"api_token": "CROWDIN_API_TOKEN"
+"base_path": "."
+"base_url": "https://api.crowdin.com"
+"preserve_hierarchy": true
+
+files: [
+  {
+    "source": "core/locales/src/main/res/values/strings.xml",
+    "translation": "core/locales/src/main/res/values-%two_letters_code%/strings.xml",
+  }
+]
