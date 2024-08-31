@@ -78,10 +78,8 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle =
-        if (subscriptionDialogState.id.isNotEmpty()) R.string.feature_subscription_dialog_edit else R.string.feature_subscription_dialog_new
-    val dialogConfirmText =
-        if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.edit_subscription else localesR.string.new_subscription
+    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -136,7 +134,7 @@ fun SubscriptionDialog(
             )
             DatePickerTextField(
                 value = subscriptionDialogState.paymentDate.formatDate(),
-                labelTextId = R.string.feature_subscription_dialog_payment_date,
+                labelTextId = localesR.string.payment_date,
                 iconId = CsIcons.Calendar,
                 onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
                 modifier = Modifier
@@ -153,8 +151,8 @@ fun SubscriptionDialog(
                     .padding(bottom = 8.dp),
             )
             CsListItem(
-                headlineContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder)) },
-                supportingContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder_description)) },
+                headlineContent = { Text(stringResource(localesR.string.reminder)) },
+                supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Notifications),
@@ -196,11 +194,11 @@ fun RepeatingIntervalDropdownMenu(
     modifier: Modifier = Modifier,
 ) {
     val intervalNames = listOf(
-        stringResource(R.string.feature_subscription_dialog_repeat_none),
-        stringResource(R.string.feature_subscription_dialog_repeat_daily),
-        stringResource(R.string.feature_subscription_dialog_repeat_weekly),
-        stringResource(R.string.feature_subscription_dialog_repeat_monthly),
-        stringResource(R.string.feature_subscription_dialog_repeat_yearly),
+        stringResource(localesR.string.repeat_none),
+        stringResource(localesR.string.repeat_daily),
+        stringResource(localesR.string.repeat_weekly),
+        stringResource(localesR.string.repeat_monthly),
+        stringResource(localesR.string.repeat_yearly),
     )
     var expanded by remember { mutableStateOf(false) }
 
@@ -218,7 +216,7 @@ fun RepeatingIntervalDropdownMenu(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
             ),
-            label = { Text(stringResource(R.string.feature_subscription_dialog_repeating_interval)) },
+            label = { Text(stringResource(localesR.string.repeating_interval)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
         ExposedDropdownMenu(

@@ -65,7 +65,7 @@ internal fun SubscriptionsScreen(
     when (subscriptionsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
-            val subscriptionDeletedMessage = stringResource(R.string.feature_subscription_list_deleted)
+            val subscriptionDeletedMessage = stringResource(localesR.string.subscription_deleted)
             val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(subscriptionsState.shouldDisplayUndoSubscription) {
@@ -105,7 +105,7 @@ internal fun SubscriptionsScreen(
                 }
             } else {
                 EmptyState(
-                    messageRes = R.string.feature_subscription_list_empty_message,
+                    messageRes = localesR.string.subscriptions_empty,
                     animationRes = R.raw.anim_subscriptions_empty,
                 )
             }

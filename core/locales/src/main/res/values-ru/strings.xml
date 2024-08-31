@@ -43,4 +43,18 @@
     <string name="version">Версия</string>
     <string name="feedback">Обратная связь</string>
     <string name="choose_currency">Выберите валюту по умолчанию</string>
+    <string name="new_subscription">Новая подписка</string>
+    <string name="edit_subscription">Изменение подписки</string>
+    <string name="payment_date">Дата платежа</string>
+    <string name="reminder">Напоминание</string>
+    <string name="reminder_description">Вы получите уведомление за день до даты платежа</string>
+    <string name="repeating_interval">Интервал повторений</string>
+    <string name="repeat_none">Не повторять</string>
+    <string name="repeat_daily">Ежедневно</string>
+    <string name="repeat_weekly">Еженедельно</string>
+    <string name="repeat_monthly">Ежемесячно</string>
+    <string name="repeat_yearly">Ежегодно</string>
+    <string name="subscriptions_title">Подписки</string>
+    <string name="subscriptions_empty">Здесь будут ваши подписки</string>
+    <string name="subscription_deleted">Подписка удалена</string>
 </resources>

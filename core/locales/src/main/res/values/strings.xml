@@ -43,4 +43,18 @@
     <string name="version">Version</string>
     <string name="feedback">Feedback</string>
     <string name="choose_currency">Choose your default currency</string>
+    <string name="new_subscription">New subscription</string>
+    <string name="edit_subscription">Edit subscription</string>
+    <string name="payment_date">Payment date</string>
+    <string name="reminder">Reminder</string>
+    <string name="reminder_description">You\'ll be notified 1 day before your payment date</string>
+    <string name="repeating_interval">Repeating interval</string>
+    <string name="repeat_none">Doesn\'t repeating</string>
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <string name="repeat_yearly">Yearly</string>
+    <string name="subscriptions_title">Subscriptions</string>
+    <string name="subscriptions_empty">Nothing in Subscriptions</string>
+    <string name="subscription_deleted">Subscription deleted</string>
 </resources>

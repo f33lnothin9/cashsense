@@ -8,8 +8,6 @@ import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
-import ru.resodostudios.cashsense.feature.subscription.dialog.R as subscriptionDialogR
-import ru.resodostudios.cashsense.feature.subscription.list.R as subscriptionListR
 import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
 enum class TopLevelDestination(
@@ -42,10 +40,10 @@ enum class TopLevelDestination(
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.AutoRenew,
         unselectedIcon = CsIcons.AutoRenew,
-        iconTextId = subscriptionListR.string.feature_subscription_list_title,
-        titleTextId = subscriptionListR.string.feature_subscription_list_title,
+        iconTextId = localesR.string.subscriptions_title,
+        titleTextId = localesR.string.subscriptions_title,
         fabIcon = CsIcons.Add,
-        fabTitle = subscriptionDialogR.string.feature_subscription_dialog_new,
+        fabTitle = localesR.string.new_subscription,
         route = SubscriptionsRoute::class,
     ),
     SETTINGS(

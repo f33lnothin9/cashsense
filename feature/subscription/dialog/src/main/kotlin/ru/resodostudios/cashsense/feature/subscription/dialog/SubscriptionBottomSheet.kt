@@ -105,11 +105,11 @@ fun SubscriptionBottomSheet(
                         val repeatingIntervalType =
                             getRepeatingIntervalType(subscriptionDialogState.repeatingInterval.period)
                         val reminderTitle = when (repeatingIntervalType) {
-                            DAILY -> stringResource(R.string.feature_subscription_dialog_repeat_daily)
-                            WEEKLY -> stringResource(R.string.feature_subscription_dialog_repeat_weekly)
-                            MONTHLY -> stringResource(R.string.feature_subscription_dialog_repeat_monthly)
-                            YEARLY -> stringResource(R.string.feature_subscription_dialog_repeat_yearly)
-                            else -> stringResource(R.string.feature_subscription_dialog_reminder)
+                            DAILY -> stringResource(localesR.string.repeat_daily)
+                            WEEKLY -> stringResource(localesR.string.repeat_weekly)
+                            MONTHLY -> stringResource(localesR.string.repeat_monthly)
+                            YEARLY -> stringResource(localesR.string.repeat_yearly)
+                            else -> stringResource(localesR.string.reminder)
                         }
                         CsTag(
                             text = reminderTitle,
