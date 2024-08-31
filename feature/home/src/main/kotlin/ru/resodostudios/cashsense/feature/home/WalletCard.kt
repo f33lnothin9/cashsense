@@ -48,6 +48,7 @@ import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
+import ru.resodostudios.cashsense.core.locales.R as localesR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
@@ -124,7 +125,7 @@ fun WalletCard(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                    contentDescription = stringResource(R.string.feature_home_wallet_menu_icon_description),
+                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                 )
             }
         }

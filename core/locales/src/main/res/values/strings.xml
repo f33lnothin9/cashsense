@@ -25,4 +25,8 @@
     <string name="categories_title">Categories</string>
     <string name="categories_empty">Nothing in Categories</string>
     <string name="category_deleted">Category deleted</string>
+    <string name="home_title">Home</string>
+    <string name="wallet_deleted">Wallet deleted</string>
+    <string name="wallet_menu_icon_description">Wallet menu</string>
+    <string name="home_empty">Nothing in Wallets</string>
 </resources>

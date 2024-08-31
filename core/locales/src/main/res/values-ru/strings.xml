@@ -25,4 +25,8 @@
     <string name="categories_title">Категории</string>
     <string name="categories_empty">Здесь будут ваши категории</string>
     <string name="category_deleted">Категория удалена</string>
+    <string name="home_title">Главная</string>
+    <string name="wallet_deleted">Кошелёк удалён</string>
+    <string name="wallet_menu_icon_description">Меню кошелька</string>
+    <string name="home_empty">Здесь будут ваши кошельки</string>
 </resources>
