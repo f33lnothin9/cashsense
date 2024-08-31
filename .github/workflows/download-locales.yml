@@ -17,6 +17,7 @@ jobs:
         with:
           upload_sources: false
           upload_translations: false
+          download_bundle: 9
           download_translations: true
           localization_branch_name: translations
 
