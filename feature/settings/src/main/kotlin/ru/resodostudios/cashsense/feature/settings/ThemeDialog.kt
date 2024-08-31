@@ -47,7 +47,7 @@ internal fun ThemeDialog(
         },
         title = {
             Text(
-                text = stringResource(R.string.feature_settings_theme),
+                text = stringResource(localesR.string.theme),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
             )

@@ -25,7 +25,7 @@ internal fun LicensesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.feature_settings_licenses)) },
+                title = { Text(stringResource(localesR.string.licenses)) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBackClick,

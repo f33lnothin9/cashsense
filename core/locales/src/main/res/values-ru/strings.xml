@@ -29,4 +29,18 @@
     <string name="wallet_deleted">Кошелёк удалён</string>
     <string name="wallet_menu_icon_description">Меню кошелька</string>
     <string name="home_empty">Здесь будут ваши кошельки</string>
+    <string name="settings_general">Основные</string>
+    <string name="settings_appearance">Оформление</string>
+    <string name="settings_title">Настройки</string>
+    <string name="about">О приложении</string>
+    <string name="dynamic_color">Динамический цвет</string>
+    <string name="theme">Тема</string>
+    <string name="theme_system_default">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="licenses">Лицензии</string>
+    <string name="version">Версия</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="choose_currency">Выберите валюту по умолчанию</string>
 </resources>
