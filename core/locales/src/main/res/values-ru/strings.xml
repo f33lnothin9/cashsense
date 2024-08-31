@@ -57,4 +57,17 @@
     <string name="subscriptions_title">Подписки</string>
     <string name="subscriptions_empty">Здесь будут ваши подписки</string>
     <string name="subscription_deleted">Подписка удалена</string>
+    <string name="category_title">Категория</string>
+    <string name="transactions_empty">Здесь будут ваши транзакции</string>
+    <string name="add_transaction">Добавить транзакцию</string>
+    <string name="edit_transaction">Изменение транзакции</string>
+    <string name="new_transaction">Новая транзакция</string>
+    <string name="add_transaction_icon_description">Добавить транзакцию</string>
+    <string name="expense">Расход</string>
+    <string name="income">Доход</string>
+    <string name="transaction_deleted">Транзакция удалена</string>
+    <string name="transaction_shortcut_long_label">Добавить новую транзакцию</string>
+    <string name="completed">Завершена</string>
+    <string name="pending">В процeссе</string>
+    <string name="transaction_ignore">Не учитывать в расчетах</string>
 </resources>

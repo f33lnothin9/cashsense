@@ -190,7 +190,7 @@ internal fun WalletScreen(
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(transactionR.string.feature_transaction_deleted)
+            val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
             val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
@@ -255,7 +255,7 @@ internal fun WalletScreen(
                 } else {
                     item {
                         EmptyState(
-                            messageRes = transactionR.string.feature_transaction_transactions_empty,
+                            messageRes = localesR.string.transactions_empty,
                             animationRes = transactionR.raw.anim_transactions_empty,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -350,7 +350,7 @@ private fun WalletTopBar(
             IconButton(onNewTransactionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Add),
-                    contentDescription = stringResource(transactionR.string.feature_transaction_add_transaction_icon_description),
+                    contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
             if (showDetailActions) {

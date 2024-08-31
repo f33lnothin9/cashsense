@@ -92,8 +92,8 @@ fun TransactionBottomSheet(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
-                        COMPLETED -> stringResource(R.string.feature_transaction_status_completed) to CsIcons.CheckCircle
-                        PENDING -> stringResource(R.string.feature_transaction_status_pending) to CsIcons.Pending
+                        COMPLETED -> stringResource(localesR.string.completed) to CsIcons.CheckCircle
+                        PENDING -> stringResource(localesR.string.pending) to CsIcons.Pending
                     }
                     CsTag(
                         text = statusTag.first,
@@ -117,7 +117,7 @@ fun TransactionBottomSheet(
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Block),

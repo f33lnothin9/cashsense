@@ -92,10 +92,8 @@ fun TransactionDialog(
     val isTransactionLoading = transactionDialogState.isLoading
     val isCategoriesLoading = categoriesState is Loading
 
-    val dialogTitle =
-        if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
-    val dialogConfirmText =
-        if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
+    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.edit_transaction else localesR.string.new_transaction
+    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -173,7 +171,7 @@ fun TransactionDialog(
                         .focusRequester(descTextField),
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Block),
@@ -203,8 +201,8 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        stringResource(R.string.feature_transaction_expense),
-        stringResource(R.string.feature_transaction_income),
+        stringResource(localesR.string.expense),
+        stringResource(localesR.string.income),
     )
     val chartDirectionIcons = listOf(
         CsIcons.TrendingDown,
@@ -250,8 +248,8 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        stringResource(R.string.feature_transaction_status_completed),
-        stringResource(R.string.feature_transaction_status_pending),
+        stringResource(localesR.string.completed),
+        stringResource(localesR.string.pending),
     )
     val statusIcons = listOf(
         CsIcons.CheckCircle,
@@ -315,7 +313,7 @@ private fun CategoryExposedDropdownMenuBox(
                     readOnly = true,
                     value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},
-                    label = { Text(stringResource(R.string.feature_transaction_category_title)) },
+                    label = { Text(stringResource(localesR.string.category_title)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     leadingIcon = {
                         Icon(

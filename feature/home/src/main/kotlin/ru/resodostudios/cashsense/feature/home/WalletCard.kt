@@ -49,7 +49,6 @@ import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import ru.resodostudios.cashsense.core.locales.R as localesR
-import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
 @Composable
@@ -113,7 +112,7 @@ fun WalletCard(
             Button(
                 onClick = { onTransactionCreate(wallet.id) },
             ) {
-                Text(stringResource(transactionR.string.feature_transaction_add_transaction))
+                Text(stringResource(localesR.string.add_transaction))
             }
             IconButton(
                 onClick = {
