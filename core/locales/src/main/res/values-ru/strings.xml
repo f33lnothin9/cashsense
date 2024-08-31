@@ -64,10 +64,23 @@
     <string name="new_transaction">Новая транзакция</string>
     <string name="add_transaction_icon_description">Добавить транзакцию</string>
     <string name="expense">Расход</string>
-    <string name="income">Доход</string>
+    <string name="expenses">Расходы</string>
+    <string name="income_singular">Доход</string>
+    <string name="income_plural">Доходы</string>
     <string name="transaction_deleted">Транзакция удалена</string>
     <string name="transaction_shortcut_long_label">Добавить новую транзакцию</string>
     <string name="completed">Завершена</string>
     <string name="pending">В процeссе</string>
     <string name="transaction_ignore">Не учитывать в расчетах</string>
+    <string name="week">Неделя</string>
+    <string name="month">Месяц</string>
+    <string name="year">Год</string>
+    <string name="select_wallet">Выберите кошелёк</string>
+    <string name="new_wallet">Новый кошелёк</string>
+    <string name="edit_wallet">Изменение кошелька</string>
+    <string name="initial_balance">Первоначальный баланс</string>
+    <string name="primary">Основной</string>
+    <string name="wallet_widget_description">Ваши кошельки</string>
+    <string name="wallet_widget_title">Кошельки</string>
+    <string name="wallet_widget_empty">У вас нет кошельков</string>
 </resources>

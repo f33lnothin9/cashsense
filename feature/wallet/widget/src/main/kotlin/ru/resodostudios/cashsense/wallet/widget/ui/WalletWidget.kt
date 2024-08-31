@@ -44,7 +44,6 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -79,7 +78,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
         titleBar = {
             TitleBar(
                 startIcon = ImageProvider(CsIcons.Wallet),
-                title = LocalContext.current.getString(R.string.wallet_widget_title),
+                title = LocalContext.current.getString(localesR.string.wallet_widget_title),
             )
         },
     ) {
@@ -112,7 +111,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                 modifier = GlanceModifier.fillMaxSize(),
             ) {
                 Text(
-                    text = LocalContext.current.getString(R.string.wallet_widget_empty),
+                    text = LocalContext.current.getString(localesR.string.wallet_widget_empty),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,

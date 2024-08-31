@@ -8,7 +8,6 @@ import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
-import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
 
 enum class TopLevelDestination(
     val selectedIcon: Int,
@@ -25,7 +24,7 @@ enum class TopLevelDestination(
         iconTextId = localesR.string.home_title,
         titleTextId = R.string.app_name,
         fabIcon = CsIcons.Wallet,
-        fabTitle = walletDialogR.string.feature_wallet_dialog_new_wallet,
+        fabTitle = localesR.string.new_wallet,
         route = HomeRoute::class,
     ),
     CATEGORIES(

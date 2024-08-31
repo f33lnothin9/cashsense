@@ -84,7 +84,7 @@ fun WalletBottomSheet(
                 )
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
+                    headlineContent = { Text(stringResource(localesR.string.primary)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Star),

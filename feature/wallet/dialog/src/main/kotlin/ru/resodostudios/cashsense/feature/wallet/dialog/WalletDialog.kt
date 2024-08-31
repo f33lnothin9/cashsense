@@ -58,7 +58,7 @@ fun WalletDialog(
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (walletDialogState.id.isNotEmpty()) R.string.feature_wallet_dialog_edit_wallet else R.string.feature_wallet_dialog_new_wallet
+    val dialogTitle = if (walletDialogState.id.isNotEmpty()) localesR.string.edit_wallet else localesR.string.new_wallet
     val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
@@ -102,7 +102,7 @@ fun WalletDialog(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
                     .focusRequester(initialBalanceTextField),
-                label = { Text(stringResource(R.string.feature_wallet_dialog_initial_balance)) },
+                label = { Text(stringResource(localesR.string.initial_balance)) },
                 placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
@@ -118,7 +118,7 @@ fun WalletDialog(
                     .padding(bottom = 8.dp),
             )
             CsListItem(
-                headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
+                headlineContent = { Text(stringResource(localesR.string.primary)) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Star),

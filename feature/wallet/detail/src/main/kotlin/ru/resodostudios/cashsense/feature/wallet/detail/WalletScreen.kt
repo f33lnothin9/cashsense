@@ -420,7 +420,7 @@ private fun FinancePanel(
                             FinanceCard(
                                 title = expenses,
                                 currency = walletState.wallet.currency,
-                                supportingTextId = R.string.feature_wallet_detail_expenses,
+                                supportingTextId = localesR.string.expenses,
                                 indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -432,7 +432,7 @@ private fun FinancePanel(
                             FinanceCard(
                                 title = income,
                                 currency = walletState.wallet.currency,
-                                supportingTextId = R.string.feature_wallet_detail_income,
+                                supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -457,7 +457,7 @@ private fun FinancePanel(
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
                             currency = walletState.wallet.currency,
-                            supportingTextId = R.string.feature_wallet_detail_expenses,
+                            supportingTextId = localesR.string.expenses,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
                                 onWalletEvent(UpdateDateType(ALL))
@@ -481,7 +481,7 @@ private fun FinancePanel(
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
                             currency = walletState.wallet.currency,
-                            supportingTextId = R.string.feature_wallet_detail_income,
+                            supportingTextId = localesR.string.income_plural,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
                                 onWalletEvent(UpdateDateType(ALL))
@@ -760,9 +760,9 @@ private fun FilterDateTypeSelectorRow(
     modifier: Modifier = Modifier,
 ) {
     val dateTypes = listOf(
-        stringResource(R.string.feature_wallet_detail_week),
-        stringResource(R.string.feature_wallet_detail_month),
-        stringResource(R.string.feature_wallet_detail_year),
+        stringResource(localesR.string.week),
+        stringResource(localesR.string.month),
+        stringResource(localesR.string.year),
     )
     SingleChoiceSegmentedButtonRow(modifier) {
         dateTypes.forEachIndexed { index, label ->

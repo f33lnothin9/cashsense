@@ -202,7 +202,7 @@ private fun TransactionTypeChoiceRow(
 ) {
     val transactionTypes = listOf(
         stringResource(localesR.string.expense),
-        stringResource(localesR.string.income),
+        stringResource(localesR.string.income_singular),
     )
     val chartDirectionIcons = listOf(
         CsIcons.TrendingDown,

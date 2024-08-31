@@ -64,10 +64,23 @@
     <string name="new_transaction">New transaction</string>
     <string name="add_transaction_icon_description">Add transaction</string>
     <string name="expense">Expense</string>
-    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="income_singular">Income</string>
+    <string name="income_plural">Income</string>
     <string name="transaction_deleted">Transaction deleted</string>
     <string name="transaction_shortcut_long_label">Add a new transaction</string>
     <string name="completed">Completed</string>
     <string name="pending">Pending</string>
     <string name="transaction_ignore">Ignore in calculations</string>
+    <string name="week">Week</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="select_wallet">Select a Wallet</string>
+    <string name="new_wallet">New wallet</string>
+    <string name="edit_wallet">Edit wallet</string>
+    <string name="initial_balance">Initial balance</string>
+    <string name="primary">Primary</string>
+    <string name="wallet_widget_description">Your wallets</string>
+    <string name="wallet_widget_title">Wallets</string>
+    <string name="wallet_widget_empty">You don\'t have any wallets</string>
 </resources>
