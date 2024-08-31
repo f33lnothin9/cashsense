@@ -18,6 +18,11 @@
     <string name="amount">Сумма</string>
     <string name="subscriptions_notification_channel_name">Напоминания о подписках</string>
     <string name="subscriptions_notification_channel_description">Напоминания об истекающих подписках</string>
-    <string name="subscriptions_content_text">%2$s вам необходимо заплатить %1$s за подписку </string>
-    <string name="subscriptions_summary_title">Подписки</string>
+    <string name="subscriptions_notification_content_text">%2$s вам необходимо заплатить %1$s за подписку </string>
+    <string name="subscriptions_notification_summary_title">Подписки</string>
+    <string name="new_category">Новая категория</string>
+    <string name="edit_category">Изменение категории</string>
+    <string name="categories_title">Категории</string>
+    <string name="categories_empty">Здесь будут ваши категории</string>
+    <string name="category_deleted">Категория удалена</string>
 </resources>

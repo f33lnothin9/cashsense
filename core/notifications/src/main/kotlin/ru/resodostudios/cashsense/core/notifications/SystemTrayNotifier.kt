@@ -53,7 +53,7 @@ internal class SystemTrayNotifier @Inject constructor(
         val subscriptionNotification = createSubscriptionNotification {
             val price = subscription.amount.formatAmount(subscription.currency)
             val date = subscription.paymentDate.formatDate()
-            val contentText = getString(localesR.string.subscriptions_content_text, price, date)
+            val contentText = getString(localesR.string.subscriptions_notification_content_text, price, date)
             setSmallIcon(CsIcons.Payments)
                 .setContentTitle(subscription.title)
                 .setContentText(contentText)
@@ -62,7 +62,7 @@ internal class SystemTrayNotifier @Inject constructor(
                 .setAutoCancel(true)
         }
         val summaryNotification = createSubscriptionNotification {
-            val title = getString(localesR.string.subscriptions_summary_title)
+            val title = getString(localesR.string.subscriptions_notification_summary_title)
             setContentTitle(title)
                 .setContentText(title)
                 .setSmallIcon(CsIcons.Payments)

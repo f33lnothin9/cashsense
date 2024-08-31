@@ -49,7 +49,7 @@ fun CategoryDialog(
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (categoryDialogState.id.isNotEmpty()) R.string.feature_category_dialog_edit_category else R.string.feature_category_dialog_new_category
+    val dialogTitle = if (categoryDialogState.id.isNotEmpty()) localesR.string.edit_category else localesR.string.new_category
     val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(

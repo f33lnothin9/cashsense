@@ -7,8 +7,7 @@ import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import kotlin.reflect.KClass
-import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
-import ru.resodostudios.cashsense.feature.category.list.R as categoryListR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 import ru.resodostudios.cashsense.feature.home.R as homeR
 import ru.resodostudios.cashsense.feature.settings.R as settingsR
 import ru.resodostudios.cashsense.feature.subscription.dialog.R as subscriptionDialogR
@@ -36,10 +35,10 @@ enum class TopLevelDestination(
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
         unselectedIcon = CsIcons.Category,
-        iconTextId = categoryListR.string.feature_category_list_title,
-        titleTextId = categoryListR.string.feature_category_list_title,
+        iconTextId = localesR.string.categories_title,
+        titleTextId = localesR.string.categories_title,
         fabIcon = CsIcons.Add,
-        fabTitle = categoryDialogR.string.feature_category_dialog_new_category,
+        fabTitle = localesR.string.new_category,
         route = CategoriesRoute::class,
     ),
     SUBSCRIPTIONS(

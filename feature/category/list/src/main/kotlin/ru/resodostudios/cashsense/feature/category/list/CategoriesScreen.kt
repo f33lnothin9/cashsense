@@ -76,7 +76,7 @@ internal fun CategoriesScreen(
     when (categoriesState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val categoryDeletedMessage = stringResource(R.string.feature_category_list_deleted)
+            val categoryDeletedMessage = stringResource(localesR.string.category_deleted)
             val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(categoriesState.shouldDisplayUndoCategory) {
@@ -115,7 +115,7 @@ internal fun CategoriesScreen(
                 }
             } else {
                 EmptyState(
-                    messageRes = R.string.feature_category_list_empty,
+                    messageRes = localesR.string.categories_empty,
                     animationRes = R.raw.anim_categories_empty,
                     modifier = modifier,
                 )
