@@ -32,6 +32,10 @@ It's a mobile app designed to help users manage their finances effectively. Whet
 * [Jetpack Compose][4]
 * [Lottie][5]
 
+# Localization
+
+If you'd like to contribute to translating this app, you can [join][6] our localization efforts on [Crowdin][7]. Your contributions will help ensure that everyone can enjoy the app in their native language.
+
 # Contributing
 
 Contributions are welcome! If you have any improvements or bug fixes in mind, feel free to submit a pull request.
@@ -46,3 +50,5 @@ Contributions are welcome! If you have any improvements or bug fixes in mind, fe
 [3]: https://developer.android.com/reference/kotlin/androidx/compose/material3/adaptive/navigation/suite/package-summary
 [4]: https://developer.android.com/jetpack/compose
 [5]: https://github.com/airbnb/lottie/blob/master/android-compose.md
+[6]: https://crowdin.com/project/cashsense/invite?h=d573fbd44b6bcf6bfc0dfbbfb3bf800f2198579
+[7]: https://crowdin.com/
