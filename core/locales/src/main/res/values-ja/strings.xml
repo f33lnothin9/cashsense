@@ -71,7 +71,7 @@
   <string name="transaction_shortcut_long_label">新しい取引を追加</string>
   <string name="completed">完了</string>
   <string name="pending">保留中</string>
-  <string name="transaction_ignore">計算で無視</string>
+  <string name="transaction_ignore">計算に含めない</string>
   <string name="week">週</string>
   <string name="month">月</string>
   <string name="year">年</string>
@@ -79,7 +79,7 @@
   <string name="new_wallet">新しいウォレット</string>
   <string name="edit_wallet">ウォレットを編集</string>
   <string name="initial_balance">初期残高</string>
-  <string name="primary">プライマリ（プライマリ）</string>
+  <string name="primary">プライマリ</string>
   <string name="wallet_widget_description">あなたのウォレット</string>
   <string name="wallet_widget_title">ウォレット</string>
   <string name="wallet_widget_empty">ウォレットがありません</string>
