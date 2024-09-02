@@ -3,7 +3,7 @@
   <string name="currency">通貨</string>
   <string name="ok">OK</string>
   <string name="cancel">キャンセル</string>
-  <string name="icon_and_title">アイコンとタイトル</string>
+  <string name="icon_and_title">アイコン &amp; タイトル</string>
   <string name="date">日付</string>
   <string name="undo">元に戻す</string>
   <string name="navigation_back_icon_description">戻る</string>
