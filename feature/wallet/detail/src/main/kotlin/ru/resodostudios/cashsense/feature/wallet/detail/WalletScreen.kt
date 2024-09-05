@@ -829,39 +829,27 @@ private fun LazyListScope.transactions(
     currency: String,
     onTransactionClick: (String) -> Unit,
 ) {
-    val groupedTransactionsCategories = transactionsCategories
-        .groupBy {
-            it.transaction.timestamp
-                .toJavaInstant()
-                .truncatedTo(ChronoUnit.DAYS)
-        }
+    val transactionsByDay = transactionsCategories
+        .groupBy { it.transaction.timestamp.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
         .toSortedMap(compareByDescending { it })
-        .map { it.key to it.value }
 
-    groupedTransactionsCategories.forEach { group ->
+    transactionsByDay.forEach { transactionGroup ->
         stickyHeader {
             CsTag(
-                text = group.first
-                    .toKotlinInstant()
-                    .formatDate(),
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp),
+                text = transactionGroup.key.toKotlinInstant().formatDate(),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
             )
         }
         item { Spacer(Modifier.height(16.dp)) }
         items(
-            items = group.second,
+            items = transactionGroup.value,
             key = { it.transaction.id },
             contentType = { "transactionCategory" },
         ) { transactionCategory ->
             val transaction = transactionCategory.transaction
             val category = transactionCategory.category
-
             TransactionItem(
-                amount = transaction.amount.formatAmount(
-                    currencyCode = currency,
-                    withPlus = true,
-                ),
+                amount = transaction.amount.formatAmount(currency, true),
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
                 categoryTitle = category?.title ?: stringResource(localesR.string.none),
                 transactionStatus = transaction.status,
