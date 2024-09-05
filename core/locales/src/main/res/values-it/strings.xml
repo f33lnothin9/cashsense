@@ -19,7 +19,6 @@
   <string name="subscriptions_notification_channel_name">Promemoria degli abbonamenti</string>
   <string name="subscriptions_notification_channel_description">Promemoria degli abbonamenti in scadenza</string>
   <string name="subscriptions_notification_content_text">Devi pagare %1$s per un abbonamento il %2$s</string>
-  <string name="subscriptions_notification_summary_title">Abbonamenti</string>
   <string name="new_category">Nuova categoria</string>
   <string name="edit_category">Modifica categoria</string>
   <string name="categories_title">Categorie</string>
