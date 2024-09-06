@@ -13,7 +13,7 @@ import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsScreen
 @Serializable
 object SubscriptionsRoute
 
-private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$SUBSCRIPTIONS_PATH"
+private const val DEEP_LINK_URI_PATTERN = "$DEEP_LINK_SCHEME_AND_HOST/$SUBSCRIPTIONS_PATH"
 
 fun NavController.navigateToSubscriptions(navOptions: NavOptions) =
     navigate(route = SubscriptionsRoute, navOptions)
@@ -23,7 +23,7 @@ fun NavGraphBuilder.subscriptionsScreen(
 ) {
     composable<SubscriptionsRoute>(
         deepLinks = listOf(
-            navDeepLink<SubscriptionsRoute>(basePath = DEEP_LINK_BASE_PATH),
+            navDeepLink { uriPattern = DEEP_LINK_URI_PATTERN },
         ),
     ) {
         SubscriptionsScreen(onShowSnackbar)

@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.navigation
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -10,12 +12,12 @@ import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 enum class TopLevelDestination(
-    val selectedIcon: Int,
-    val unselectedIcon: Int,
-    val iconTextId: Int,
-    val titleTextId: Int,
-    val fabIcon: Int?,
-    val fabTitle: Int?,
+    @DrawableRes val selectedIcon: Int,
+    @DrawableRes val unselectedIcon: Int,
+    @StringRes val iconTextId: Int,
+    @StringRes val titleTextId: Int,
+    @DrawableRes val fabIcon: Int?,
+    @StringRes val fabTitle: Int?,
     val route: KClass<*>,
 ) {
     HOME(

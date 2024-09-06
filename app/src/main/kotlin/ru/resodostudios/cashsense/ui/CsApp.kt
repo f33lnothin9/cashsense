@@ -43,10 +43,10 @@ import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
-import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
+import kotlin.reflect.KClass
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -69,21 +69,18 @@ fun CsApp(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
-
     val currentDestination = appState.currentDestination
-
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     NavigationSuiteScaffold(
         layoutType = layoutType,
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
+                val selected = currentDestination.isRouteInHierarchy(destination.route)
                 item(
                     selected = selected,
                     icon = {
-                        val navItemIcon =
-                            if (selected) destination.selectedIcon else destination.unselectedIcon
+                        val navItemIcon = if (selected) destination.selectedIcon else destination.unselectedIcon
                         Icon(
                             imageVector = ImageVector.vectorResource(navItemIcon),
                             contentDescription = null,
@@ -167,7 +164,7 @@ fun CsApp(
     }
 }
 
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
+private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any {
-        it.hasRoute(destination.route)
+        it.hasRoute(route)
     } ?: false
