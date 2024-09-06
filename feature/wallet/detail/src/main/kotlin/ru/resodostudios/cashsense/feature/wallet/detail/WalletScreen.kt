@@ -590,7 +590,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         AnimatedVisibility(walletFilter.dateType == YEAR) {
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
-                availableDates = walletFilter.availableDates,
+                availableYears = walletFilter.availableYears,
                 selectedDate = walletFilter.selectedDate,
                 modifier = Modifier.padding(bottom = 6.dp),
             )
@@ -788,7 +788,7 @@ private fun FilterDateTypeSelectorRow(
 @Composable
 private fun FilterBySelectedDateTypeRow(
     onWalletEvent: (WalletEvent) -> Unit,
-    availableDates: List<Int>,
+    availableYears: List<Int>,
     selectedDate: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -798,7 +798,7 @@ private fun FilterBySelectedDateTypeRow(
         modifier = modifier.fillMaxWidth(),
     ) {
         val isPreviousActive =
-            if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
+            if (availableYears.isNotEmpty()) selectedDate != availableYears.first() else false
         IconButton(
             onClick = { onWalletEvent(DecrementSelectedDate) },
             enabled = isPreviousActive,
@@ -810,7 +810,7 @@ private fun FilterBySelectedDateTypeRow(
         }
         Text(selectedDate.toString())
         val isNextActive =
-            if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
+            if (availableYears.isNotEmpty()) selectedDate != availableYears.last() else false
         IconButton(
             onClick = { onWalletEvent(IncrementSelectedDate) },
             enabled = isNextActive,
@@ -892,7 +892,7 @@ fun FinancePanelDefaultPreview(
                         selectedCategories = categories.take(3),
                         financeType = NONE,
                         dateType = YEAR,
-                        availableDates = emptyList(),
+                        availableYears = emptyList(),
                         selectedDate = 0,
                     ),
                     transactionsCategories = transactionsCategories,
@@ -932,7 +932,7 @@ fun FinancePanelOpenedPreview(
                         selectedCategories = categories.take(2),
                         financeType = EXPENSES,
                         dateType = YEAR,
-                        availableDates = emptyList(),
+                        availableYears = emptyList(),
                         selectedDate = 0,
                     ),
                     transactionsCategories = transactionsCategories,

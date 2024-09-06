@@ -63,7 +63,7 @@ class WalletViewModel @Inject constructor(
             availableCategories = emptyList(),
             financeType = NONE,
             dateType = ALL,
-            availableDates = emptyList(),
+            availableYears = emptyList(),
             selectedDate = 0,
         )
     )
@@ -84,12 +84,12 @@ class WalletViewModel @Inject constructor(
             EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
             INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
         }
-        val availableDates = financeTypeTransactions
-            .map { transactionCategory -> transactionCategory.transaction.timestamp.getZonedDateTime().year }
-            .toSortedSet()
-            .toList()
         walletFilterState.update {
-            it.copy(availableDates = availableDates)
+            val availableYears = financeTypeTransactions
+                .map { it.transaction.timestamp.getZonedDateTime().year }
+                .toSortedSet()
+                .toList()
+            it.copy(availableYears = availableYears)
         }
         val dateTypeTransactions = when (walletFilter.dateType) {
             WEEK -> financeTypeTransactions.filter {
@@ -137,7 +137,7 @@ class WalletViewModel @Inject constructor(
                 selectedCategories = walletFilter.selectedCategories,
                 financeType = walletFilter.financeType,
                 dateType = walletFilter.dateType,
-                availableDates = walletFilter.availableDates,
+                availableYears = walletFilter.availableYears,
                 selectedDate = walletFilter.selectedDate,
             ),
             wallet = walletTransactionsCategories.wallet,
@@ -202,8 +202,8 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateDateType(dateType: DateType) {
-        if (walletFilterState.value.availableDates.isNotEmpty()) {
-            val selectedDate = walletFilterState.value.availableDates.last()
+        if (walletFilterState.value.availableYears.isNotEmpty()) {
+            val selectedDate = walletFilterState.value.availableYears.last()
             walletFilterState.update {
                 it.copy(
                     dateType = dateType,
@@ -215,20 +215,20 @@ class WalletViewModel @Inject constructor(
 
     private fun incrementSelectedDate() {
         val currentIndex =
-            walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
-        if (currentIndex in 0 until walletFilterState.value.availableDates.size - 1) {
+            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedDate)
+        if (currentIndex in 0 until walletFilterState.value.availableYears.size - 1) {
             walletFilterState.update {
-                it.copy(selectedDate = walletFilterState.value.availableDates[currentIndex + 1])
+                it.copy(selectedDate = walletFilterState.value.availableYears[currentIndex + 1])
             }
         }
     }
 
     private fun decrementSelectedDate() {
         val currentIndex =
-            walletFilterState.value.availableDates.indexOf(walletFilterState.value.selectedDate)
-        if (currentIndex in 1 until walletFilterState.value.availableDates.size) {
+            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedDate)
+        if (currentIndex in 1 until walletFilterState.value.availableYears.size) {
             walletFilterState.update {
-                it.copy(selectedDate = walletFilterState.value.availableDates[currentIndex - 1])
+                it.copy(selectedDate = walletFilterState.value.availableYears[currentIndex - 1])
             }
         }
     }
@@ -270,7 +270,7 @@ data class WalletFilter(
     val availableCategories: List<Category>,
     val financeType: FinanceType,
     val dateType: DateType,
-    val availableDates: List<Int>,
+    val availableYears: List<Int>,
     val selectedDate: Int,
 )
 
