@@ -574,7 +574,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 .fillMaxWidth(),
         ) {
             FilterDateTypeSelectorRow(
-                dateType = walletFilter.dateType,
+                walletFilter = walletFilter,
                 onWalletEvent = onWalletEvent,
                 modifier = Modifier
                     .padding(end = 12.dp)
@@ -756,7 +756,7 @@ private fun CategoryChip(
 
 @Composable
 private fun FilterDateTypeSelectorRow(
-    dateType: DateType,
+    walletFilter: WalletFilter,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -773,7 +773,8 @@ private fun FilterDateTypeSelectorRow(
                     count = dateTypes.size,
                 ),
                 onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
-                selected = dateType == DateType.entries[index],
+                selected = walletFilter.dateType == DateType.entries[index],
+                enabled = walletFilter.availableYears.isNotEmpty(),
             ) {
                 Text(
                     text = label,
@@ -893,6 +894,7 @@ fun FinancePanelDefaultPreview(
                         financeType = NONE,
                         dateType = YEAR,
                         availableYears = emptyList(),
+                        availableMonths = emptyList(),
                         selectedDate = 0,
                     ),
                     transactionsCategories = transactionsCategories,
@@ -933,6 +935,7 @@ fun FinancePanelOpenedPreview(
                         financeType = EXPENSES,
                         dateType = YEAR,
                         availableYears = emptyList(),
+                        availableMonths = emptyList(),
                         selectedDate = 0,
                     ),
                     transactionsCategories = transactionsCategories,

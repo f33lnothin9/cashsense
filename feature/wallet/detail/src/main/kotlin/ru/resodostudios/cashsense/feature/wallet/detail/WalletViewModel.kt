@@ -64,6 +64,7 @@ class WalletViewModel @Inject constructor(
             financeType = NONE,
             dateType = ALL,
             availableYears = emptyList(),
+            availableMonths = emptyList(),
             selectedDate = 0,
         )
     )
@@ -84,7 +85,7 @@ class WalletViewModel @Inject constructor(
             EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
             INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
         }
-        calculateAvailableYears(financeTypeTransactions)
+        calculateAvailableDates(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
             WEEK -> financeTypeTransactions.filter {
                 val weekOfTransaction = it.transaction.timestamp
@@ -104,14 +105,11 @@ class WalletViewModel @Inject constructor(
             }
 
             ALL -> financeTypeTransactions
-        }
+        }.filterNot { it.transaction.id == lastRemovedTransactionId }
 
-        val filteredTransactionsCategories = dateTypeTransactions
-            .filterNot { it.transaction.id == lastRemovedTransactionId }
-
-        calculateAvailableCategories(filteredTransactionsCategories)
+        calculateAvailableCategories(dateTypeTransactions)
         val filteredByCategories = if (walletFilterState.value.selectedCategories.isNotEmpty()) {
-            filteredTransactionsCategories
+            dateTypeTransactions
                 .filter { walletFilterState.value.selectedCategories.contains(it.category) }
                 .apply {
                     if (this.isEmpty()) {
@@ -120,7 +118,7 @@ class WalletViewModel @Inject constructor(
                         }
                     }
                 }
-        } else filteredTransactionsCategories
+        } else dateTypeTransactions
 
         Success(
             currentBalance = currentBalance,
@@ -130,6 +128,7 @@ class WalletViewModel @Inject constructor(
                 financeType = walletFilter.financeType,
                 dateType = walletFilter.dateType,
                 availableYears = walletFilter.availableYears,
+                availableMonths = walletFilter.availableMonths,
                 selectedDate = walletFilter.selectedDate,
             ),
             wallet = walletTransactionsCategories.wallet,
@@ -144,13 +143,21 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    private fun calculateAvailableYears(transactions: List<TransactionWithCategory>) {
+    private fun calculateAvailableDates(transactions: List<TransactionWithCategory>) {
         walletFilterState.update {
             val availableYears = transactions
                 .map { it.transaction.timestamp.getZonedDateTime().year }
                 .toSortedSet()
                 .toList()
-            it.copy(availableYears = availableYears)
+            val availableMonths = transactions
+                .filter { it.transaction.timestamp.getZonedDateTime().year == availableYears.last() }
+                .map { it.transaction.timestamp.getZonedDateTime().month.value }
+                .toSortedSet()
+                .toList()
+            it.copy(
+                availableYears = availableYears,
+                availableMonths = availableMonths,
+            )
         }
     }
 
@@ -204,11 +211,11 @@ class WalletViewModel @Inject constructor(
 
     private fun updateDateType(dateType: DateType) {
         if (walletFilterState.value.availableYears.isNotEmpty()) {
-            val selectedDate = walletFilterState.value.availableYears.last()
+            val lastYear = walletFilterState.value.availableYears.last()
             walletFilterState.update {
                 it.copy(
                     dateType = dateType,
-                    selectedDate = selectedDate,
+                    selectedDate = lastYear,
                 )
             }
         }
@@ -272,6 +279,7 @@ data class WalletFilter(
     val financeType: FinanceType,
     val dateType: DateType,
     val availableYears: List<Int>,
+    val availableMonths: List<Int>,
     val selectedDate: Int,
 )
 
