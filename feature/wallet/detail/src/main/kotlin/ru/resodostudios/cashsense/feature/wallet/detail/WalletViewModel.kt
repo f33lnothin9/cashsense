@@ -84,13 +84,7 @@ class WalletViewModel @Inject constructor(
             EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
             INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
         }
-        walletFilterState.update {
-            val availableYears = financeTypeTransactions
-                .map { it.transaction.timestamp.getZonedDateTime().year }
-                .toSortedSet()
-                .toList()
-            it.copy(availableYears = availableYears)
-        }
+        calculateAvailableYears(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
             WEEK -> financeTypeTransactions.filter {
                 val weekOfTransaction = it.transaction.timestamp
@@ -105,10 +99,8 @@ class WalletViewModel @Inject constructor(
                     .isInCurrentMonthAndYear()
             }
 
-            YEAR -> {
-                financeTypeTransactions.filter {
-                    it.transaction.timestamp.getZonedDateTime().year == walletFilterState.value.selectedDate
-                }
+            YEAR -> financeTypeTransactions.filter {
+                it.transaction.timestamp.getZonedDateTime().year == walletFilterState.value.selectedDate
             }
 
             ALL -> financeTypeTransactions
@@ -152,15 +144,24 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
+    private fun calculateAvailableYears(transactions: List<TransactionWithCategory>) {
+        walletFilterState.update {
+            val availableYears = transactions
+                .map { it.transaction.timestamp.getZonedDateTime().year }
+                .toSortedSet()
+                .toList()
+            it.copy(availableYears = availableYears)
+        }
+    }
+
     private fun calculateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
-        transactionsCategories
+        val availableCategories = transactionsCategories
             .map { it.category }
             .toSet()
-            .also { categories ->
-                walletFilterState.update {
-                    it.copy(availableCategories = categories.filterNotNull())
-                }
-            }
+            .filterNotNull()
+        walletFilterState.update {
+            it.copy(availableCategories = availableCategories)
+        }
     }
 
     fun onWalletEvent(event: WalletEvent) {
