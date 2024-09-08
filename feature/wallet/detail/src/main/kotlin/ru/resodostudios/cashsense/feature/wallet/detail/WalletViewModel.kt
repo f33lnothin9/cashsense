@@ -65,7 +65,8 @@ class WalletViewModel @Inject constructor(
             dateType = ALL,
             availableYears = emptyList(),
             availableMonths = emptyList(),
-            selectedDate = 0,
+            selectedYear = 0,
+            selectedMonth = 0,
         )
     )
 
@@ -101,7 +102,7 @@ class WalletViewModel @Inject constructor(
             }
 
             YEAR -> financeTypeTransactions.filter {
-                it.transaction.timestamp.getZonedDateTime().year == walletFilterState.value.selectedDate
+                it.transaction.timestamp.getZonedDateTime().year == walletFilterState.value.selectedYear
             }
 
             ALL -> financeTypeTransactions
@@ -129,7 +130,8 @@ class WalletViewModel @Inject constructor(
                 dateType = walletFilter.dateType,
                 availableYears = walletFilter.availableYears,
                 availableMonths = walletFilter.availableMonths,
-                selectedDate = walletFilter.selectedDate,
+                selectedYear = walletFilter.selectedYear,
+                selectedMonth = walletFilter.selectedMonth,
             ),
             wallet = walletTransactionsCategories.wallet,
             transactionsCategories = filteredByCategories,
@@ -150,8 +152,8 @@ class WalletViewModel @Inject constructor(
                 .toSortedSet()
                 .toList()
             val availableMonths = transactions
-                .filter { it.transaction.timestamp.getZonedDateTime().year == availableYears.last() }
-                .map { it.transaction.timestamp.getZonedDateTime().month.value }
+                .filter { it.transaction.timestamp.getZonedDateTime().year == findCurrentOrLastYear(availableYears) }
+                .map { it.transaction.timestamp.getZonedDateTime().monthValue }
                 .toSortedSet()
                 .toList()
             it.copy(
@@ -211,32 +213,36 @@ class WalletViewModel @Inject constructor(
 
     private fun updateDateType(dateType: DateType) {
         if (walletFilterState.value.availableYears.isNotEmpty()) {
-            val lastYear = walletFilterState.value.availableYears.last()
             walletFilterState.update {
                 it.copy(
                     dateType = dateType,
-                    selectedDate = lastYear,
+                    selectedYear = findCurrentOrLastYear(walletFilterState.value.availableYears),
+                    selectedMonth = findCurrentOrLastMonth(walletFilterState.value.availableYears),
                 )
             }
         }
     }
 
+    private fun findCurrentOrLastYear(years: List<Int>) = years.find { it == getCurrentZonedDateTime().year } ?: years.last()
+
+    private fun findCurrentOrLastMonth(months: List<Int>) = months.find { it == getCurrentZonedDateTime().monthValue } ?: months.last()
+
     private fun incrementSelectedDate() {
         val currentIndex =
-            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedDate)
+            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedYear)
         if (currentIndex in 0 until walletFilterState.value.availableYears.size - 1) {
             walletFilterState.update {
-                it.copy(selectedDate = walletFilterState.value.availableYears[currentIndex + 1])
+                it.copy(selectedYear = walletFilterState.value.availableYears[currentIndex + 1])
             }
         }
     }
 
     private fun decrementSelectedDate() {
         val currentIndex =
-            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedDate)
+            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedYear)
         if (currentIndex in 1 until walletFilterState.value.availableYears.size) {
             walletFilterState.update {
-                it.copy(selectedDate = walletFilterState.value.availableYears[currentIndex - 1])
+                it.copy(selectedYear = walletFilterState.value.availableYears[currentIndex - 1])
             }
         }
     }
@@ -280,7 +286,8 @@ data class WalletFilter(
     val dateType: DateType,
     val availableYears: List<Int>,
     val availableMonths: List<Int>,
-    val selectedDate: Int,
+    val selectedYear: Int,
+    val selectedMonth: Int,
 )
 
 sealed interface WalletUiState {

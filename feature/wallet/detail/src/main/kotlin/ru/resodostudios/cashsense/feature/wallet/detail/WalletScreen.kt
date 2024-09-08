@@ -400,7 +400,7 @@ private fun FinancePanel(
                 label = "finance_panel",
             ) { financeType ->
                 val groupedByMonth = currentMonthTransactions
-                    .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedDate }
+                    .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedYear }
                     .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
                 when (financeType) {
                     NONE -> {
@@ -591,7 +591,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
                 availableYears = walletFilter.availableYears,
-                selectedDate = walletFilter.selectedDate,
+                selectedDate = walletFilter.selectedYear,
                 modifier = Modifier.padding(bottom = 6.dp),
             )
         }
@@ -895,7 +895,8 @@ fun FinancePanelDefaultPreview(
                         dateType = YEAR,
                         availableYears = emptyList(),
                         availableMonths = emptyList(),
-                        selectedDate = 0,
+                        selectedYear = 0,
+                        selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,
@@ -936,7 +937,8 @@ fun FinancePanelOpenedPreview(
                         dateType = YEAR,
                         availableYears = emptyList(),
                         availableMonths = emptyList(),
-                        selectedDate = 0,
+                        selectedYear = 0,
+                        selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,
