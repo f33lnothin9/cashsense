@@ -16,5 +16,6 @@ fun String.cleanAndValidateAmount(): Pair<String, Boolean> {
     val matchResult = regex.find(this.replace(",", ".")) // Directly match and replace comma
 
     val cleanedInput = matchResult?.value ?: ""
+    if (cleanedInput.toDoubleOrNull() == 0.0) return cleanedInput to false
     return cleanedInput to (cleanedInput.isNotEmpty())
 }
