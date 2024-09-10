@@ -11,6 +11,18 @@ import ru.resodostudios.cashsense.feature.subscription.list.navigation.Subscript
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+/**
+ * Represents the top-level destinations in the application.
+ * Each destination has associated icons, text, and a route.
+ *
+ * @param selectedIcon Resource ID for the icon when the destination is selected.
+ * @param unselectedIcon Resource ID for the icon when the destination is not selected.
+ * @param iconTextId Resource ID for the text displayed with the icon.
+ * @param titleTextId Resource ID for the title text of the destination.
+ * @param fabIcon Resource ID for the Floating Action Button (FAB) icon, if applicable.
+ * @param fabTitle Resource ID for the FAB title text, if applicable.
+ * @param route The Kotlin class representing the route for this destination.
+ */
 enum class TopLevelDestination(
     @DrawableRes val selectedIcon: Int,
     @DrawableRes val unselectedIcon: Int,
