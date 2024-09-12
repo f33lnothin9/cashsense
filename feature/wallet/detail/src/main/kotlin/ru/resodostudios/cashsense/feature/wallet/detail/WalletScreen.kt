@@ -114,6 +114,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
@@ -587,11 +588,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        AnimatedVisibility(walletFilter.dateType == YEAR) {
+        AnimatedVisibility(walletFilter.dateType != WEEK) {
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
-                availableYears = walletFilter.availableYears,
-                selectedDate = walletFilter.selectedYear,
+                walletFilter = walletFilter,
                 modifier = Modifier.padding(bottom = 6.dp),
             )
         }
@@ -643,10 +643,7 @@ private fun FinanceGraph(
     val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { x, _, _ ->
-        Month(x.toInt())
-            .getDisplayName(TextStyle.SHORT, Locale.getDefault())
-            .first()
-            .uppercase()
+        Month(x.toInt()).getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault())
     }
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
@@ -789,8 +786,7 @@ private fun FilterDateTypeSelectorRow(
 @Composable
 private fun FilterBySelectedDateTypeRow(
     onWalletEvent: (WalletEvent) -> Unit,
-    availableYears: List<Int>,
-    selectedDate: Int,
+    walletFilter: WalletFilter,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -798,8 +794,7 @@ private fun FilterBySelectedDateTypeRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
-        val isPreviousActive =
-            if (availableYears.isNotEmpty()) selectedDate != availableYears.first() else false
+        val isPreviousActive = walletFilter.availableYears.isNotEmpty() && walletFilter.selectedYear != walletFilter.availableYears.first()
         IconButton(
             onClick = { onWalletEvent(DecrementSelectedDate) },
             enabled = isPreviousActive,
@@ -809,9 +804,13 @@ private fun FilterBySelectedDateTypeRow(
                 contentDescription = null,
             )
         }
-        Text(selectedDate.toString())
-        val isNextActive =
-            if (availableYears.isNotEmpty()) selectedDate != availableYears.last() else false
+        val selectedDate = when (walletFilter.dateType) {
+            YEAR -> walletFilter.selectedYear.toString()
+            MONTH -> Month(walletFilter.selectedMonth).getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
+            else -> ""
+        }
+        Text(selectedDate)
+        val isNextActive = walletFilter.availableYears.isNotEmpty() && walletFilter.selectedYear != walletFilter.availableYears.last()
         IconButton(
             onClick = { onWalletEvent(IncrementSelectedDate) },
             enabled = isNextActive,

@@ -225,21 +225,21 @@ class WalletViewModel @Inject constructor(
         months.find { it == getCurrentZonedDateTime().monthValue } ?: months.last()
 
     private fun incrementSelectedDate() {
-        val currentIndex =
-            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedYear)
-        if (currentIndex in 0 until walletFilterState.value.availableYears.size - 1) {
+        val walletFilter = walletFilterState.value
+        val currentIndex = walletFilter.availableYears.indexOf(walletFilter.selectedYear)
+        if (currentIndex in 0 until walletFilter.availableYears.size - 1) {
             walletFilterState.update {
-                it.copy(selectedYear = walletFilterState.value.availableYears[currentIndex + 1])
+                it.copy(selectedYear = walletFilter.availableYears[currentIndex + 1])
             }
         }
     }
 
     private fun decrementSelectedDate() {
-        val currentIndex =
-            walletFilterState.value.availableYears.indexOf(walletFilterState.value.selectedYear)
-        if (currentIndex in 1 until walletFilterState.value.availableYears.size) {
+        val walletFilter = walletFilterState.value
+        val currentIndex = walletFilter.availableYears.indexOf(walletFilter.selectedYear)
+        if (currentIndex in 1 until walletFilter.availableYears.size) {
             walletFilterState.update {
-                it.copy(selectedYear = walletFilterState.value.availableYears[currentIndex - 1])
+                it.copy(selectedYear = walletFilter.availableYears[currentIndex - 1])
             }
         }
     }
