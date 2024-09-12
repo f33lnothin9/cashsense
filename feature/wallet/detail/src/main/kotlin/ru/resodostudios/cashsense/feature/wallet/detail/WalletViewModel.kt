@@ -20,7 +20,6 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
-import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
@@ -88,6 +87,7 @@ class WalletViewModel @Inject constructor(
         }
         calculateAvailableDates(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
+            ALL -> financeTypeTransactions
             WEEK -> financeTypeTransactions.filter {
                 val weekOfTransaction = it.transaction.timestamp
                     .getZonedDateTime()
@@ -95,23 +95,18 @@ class WalletViewModel @Inject constructor(
                 weekOfTransaction == getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
             }
 
-            MONTH -> financeTypeTransactions.filter {
-                it.transaction.timestamp
-                    .getZonedDateTime()
-                    .isInCurrentMonthAndYear()
-            }
+            MONTH -> financeTypeTransactions
+                .filter { it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYear }
+                .filter { it.transaction.timestamp.getZonedDateTime().monthValue == walletFilter.selectedMonth }
 
-            YEAR -> financeTypeTransactions.filter {
-                it.transaction.timestamp.getZonedDateTime().year == walletFilterState.value.selectedYear
-            }
-
-            ALL -> financeTypeTransactions
+            YEAR -> financeTypeTransactions
+                .filter { it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYear }
         }.filterNot { it.transaction.id == lastRemovedTransactionId }
 
         calculateAvailableCategories(dateTypeTransactions)
-        val filteredByCategories = if (walletFilterState.value.selectedCategories.isNotEmpty()) {
+        val filteredByCategories = if (walletFilter.selectedCategories.isNotEmpty()) {
             dateTypeTransactions
-                .filter { walletFilterState.value.selectedCategories.contains(it.category) }
+                .filter { walletFilter.selectedCategories.contains(it.category) }
                 .apply {
                     if (this.isEmpty()) {
                         walletFilterState.update {
@@ -217,15 +212,17 @@ class WalletViewModel @Inject constructor(
                 it.copy(
                     dateType = dateType,
                     selectedYear = findCurrentOrLastYear(walletFilterState.value.availableYears),
-                    selectedMonth = findCurrentOrLastMonth(walletFilterState.value.availableYears),
+                    selectedMonth = findCurrentOrLastMonth(walletFilterState.value.availableMonths),
                 )
             }
         }
     }
 
-    private fun findCurrentOrLastYear(years: List<Int>) = years.find { it == getCurrentZonedDateTime().year } ?: years.last()
+    private fun findCurrentOrLastYear(years: List<Int>) =
+        years.find { it == getCurrentZonedDateTime().year } ?: years.last()
 
-    private fun findCurrentOrLastMonth(months: List<Int>) = months.find { it == getCurrentZonedDateTime().monthValue } ?: months.last()
+    private fun findCurrentOrLastMonth(months: List<Int>) =
+        months.find { it == getCurrentZonedDateTime().monthValue } ?: months.last()
 
     private fun incrementSelectedDate() {
         val currentIndex =
