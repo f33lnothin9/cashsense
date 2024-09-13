@@ -647,11 +647,12 @@ private fun FinanceGraph(
     }
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
+            textSizeSp = 14f,
             padding = Dimensions(
                 startDp = 8f,
                 endDp = 8f,
                 topDp = 4f,
-                bottomDp = 8f,
+                bottomDp = 20f,
             ),
             background = ShapeComponent(
                 color = MaterialTheme.colorScheme.primaryContainer.toArgb(),
@@ -660,7 +661,7 @@ private fun FinanceGraph(
                     startDp = 0f,
                     endDp = 0f,
                     topDp = 0f,
-                    bottomDp = 4f,
+                    bottomDp = 16f,
                 )
             ),
         ),
