@@ -377,17 +377,17 @@ private fun FinancePanel(
 ) {
     val validTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
-    val currentMonthTransactions = when (walletState.walletFilter.dateType) {
+    val monthlyTransactions = when (walletState.walletFilter.dateType) {
         ALL -> validTransactions.filter {
             it.transaction.timestamp.getZonedDateTime().isInCurrentMonthAndYear()
         }
 
         else -> validTransactions
     }
-    val expenses = currentMonthTransactions
+    val expenses = monthlyTransactions
         .filter { it.transaction.amount < ZERO }
         .sumOf { it.transaction.amount.abs() }
-    val income = currentMonthTransactions
+    val income = monthlyTransactions
         .filter { it.transaction.amount > ZERO }
         .sumOf { it.transaction.amount }
 
@@ -400,7 +400,7 @@ private fun FinancePanel(
                 targetState = walletState.walletFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
-                val groupedByMonth = currentMonthTransactions
+                val groupedByMonth = monthlyTransactions
                     .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedYear }
                     .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
                 when (financeType) {
@@ -410,12 +410,12 @@ private fun FinancePanel(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(expenses, currentMonthTransactions),
+                                targetValue = getFinanceProgress(expenses, monthlyTransactions),
                                 label = "expenses_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             val incomeProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(income, currentMonthTransactions),
+                                targetValue = getFinanceProgress(income, monthlyTransactions),
                                 label = "income_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
@@ -948,9 +948,9 @@ fun FinancePanelOpenedPreview(
                         selectedCategories = categories.take(2),
                         financeType = EXPENSES,
                         dateType = YEAR,
-                        availableYears = emptyList(),
+                        availableYears = listOf(2023, 2024),
                         availableMonths = emptyList(),
-                        selectedYear = 0,
+                        selectedYear = 2024,
                         selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
