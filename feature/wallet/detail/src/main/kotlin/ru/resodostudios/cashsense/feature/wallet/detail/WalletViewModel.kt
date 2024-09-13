@@ -226,21 +226,51 @@ class WalletViewModel @Inject constructor(
 
     private fun incrementSelectedDate() {
         val walletFilter = walletFilterState.value
-        val currentIndex = walletFilter.availableYears.indexOf(walletFilter.selectedYear)
-        if (currentIndex in 0 until walletFilter.availableYears.size - 1) {
-            walletFilterState.update {
-                it.copy(selectedYear = walletFilter.availableYears[currentIndex + 1])
+        when (walletFilter.dateType) {
+            MONTH -> {
+                val currentIndex = walletFilter.availableMonths.indexOf(walletFilter.selectedMonth)
+                if (currentIndex in 0 until walletFilter.availableMonths.size - 1) {
+                    walletFilterState.update {
+                        it.copy(selectedMonth = walletFilter.availableMonths[currentIndex + 1])
+                    }
+                }
             }
+
+            YEAR -> {
+                val currentIndex = walletFilter.availableYears.indexOf(walletFilter.selectedYear)
+                if (currentIndex in 0 until walletFilter.availableYears.size - 1) {
+                    walletFilterState.update {
+                        it.copy(selectedYear = walletFilter.availableYears[currentIndex + 1])
+                    }
+                }
+            }
+
+            else -> {}
         }
     }
 
     private fun decrementSelectedDate() {
         val walletFilter = walletFilterState.value
-        val currentIndex = walletFilter.availableYears.indexOf(walletFilter.selectedYear)
-        if (currentIndex in 1 until walletFilter.availableYears.size) {
-            walletFilterState.update {
-                it.copy(selectedYear = walletFilter.availableYears[currentIndex - 1])
+        when (walletFilter.dateType) {
+            MONTH -> {
+                val currentIndex = walletFilter.availableMonths.indexOf(walletFilter.selectedMonth)
+                if (currentIndex in 1 until walletFilter.availableMonths.size) {
+                    walletFilterState.update {
+                        it.copy(selectedMonth = walletFilter.availableMonths[currentIndex - 1])
+                    }
+                }
             }
+
+            YEAR -> {
+                val currentIndex = walletFilter.availableYears.indexOf(walletFilter.selectedYear)
+                if (currentIndex in 1 until walletFilter.availableYears.size) {
+                    walletFilterState.update {
+                        it.copy(selectedYear = walletFilter.availableYears[currentIndex - 1])
+                    }
+                }
+            }
+
+            else -> {}
         }
     }
 
