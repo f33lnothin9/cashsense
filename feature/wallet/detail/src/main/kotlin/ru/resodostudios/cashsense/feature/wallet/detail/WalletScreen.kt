@@ -619,9 +619,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (walletFilter.dateType == YEAR) {
-            FinanceGraph(graphValues)
-        }
+        if (walletFilter.dateType != WEEK) FinanceGraph(graphValues)
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
                 availableCategories = walletFilter.availableCategories,
@@ -654,8 +652,9 @@ private fun FinanceGraph(
                 topDp = 4f,
                 bottomDp = 20f,
             ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
             background = ShapeComponent(
-                color = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+                color = MaterialTheme.colorScheme.surfaceVariant.toArgb(),
                 shape = Shape.Pill,
                 margins = Dimensions(
                     startDp = 0f,
