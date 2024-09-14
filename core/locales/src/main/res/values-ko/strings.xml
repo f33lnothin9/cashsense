@@ -19,7 +19,6 @@
   <string name="subscriptions_notification_channel_name">구독 알림</string>
   <string name="subscriptions_notification_channel_description">만료 예정 구독 알림</string>
   <string name="subscriptions_notification_content_text">%2$s 에 구독료로 %1$s 을(를) 지불해야 합니다</string>
-  <string name="subscriptions_notification_summary_title">구독</string>
   <string name="new_category">새 범주</string>
   <string name="edit_category">범주 편집</string>
   <string name="categories_title">범주</string>
