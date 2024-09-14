@@ -19,7 +19,6 @@
   <string name="subscriptions_notification_channel_name">تذكيرات الاشتراك</string>
   <string name="subscriptions_notification_channel_description">تذكيرات باشتراكاتك التي تنتهي قريبًا</string>
   <string name="subscriptions_notification_content_text">عليك دفع %1$s لاشتراكك في %2$s</string>
-  <string name="subscriptions_notification_summary_title">الاشتراكات</string>
   <string name="new_category">فئة جديدة</string>
   <string name="edit_category">تحرير الفئة</string>
   <string name="categories_title">الفئات</string>

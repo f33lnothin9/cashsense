@@ -55,7 +55,7 @@ import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.core.ui.validateAmount
+import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
@@ -104,7 +104,7 @@ fun TransactionDialog(
             onTransactionEvent(Save)
             onDismiss()
         },
-        isConfirmEnabled = transactionDialogState.amount.validateAmount().second,
+        isConfirmEnabled = transactionDialogState.amount.cleanAndValidateAmount().second,
         onDismiss = onDismiss,
     ) {
         if (isTransactionLoading || isCategoriesLoading) {
@@ -126,7 +126,7 @@ fun TransactionDialog(
                 )
                 OutlinedTextField(
                     value = transactionDialogState.amount,
-                    onValueChange = { onTransactionEvent(UpdateAmount(it.validateAmount().first)) },
+                    onValueChange = { onTransactionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,

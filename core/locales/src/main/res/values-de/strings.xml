@@ -19,7 +19,6 @@
   <string name="subscriptions_notification_channel_name">Abonnement Erinnerung</string>
   <string name="subscriptions_notification_channel_description">Erinnerungen an abgelaufene Abonnements</string>
   <string name="subscriptions_notification_content_text">Sie müssen %1$s für ein Abonnement auf %2$s bezahlen</string>
-  <string name="subscriptions_notification_summary_title">Abonnements</string>
   <string name="new_category">Neue Kategorie</string>
   <string name="edit_category">Kategorie bearbeiten</string>
   <string name="categories_title">Kategorien</string>

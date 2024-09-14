@@ -14,6 +14,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
@@ -78,6 +80,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
             TitleBar(
                 startIcon = ImageProvider(CsIcons.Wallet),
                 title = LocalContext.current.getString(localesR.string.wallet_widget_title),
+                modifier = GlanceModifier.clickable(openHomeScreen()),
             )
         },
         modifier = GlanceModifier.cornerRadius(16.dp),
@@ -93,15 +96,18 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                             .toLong()
                     }
                 ) { walletPopulated ->
+                    val sumOfTransactions = walletPopulated.transactionsWithCategories
+                        .sumOf { it.transaction.amount }
                     val currentBalance = walletPopulated.wallet.initialBalance
-                        .plus(walletPopulated.transactionsWithCategories
-                            .sumOf { it.transaction.amount })
+                        .plus(sumOfTransactions)
 
                     WalletItem(
                         walletId = walletPopulated.wallet.id,
                         title = walletPopulated.wallet.title,
                         currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                        modifier = GlanceModifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                        modifier = GlanceModifier
+                            .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
+                            .clickable(openHomeScreen(walletPopulated.wallet.id)),
                     )
                 }
             }
@@ -158,17 +164,23 @@ fun WalletItem(
         }
         CircleIconButton(
             imageProvider = ImageProvider(CsIcons.Add),
-            onClick = actionStartActivity(
-                Intent().apply {
-                    action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/true".toUri()
-                    component = ComponentName(
-                        LocalContext.current.packageName,
-                        TARGET_ACTIVITY_NAME,
-                    )
-                }
-            ),
+            onClick = openHomeScreen(walletId, true),
             contentDescription = LocalContext.current.getString(localesR.string.add),
         )
     }
 }
+
+@Composable
+private fun openHomeScreen(
+    walletId: String? = null,
+    startAddTransaction: Boolean = false,
+): Action = actionStartActivity(
+    Intent().apply {
+        action = Intent.ACTION_VIEW
+        data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/$startAddTransaction".toUri()
+        component = ComponentName(
+            LocalContext.current.packageName,
+            TARGET_ACTIVITY_NAME,
+        )
+    }
+)
