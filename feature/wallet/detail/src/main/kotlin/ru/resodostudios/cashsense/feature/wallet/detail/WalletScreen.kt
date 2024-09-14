@@ -68,6 +68,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
@@ -77,7 +78,9 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.Zoom
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -375,19 +378,19 @@ private fun FinancePanel(
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val validTransactions = walletState.transactionsCategories
+    val filteredTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
-    val monthlyTransactions = when (walletState.walletFilter.dateType) {
-        ALL -> validTransactions.filter {
-            it.transaction.timestamp.getZonedDateTime().isInCurrentMonthAndYear()
+        .filter {
+            if (walletState.walletFilter.dateType == ALL) {
+                it.transaction.timestamp
+                    .getZonedDateTime()
+                    .isInCurrentMonthAndYear()
+            } else true
         }
-
-        else -> validTransactions
-    }
-    val expenses = monthlyTransactions
+    val expenses = filteredTransactions
         .filter { it.transaction.amount < ZERO }
         .sumOf { it.transaction.amount.abs() }
-    val income = monthlyTransactions
+    val income = filteredTransactions
         .filter { it.transaction.amount > ZERO }
         .sumOf { it.transaction.amount }
 
@@ -400,9 +403,14 @@ private fun FinancePanel(
                 targetState = walletState.walletFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
-                val groupedByMonth = monthlyTransactions
-                    .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedYear }
-                    .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
+                val groupedTransactions = filteredTransactions
+                    .groupBy {
+                        val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
+                        when (walletState.walletFilter.dateType) {
+                            YEAR -> zonedDateTime.monthValue
+                            else -> zonedDateTime.dayOfMonth
+                        }
+                    }
                 when (financeType) {
                     NONE -> {
                         Row(
@@ -410,12 +418,12 @@ private fun FinancePanel(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(expenses, monthlyTransactions),
+                                targetValue = getFinanceProgress(expenses, filteredTransactions),
                                 label = "expenses_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             val incomeProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(income, monthlyTransactions),
+                                targetValue = getFinanceProgress(income, filteredTransactions),
                                 label = "income_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
@@ -447,9 +455,9 @@ private fun FinancePanel(
                     }
 
                     EXPENSES -> {
-                        val graphValues = groupedByMonth
-                            .map { monthTransactions ->
-                                monthTransactions.key to monthTransactions.value
+                        val graphValues = groupedTransactions
+                            .map { transactionsCategories ->
+                                transactionsCategories.key to transactionsCategories.value
                                     .map { transactionCategory -> transactionCategory.transaction.amount }
                                     .sumOf { it.abs() }
                             }
@@ -471,9 +479,9 @@ private fun FinancePanel(
                     }
 
                     INCOME -> {
-                        val graphValues = groupedByMonth
-                            .map { monthTransactions ->
-                                monthTransactions.key to monthTransactions.value
+                        val graphValues = groupedTransactions
+                            .map { transactionsCategories ->
+                                transactionsCategories.key to transactionsCategories.value
                                     .map { transactionCategory -> transactionCategory.transaction.amount }
                                     .sumOf { it }
                             }
@@ -619,7 +627,12 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (walletFilter.dateType != WEEK) FinanceGraph(graphValues)
+        if (walletFilter.dateType != WEEK) {
+            FinanceGraph(
+                walletFilter = walletFilter,
+                graphValues = graphValues,
+            )
+        }
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
                 availableCategories = walletFilter.availableCategories,
@@ -634,6 +647,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
 
 @Composable
 private fun FinanceGraph(
+    walletFilter: WalletFilter,
     graphValues: Map<Int, BigDecimal>,
     modifier: Modifier = Modifier,
 ) {
@@ -641,8 +655,13 @@ private fun FinanceGraph(
     val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { x, _, _ ->
-        Month(x.toInt()).getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault())
+        when (walletFilter.dateType) {
+            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault())
+            else -> x.toInt().toString()
+        }
     }
+    val xItemPlacer = HorizontalAxis.ItemPlacer.default(addExtremeLabelPadding = true)
+
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
             textSizeSp = 14f,
@@ -680,10 +699,21 @@ private fun FinanceGraph(
                 rememberColumnCartesianLayer(),
                 bottomAxis = rememberBottomAxis(
                     valueFormatter = xDateFormatter,
+                    itemPlacer = xItemPlacer,
                     guideline = null,
+                    line = null,
+                    tick = rememberAxisTickComponent(
+                        margins = Dimensions(
+                            startDp = 0f,
+                            endDp = 0f,
+                            topDp = 2f,
+                            bottomDp = -2f,
+                        ),
+                    )
                 ),
                 marker = marker,
                 fadingEdges = rememberFadingEdges(),
+                horizontalLayout = HorizontalLayout.FullWidth(),
             ),
             modelProducer = modelProducer,
             scrollState = scrollState,
