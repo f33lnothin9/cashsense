@@ -45,7 +45,8 @@ class SubscriptionDialogViewModel @Inject constructor(
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
             SubscriptionDialogEvent.Save -> {
-                val subscriptionId = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() }
+                val subscriptionId = _subscriptionDialogUiState.value.id
+                    .ifEmpty { UUID.randomUUID().toString() }
                 var reminder: Reminder? = null
 
                 if (_subscriptionDialogUiState.value.isReminderEnabled) {
@@ -125,19 +126,20 @@ class SubscriptionDialogViewModel @Inject constructor(
     private fun loadSubscription() {
         viewModelScope.launch {
             subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
-                .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
-                .catch { _subscriptionDialogUiState.value = SubscriptionDialogUiState() }
-                .collect {
-                    _subscriptionDialogUiState.value = SubscriptionDialogUiState(
-                        id = it.id,
-                        title = it.title,
-                        amount = it.amount.toString(),
-                        paymentDate = it.paymentDate,
-                        currency = it.currency,
-                        isReminderEnabled = it.reminder != null,
-                        repeatingInterval = getRepeatingIntervalType(it.reminder?.repeatingInterval ?: 0),
-                        isLoading = false,
-                    )
+                .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
+                .catch { _subscriptionDialogUiState.update { SubscriptionDialogUiState() } }
+                .collect { subscription ->
+                    _subscriptionDialogUiState.update {
+                        SubscriptionDialogUiState(
+                            id = subscription.id,
+                            title = subscription.title,
+                            amount = subscription.amount.toString(),
+                            paymentDate = subscription.paymentDate,
+                            currency = subscription.currency,
+                            isReminderEnabled = subscription.reminder != null,
+                            repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval ?: 0),
+                        )
+                    }
                 }
         }
     }
@@ -145,11 +147,13 @@ class SubscriptionDialogViewModel @Inject constructor(
     private fun clearSubscriptionDialogState() {
         viewModelScope.launch {
             userDataRepository.userData
-                .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
-                .collect {
-                    _subscriptionDialogUiState.value = SubscriptionDialogUiState(
-                        currency = it.currency.ifEmpty { "USD" },
-                    )
+                .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
+                .collect { subscription ->
+                    _subscriptionDialogUiState.update {
+                        SubscriptionDialogUiState(
+                            currency = subscription.currency.ifEmpty { "USD" },
+                        )
+                    }
                 }
         }
     }

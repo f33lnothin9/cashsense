@@ -30,7 +30,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
-import ru.resodostudios.cashsense.core.ui.validateAmount
+import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
@@ -97,7 +97,7 @@ fun WalletDialog(
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.validateAmount().first)) },
+                onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.cleanAndValidateAmount().first)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)

@@ -19,7 +19,6 @@
   <string name="subscriptions_notification_channel_name">Przypomnienia o subskrypcjach</string>
   <string name="subscriptions_notification_channel_description">Przypomnienia o wygasających subskrypcjach</string>
   <string name="subscriptions_notification_content_text">Musisz zapłacić %1$s za subskrypcję w dniu %2$s</string>
-  <string name="subscriptions_notification_summary_title">Subskrypcje</string>
   <string name="new_category">Nowa kategoria</string>
   <string name="edit_category">Edytuj kategorię</string>
   <string name="categories_title">Kategorie</string>

@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.Keep
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -39,11 +40,14 @@ import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import java.util.UUID
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH"
+private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
 
+// TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
+@Keep
 @Serializable
 internal object WalletPlaceholderRoute
 
+@Keep
 @Serializable
 internal object DetailPaneNavHostRoute
 
@@ -52,7 +56,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 ) {
     composable<HomeRoute>(
         deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"),
+            navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
         ),
     ) {
         HomeListDetailScreen(

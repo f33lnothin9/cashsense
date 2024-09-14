@@ -62,7 +62,7 @@ internal class SystemTrayNotifier @Inject constructor(
                 .setAutoCancel(true)
         }
         val summaryNotification = createSubscriptionNotification {
-            val title = getString(localesR.string.subscriptions_notification_summary_title)
+            val title = getString(localesR.string.subscriptions_title)
             setContentTitle(title)
                 .setContentText(title)
                 .setSmallIcon(CsIcons.Payments)

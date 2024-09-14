@@ -68,6 +68,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
@@ -77,6 +78,9 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.Zoom
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -113,6 +117,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.TransactionItem
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
+import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
@@ -373,19 +378,19 @@ private fun FinancePanel(
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val validTransactions = walletState.transactionsCategories
+    val filteredTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
-    val currentMonthTransactions = when (walletState.walletFilter.dateType) {
-        ALL -> validTransactions.filter {
-            it.transaction.timestamp.getZonedDateTime().isInCurrentMonthAndYear()
+        .filter {
+            if (walletState.walletFilter.dateType == ALL) {
+                it.transaction.timestamp
+                    .getZonedDateTime()
+                    .isInCurrentMonthAndYear()
+            } else true
         }
-
-        else -> validTransactions
-    }
-    val expenses = currentMonthTransactions
+    val expenses = filteredTransactions
         .filter { it.transaction.amount < ZERO }
         .sumOf { it.transaction.amount.abs() }
-    val income = currentMonthTransactions
+    val income = filteredTransactions
         .filter { it.transaction.amount > ZERO }
         .sumOf { it.transaction.amount }
 
@@ -398,9 +403,14 @@ private fun FinancePanel(
                 targetState = walletState.walletFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
-                val groupedByMonth = currentMonthTransactions
-                    .filter { it.transaction.timestamp.getZonedDateTime().year == walletState.walletFilter.selectedDate }
-                    .groupBy { it.transaction.timestamp.getZonedDateTime().monthValue }
+                val groupedTransactions = filteredTransactions
+                    .groupBy {
+                        val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
+                        when (walletState.walletFilter.dateType) {
+                            YEAR -> zonedDateTime.monthValue
+                            else -> zonedDateTime.dayOfMonth
+                        }
+                    }
                 when (financeType) {
                     NONE -> {
                         Row(
@@ -408,12 +418,12 @@ private fun FinancePanel(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(expenses, currentMonthTransactions),
+                                targetValue = getFinanceProgress(expenses, filteredTransactions),
                                 label = "expenses_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             val incomeProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(income, currentMonthTransactions),
+                                targetValue = getFinanceProgress(income, filteredTransactions),
                                 label = "income_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
@@ -445,9 +455,9 @@ private fun FinancePanel(
                     }
 
                     EXPENSES -> {
-                        val graphValues = groupedByMonth
-                            .map { monthTransactions ->
-                                monthTransactions.key to monthTransactions.value
+                        val graphValues = groupedTransactions
+                            .map { transactionsCategories ->
+                                transactionsCategories.key to transactionsCategories.value
                                     .map { transactionCategory -> transactionCategory.transaction.amount }
                                     .sumOf { it.abs() }
                             }
@@ -469,9 +479,9 @@ private fun FinancePanel(
                     }
 
                     INCOME -> {
-                        val graphValues = groupedByMonth
-                            .map { monthTransactions ->
-                                monthTransactions.key to monthTransactions.value
+                        val graphValues = groupedTransactions
+                            .map { transactionsCategories ->
+                                transactionsCategories.key to transactionsCategories.value
                                     .map { transactionCategory -> transactionCategory.transaction.amount }
                                     .sumOf { it }
                             }
@@ -573,7 +583,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 .fillMaxWidth(),
         ) {
             FilterDateTypeSelectorRow(
-                dateType = walletFilter.dateType,
+                walletFilter = walletFilter,
                 onWalletEvent = onWalletEvent,
                 modifier = Modifier
                     .padding(end = 12.dp)
@@ -586,11 +596,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        AnimatedVisibility(walletFilter.dateType == YEAR) {
+        AnimatedVisibility(walletFilter.dateType != WEEK) {
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
-                availableDates = walletFilter.availableDates,
-                selectedDate = walletFilter.selectedDate,
+                walletFilter = walletFilter,
                 modifier = Modifier.padding(bottom = 6.dp),
             )
         }
@@ -618,8 +627,11 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (walletFilter.dateType == YEAR) {
-            FinanceGraph(graphValues)
+        if (walletFilter.dateType != WEEK) {
+            FinanceGraph(
+                walletFilter = walletFilter,
+                graphValues = graphValues,
+            )
         }
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
@@ -635,34 +647,39 @@ private fun SharedTransitionScope.DetailedFinanceSection(
 
 @Composable
 private fun FinanceGraph(
+    walletFilter: WalletFilter,
     graphValues: Map<Int, BigDecimal>,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberVicoScrollState()
-    val zoomState = rememberVicoZoomState()
+    val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { x, _, _ ->
-        Month(x.toInt())
-            .getDisplayName(TextStyle.SHORT, Locale.getDefault())
-            .first()
-            .uppercase()
+        when (walletFilter.dateType) {
+            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault())
+            else -> x.toInt().toString()
+        }
     }
+    val xItemPlacer = HorizontalAxis.ItemPlacer.default(addExtremeLabelPadding = true)
+
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
+            textSizeSp = 14f,
             padding = Dimensions(
                 startDp = 8f,
                 endDp = 8f,
                 topDp = 4f,
-                bottomDp = 8f,
+                bottomDp = 20f,
             ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
             background = ShapeComponent(
-                color = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+                color = MaterialTheme.colorScheme.surfaceVariant.toArgb(),
                 shape = Shape.Pill,
                 margins = Dimensions(
                     startDp = 0f,
                     endDp = 0f,
                     topDp = 0f,
-                    bottomDp = 4f,
+                    bottomDp = 16f,
                 )
             ),
         ),
@@ -682,10 +699,21 @@ private fun FinanceGraph(
                 rememberColumnCartesianLayer(),
                 bottomAxis = rememberBottomAxis(
                     valueFormatter = xDateFormatter,
+                    itemPlacer = xItemPlacer,
                     guideline = null,
+                    line = null,
+                    tick = rememberAxisTickComponent(
+                        margins = Dimensions(
+                            startDp = 0f,
+                            endDp = 0f,
+                            topDp = 2f,
+                            bottomDp = -2f,
+                        ),
+                    )
                 ),
                 marker = marker,
                 fadingEdges = rememberFadingEdges(),
+                horizontalLayout = HorizontalLayout.FullWidth(),
             ),
             modelProducer = modelProducer,
             scrollState = scrollState,
@@ -755,7 +783,7 @@ private fun CategoryChip(
 
 @Composable
 private fun FilterDateTypeSelectorRow(
-    dateType: DateType,
+    walletFilter: WalletFilter,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -772,7 +800,8 @@ private fun FilterDateTypeSelectorRow(
                     count = dateTypes.size,
                 ),
                 onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
-                selected = dateType == DateType.entries[index],
+                selected = walletFilter.dateType == DateType.entries[index],
+                enabled = walletFilter.availableYears.isNotEmpty(),
             ) {
                 Text(
                     text = label,
@@ -787,8 +816,7 @@ private fun FilterDateTypeSelectorRow(
 @Composable
 private fun FilterBySelectedDateTypeRow(
     onWalletEvent: (WalletEvent) -> Unit,
-    availableDates: List<Int>,
-    selectedDate: Int,
+    walletFilter: WalletFilter,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -796,8 +824,11 @@ private fun FilterBySelectedDateTypeRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
-        val isPreviousActive =
-            if (availableDates.isNotEmpty()) selectedDate != availableDates.first() else false
+        val isPreviousActive = when (walletFilter.dateType) {
+            YEAR -> walletFilter.availableYears.isNotEmpty() && walletFilter.selectedYear != walletFilter.availableYears.first()
+            MONTH -> walletFilter.availableMonths.isNotEmpty() && walletFilter.selectedMonth != walletFilter.availableMonths.first()
+            else -> false
+        }
         IconButton(
             onClick = { onWalletEvent(DecrementSelectedDate) },
             enabled = isPreviousActive,
@@ -807,9 +838,23 @@ private fun FilterBySelectedDateTypeRow(
                 contentDescription = null,
             )
         }
-        Text(selectedDate.toString())
-        val isNextActive =
-            if (availableDates.isNotEmpty()) selectedDate != availableDates.last() else false
+
+        val selectedDate = when (walletFilter.dateType) {
+            YEAR -> walletFilter.selectedYear.toString()
+            MONTH -> Month(walletFilter.selectedMonth).getDisplayName(
+                TextStyle.FULL_STANDALONE,
+                Locale.getDefault()
+            )
+
+            else -> ""
+        }
+        Text(selectedDate)
+
+        val isNextActive = when (walletFilter.dateType) {
+            YEAR -> walletFilter.availableYears.isNotEmpty() && walletFilter.selectedYear != walletFilter.availableYears.last()
+            MONTH -> walletFilter.availableMonths.isNotEmpty() && walletFilter.selectedMonth != walletFilter.availableMonths.last()
+            else -> false
+        }
         IconButton(
             onClick = { onWalletEvent(IncrementSelectedDate) },
             enabled = isNextActive,
@@ -828,39 +873,27 @@ private fun LazyListScope.transactions(
     currency: String,
     onTransactionClick: (String) -> Unit,
 ) {
-    val groupedTransactionsCategories = transactionsCategories
-        .groupBy {
-            it.transaction.timestamp
-                .toJavaInstant()
-                .truncatedTo(ChronoUnit.DAYS)
-        }
+    val transactionsByDay = transactionsCategories
+        .groupBy { it.transaction.timestamp.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
         .toSortedMap(compareByDescending { it })
-        .map { it.key to it.value }
 
-    groupedTransactionsCategories.forEach { group ->
+    transactionsByDay.forEach { transactionGroup ->
         stickyHeader {
             CsTag(
-                text = group.first
-                    .toKotlinInstant()
-                    .formatDate(),
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp),
+                text = transactionGroup.key.toKotlinInstant().formatDate(),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
             )
         }
         item { Spacer(Modifier.height(16.dp)) }
         items(
-            items = group.second,
+            items = transactionGroup.value,
             key = { it.transaction.id },
             contentType = { "transactionCategory" },
         ) { transactionCategory ->
             val transaction = transactionCategory.transaction
             val category = transactionCategory.category
-
             TransactionItem(
-                amount = transaction.amount.formatAmount(
-                    currencyCode = currency,
-                    withPlus = true,
-                ),
+                amount = transaction.amount.formatAmount(currency, true),
                 icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
                 categoryTitle = category?.title ?: stringResource(localesR.string.none),
                 transactionStatus = transaction.status,
@@ -903,8 +936,10 @@ fun FinancePanelDefaultPreview(
                         selectedCategories = categories.take(3),
                         financeType = NONE,
                         dateType = YEAR,
-                        availableDates = emptyList(),
-                        selectedDate = 0,
+                        availableYears = emptyList(),
+                        availableMonths = emptyList(),
+                        selectedYear = 0,
+                        selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,
@@ -943,8 +978,10 @@ fun FinancePanelOpenedPreview(
                         selectedCategories = categories.take(2),
                         financeType = EXPENSES,
                         dateType = YEAR,
-                        availableDates = emptyList(),
-                        selectedDate = 0,
+                        availableYears = listOf(2023, 2024),
+                        availableMonths = emptyList(),
+                        selectedYear = 2024,
+                        selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
                     shouldDisplayUndoTransaction = false,

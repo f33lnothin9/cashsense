@@ -158,9 +158,13 @@ class WalletDialogViewModel @Inject constructor(
     private fun clearWalletDialogState() {
         viewModelScope.launch {
             userDataRepository.userData
-                .onStart { _walletDialogUiState.value = WalletDialogUiState(isLoading = true) }
+                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
                 .collect {
-                    _walletDialogUiState.value = WalletDialogUiState(
+                    _walletDialogUiState.value = _walletDialogUiState.value.copy(
+                        id = "",
+                        title = "",
+                        initialBalance = "",
+                        isPrimary = false,
                         currency = it.currency.ifEmpty { "USD" },
                     )
                 }
