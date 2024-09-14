@@ -19,7 +19,6 @@
   <string name="subscriptions_notification_channel_name">Rappels d\'abonnement</string>
   <string name="subscriptions_notification_channel_description">Rappels des abonnements qui expirent</string>
   <string name="subscriptions_notification_content_text">Vous devez payer %1$s pour un abonnement le %2$s</string>
-  <string name="subscriptions_notification_summary_title">Abonnements</string>
   <string name="new_category">Nouvelle catégorie</string>
   <string name="edit_category">Modifier la catégorie</string>
   <string name="categories_title">Catégories</string>
