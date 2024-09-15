@@ -855,10 +855,12 @@ private fun FilterBySelectedDateTypeRow(
 
         val selectedDate = when (walletFilter.dateType) {
             YEAR -> walletFilter.selectedYear.toString()
-            MONTH -> Month(walletFilter.selectedMonth).getDisplayName(
-                TextStyle.FULL_STANDALONE,
-                Locale.getDefault()
-            )
+            MONTH -> Month(walletFilter.selectedMonth)
+                .getDisplayName(
+                    TextStyle.FULL_STANDALONE,
+                    Locale.getDefault(),
+                )
+                .replaceFirstChar { it.uppercaseChar() }
 
             else -> ""
         }
