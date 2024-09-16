@@ -82,4 +82,5 @@
   <string name="wallet_widget_description">Tus carteras</string>
   <string name="wallet_widget_title">Carteras</string>
   <string name="wallet_widget_empty">No tienes ninguna cartera</string>
+  <string name="not_enough_data">Not enough data</string>
 </resources>
