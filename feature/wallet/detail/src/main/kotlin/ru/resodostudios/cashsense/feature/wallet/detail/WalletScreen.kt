@@ -13,6 +13,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -628,10 +629,18 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             style = MaterialTheme.typography.labelLarge,
         )
         if (walletFilter.dateType != WEEK) {
-            FinanceGraph(
-                walletFilter = walletFilter,
-                graphValues = graphValues,
-            )
+            Box(contentAlignment = Alignment.Center) {
+                if (graphValues.keys.size < 2) {
+                    Text(
+                        text = stringResource(localesR.string.not_enough_data),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+                FinanceGraph(
+                    walletFilter = walletFilter,
+                    graphValues = graphValues,
+                )
+            }
         }
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
@@ -656,7 +665,12 @@ private fun FinanceGraph(
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { x, _, _ ->
         when (walletFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault())
+            YEAR -> Month(x.toInt().coerceIn(1, 12))
+                .getDisplayName(
+                    TextStyle.NARROW_STANDALONE,
+                    Locale.getDefault(),
+                )
+
             else -> x.toInt().toString()
         }
     }
@@ -688,7 +702,7 @@ private fun FinanceGraph(
 
     LaunchedEffect(graphValues) {
         modelProducer.runTransaction {
-            if (graphValues.isNotEmpty()) {
+            if (graphValues.isNotEmpty() && graphValues.keys.size > 1) {
                 columnSeries { series(graphValues.keys, graphValues.values) }
             }
         }
@@ -841,10 +855,12 @@ private fun FilterBySelectedDateTypeRow(
 
         val selectedDate = when (walletFilter.dateType) {
             YEAR -> walletFilter.selectedYear.toString()
-            MONTH -> Month(walletFilter.selectedMonth).getDisplayName(
-                TextStyle.FULL_STANDALONE,
-                Locale.getDefault()
-            )
+            MONTH -> Month(walletFilter.selectedMonth)
+                .getDisplayName(
+                    TextStyle.FULL_STANDALONE,
+                    Locale.getDefault(),
+                )
+                .replaceFirstChar { it.uppercaseChar() }
 
             else -> ""
         }
