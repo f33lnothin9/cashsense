@@ -82,4 +82,5 @@
   <string name="wallet_widget_description">محافظك</string>
   <string name="wallet_widget_title">المحافظ</string>
   <string name="wallet_widget_empty">لا تملك أي محافظ</string>
+  <string name="not_enough_data">Not enough data</string>
 </resources>
