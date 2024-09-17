@@ -628,7 +628,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (walletFilter.dateType != WEEK) {
+        if (walletFilter.dateType != WEEK && graphValues.isNotEmpty()) {
             Box(contentAlignment = Alignment.Center) {
                 if (graphValues.keys.size < 2) {
                     Text(
