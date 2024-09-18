@@ -8,8 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -135,11 +134,11 @@ class WalletDialogViewModel @Inject constructor(
 
     private fun loadWallet() {
         viewModelScope.launch {
-            combine(
-                userDataRepository.userData,
-                walletsRepository.getWallet(_walletDialogUiState.value.id),
-            ) { userData, wallet ->
-                _walletDialogUiState.value.copy(
+            _walletDialogUiState.update { it.copy(isLoading = true) }
+            val userData = userDataRepository.userData.first()
+            val wallet = walletsRepository.getWallet(_walletDialogUiState.value.id).first()
+            _walletDialogUiState.update {
+                it.copy(
                     id = wallet.id,
                     title = wallet.title,
                     initialBalance = wallet.initialBalance.toString(),
@@ -149,24 +148,23 @@ class WalletDialogViewModel @Inject constructor(
                     isLoading = false,
                 )
             }
-                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
-                .catch { _walletDialogUiState.value = WalletDialogUiState() }
-                .collect { _walletDialogUiState.value = it }
         }
     }
 
     private fun clearWalletDialogState() {
         viewModelScope.launch {
             userDataRepository.userData
-                .onStart { _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true) }
-                .collect {
-                    _walletDialogUiState.value = _walletDialogUiState.value.copy(
-                        id = "",
-                        title = "",
-                        initialBalance = "",
-                        isPrimary = false,
-                        currency = it.currency.ifEmpty { "USD" },
-                    )
+                .onStart { _walletDialogUiState.update { it.copy(isLoading = true) } }
+                .collect { userData ->
+                    _walletDialogUiState.update {
+                        it.copy(
+                            id = "",
+                            title = "",
+                            initialBalance = "",
+                            isPrimary = false,
+                            currency = userData.currency.ifEmpty { "USD" },
+                        )
+                    }
                 }
         }
     }
