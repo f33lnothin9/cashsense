@@ -26,12 +26,12 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
-import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -91,19 +91,6 @@ fun TransactionBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
-                        COMPLETED -> stringResource(localesR.string.completed) to CsIcons.CheckCircle
-                        PENDING -> stringResource(localesR.string.pending) to CsIcons.Pending
-                    }
-                    CsTag(
-                        text = statusTag.first,
-                        iconId = statusTag.second,
-                        color = if (transactionDialogState.status == PENDING) {
-                            MaterialTheme.colorScheme.tertiaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.secondaryContainer
-                        }
-                    )
                     if (transactionDialogState.category != null) {
                         CsTag(
                             text = transactionDialogState.category.title.toString(),
@@ -113,6 +100,24 @@ fun TransactionBottomSheet(
                     CsTag(
                         text = transactionDialogState.date.formatDate(DATE_TIME),
                         iconId = CsIcons.Calendar,
+                    )
+                    val statusTag = if (transactionDialogState.status == COMPLETED) {
+                        Triple(
+                            stringResource(localesR.string.completed),
+                            CsIcons.CheckCircle,
+                            MaterialTheme.colorScheme.secondaryContainer,
+                        )
+                    } else {
+                        Triple(
+                            stringResource(localesR.string.pending),
+                            CsIcons.Pending,
+                            MaterialTheme.colorScheme.tertiaryContainer,
+                        )
+                    }
+                    CsTag(
+                        text = statusTag.first,
+                        iconId = statusTag.second,
+                        color = statusTag.third,
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
@@ -132,6 +137,20 @@ fun TransactionBottomSheet(
                                 onTransactionEvent(Save)
                             },
                         )
+                    },
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Redo),
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        onTransactionEvent(Repeat)
+                        onDismiss()
+                        onEdit()
                     },
                 )
                 CsListItem(
