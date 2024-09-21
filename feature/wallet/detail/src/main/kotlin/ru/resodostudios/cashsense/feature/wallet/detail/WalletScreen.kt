@@ -89,6 +89,7 @@ import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
@@ -408,7 +409,8 @@ private fun FinancePanel(
                         val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
                         when (walletState.walletFilter.dateType) {
                             YEAR -> zonedDateTime.monthValue
-                            else -> zonedDateTime.dayOfMonth
+                            MONTH -> zonedDateTime.dayOfMonth
+                            else -> zonedDateTime.dayOfWeek.value
                         }
                     }
                 when (financeType) {
@@ -627,7 +629,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (walletFilter.dateType != WEEK && graphValues.isNotEmpty()) {
+        if (graphValues.isNotEmpty()) {
             Box(contentAlignment = Alignment.Center) {
                 if (graphValues.keys.size < 2) {
                     Text(
@@ -664,13 +666,16 @@ private fun FinanceGraph(
     val modelProducer = remember { CartesianChartModelProducer() }
     val xDateFormatter = CartesianValueFormatter { _, x, _ ->
         when (walletFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12))
-                .getDisplayName(
-                    TextStyle.NARROW_STANDALONE,
-                    Locale.getDefault(),
-                )
+            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
+                TextStyle.NARROW_STANDALONE,
+                Locale.getDefault(),
+            )
 
-            else -> x.toInt().toString()
+            MONTH -> x.toInt().toString()
+            else -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
+                TextStyle.NARROW_STANDALONE,
+                Locale.getDefault(),
+            )
         }
     }
 
