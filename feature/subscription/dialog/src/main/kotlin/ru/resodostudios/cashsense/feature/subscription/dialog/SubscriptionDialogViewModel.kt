@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -125,22 +125,20 @@ class SubscriptionDialogViewModel @Inject constructor(
 
     private fun loadSubscription() {
         viewModelScope.launch {
-            subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
+            val subscription = subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
                 .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
-                .catch { _subscriptionDialogUiState.update { SubscriptionDialogUiState() } }
-                .collect { subscription ->
-                    _subscriptionDialogUiState.update {
-                        SubscriptionDialogUiState(
-                            id = subscription.id,
-                            title = subscription.title,
-                            amount = subscription.amount.toString(),
-                            paymentDate = subscription.paymentDate,
-                            currency = subscription.currency,
-                            isReminderEnabled = subscription.reminder != null,
-                            repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval ?: 0),
-                        )
-                    }
-                }
+                .first()
+            _subscriptionDialogUiState.update {
+                SubscriptionDialogUiState(
+                    id = subscription.id,
+                    title = subscription.title,
+                    amount = subscription.amount.toString(),
+                    paymentDate = subscription.paymentDate,
+                    currency = subscription.currency,
+                    isReminderEnabled = subscription.reminder != null,
+                    repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval ?: 0),
+                )
+            }
         }
     }
 
@@ -148,10 +146,10 @@ class SubscriptionDialogViewModel @Inject constructor(
         viewModelScope.launch {
             userDataRepository.userData
                 .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
-                .collect { subscription ->
+                .collect { userData ->
                     _subscriptionDialogUiState.update {
                         SubscriptionDialogUiState(
-                            currency = subscription.currency.ifEmpty { "USD" },
+                            currency = userData.currency.ifEmpty { "USD" },
                         )
                     }
                 }

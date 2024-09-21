@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -185,29 +184,25 @@ class TransactionDialogViewModel @Inject constructor(
     private fun loadTransaction() {
         viewModelScope.launch {
             if (_transactionDialogUiState.value.transactionId.isNotEmpty()) {
-                val transactionCategory =
-                    transactionsRepository.getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
-                        .onStart {
-                            _transactionDialogUiState.value =
-                                _transactionDialogUiState.value.copy(isLoading = true)
-                        }
-                        .onCompletion {
-                            _transactionDialogUiState.value =
-                                _transactionDialogUiState.value.copy(isLoading = false)
-                        }
-                        .first()
-                _transactionDialogUiState.value = _transactionDialogUiState.value.copy(
-                    transactionId = transactionCategory.transaction.id,
-                    description = transactionCategory.transaction.description.toString(),
-                    amount = transactionCategory.transaction.amount.toString(),
-                    transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
-                    date = transactionCategory.transaction.timestamp,
-                    category = transactionCategory.category,
-                    status = transactionCategory.transaction.status,
-                    ignored = transactionCategory.transaction.ignored,
-                )
+                val transactionCategory = transactionsRepository
+                    .getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
+                    .onStart { _transactionDialogUiState.update { it.copy(isLoading = true) } }
+                    .first()
+                _transactionDialogUiState.update {
+                    it.copy(
+                        transactionId = transactionCategory.transaction.id,
+                        description = transactionCategory.transaction.description.toString(),
+                        amount = transactionCategory.transaction.amount.toString(),
+                        transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
+                        date = transactionCategory.transaction.timestamp,
+                        category = transactionCategory.category,
+                        status = transactionCategory.transaction.status,
+                        ignored = transactionCategory.transaction.ignored,
+                        isLoading = false,
+                    )
+                }
             } else {
-                _transactionDialogUiState.value = TransactionDialogUiState()
+                _transactionDialogUiState.update { TransactionDialogUiState() }
             }
         }
     }
