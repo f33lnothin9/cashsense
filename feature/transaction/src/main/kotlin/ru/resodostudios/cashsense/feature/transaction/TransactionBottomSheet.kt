@@ -32,6 +32,7 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -97,12 +98,10 @@ fun TransactionBottomSheet(
                             iconId = StoredIcon.asRes(transactionDialogState.category.iconId ?: 0),
                         )
                     }
-
                     CsTag(
                         text = transactionDialogState.date.formatDate(DATE_TIME),
                         iconId = CsIcons.Calendar,
                     )
-
                     val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
                         COMPLETED -> stringResource(localesR.string.completed) to CsIcons.CheckCircle
                         PENDING -> stringResource(localesR.string.pending) to CsIcons.Pending
@@ -134,6 +133,20 @@ fun TransactionBottomSheet(
                                 onTransactionEvent(Save)
                             },
                         )
+                    },
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Redo),
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        onTransactionEvent(Repeat)
+                        onDismiss()
+                        onEdit()
                     },
                 )
                 CsListItem(
