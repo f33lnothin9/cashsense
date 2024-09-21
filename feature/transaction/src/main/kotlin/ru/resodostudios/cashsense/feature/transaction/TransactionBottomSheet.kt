@@ -26,7 +26,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
-import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -102,18 +101,23 @@ fun TransactionBottomSheet(
                         text = transactionDialogState.date.formatDate(DATE_TIME),
                         iconId = CsIcons.Calendar,
                     )
-                    val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
-                        COMPLETED -> stringResource(localesR.string.completed) to CsIcons.CheckCircle
-                        PENDING -> stringResource(localesR.string.pending) to CsIcons.Pending
+                    val statusTag = if (transactionDialogState.status == COMPLETED) {
+                        Triple(
+                            stringResource(localesR.string.completed),
+                            CsIcons.CheckCircle,
+                            MaterialTheme.colorScheme.secondaryContainer,
+                        )
+                    } else {
+                        Triple(
+                            stringResource(localesR.string.pending),
+                            CsIcons.Pending,
+                            MaterialTheme.colorScheme.tertiaryContainer,
+                        )
                     }
                     CsTag(
                         text = statusTag.first,
                         iconId = statusTag.second,
-                        color = if (transactionDialogState.status == PENDING) {
-                            MaterialTheme.colorScheme.tertiaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.secondaryContainer
-                        }
+                        color = statusTag.third,
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
