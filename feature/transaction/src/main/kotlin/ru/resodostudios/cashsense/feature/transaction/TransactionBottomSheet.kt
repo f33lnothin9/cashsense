@@ -91,6 +91,18 @@ fun TransactionBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
+                    if (transactionDialogState.category != null) {
+                        CsTag(
+                            text = transactionDialogState.category.title.toString(),
+                            iconId = StoredIcon.asRes(transactionDialogState.category.iconId ?: 0),
+                        )
+                    }
+
+                    CsTag(
+                        text = transactionDialogState.date.formatDate(DATE_TIME),
+                        iconId = CsIcons.Calendar,
+                    )
+
                     val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
                         COMPLETED -> stringResource(localesR.string.completed) to CsIcons.CheckCircle
                         PENDING -> stringResource(localesR.string.pending) to CsIcons.Pending
@@ -103,16 +115,6 @@ fun TransactionBottomSheet(
                         } else {
                             MaterialTheme.colorScheme.secondaryContainer
                         }
-                    )
-                    if (transactionDialogState.category != null) {
-                        CsTag(
-                            text = transactionDialogState.category.title.toString(),
-                            iconId = StoredIcon.asRes(transactionDialogState.category.iconId ?: 0),
-                        )
-                    }
-                    CsTag(
-                        text = transactionDialogState.date.formatDate(DATE_TIME),
-                        iconId = CsIcons.Calendar,
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
