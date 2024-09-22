@@ -82,4 +82,6 @@
   <string name="wallet_widget_description">आपके वॉलेट</string>
   <string name="wallet_widget_title">वॉलेट</string>
   <string name="wallet_widget_empty">आपके पास कोई वॉलेट नहीं है</string>
+  <string name="not_enough_data">पर्याप्त डेटा नहीं है</string>
+  <string name="repeat">दोहराना</string>
 </resources>
