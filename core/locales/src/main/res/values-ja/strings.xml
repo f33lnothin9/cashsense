@@ -82,5 +82,6 @@
   <string name="wallet_widget_description">あなたのウォレット</string>
   <string name="wallet_widget_title">ウォレット</string>
   <string name="wallet_widget_empty">ウォレットがありません</string>
-  <string name="not_enough_data">Not enough data</string>
+  <string name="not_enough_data">データが不足しています</string>
+  <string name="repeat">繰り返す</string>
 </resources>
