@@ -82,5 +82,6 @@
   <string name="wallet_widget_description">Vos portefeuilles</string>
   <string name="wallet_widget_title">Portefeuilles</string>
   <string name="wallet_widget_empty">Vous n\'avez aucun portefeuille</string>
-  <string name="not_enough_data">Not enough data</string>
+  <string name="not_enough_data">Pas assez de données</string>
+  <string name="repeat">Répéter</string>
 </resources>
