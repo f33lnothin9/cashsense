@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 23
-        versionName = "1.0.0-beta02"
+        versionCode = 24
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

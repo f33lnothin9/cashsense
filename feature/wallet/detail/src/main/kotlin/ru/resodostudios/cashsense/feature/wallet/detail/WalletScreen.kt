@@ -13,6 +13,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -69,7 +70,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -78,7 +79,6 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -88,7 +88,8 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
@@ -408,7 +409,8 @@ private fun FinancePanel(
                         val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
                         when (walletState.walletFilter.dateType) {
                             YEAR -> zonedDateTime.monthValue
-                            else -> zonedDateTime.dayOfMonth
+                            MONTH -> zonedDateTime.dayOfMonth
+                            else -> zonedDateTime.dayOfWeek.value
                         }
                     }
                 when (financeType) {
@@ -627,11 +629,19 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (walletFilter.dateType != WEEK) {
-            FinanceGraph(
-                walletFilter = walletFilter,
-                graphValues = graphValues,
-            )
+        if (graphValues.isNotEmpty()) {
+            Box(contentAlignment = Alignment.Center) {
+                if (graphValues.keys.size < 2) {
+                    Text(
+                        text = stringResource(localesR.string.not_enough_data),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+                FinanceGraph(
+                    walletFilter = walletFilter,
+                    graphValues = graphValues,
+                )
+            }
         }
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
@@ -654,13 +664,20 @@ private fun FinanceGraph(
     val scrollState = rememberVicoScrollState()
     val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
     val modelProducer = remember { CartesianChartModelProducer() }
-    val xDateFormatter = CartesianValueFormatter { x, _, _ ->
+    val xDateFormatter = CartesianValueFormatter { _, x, _ ->
         when (walletFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault())
-            else -> x.toInt().toString()
+            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
+                TextStyle.NARROW_STANDALONE,
+                Locale.getDefault(),
+            )
+
+            MONTH -> x.toInt().toString()
+            else -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
+                TextStyle.NARROW_STANDALONE,
+                Locale.getDefault(),
+            )
         }
     }
-    val xItemPlacer = HorizontalAxis.ItemPlacer.default(addExtremeLabelPadding = true)
 
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
@@ -674,7 +691,7 @@ private fun FinanceGraph(
             color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
             background = ShapeComponent(
                 color = MaterialTheme.colorScheme.surfaceVariant.toArgb(),
-                shape = Shape.Pill,
+                shape = CorneredShape.Pill,
                 margins = Dimensions(
                     startDp = 0f,
                     endDp = 0f,
@@ -688,7 +705,7 @@ private fun FinanceGraph(
 
     LaunchedEffect(graphValues) {
         modelProducer.runTransaction {
-            if (graphValues.isNotEmpty()) {
+            if (graphValues.isNotEmpty() && graphValues.keys.size > 1) {
                 columnSeries { series(graphValues.keys, graphValues.values) }
             }
         }
@@ -697,9 +714,9 @@ private fun FinanceGraph(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberColumnCartesianLayer(),
-                bottomAxis = rememberBottomAxis(
+                bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = xDateFormatter,
-                    itemPlacer = xItemPlacer,
+                    itemPlacer = HorizontalAxis.ItemPlacer.aligned(),
                     guideline = null,
                     line = null,
                     tick = rememberAxisTickComponent(
@@ -713,7 +730,6 @@ private fun FinanceGraph(
                 ),
                 marker = marker,
                 fadingEdges = rememberFadingEdges(),
-                horizontalLayout = HorizontalLayout.FullWidth(),
             ),
             modelProducer = modelProducer,
             scrollState = scrollState,
@@ -841,10 +857,12 @@ private fun FilterBySelectedDateTypeRow(
 
         val selectedDate = when (walletFilter.dateType) {
             YEAR -> walletFilter.selectedYear.toString()
-            MONTH -> Month(walletFilter.selectedMonth).getDisplayName(
-                TextStyle.FULL_STANDALONE,
-                Locale.getDefault()
-            )
+            MONTH -> Month(walletFilter.selectedMonth)
+                .getDisplayName(
+                    TextStyle.FULL_STANDALONE,
+                    Locale.getDefault(),
+                )
+                .replaceFirstChar { it.uppercaseChar() }
 
             else -> ""
         }

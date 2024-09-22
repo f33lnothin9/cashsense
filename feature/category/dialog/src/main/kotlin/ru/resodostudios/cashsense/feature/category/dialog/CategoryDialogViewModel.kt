@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -71,17 +70,16 @@ class CategoryDialogViewModel @Inject constructor(
 
     private fun loadCategory() {
         viewModelScope.launch {
-            categoriesRepository.getCategory(_categoryDialogUiState.value.id)
+            val category = categoriesRepository.getCategory(_categoryDialogUiState.value.id)
                 .onStart { _categoryDialogUiState.update { it.copy(isLoading = true) } }
-                .onCompletion { _categoryDialogUiState.update { it.copy(isLoading = false) } }
-                .catch { _categoryDialogUiState.value = CategoryDialogUiState() }
-                .collect {
-                    _categoryDialogUiState.value = CategoryDialogUiState(
-                        id = it.id.toString(),
-                        title = it.title.toString(),
-                        iconId = it.iconId ?: 0,
-                    )
-                }
+                .first()
+            _categoryDialogUiState.update {
+                CategoryDialogUiState(
+                    id = category.id.toString(),
+                    title = category.title.toString(),
+                    iconId = category.iconId ?: 0,
+                )
+            }
         }
     }
 }

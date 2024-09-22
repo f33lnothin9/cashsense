@@ -141,7 +141,7 @@ class WalletViewModel @Inject constructor(
         )
 
     private fun calculateAvailableDates(transactions: List<TransactionWithCategory>) {
-        walletFilterState.update {
+        walletFilterState.update { filterState ->
             val availableYears = transactions
                 .map { it.transaction.timestamp.getZonedDateTime().year }
                 .toSortedSet()
@@ -151,7 +151,7 @@ class WalletViewModel @Inject constructor(
                 .map { it.transaction.timestamp.getZonedDateTime().monthValue }
                 .toSortedSet()
                 .toList()
-            it.copy(
+            filterState.copy(
                 availableYears = availableYears,
                 availableMonths = availableMonths,
             )

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,7 +26,9 @@ import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
+import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Delete
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
@@ -52,7 +53,7 @@ class TransactionDialogViewModel @Inject constructor(
     categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
-    private val walletId = savedStateHandle.getStateFlow(key = WALLET_ID, initialValue = "")
+    private val walletId = savedStateHandle.getStateFlow(key = WALLET_ID_KEY, initialValue = "")
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
     val transactionDialogUiState = _transactionDialogUiState.asStateFlow()
@@ -70,6 +71,7 @@ class TransactionDialogViewModel @Inject constructor(
         when (event) {
             Save -> saveTransaction()
             Delete -> deleteTransaction()
+            Repeat -> repeatTransaction()
             is UpdateTransactionId -> updateTransactionId(event.id)
             is UpdateWalletId -> updateWalletId(event.id)
             is UpdateCurrency -> updateCurrency(event.currency)
@@ -85,17 +87,20 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction() {
         val transaction = Transaction(
-            id = _transactionDialogUiState.value.transactionId.ifEmpty {
-                UUID.randomUUID().toString()
-            },
+            id = _transactionDialogUiState.value.transactionId
+                .ifEmpty { UUID.randomUUID().toString() },
             walletOwnerId = walletId.value,
             description = _transactionDialogUiState.value.description,
             amount = when (_transactionDialogUiState.value.transactionType) {
-                EXPENSE -> _transactionDialogUiState.value.amount.toBigDecimal().let {
-                    if (it > ZERO) it.negate() else it
-                }
+                EXPENSE ->
+                    _transactionDialogUiState.value.amount
+                        .toBigDecimal()
+                        .let { if (it > ZERO) it.negate() else it }
 
-                INCOME -> _transactionDialogUiState.value.amount.toBigDecimal().abs()
+                INCOME ->
+                    _transactionDialogUiState.value.amount
+                        .toBigDecimal()
+                        .abs()
             },
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
@@ -131,7 +136,7 @@ class TransactionDialogViewModel @Inject constructor(
     }
 
     private fun updateWalletId(id: String) {
-        savedStateHandle[WALLET_ID] = id
+        savedStateHandle[WALLET_ID_KEY] = id
     }
 
     private fun updateCurrency(currency: String) {
@@ -182,32 +187,37 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
+    private fun repeatTransaction() {
+        _transactionDialogUiState.update {
+            it.copy(
+                transactionId = "",
+                date = Clock.System.now(),
+            )
+        }
+    }
+
     private fun loadTransaction() {
         viewModelScope.launch {
             if (_transactionDialogUiState.value.transactionId.isNotEmpty()) {
-                val transactionCategory =
-                    transactionsRepository.getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
-                        .onStart {
-                            _transactionDialogUiState.value =
-                                _transactionDialogUiState.value.copy(isLoading = true)
-                        }
-                        .onCompletion {
-                            _transactionDialogUiState.value =
-                                _transactionDialogUiState.value.copy(isLoading = false)
-                        }
-                        .first()
-                _transactionDialogUiState.value = _transactionDialogUiState.value.copy(
-                    transactionId = transactionCategory.transaction.id,
-                    description = transactionCategory.transaction.description.toString(),
-                    amount = transactionCategory.transaction.amount.toString(),
-                    transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
-                    date = transactionCategory.transaction.timestamp,
-                    category = transactionCategory.category,
-                    status = transactionCategory.transaction.status,
-                    ignored = transactionCategory.transaction.ignored,
-                )
+                val transactionCategory = transactionsRepository
+                    .getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
+                    .onStart { _transactionDialogUiState.update { it.copy(isLoading = true) } }
+                    .first()
+                _transactionDialogUiState.update {
+                    it.copy(
+                        transactionId = transactionCategory.transaction.id,
+                        description = transactionCategory.transaction.description.toString(),
+                        amount = transactionCategory.transaction.amount.toString(),
+                        transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
+                        date = transactionCategory.transaction.timestamp,
+                        category = transactionCategory.category,
+                        status = transactionCategory.transaction.status,
+                        ignored = transactionCategory.transaction.ignored,
+                        isLoading = false,
+                    )
+                }
             } else {
-                _transactionDialogUiState.value = TransactionDialogUiState()
+                _transactionDialogUiState.update { TransactionDialogUiState() }
             }
         }
     }
@@ -230,5 +240,3 @@ data class TransactionDialogUiState(
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
 )
-
-private const val WALLET_ID = "walletId"
