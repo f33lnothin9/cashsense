@@ -587,11 +587,11 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             FilterDateTypeSelectorRow(
                 walletFilter = walletFilter,
                 onWalletEvent = onWalletEvent,
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .weight(1f),
             )
-            FilledTonalIconButton(onBackClick) {
+            FilledTonalIconButton(
+                onClick = onBackClick,
+                modifier = Modifier.padding(start = 12.dp),
+            ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Close),
                     contentDescription = null,
