@@ -60,7 +60,9 @@ class WalletWidget : GlanceAppWidget() {
         val walletsRepository = walletsEntryPoint.walletsRepository()
 
         val initialWallets = withContext(Dispatchers.IO) {
-            walletsRepository.getWalletsWithTransactions().first()
+            walletsRepository.getWalletsWithTransactions()
+                .first()
+                .sortedByDescending { it.wallet.id }
         }
 
         provideContent {

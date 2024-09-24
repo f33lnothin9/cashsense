@@ -82,4 +82,6 @@
   <string name="wallet_widget_description">Deine Wallets</string>
   <string name="wallet_widget_title">Wallets</string>
   <string name="wallet_widget_empty">Sie haben keine Wallets</string>
+  <string name="not_enough_data">Nicht genug Daten</string>
+  <string name="repeat">Wiederholen</string>
 </resources>
