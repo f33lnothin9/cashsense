@@ -201,17 +201,13 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        stringResource(localesR.string.expense),
-        stringResource(localesR.string.income_singular),
-    )
-    val chartDirectionIcons = listOf(
-        CsIcons.TrendingDown,
-        CsIcons.TrendingUp,
+        Pair(stringResource(localesR.string.expense), CsIcons.TrendingDown),
+        Pair(stringResource(localesR.string.income_singular), CsIcons.TrendingUp),
     )
     SingleChoiceSegmentedButtonRow(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        transactionTypes.forEachIndexed { index, label ->
+        transactionTypes.forEachIndexed { index, transactionType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -222,7 +218,7 @@ private fun TransactionTypeChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(chartDirectionIcons[index]),
+                            imageVector = ImageVector.vectorResource(transactionType.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -233,7 +229,7 @@ private fun TransactionTypeChoiceRow(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = transactionType.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
