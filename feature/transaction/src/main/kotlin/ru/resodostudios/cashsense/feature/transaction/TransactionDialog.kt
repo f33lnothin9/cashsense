@@ -204,9 +204,7 @@ private fun TransactionTypeChoiceRow(
         Pair(stringResource(localesR.string.expense), CsIcons.TrendingDown),
         Pair(stringResource(localesR.string.income_singular), CsIcons.TrendingUp),
     )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         transactionTypes.forEachIndexed { index, transactionType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
@@ -244,17 +242,11 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        stringResource(localesR.string.completed),
-        stringResource(localesR.string.pending),
+        Pair(stringResource(localesR.string.completed), CsIcons.CheckCircle),
+        Pair(stringResource(localesR.string.pending), CsIcons.Pending),
     )
-    val statusIcons = listOf(
-        CsIcons.CheckCircle,
-        CsIcons.Pending,
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        statusTypes.forEachIndexed { index, label ->
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        statusTypes.forEachIndexed { index, statusType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -265,7 +257,7 @@ private fun TransactionStatusChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(statusIcons[index]),
+                            imageVector = ImageVector.vectorResource(statusType.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -276,7 +268,7 @@ private fun TransactionStatusChoiceRow(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = statusType.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -317,7 +309,6 @@ private fun CategoryExposedDropdownMenuBox(
                             contentDescription = null,
                         )
                     },
-                    maxLines = 1,
                     singleLine = true,
                 )
                 ExposedDropdownMenu(
