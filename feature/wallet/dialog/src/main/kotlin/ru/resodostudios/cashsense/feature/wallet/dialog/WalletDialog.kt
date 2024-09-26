@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -15,10 +16,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -73,19 +75,17 @@ fun WalletDialog(
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
-        val (titleTextField, initialBalanceTextField) = remember { FocusRequester.createRefs() }
+        val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
 
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-        ) {
+        Column(Modifier.verticalScroll(rememberScrollState())) {
             OutlinedTextField(
                 value = walletDialogState.title,
                 onValueChange = { onWalletDialogEvent(UpdateTitle(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
-                    .focusRequester(titleTextField)
-                    .focusProperties { next = initialBalanceTextField },
+                    .focusRequester(focusRequester),
                 label = { Text(stringResource(localesR.string.title)) },
                 placeholder = { Text(stringResource(localesR.string.title) + "*") },
                 supportingText = { Text(stringResource(localesR.string.required)) },
@@ -93,22 +93,27 @@ fun WalletDialog(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
-                maxLines = 1,
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
+                singleLine = true,
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
                 onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.cleanAndValidateAmount().first)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-                    .focusRequester(initialBalanceTextField),
+                    .padding(bottom = 16.dp),
                 label = { Text(stringResource(localesR.string.initial_balance)) },
                 placeholder = { Text("0") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
-                maxLines = 1,
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                ),
+                singleLine = true,
             )
             CurrencyDropdownMenu(
                 currencyName = walletDialogState.currency,
@@ -135,7 +140,7 @@ fun WalletDialog(
         }
         LaunchedEffect(Unit) {
             if (walletDialogState.id.isEmpty()) {
-                titleTextField.requestFocus()
+                focusRequester.requestFocus()
             }
         }
     }
