@@ -633,7 +633,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             ),
             style = MaterialTheme.typography.labelLarge,
         )
-        if (graphValues.isNotEmpty()) {
+        if (graphValues.isNotEmpty() && walletFilter.dateType != ALL) {
             Box(contentAlignment = Alignment.Center) {
                 if (graphValues.keys.size < 2) {
                     Text(
