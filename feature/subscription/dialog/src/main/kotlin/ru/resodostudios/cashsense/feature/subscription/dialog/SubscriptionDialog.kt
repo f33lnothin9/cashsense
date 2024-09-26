@@ -114,7 +114,6 @@ fun SubscriptionDialog(
                 label = { Text(stringResource(localesR.string.title)) },
                 placeholder = { Text(stringResource(localesR.string.title) + "*") },
                 supportingText = { Text(stringResource(localesR.string.required)) },
-                maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
@@ -134,7 +133,6 @@ fun SubscriptionDialog(
                 label = { Text(stringResource(localesR.string.amount)) },
                 placeholder = { Text(stringResource(localesR.string.amount) + "*") },
                 supportingText = { Text(stringResource(localesR.string.required)) },
-                maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),

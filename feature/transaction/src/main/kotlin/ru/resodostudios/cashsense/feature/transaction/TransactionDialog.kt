@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
@@ -34,6 +35,7 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -54,8 +56,8 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
@@ -89,8 +91,7 @@ fun TransactionDialog(
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val isTransactionLoading = transactionDialogState.isLoading
-    val isCategoriesLoading = categoriesState is Loading
+    val isLoading = transactionDialogState.isLoading || categoriesState is Loading
 
     val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.edit_transaction else localesR.string.new_transaction
     val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
@@ -107,13 +108,10 @@ fun TransactionDialog(
         isConfirmEnabled = transactionDialogState.amount.cleanAndValidateAmount().second,
         onDismiss = onDismiss,
     ) {
-        if (isTransactionLoading || isCategoriesLoading) {
-            LoadingState(
-                Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-            )
+        if (isLoading) {
+            LoadingState(Modifier.fillMaxWidth().height(250.dp))
         } else {
+            val focusManager = LocalFocusManager.current
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
             Column(
@@ -134,7 +132,7 @@ fun TransactionDialog(
                     label = { Text(stringResource(localesR.string.amount)) },
                     placeholder = { Text(stringResource(localesR.string.amount) + "*") },
                     supportingText = { Text(stringResource(localesR.string.required)) },
-                    maxLines = 1,
+                    singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(amountTextField)
@@ -164,8 +162,10 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
                     label = { Text(stringResource(localesR.string.description)) },
-                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(descTextField),
