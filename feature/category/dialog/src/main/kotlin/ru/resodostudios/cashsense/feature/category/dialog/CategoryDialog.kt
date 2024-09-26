@@ -65,7 +65,7 @@ fun CategoryDialog(
         onDismiss = onDismiss,
     ) {
         val focusManager = LocalFocusManager.current
-        val titleTextField = remember { FocusRequester() }
+        val focusRequester = remember { FocusRequester() }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -89,12 +89,12 @@ fun CategoryDialog(
                         onClick = { focusManager.clearFocus() },
                     )
                 },
-                modifier = Modifier.focusRequester(titleTextField),
+                modifier = Modifier.focusRequester(focusRequester),
             )
         }
         LaunchedEffect(Unit) {
             if (categoryDialogState.id.isEmpty()) {
-                titleTextField.requestFocus()
+                focusRequester.requestFocus()
             }
         }
     }
