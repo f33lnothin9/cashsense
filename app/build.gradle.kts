@@ -53,6 +53,7 @@ android {
 
 baselineProfile {
     automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }
 
 dependencies {
