@@ -37,7 +37,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
-import java.util.UUID
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
@@ -108,9 +108,9 @@ internal fun HomeListDetailScreen(
         mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
-        stateSaver = Saver({ it.toString() }, UUID::fromString),
+        stateSaver = Saver({ it.toString() }, Uuid::parse),
     ) {
-        mutableStateOf(UUID.randomUUID())
+        mutableStateOf(Uuid.random())
     }
     val nestedNavController = key(nestedNavKey) {
         rememberNavController()
@@ -125,7 +125,7 @@ internal fun HomeListDetailScreen(
                 }
             } else {
                 nestedNavHostStartRoute = WalletRoute(walletId = walletId)
-                nestedNavKey = UUID.randomUUID()
+                nestedNavKey = Uuid.random()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         } else if (listDetailNavigator.isDetailPaneVisible()) {

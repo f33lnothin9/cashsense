@@ -43,8 +43,8 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.INCOME
 import java.math.BigDecimal.ZERO
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class TransactionDialogViewModel @Inject constructor(
@@ -87,7 +87,7 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction() {
         val transaction = Transaction(
-            id = _transactionDialogUiState.value.transactionId.ifEmpty { UUID.randomUUID().toString() },
+            id = _transactionDialogUiState.value.transactionId.ifEmpty { Uuid.random().toString() },
             walletOwnerId = walletId.value,
             description = _transactionDialogUiState.value.description,
             amount = _transactionDialogUiState.value.amount
