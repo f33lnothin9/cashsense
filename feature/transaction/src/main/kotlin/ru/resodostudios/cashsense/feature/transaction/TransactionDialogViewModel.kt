@@ -87,21 +87,12 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction() {
         val transaction = Transaction(
-            id = _transactionDialogUiState.value.transactionId
-                .ifEmpty { UUID.randomUUID().toString() },
+            id = _transactionDialogUiState.value.transactionId.ifEmpty { UUID.randomUUID().toString() },
             walletOwnerId = walletId.value,
             description = _transactionDialogUiState.value.description,
-            amount = when (_transactionDialogUiState.value.transactionType) {
-                EXPENSE ->
-                    _transactionDialogUiState.value.amount
-                        .toBigDecimal()
-                        .let { if (it > ZERO) it.negate() else it }
-
-                INCOME ->
-                    _transactionDialogUiState.value.amount
-                        .toBigDecimal()
-                        .abs()
-            },
+            amount = _transactionDialogUiState.value.amount
+                .toBigDecimal()
+                .run { if (_transactionDialogUiState.value.transactionType == EXPENSE) negate() else abs() },
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
             ignored = _transactionDialogUiState.value.ignored,
@@ -207,7 +198,7 @@ class TransactionDialogViewModel @Inject constructor(
                     it.copy(
                         transactionId = transactionCategory.transaction.id,
                         description = transactionCategory.transaction.description.toString(),
-                        amount = transactionCategory.transaction.amount.toString(),
+                        amount = transactionCategory.transaction.amount.abs().toString(),
                         transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
                         date = transactionCategory.transaction.timestamp,
                         category = transactionCategory.category,
