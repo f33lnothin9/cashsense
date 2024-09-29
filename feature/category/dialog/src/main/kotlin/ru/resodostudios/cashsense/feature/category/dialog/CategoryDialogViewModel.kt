@@ -15,8 +15,8 @@ import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.Sa
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateIcon
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateTitle
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class CategoryDialogViewModel @Inject constructor(
@@ -37,7 +37,7 @@ class CategoryDialogViewModel @Inject constructor(
 
     private fun saveCategory() {
         val category = Category(
-            id = _categoryDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+            id = _categoryDialogUiState.value.id.ifEmpty { Uuid.random().toString() },
             title = _categoryDialogUiState.value.title,
             iconId = _categoryDialogUiState.value.iconId,
         )

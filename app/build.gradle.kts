@@ -32,7 +32,7 @@ android {
             applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
             signingConfig = signingConfigs.named("debug").get()
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
     androidResources {
@@ -53,6 +53,7 @@ android {
 
 baselineProfile {
     automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }
 
 dependencies {

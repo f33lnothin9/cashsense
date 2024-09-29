@@ -25,8 +25,8 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.NONE
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class SubscriptionDialogViewModel @Inject constructor(
@@ -45,8 +45,7 @@ class SubscriptionDialogViewModel @Inject constructor(
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
             SubscriptionDialogEvent.Save -> {
-                val subscriptionId = _subscriptionDialogUiState.value.id
-                    .ifEmpty { UUID.randomUUID().toString() }
+                val subscriptionId = _subscriptionDialogUiState.value.id.ifEmpty { Uuid.random().toString() }
                 var reminder: Reminder? = null
 
                 if (_subscriptionDialogUiState.value.isReminderEnabled) {

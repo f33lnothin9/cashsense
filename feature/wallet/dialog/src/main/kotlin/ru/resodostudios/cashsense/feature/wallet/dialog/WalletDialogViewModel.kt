@@ -25,8 +25,8 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import java.math.BigDecimal.ZERO
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @HiltViewModel
@@ -60,7 +60,7 @@ class WalletDialogViewModel @Inject constructor(
 
     private fun saveWallet() {
         val wallet = Wallet(
-            id = _walletDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+            id = _walletDialogUiState.value.id.ifEmpty { Uuid.random().toString() },
             title = _walletDialogUiState.value.title,
             initialBalance = if (_walletDialogUiState.value.initialBalance.isEmpty()) {
                 ZERO
