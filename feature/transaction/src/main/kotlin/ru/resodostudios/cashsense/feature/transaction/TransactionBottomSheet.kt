@@ -34,6 +34,7 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
+import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -65,11 +66,7 @@ fun TransactionBottomSheet(
 ) {
     CsModalBottomSheet(onDismiss) {
         if (transactionDialogState.isLoading) {
-            LoadingState(
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth()
-            )
+            LoadingState(Modifier.height(100.dp).fillMaxWidth())
         } else {
             Column {
                 CsListItem(
@@ -77,6 +74,7 @@ fun TransactionBottomSheet(
                         Text(
                             text = transactionDialogState.amount
                                 .toBigDecimal()
+                                .run { if (transactionDialogState.transactionType == EXPENSE) negate() else abs() }
                                 .formatAmount(transactionDialogState.currency, true)
                         )
                     },
