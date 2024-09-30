@@ -187,7 +187,7 @@ fun TransactionDialog(
                 )
             }
             LaunchedEffect(Unit) {
-                if (transactionDialogState.transactionId.isEmpty()) {
+                if (transactionDialogState.amount.isEmpty()) {
                     amountTextField.requestFocus()
                 }
             }
