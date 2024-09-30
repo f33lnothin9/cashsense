@@ -3,6 +3,7 @@
   <string name="currency">العملة</string>
   <string name="ok">موافق</string>
   <string name="cancel">إلغاء</string>
+  <string name="search_currency">بحث العملة</string>
   <string name="icon_and_title">الأيقونة والعنوان</string>
   <string name="date">التاريخ</string>
   <string name="undo">تراجع</string>
@@ -84,4 +85,5 @@
   <string name="wallet_widget_empty">لا تملك أي محافظ</string>
   <string name="not_enough_data">البيانات غير كافية</string>
   <string name="repeat">تكرار</string>
+  <string name="currency_not_found">العملة غير موجودة!!!</string>
 </resources>

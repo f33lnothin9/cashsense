@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="currency">Waluta</string>
-  <string name="ok">OK</string>
+    <string name="search_currency">Wyszukaj walutę</string>
+    <string name="ok">OK</string>
   <string name="cancel">Anuluj</string>
   <string name="icon_and_title">Ikona i Tytuł</string>
   <string name="date">Data</string>
@@ -84,4 +85,5 @@
   <string name="wallet_widget_empty">Nie masz żadnych portfeli</string>
   <string name="not_enough_data">Niewystarczające dane</string>
   <string name="repeat">Powtórz</string>
+    <string name="currency_not_found">Waluta nieznaleziona!!!</string>
 </resources>

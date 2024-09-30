@@ -3,6 +3,7 @@
   <string name="currency">Moneda</string>
   <string name="ok">Ok</string>
   <string name="cancel">Cancelar</string>
+  <string name="search_currency">Buscar moneda</string>
   <string name="icon_and_title">Icono &amp; Título</string>
   <string name="date">Fecha</string>
   <string name="undo">Deshacer</string>
@@ -84,4 +85,5 @@
   <string name="wallet_widget_empty">No tienes ninguna cartera</string>
   <string name="not_enough_data">Datos insuficientes</string>
   <string name="repeat">Repetir</string>
+  <string name="currency_not_found">Валюта не найдена!!!</string>
 </resources>

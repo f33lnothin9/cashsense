@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="currency">通貨</string>
-  <string name="ok">OK</string>
+    <string name="search_currency">検索通貨</string>
+    <string name="ok">OK</string>
   <string name="cancel">キャンセル</string>
   <string name="icon_and_title">アイコン &amp; タイトル</string>
   <string name="date">日付</string>
@@ -84,4 +85,5 @@
   <string name="wallet_widget_empty">ウォレットがありません</string>
   <string name="not_enough_data">データが不足しています</string>
   <string name="repeat">繰り返す</string>
+    <string name="currency_not_found">通貨が見つかりません!!!</string>
 </resources>
