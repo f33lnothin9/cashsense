@@ -99,7 +99,7 @@ fun TransactionBottomSheet(
                         text = transactionDialogState.date.formatDate(DATE_TIME),
                         iconId = CsIcons.Calendar,
                     )
-                    val statusTag = if (transactionDialogState.status == COMPLETED) {
+                    val transactionStatusTag = if (transactionDialogState.status == COMPLETED) {
                         Triple(
                             stringResource(localesR.string.completed),
                             CsIcons.CheckCircle,
@@ -113,9 +113,9 @@ fun TransactionBottomSheet(
                         )
                     }
                     CsTag(
-                        text = statusTag.first,
-                        iconId = statusTag.second,
-                        color = statusTag.third,
+                        text = transactionStatusTag.first,
+                        iconId = transactionStatusTag.second,
+                        color = transactionStatusTag.third,
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
