@@ -26,15 +26,15 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
-import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionBottomSheet(
@@ -91,19 +91,6 @@ fun TransactionBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    val statusTag: Pair<String, Int> = when (transactionDialogState.status) {
-                        COMPLETED -> stringResource(R.string.feature_transaction_status_completed) to CsIcons.CheckCircle
-                        PENDING -> stringResource(R.string.feature_transaction_status_pending) to CsIcons.Pending
-                    }
-                    CsTag(
-                        text = statusTag.first,
-                        iconId = statusTag.second,
-                        color = if (transactionDialogState.status == PENDING) {
-                            MaterialTheme.colorScheme.tertiaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.secondaryContainer
-                        }
-                    )
                     if (transactionDialogState.category != null) {
                         CsTag(
                             text = transactionDialogState.category.title.toString(),
@@ -114,10 +101,28 @@ fun TransactionBottomSheet(
                         text = transactionDialogState.date.formatDate(DATE_TIME),
                         iconId = CsIcons.Calendar,
                     )
+                    val statusTag = if (transactionDialogState.status == COMPLETED) {
+                        Triple(
+                            stringResource(localesR.string.completed),
+                            CsIcons.CheckCircle,
+                            MaterialTheme.colorScheme.secondaryContainer,
+                        )
+                    } else {
+                        Triple(
+                            stringResource(localesR.string.pending),
+                            CsIcons.Pending,
+                            MaterialTheme.colorScheme.tertiaryContainer,
+                        )
+                    }
+                    CsTag(
+                        text = statusTag.first,
+                        iconId = statusTag.second,
+                        color = statusTag.third,
+                    )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Block),
@@ -135,7 +140,21 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_edit)) },
+                    headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Redo),
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        onTransactionEvent(Repeat)
+                        onDismiss()
+                        onEdit()
+                    },
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -148,7 +167,7 @@ fun TransactionBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_delete)) },
+                    headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

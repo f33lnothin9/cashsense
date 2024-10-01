@@ -1,5 +1,0 @@
-<resources>
-    <string name="wallet_widget_description">Your wallets</string>
-    <string name="wallet_widget_title">Wallets</string>
-    <string name="wallet_widget_empty">You don\'t have any wallets</string>
-</resources>

@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,8 +15,8 @@ import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.Sa
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateIcon
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateTitle
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class CategoryDialogViewModel @Inject constructor(
@@ -38,7 +37,7 @@ class CategoryDialogViewModel @Inject constructor(
 
     private fun saveCategory() {
         val category = Category(
-            id = _categoryDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() },
+            id = _categoryDialogUiState.value.id.ifEmpty { Uuid.random().toString() },
             title = _categoryDialogUiState.value.title,
             iconId = _categoryDialogUiState.value.iconId,
         )
@@ -71,17 +70,16 @@ class CategoryDialogViewModel @Inject constructor(
 
     private fun loadCategory() {
         viewModelScope.launch {
-            categoriesRepository.getCategory(_categoryDialogUiState.value.id)
+            val category = categoriesRepository.getCategory(_categoryDialogUiState.value.id)
                 .onStart { _categoryDialogUiState.update { it.copy(isLoading = true) } }
-                .onCompletion { _categoryDialogUiState.update { it.copy(isLoading = false) } }
-                .catch { _categoryDialogUiState.value = CategoryDialogUiState() }
-                .collect {
-                    _categoryDialogUiState.value = CategoryDialogUiState(
-                        id = it.id.toString(),
-                        title = it.title.toString(),
-                        iconId = it.iconId ?: 0,
-                    )
-                }
+                .first()
+            _categoryDialogUiState.update {
+                CategoryDialogUiState(
+                    id = category.id.toString(),
+                    title = category.title.toString(),
+                    iconId = category.iconId ?: 0,
+                )
+            }
         }
     }
 }

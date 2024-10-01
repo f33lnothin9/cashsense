@@ -1,21 +1,18 @@
 [versions]
 aboutLibraries = "11.2.3"
-accompanist = "0.35.2-beta"
-androidGradlePlugin = "8.6.0"
-androidxActivityCompose = "1.9.1"
+accompanist = "0.36.0"
+androidGradlePlugin = "8.6.1"
+androidxActivityCompose = "1.9.2"
 androidxBrowser = "1.8.0"
-androidxCompose = "1.7.0-rc01"
-androidxComposeMaterial3 = "1.3.0-rc01"
-androidxComposeMaterial3Adaptive = "1.0.0-rc01"
 androidxCore = "1.13.1"
-androidxCoreSplashscreen = "1.2.0-alpha01"
+androidxCoreSplashscreen = "1.2.0-alpha02"
 androidxDataStore = "1.1.1"
 androidxGlance = "1.1.0"
 androidxHiltNavigationCompose = "1.2.0"
-androidxLifecycle = "2.8.4"
-androidxMacroBenchmark = "1.3.0"
-androidxNavigation = "2.8.0-rc01"
-androidxProfileinstaller = "1.4.0-beta01"
+androidxLifecycle = "2.8.6"
+androidxMacroBenchmark = "1.3.1"
+androidxNavigation = "2.8.1"
+androidxProfileinstaller = "1.4.0"
 androidxTestCore = "1.6.1"
 androidxTestEspresso = "3.6.1"
 androidxTestExt = "1.2.1"
@@ -23,22 +20,22 @@ androidxTestRules = "1.6.1"
 androidxTestRunner = "1.6.2"
 androidxTestUiAutomator = "2.3.0"
 androidxTracing = "1.3.0-alpha02"
-composeBom = "2024.08.00"
-firebaseBom = "33.2.0"
+composeBom = "2024.09.02"
+firebaseBom = "33.3.0"
 firebaseCrashlyticsPlugin = "3.0.2"
 firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.4.2"
 kotlin = "2.0.20"
 hilt = "2.52"
-kotlinxCoroutines = "1.9.0-RC.2"
+kotlinxCoroutines = "1.9.0"
 kotlinxDatetime = "0.6.1"
-kotlinxSerializationJson = "1.7.2"
-ksp = "2.0.20-1.0.24"
-lottie = "6.5.0"
+kotlinxSerializationJson = "1.7.3"
+ksp = "2.0.20-1.0.25"
+lottie = "6.5.2"
 protobuf = "4.26.1"
 protobufPlugin = "0.9.4"
-room = "2.7.0-alpha07"
-vico = "2.0.0-alpha.28"
+room = "2.7.0-alpha08"
+vico = "2.0.0-beta.1"
 
 [libraries]
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
@@ -48,17 +45,17 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
-androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
-androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "androidxComposeMaterial3Adaptive" }
-androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "androidxCompose" }
-androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "androidxCompose" }
-androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "androidxCompose" }
-androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "androidxCompose" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "androidxCompose" }
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidxCompose" }
-androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util", version.ref = "androidxCompose" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive" }
+androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation" }
+androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
+androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
@@ -101,9 +98,9 @@ vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = 
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
-kotlin-compose-compiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
@@ -114,11 +111,11 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark"}
+compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -126,13 +123,13 @@ protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 room = { id = "androidx.room", version.ref = "room" }
 
 # Plugins defined by this project
-cashsense-android-application = { id = "cashsense.android.application", version = "unspecified" }
-cashsense-android-application-compose = { id = "cashsense.android.application.compose", version = "unspecified" }
-cashsense-android-application-firebase = { id = "cashsense.android.application.firebase", version = "unspecified" }
-cashsense-android-feature = { id = "cashsense.android.feature", version = "unspecified" }
-cashsense-android-library = { id = "cashsense.android.library", version = "unspecified" }
-cashsense-android-library-compose = { id = "cashsense.android.library.compose", version = "unspecified" }
-cashsense-android-room = { id = "cashsense.android.room", version = "unspecified" }
-cashsense-android-test = { id = "cashsense.android.test", version = "unspecified" }
-cashsense-hilt = { id = "cashsense.hilt", version = "unspecified" }
-cashsense-jvm-library = { id = "cashsense.jvm.library", version = "unspecified" }
+cashsense-android-application = { id = "cashsense.android.application" }
+cashsense-android-application-compose = { id = "cashsense.android.application.compose" }
+cashsense-android-application-firebase = { id = "cashsense.android.application.firebase" }
+cashsense-android-feature = { id = "cashsense.android.feature" }
+cashsense-android-library = { id = "cashsense.android.library" }
+cashsense-android-library-compose = { id = "cashsense.android.library.compose" }
+cashsense-android-room = { id = "cashsense.android.room" }
+cashsense-android-test = { id = "cashsense.android.test" }
+cashsense-hilt = { id = "cashsense.hilt" }
+cashsense-jvm-library = { id = "cashsense.jvm.library" }

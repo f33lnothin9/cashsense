@@ -10,7 +10,7 @@ android {
 
 dependencies {
     implementation(projects.core.data)
-    implementation(projects.core.ui)
+    implementation(projects.core.locales)
 
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose)

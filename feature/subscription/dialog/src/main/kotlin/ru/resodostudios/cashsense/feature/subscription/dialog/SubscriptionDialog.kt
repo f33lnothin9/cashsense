@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
@@ -26,10 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -47,8 +49,8 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
@@ -56,7 +58,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateReminderSwitch
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateRepeatingInterval
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateTitle
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun SubscriptionDialog(
@@ -78,29 +80,26 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle =
-        if (subscriptionDialogState.id.isNotEmpty()) R.string.feature_subscription_dialog_edit else R.string.feature_subscription_dialog_new
-    val dialogConfirmText =
-        if (subscriptionDialogState.id.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.edit_subscription else localesR.string.new_subscription
+    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.AutoRenew,
         onConfirm = {
             onSubscriptionEvent(Save)
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
-                subscriptionDialogState.amount.validateAmount().second,
+                subscriptionDialogState.amount.cleanAndValidateAmount().second,
         onDismiss = onDismiss,
     ) {
-        val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
+        val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
 
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-        ) {
+        Column(Modifier.verticalScroll(rememberScrollState())) {
             OutlinedTextField(
                 value = subscriptionDialogState.title,
                 onValueChange = { onSubscriptionEvent(UpdateTitle(it)) },
@@ -108,42 +107,35 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
-                label = { Text(stringResource(uiR.string.core_ui_title)) },
-                placeholder = { Text(stringResource(uiR.string.core_ui_title) + "*") },
-                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
-                maxLines = 1,
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                ),
+                singleLine = true,
+                label = { Text(stringResource(localesR.string.title)) },
+                placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                supportingText = { Text(stringResource(localesR.string.required)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
-                    .focusRequester(titleTextField)
-                    .focusProperties { next = amountTextField },
+                    .focusRequester(focusRequester),
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
-                onValueChange = { onSubscriptionEvent(UpdateAmount(it.validateAmount().first)) },
+                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
-                label = { Text(stringResource(uiR.string.core_ui_amount)) },
-                placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
-                supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
-                maxLines = 1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-                    .focusRequester(amountTextField),
-            )
-            DatePickerTextField(
-                value = subscriptionDialogState.paymentDate.formatDate(),
-                labelTextId = R.string.feature_subscription_dialog_payment_date,
-                iconId = CsIcons.Calendar,
-                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() },
+                ),
+                singleLine = true,
+                label = { Text(stringResource(localesR.string.amount)) },
+                placeholder = { Text(stringResource(localesR.string.amount) + "*") },
+                supportingText = { Text(stringResource(localesR.string.required)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
-                isAllDatesEnabled = false,
             )
             CurrencyDropdownMenu(
                 currencyName = subscriptionDialogState.currency,
@@ -152,9 +144,20 @@ fun SubscriptionDialog(
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
             )
+            DatePickerTextField(
+                value = subscriptionDialogState.paymentDate.formatDate(),
+                labelTextId = localesR.string.payment_date,
+                iconId = CsIcons.Calendar,
+                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
+                isAllDatesEnabled = false,
+            )
             CsListItem(
-                headlineContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder)) },
-                supportingContent = { Text(stringResource(R.string.feature_subscription_dialog_reminder_description)) },
+                headlineContent = { Text(stringResource(localesR.string.reminder)) },
+                supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Notifications),
@@ -180,7 +183,7 @@ fun SubscriptionDialog(
         }
         LaunchedEffect(Unit) {
             if (subscriptionDialogState.id.isEmpty()) {
-                titleTextField.requestFocus()
+                focusRequester.requestFocus()
             }
         }
 
@@ -196,11 +199,11 @@ fun RepeatingIntervalDropdownMenu(
     modifier: Modifier = Modifier,
 ) {
     val intervalNames = listOf(
-        stringResource(R.string.feature_subscription_dialog_repeat_none),
-        stringResource(R.string.feature_subscription_dialog_repeat_daily),
-        stringResource(R.string.feature_subscription_dialog_repeat_weekly),
-        stringResource(R.string.feature_subscription_dialog_repeat_monthly),
-        stringResource(R.string.feature_subscription_dialog_repeat_yearly),
+        stringResource(localesR.string.repeat_none),
+        stringResource(localesR.string.repeat_daily),
+        stringResource(localesR.string.repeat_weekly),
+        stringResource(localesR.string.repeat_monthly),
+        stringResource(localesR.string.repeat_yearly),
     )
     var expanded by remember { mutableStateOf(false) }
 
@@ -218,7 +221,7 @@ fun RepeatingIntervalDropdownMenu(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
             ),
-            label = { Text(stringResource(R.string.feature_subscription_dialog_repeating_interval)) },
+            label = { Text(stringResource(localesR.string.repeating_interval)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
         ExposedDropdownMenu(

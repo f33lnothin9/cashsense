@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,14 +25,14 @@ internal fun LicensesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.feature_settings_licenses)) },
+                title = { Text(stringResource(localesR.string.licenses)) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBackClick,
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
-                            contentDescription = stringResource(uiR.string.core_ui_navigation_back_icon_description),
+                            contentDescription = stringResource(localesR.string.navigation_back_icon_description),
                         )
                     }
                 }

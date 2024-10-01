@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 22
-        versionName = "1.0.0"
+        versionCode = 25
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -32,7 +32,7 @@ android {
             applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
             signingConfig = signingConfigs.named("debug").get()
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
     androidResources {
@@ -53,6 +53,7 @@ android {
 
 baselineProfile {
     automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }
 
 dependencies {

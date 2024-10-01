@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="feature_home_title">Home</string>
-    <string name="feature_home_wallet_deleted">Wallet deleted</string>
-    <string name="feature_home_wallet_menu_icon_description">Wallet menu</string>
-    <string name="feature_home_empty">Nothing in Wallets</string>
-</resources>

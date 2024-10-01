@@ -1,5 +1,5 @@
 <div style="display:flex">
-<a href='https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+<a href='https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense'>
     <img alt="Get it on Google Play" src="docs/images/badges/google-play-badge.png" height="80"/>
   </a>
   <a href="https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense">
@@ -32,6 +32,10 @@ It's a mobile app designed to help users manage their finances effectively. Whet
 * [Jetpack Compose][4]
 * [Lottie][5]
 
+# Localization
+
+If you'd like to contribute to translating this app, you can [join][6] our localization efforts on [Crowdin][7]. Your contributions will help ensure that everyone can enjoy the app in their native language.
+
 # Contributing
 
 Contributions are welcome! If you have any improvements or bug fixes in mind, feel free to submit a pull request.
@@ -46,3 +50,5 @@ Contributions are welcome! If you have any improvements or bug fixes in mind, fe
 [3]: https://developer.android.com/reference/kotlin/androidx/compose/material3/adaptive/navigation/suite/package-summary
 [4]: https://developer.android.com/jetpack/compose
 [5]: https://github.com/airbnb/lottie/blob/master/android-compose.md
+[6]: https://crowdin.com/project/cashsense/invite?h=d573fbd44b6bcf6bfc0dfbbfb3bf800f2198579
+[7]: https://crowdin.com/

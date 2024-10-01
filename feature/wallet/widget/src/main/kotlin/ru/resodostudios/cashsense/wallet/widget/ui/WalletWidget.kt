@@ -14,6 +14,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
@@ -47,9 +49,8 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 class WalletWidget : GlanceAppWidget() {
 
@@ -61,7 +62,9 @@ class WalletWidget : GlanceAppWidget() {
         val walletsRepository = walletsEntryPoint.walletsRepository()
 
         val initialWallets = withContext(Dispatchers.IO) {
-            walletsRepository.getWalletsWithTransactions().first()
+            walletsRepository.getWalletsWithTransactions()
+                .first()
+                .sortedByDescending { it.wallet.id }
         }
 
         provideContent {
@@ -80,7 +83,8 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
         titleBar = {
             TitleBar(
                 startIcon = ImageProvider(CsIcons.Wallet),
-                title = LocalContext.current.getString(R.string.wallet_widget_title),
+                title = LocalContext.current.getString(localesR.string.wallet_widget_title),
+                modifier = GlanceModifier.clickable(openHomeScreen()),
             )
         },
         modifier = GlanceModifier.cornerRadius(16.dp),
@@ -96,15 +100,18 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                             .toLong()
                     }
                 ) { walletPopulated ->
+                    val sumOfTransactions = walletPopulated.transactionsWithCategories
+                        .sumOf { it.transaction.amount }
                     val currentBalance = walletPopulated.wallet.initialBalance
-                        .plus(walletPopulated.transactionsWithCategories
-                            .sumOf { it.transaction.amount })
+                        .plus(sumOfTransactions)
 
                     WalletItem(
                         walletId = walletPopulated.wallet.id,
                         title = walletPopulated.wallet.title,
                         currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                        modifier = GlanceModifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                        modifier = GlanceModifier
+                            .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
+                            .clickable(openHomeScreen(walletPopulated.wallet.id)),
                     )
                 }
             }
@@ -114,7 +121,7 @@ private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategorie
                 modifier = GlanceModifier.fillMaxSize(),
             ) {
                 Text(
-                    text = LocalContext.current.getString(R.string.wallet_widget_empty),
+                    text = LocalContext.current.getString(localesR.string.wallet_widget_empty),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -161,17 +168,8 @@ fun WalletItem(
         }
         CircleIconButton(
             imageProvider = ImageProvider(CsIcons.Add),
-            onClick = actionStartActivity(
-                Intent().apply {
-                    action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/true".toUri()
-                    component = ComponentName(
-                        LocalContext.current.packageName,
-                        TARGET_ACTIVITY_NAME,
-                    )
-                }
-            ),
-            contentDescription = LocalContext.current.getString(uiR.string.core_ui_add),
+            onClick = openHomeScreen(walletId, true),
+            contentDescription = LocalContext.current.getString(localesR.string.add),
         )
     }
 }
@@ -184,3 +182,17 @@ fun WalletWidgetPreview() {
         WalletWidgetContent(wallets = emptyList())
     }
 }
+@Composable
+private fun openHomeScreen(
+    walletId: String? = null,
+    startAddTransaction: Boolean = false,
+): Action = actionStartActivity(
+    Intent().apply {
+        action = Intent.ACTION_VIEW
+        data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/$startAddTransaction".toUri()
+        component = ComponentName(
+            LocalContext.current.packageName,
+            TARGET_ACTIVITY_NAME,
+        )
+    }
+)

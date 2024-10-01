@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.Keep
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -36,13 +37,17 @@ import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
-import java.util.UUID
+import kotlin.uuid.Uuid
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
-private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH"
+private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
 
+// TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
+@Keep
 @Serializable
 internal object WalletPlaceholderRoute
 
+@Keep
 @Serializable
 internal object DetailPaneNavHostRoute
 
@@ -51,7 +56,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 ) {
     composable<HomeRoute>(
         deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = "$DEEP_LINK_BASE_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"),
+            navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
         ),
     ) {
         HomeListDetailScreen(
@@ -103,9 +108,9 @@ internal fun HomeListDetailScreen(
         mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
-        stateSaver = Saver({ it.toString() }, UUID::fromString),
+        stateSaver = Saver({ it.toString() }, Uuid::parse),
     ) {
-        mutableStateOf(UUID.randomUUID())
+        mutableStateOf(Uuid.random())
     }
     val nestedNavController = key(nestedNavKey) {
         rememberNavController()
@@ -120,7 +125,7 @@ internal fun HomeListDetailScreen(
                 }
             } else {
                 nestedNavHostStartRoute = WalletRoute(walletId = walletId)
-                nestedNavKey = UUID.randomUUID()
+                nestedNavKey = Uuid.random()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         } else if (listDetailNavigator.isDetailPaneVisible()) {
@@ -157,7 +162,7 @@ internal fun HomeListDetailScreen(
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(
-                                messageRes = R.string.feature_wallet_detail_select_wallet,
+                                messageRes = localesR.string.select_wallet,
                                 animationRes = R.raw.anim_select_wallet,
                             )
                         }

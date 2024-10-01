@@ -49,6 +49,7 @@ object CsIcons {
     val Pill = R.drawable.ic_outlined_pill
     val Policy = R.drawable.ic_outlined_policy
     val ReceiptLong = R.drawable.ic_outlined_receipt_long
+    val Redo = R.drawable.ic_outlined_redo
     val Restaurant = R.drawable.ic_outlined_restaurant
     val School = R.drawable.ic_outlined_school
     val SelfCare = R.drawable.ic_outlined_self_care

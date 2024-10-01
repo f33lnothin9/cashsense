@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
@@ -34,6 +35,7 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -54,8 +56,8 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.core.ui.validateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
@@ -64,7 +66,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionDialog(
@@ -89,33 +91,27 @@ fun TransactionDialog(
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val isTransactionLoading = transactionDialogState.isLoading
-    val isCategoriesLoading = categoriesState is Loading
+    val isLoading = transactionDialogState.isLoading || categoriesState is Loading
 
-    val dialogTitle =
-        if (transactionDialogState.transactionId.isNotEmpty()) R.string.feature_transaction_edit_transaction else R.string.feature_transaction_new_transaction
-    val dialogConfirmText =
-        if (transactionDialogState.transactionId.isNotEmpty()) uiR.string.core_ui_save else uiR.string.core_ui_add
+    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.edit_transaction else localesR.string.new_transaction
+    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
-        dismissButtonTextRes = uiR.string.core_ui_cancel,
+        dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.ReceiptLong,
         onConfirm = {
             onTransactionEvent(Save)
             onDismiss()
         },
-        isConfirmEnabled = transactionDialogState.amount.validateAmount().second,
+        isConfirmEnabled = transactionDialogState.amount.cleanAndValidateAmount().second,
         onDismiss = onDismiss,
     ) {
-        if (isTransactionLoading || isCategoriesLoading) {
-            LoadingState(
-                Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-            )
+        if (isLoading) {
+            LoadingState(Modifier.fillMaxWidth().height(250.dp))
         } else {
+            val focusManager = LocalFocusManager.current
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
             Column(
@@ -128,15 +124,15 @@ fun TransactionDialog(
                 )
                 OutlinedTextField(
                     value = transactionDialogState.amount,
-                    onValueChange = { onTransactionEvent(UpdateAmount(it.validateAmount().first)) },
+                    onValueChange = { onTransactionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    label = { Text(stringResource(uiR.string.core_ui_amount)) },
-                    placeholder = { Text(stringResource(uiR.string.core_ui_amount) + "*") },
-                    supportingText = { Text(stringResource(uiR.string.core_ui_required)) },
-                    maxLines = 1,
+                    label = { Text(stringResource(localesR.string.amount)) },
+                    placeholder = { Text(stringResource(localesR.string.amount) + "*") },
+                    supportingText = { Text(stringResource(localesR.string.required)) },
+                    singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(amountTextField)
@@ -153,7 +149,7 @@ fun TransactionDialog(
                 )
                 DatePickerTextField(
                     value = transactionDialogState.date.formatDate(),
-                    labelTextId = uiR.string.core_ui_date,
+                    labelTextId = localesR.string.date,
                     iconId = CsIcons.Calendar,
                     modifier = Modifier.fillMaxWidth(),
                     initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
@@ -166,14 +162,16 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(stringResource(uiR.string.core_ui_description)) },
-                    maxLines = 1,
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
+                    label = { Text(stringResource(localesR.string.description)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(descTextField),
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_transaction_ignore)) },
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Block),
@@ -203,17 +201,11 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        stringResource(R.string.feature_transaction_expense),
-        stringResource(R.string.feature_transaction_income),
+        Pair(stringResource(localesR.string.expense), CsIcons.TrendingDown),
+        Pair(stringResource(localesR.string.income_singular), CsIcons.TrendingUp),
     )
-    val chartDirectionIcons = listOf(
-        CsIcons.TrendingDown,
-        CsIcons.TrendingUp,
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        transactionTypes.forEachIndexed { index, label ->
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        transactionTypes.forEachIndexed { index, transactionType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -224,7 +216,7 @@ private fun TransactionTypeChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(chartDirectionIcons[index]),
+                            imageVector = ImageVector.vectorResource(transactionType.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -235,7 +227,7 @@ private fun TransactionTypeChoiceRow(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = transactionType.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -250,17 +242,11 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        stringResource(R.string.feature_transaction_status_completed),
-        stringResource(R.string.feature_transaction_status_pending),
+        Pair(stringResource(localesR.string.completed), CsIcons.CheckCircle),
+        Pair(stringResource(localesR.string.pending), CsIcons.Pending),
     )
-    val statusIcons = listOf(
-        CsIcons.CheckCircle,
-        CsIcons.Pending,
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        statusTypes.forEachIndexed { index, label ->
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        statusTypes.forEachIndexed { index, statusType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -271,7 +257,7 @@ private fun TransactionStatusChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(statusIcons[index]),
+                            imageVector = ImageVector.vectorResource(statusType.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -282,7 +268,7 @@ private fun TransactionStatusChoiceRow(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = statusType.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -313,9 +299,9 @@ private fun CategoryExposedDropdownMenuBox(
                         .fillMaxWidth()
                         .menuAnchor(MenuAnchorType.PrimaryEditable),
                     readOnly = true,
-                    value = currentCategory?.title ?: stringResource(uiR.string.core_ui_none),
+                    value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},
-                    label = { Text(stringResource(R.string.feature_transaction_category_title)) },
+                    label = { Text(stringResource(localesR.string.category_title)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     leadingIcon = {
                         Icon(
@@ -323,7 +309,6 @@ private fun CategoryExposedDropdownMenuBox(
                             contentDescription = null,
                         )
                     },
-                    maxLines = 1,
                     singleLine = true,
                 )
                 ExposedDropdownMenu(
@@ -333,7 +318,7 @@ private fun CategoryExposedDropdownMenuBox(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(uiR.string.core_ui_none),
+                                text = stringResource(localesR.string.none),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

@@ -33,22 +33,12 @@ fun CsNavHost(
         popExitTransition = { fadeOut(tween(0)) },
         modifier = modifier,
     ) {
-        homeListDetailScreen(
-            onShowSnackbar = onShowSnackbar,
-        )
-        categoriesScreen(
-            onShowSnackbar = onShowSnackbar,
-        )
-        subscriptionsScreen(
-            onShowSnackbar = onShowSnackbar,
-        )
+        homeListDetailScreen(onShowSnackbar)
+        categoriesScreen(onShowSnackbar)
+        subscriptionsScreen(onShowSnackbar)
         settingsGraph(
             onLicensesClick = { navController.navigateToLicenses() },
-            nestedGraphs = {
-                licensesRoute(
-                    onBackClick = navController::navigateUp,
-                )
-            }
+            nestedGraphs = { licensesRoute(navController::navigateUp) },
         )
     }
 }

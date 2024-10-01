@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.navigation
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -7,55 +9,61 @@ import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import kotlin.reflect.KClass
-import ru.resodostudios.cashsense.feature.category.dialog.R as categoryDialogR
-import ru.resodostudios.cashsense.feature.category.list.R as categoryListR
-import ru.resodostudios.cashsense.feature.home.R as homeR
-import ru.resodostudios.cashsense.feature.settings.R as settingsR
-import ru.resodostudios.cashsense.feature.subscription.dialog.R as subscriptionDialogR
-import ru.resodostudios.cashsense.feature.subscription.list.R as subscriptionListR
-import ru.resodostudios.cashsense.feature.wallet.dialog.R as walletDialogR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
+/**
+ * Represents the top-level destinations in the application.
+ * Each destination has associated icons, text, and a route.
+ *
+ * @param selectedIcon Resource ID for the icon when the destination is selected.
+ * @param unselectedIcon Resource ID for the icon when the destination is not selected.
+ * @param iconTextId Resource ID for the text displayed with the icon.
+ * @param titleTextId Resource ID for the title text of the destination.
+ * @param fabIcon Resource ID for the Floating Action Button (FAB) icon, if applicable.
+ * @param fabTitle Resource ID for the FAB title text, if applicable.
+ * @param route The Kotlin class representing the route for this destination.
+ */
 enum class TopLevelDestination(
-    val selectedIcon: Int,
-    val unselectedIcon: Int,
-    val iconTextId: Int,
-    val titleTextId: Int,
-    val fabIcon: Int?,
-    val fabTitle: Int?,
+    @DrawableRes val selectedIcon: Int,
+    @DrawableRes val unselectedIcon: Int,
+    @StringRes val iconTextId: Int,
+    @StringRes val titleTextId: Int,
+    @DrawableRes val fabIcon: Int?,
+    @StringRes val fabTitle: Int?,
     val route: KClass<*>,
 ) {
     HOME(
         selectedIcon = CsIcons.HomeFilled,
         unselectedIcon = CsIcons.Home,
-        iconTextId = homeR.string.feature_home_title,
+        iconTextId = localesR.string.home_title,
         titleTextId = R.string.app_name,
         fabIcon = CsIcons.Wallet,
-        fabTitle = walletDialogR.string.feature_wallet_dialog_new_wallet,
+        fabTitle = localesR.string.new_wallet,
         route = HomeRoute::class,
     ),
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
         unselectedIcon = CsIcons.Category,
-        iconTextId = categoryListR.string.feature_category_list_title,
-        titleTextId = categoryListR.string.feature_category_list_title,
+        iconTextId = localesR.string.categories_title,
+        titleTextId = localesR.string.categories_title,
         fabIcon = CsIcons.Add,
-        fabTitle = categoryDialogR.string.feature_category_dialog_new_category,
+        fabTitle = localesR.string.new_category,
         route = CategoriesRoute::class,
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.AutoRenew,
         unselectedIcon = CsIcons.AutoRenew,
-        iconTextId = subscriptionListR.string.feature_subscription_list_title,
-        titleTextId = subscriptionListR.string.feature_subscription_list_title,
+        iconTextId = localesR.string.subscriptions_title,
+        titleTextId = localesR.string.subscriptions_title,
         fabIcon = CsIcons.Add,
-        fabTitle = subscriptionDialogR.string.feature_subscription_dialog_new,
+        fabTitle = localesR.string.new_subscription,
         route = SubscriptionsRoute::class,
     ),
     SETTINGS(
         selectedIcon = CsIcons.SettingsFilled,
         unselectedIcon = CsIcons.Settings,
-        iconTextId = settingsR.string.feature_settings_title,
-        titleTextId = settingsR.string.feature_settings_title,
+        iconTextId = localesR.string.settings_title,
+        titleTextId = localesR.string.settings_title,
         fabIcon = null,
         fabTitle = null,
         route = SettingsGraph::class,

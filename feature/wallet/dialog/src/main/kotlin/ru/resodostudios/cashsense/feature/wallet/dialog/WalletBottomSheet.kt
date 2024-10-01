@@ -25,8 +25,8 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
-import java.math.BigDecimal
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import java.math.BigDecimal.ZERO
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun WalletBottomSheet(
@@ -75,7 +75,7 @@ fun WalletBottomSheet(
                     supportingContent = {
                         Text(
                             text = walletDialogState.currentBalance.ifEmpty {
-                                BigDecimal(0).formatAmount(walletDialogState.currency)
+                                ZERO.formatAmount(walletDialogState.currency)
                             },
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -84,7 +84,7 @@ fun WalletBottomSheet(
                 )
                 HorizontalDivider(Modifier.padding(16.dp))
                 CsListItem(
-                    headlineContent = { Text(stringResource(R.string.feature_wallet_dialog_primary)) },
+                    headlineContent = { Text(stringResource(localesR.string.primary)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Star),
@@ -102,7 +102,7 @@ fun WalletBottomSheet(
                     }
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_edit)) },
+                    headlineContent = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -115,7 +115,7 @@ fun WalletBottomSheet(
                     },
                 )
                 CsListItem(
-                    headlineContent = { Text(stringResource(uiR.string.core_ui_delete)) },
+                    headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Delete),

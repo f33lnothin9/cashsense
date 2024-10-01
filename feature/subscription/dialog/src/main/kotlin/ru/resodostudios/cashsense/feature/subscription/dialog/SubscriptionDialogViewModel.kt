@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,8 +25,8 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.NONE
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class SubscriptionDialogViewModel @Inject constructor(
@@ -45,7 +45,7 @@ class SubscriptionDialogViewModel @Inject constructor(
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
             SubscriptionDialogEvent.Save -> {
-                val subscriptionId = _subscriptionDialogUiState.value.id.ifEmpty { UUID.randomUUID().toString() }
+                val subscriptionId = _subscriptionDialogUiState.value.id.ifEmpty { Uuid.random().toString() }
                 var reminder: Reminder? = null
 
                 if (_subscriptionDialogUiState.value.isReminderEnabled) {
@@ -124,32 +124,33 @@ class SubscriptionDialogViewModel @Inject constructor(
 
     private fun loadSubscription() {
         viewModelScope.launch {
-            subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
-                .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
-                .catch { _subscriptionDialogUiState.value = SubscriptionDialogUiState() }
-                .collect {
-                    _subscriptionDialogUiState.value = SubscriptionDialogUiState(
-                        id = it.id,
-                        title = it.title,
-                        amount = it.amount.toString(),
-                        paymentDate = it.paymentDate,
-                        currency = it.currency,
-                        isReminderEnabled = it.reminder != null,
-                        repeatingInterval = getRepeatingIntervalType(it.reminder?.repeatingInterval ?: 0),
-                        isLoading = false,
-                    )
-                }
+            val subscription = subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
+                .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
+                .first()
+            _subscriptionDialogUiState.update {
+                SubscriptionDialogUiState(
+                    id = subscription.id,
+                    title = subscription.title,
+                    amount = subscription.amount.toString(),
+                    paymentDate = subscription.paymentDate,
+                    currency = subscription.currency,
+                    isReminderEnabled = subscription.reminder != null,
+                    repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval ?: 0),
+                )
+            }
         }
     }
 
     private fun clearSubscriptionDialogState() {
         viewModelScope.launch {
             userDataRepository.userData
-                .onStart { _subscriptionDialogUiState.value = SubscriptionDialogUiState(isLoading = true) }
-                .collect {
-                    _subscriptionDialogUiState.value = SubscriptionDialogUiState(
-                        currency = it.currency.ifEmpty { "USD" },
-                    )
+                .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
+                .collect { userData ->
+                    _subscriptionDialogUiState.update {
+                        SubscriptionDialogUiState(
+                            currency = userData.currency.ifEmpty { "USD" },
+                        )
+                    }
                 }
         }
     }

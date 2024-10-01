@@ -33,7 +33,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogViewModel
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsUiState.Loading
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsUiState.Success
-import ru.resodostudios.cashsense.core.ui.R as uiR
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun SubscriptionsScreen(
@@ -65,8 +65,8 @@ internal fun SubscriptionsScreen(
     when (subscriptionsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
-            val subscriptionDeletedMessage = stringResource(R.string.feature_subscription_list_deleted)
-            val undoText = stringResource(uiR.string.core_ui_undo)
+            val subscriptionDeletedMessage = stringResource(localesR.string.subscription_deleted)
+            val undoText = stringResource(localesR.string.undo)
 
             LaunchedEffect(subscriptionsState.shouldDisplayUndoSubscription) {
                 if (subscriptionsState.shouldDisplayUndoSubscription) {
@@ -105,7 +105,7 @@ internal fun SubscriptionsScreen(
                 }
             } else {
                 EmptyState(
-                    messageRes = R.string.feature_subscription_list_empty_message,
+                    messageRes = localesR.string.subscriptions_empty,
                     animationRes = R.raw.anim_subscriptions_empty,
                 )
             }

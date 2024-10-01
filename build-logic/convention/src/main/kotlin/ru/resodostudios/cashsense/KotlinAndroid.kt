@@ -60,5 +60,8 @@ private inline fun <reified T : KotlinTopLevelExtension> Project.configureKotlin
     }.apply {
         jvmTarget = JvmTarget.JVM_17
         allWarningsAsErrors = warningsAsErrors.toBoolean()
+        freeCompilerArgs.add(
+            "-opt-in=kotlin.uuid.ExperimentalUuidApi",
+        )
     }
 }

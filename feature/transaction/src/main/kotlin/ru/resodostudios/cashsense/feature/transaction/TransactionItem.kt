@@ -27,6 +27,7 @@ import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import java.math.BigDecimal
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionItem(
@@ -64,7 +65,7 @@ fun TransactionItem(
                     shape = RoundedCornerShape(16.dp),
                 ) {
                     Text(
-                        text = stringResource(R.string.feature_transaction_status_pending),
+                        text = stringResource(localesR.string.pending),
                         modifier = Modifier.padding(
                             start = 6.dp,
                             top = 3.dp,
