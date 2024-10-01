@@ -174,14 +174,6 @@ fun WalletItem(
     }
 }
 
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(widthDp = 250, heightDp = 200)
-@Composable
-fun WalletWidgetPreview() {
-    CsGlanceTheme {
-        WalletWidgetContent(wallets = emptyList())
-    }
-}
 @Composable
 private fun openHomeScreen(
     walletId: String? = null,
@@ -196,3 +188,12 @@ private fun openHomeScreen(
         )
     }
 )
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 250, heightDp = 200)
+@Composable
+fun WalletWidgetPreview() {
+    CsGlanceTheme {
+        WalletWidgetContent(wallets = emptyList())
+    }
+}
