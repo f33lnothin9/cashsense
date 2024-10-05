@@ -105,7 +105,7 @@ private fun LazyListScope.settings(
             onClick = { showCurrencyDialog = true },
         )
         if (showCurrencyDialog) {
-            CurrencyBottomSheet(
+            CurrencyDialog(
                 currencyCode = settings.currency,
                 onDismiss = {
                     showCurrencyDialog = false
