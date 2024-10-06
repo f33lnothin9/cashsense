@@ -85,5 +85,4 @@
   <string name="wallet_widget_empty">No tienes ninguna cartera</string>
   <string name="not_enough_data">Datos insuficientes</string>
   <string name="repeat">Repetir</string>
-  <string name="currency_not_found">Валюта не найдена!!!</string>
 </resources>
