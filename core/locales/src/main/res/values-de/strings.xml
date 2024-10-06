@@ -2,7 +2,6 @@
 <resources>
   <string name="currency">Währungen</string>
   <string name="ok">Okay</string>
-  <string name="search_currency">Suchwährung</string>
   <string name="cancel">Abbrechen</string>
   <string name="icon_and_title">Symbol &amp; Titel</string>
   <string name="date">Datum</string>

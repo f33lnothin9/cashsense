@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="currency">Currency</string>
-    <string name="search_currency">Search Currency</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="icon_and_title">Icon &amp; Title</string>

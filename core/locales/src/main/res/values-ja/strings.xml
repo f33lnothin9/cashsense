@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="currency">通貨</string>
-    <string name="search_currency">検索通貨</string>
-    <string name="ok">OK</string>
+  <string name="ok">OK</string>
   <string name="cancel">キャンセル</string>
   <string name="icon_and_title">アイコン &amp; タイトル</string>
   <string name="date">日付</string>

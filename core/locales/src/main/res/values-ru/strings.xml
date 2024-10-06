@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="currency">Валюта</string>
-    <string name="search_currency">Поиск валюты</string>
-    <string name="ok">ОК</string>
+  <string name="ok">ОК</string>
   <string name="cancel">Отменить</string>
   <string name="icon_and_title">Иконка и название</string>
   <string name="date">Дата</string>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="currency">Devise</string>
-    <string name="search_currency">Devise de recherche</string>
-    <string name="ok">OK</string>
+  <string name="ok">OK</string>
   <string name="cancel">Annuler</string>
   <string name="icon_and_title">Icône &amp; Titre</string>
   <string name="date">Date</string>

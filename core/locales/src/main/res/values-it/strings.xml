@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="currency">Valuta</string>
-    <string name="search_currency">Cerca valuta</string>
-    <string name="ok">OK</string>
+  <string name="ok">OK</string>
   <string name="cancel">Annulla</string>
   <string name="icon_and_title">Icona &amp; Titolo</string>
   <string name="date">Data</string>
