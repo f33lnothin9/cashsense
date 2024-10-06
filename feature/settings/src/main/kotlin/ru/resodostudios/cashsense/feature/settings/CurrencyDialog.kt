@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.settings
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +39,7 @@ internal fun CurrencyDialog(
         },
         title = {
             Text(
-                text = stringResource(localesR.string.currency),
+                text = stringResource(localesR.string.choose_currency),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -62,9 +63,8 @@ internal fun CurrencyDialog(
         text = {
             CurrencyDropdownMenu(
                 currencyCode = currencyCodeState,
-                onCurrencyClick = {
-                    currencyCodeState = it.currencyCode
-                }
+                onCurrencyClick = { currencyCodeState = it.currencyCode },
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     )
