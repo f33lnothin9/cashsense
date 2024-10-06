@@ -107,6 +107,16 @@ fun CurrencyDropdownMenu(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
+            if (filteredCurrencies.isEmpty()) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(localesR.string.currency_not_found)) },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    onClick = {
+                        expanded = false
+                        focusManager.clearFocus()
+                    },
+                )
+            }
         }
     }
 }
