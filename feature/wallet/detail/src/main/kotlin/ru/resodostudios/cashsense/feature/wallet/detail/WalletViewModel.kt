@@ -147,10 +147,13 @@ class WalletViewModel @Inject constructor(
                 .toSortedSet()
                 .toList()
             val availableMonths = transactions
+                .asSequence()
                 .filter { it.transaction.timestamp.getZonedDateTime().year == findCurrentOrLastYear(availableYears) }
                 .map { it.transaction.timestamp.getZonedDateTime().monthValue }
+                .plus(getCurrentZonedDateTime().monthValue)
                 .toSortedSet()
                 .toList()
+
             filterState.copy(
                 availableYears = availableYears,
                 availableMonths = availableMonths,
