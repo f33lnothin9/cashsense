@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,28 +30,32 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyDropdownMenu(
-    currencyName: String,
+    currencyCode: String,
     onCurrencyClick: (Currency) -> Unit,
     dropDownHeight: Dp = 200.dp,
     modifier: Modifier = Modifier,
 ) {
-    var filterText by remember { mutableStateOf(currencyName) }
+    var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
+    var currencySearchText by rememberSaveable { mutableStateOf(currencyCode) }
 
-    LaunchedEffect(currencyName) {
-        if (currencyName.isNotEmpty()) {
-            filterText = currencyName
-        }
-    }
     val currencies = Currency.getAvailableCurrencies()
         .filterNot { it.displayName.contains("""\d+""".toRegex()) }
         .sortedBy { it.currencyCode }
-    var selectedCurrency by remember { mutableStateOf(currencies.find { it.currencyCode == currencyName }) }
-    var expanded by remember { mutableStateOf(false) }
     val filteredCurrencies = currencies.filter {
-        it.currencyCode.contains(filterText, ignoreCase = true) ||
-                it.displayName.contains(filterText, ignoreCase = true)
+        it.currencyCode.contains(currencySearchText, ignoreCase = true) ||
+                it.displayName.contains(currencySearchText, ignoreCase = true)
     }
+
     val focusManager = LocalFocusManager.current
+    var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currencyCode) {
+        if (Regex("^[A-Z]{3}$").matches(currencyCode) &&
+            Currency.getInstance(currencyCode) in currencies
+        ) {
+            selectedCurrency = Currency.getInstance(currencyCode)
+        }
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -59,11 +64,10 @@ fun CurrencyDropdownMenu(
     ) {
         OutlinedTextField(
             modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
-            readOnly = false,
-            value = filterText,
+            value = currencySearchText,
             singleLine = true,
             onValueChange = { newText ->
-                filterText = newText
+                currencySearchText = newText
                 expanded = true
             },
             label = { Text(stringResource(localesR.string.currency)) },
@@ -75,11 +79,11 @@ fun CurrencyDropdownMenu(
                 expanded = false
                 selectedCurrency?.let {
                     onCurrencyClick(it)
-                    filterText = it.currencyCode
+                    currencySearchText = it.currencyCode
                     focusManager.clearFocus()
                 }
             },
-            modifier = Modifier.heightIn(max = dropDownHeight)
+            modifier = Modifier.heightIn(max = dropDownHeight),
         ) {
             filteredCurrencies.forEach { selectionOption ->
                 val currencyText = "${selectionOption.currencyCode} - ${selectionOption.displayName}"
@@ -88,11 +92,11 @@ fun CurrencyDropdownMenu(
                     onClick = {
                         selectedCurrency = selectionOption
                         onCurrencyClick(selectionOption)
-                        filterText = selectionOption.currencyCode
+                        currencySearchText = selectionOption.currencyCode
                         expanded = false
                         focusManager.clearFocus()
                     },
-                    leadingIcon = if (currencyName == selectionOption.currencyCode) {
+                    leadingIcon = if (currencyCode == selectionOption.currencyCode) {
                         {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Check),

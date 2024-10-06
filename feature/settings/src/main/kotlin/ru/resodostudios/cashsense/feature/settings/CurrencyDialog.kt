@@ -61,7 +61,7 @@ internal fun CurrencyDialog(
         modifier = modifier,
         text = {
             CurrencyDropdownMenu(
-                currencyName = currencyCodeState,
+                currencyCode = currencyCodeState,
                 onCurrencyClick = {
                     currencyCodeState = it.currencyCode
                 }
