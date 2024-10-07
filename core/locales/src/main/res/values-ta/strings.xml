@@ -84,4 +84,5 @@
   <string name="wallet_widget_empty">You don\'t have any wallets</string>
   <string name="not_enough_data">Not enough data</string>
   <string name="repeat">Repeat</string>
+  <string name="currency_not_found">Currency not found</string>
 </resources>
