@@ -84,4 +84,5 @@
   <string name="wallet_widget_empty">ウォレットがありません</string>
   <string name="not_enough_data">データが不足しています</string>
   <string name="repeat">繰り返す</string>
+  <string name="currency_not_found">Currency not found</string>
 </resources>
