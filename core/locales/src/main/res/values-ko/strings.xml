@@ -84,4 +84,5 @@
   <string name="wallet_widget_empty">지갑이 없습니다</string>
   <string name="not_enough_data">데이터가 충분하지 않습니다</string>
   <string name="repeat">반복</string>
+  <string name="currency_not_found">Currency not found</string>
 </resources>
