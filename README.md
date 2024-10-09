@@ -34,11 +34,8 @@ It's a mobile app designed to help users manage their finances effectively. Whet
 
 # Localization
 
-If you'd like to contribute to translating this app, you can [join][6] our localization efforts on [Crowdin][7]. Your contributions will help ensure that everyone can enjoy the app in their native language.
-
-# Contributing
-
-Contributions are welcome! If you have any improvements or bug fixes in mind, feel free to submit a pull request.
+If you'd like to contribute to translating this app, you can [join][6] our localization efforts on [Crowdin][7]. 
+Your contributions will help ensure that everyone can enjoy the app in their native language.
 
 # License
 
