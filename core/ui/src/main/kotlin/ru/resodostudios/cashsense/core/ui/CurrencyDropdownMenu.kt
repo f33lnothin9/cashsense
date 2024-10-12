@@ -3,10 +3,10 @@ package ru.resodostudios.cashsense.core.ui
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,8 +32,8 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 fun CurrencyDropdownMenu(
     currencyCode: String,
     onCurrencyClick: (Currency) -> Unit,
-    dropDownHeight: Dp = 200.dp,
     modifier: Modifier = Modifier,
+    dropDownHeight: Dp = 200.dp,
 ) {
     var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
     var currencySearchText by rememberSaveable { mutableStateOf(currencyCode) }
@@ -63,7 +63,7 @@ fun CurrencyDropdownMenu(
         modifier = modifier,
     ) {
         OutlinedTextField(
-            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
             value = currencySearchText,
             singleLine = true,
             onValueChange = { newText ->
