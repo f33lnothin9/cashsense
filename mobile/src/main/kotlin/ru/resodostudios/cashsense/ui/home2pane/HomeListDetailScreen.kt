@@ -2,14 +2,18 @@ package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.Keep
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
+import androidx.compose.material3.adaptive.layout.PaneExpansionDragHandle
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
+import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -108,6 +112,15 @@ internal fun HomeListDetailScreen(
             },
         ),
     )
+    val paneExpansionState = rememberPaneExpansionState(
+        anchors = listOf(
+            PaneExpansionAnchor.Proportion(0f),
+            PaneExpansionAnchor.Proportion(0.35f),
+            PaneExpansionAnchor.Proportion(0.5f),
+            PaneExpansionAnchor.Proportion(0.65f),
+            PaneExpansionAnchor.Proportion(1f),
+        ),
+    )
     val scope = rememberCoroutineScope()
     BackHandler(listDetailNavigator.canNavigateBack()) {
         scope.launch {
@@ -186,6 +199,13 @@ internal fun HomeListDetailScreen(
                     }
                 }
             }
+        },
+        paneExpansionState = paneExpansionState,
+        paneExpansionDragHandle = {
+            PaneExpansionDragHandle(
+                state = it,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         },
     )
 }
