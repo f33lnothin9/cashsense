@@ -11,7 +11,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -889,7 +888,6 @@ private fun FilterBySelectedDateTypeRow(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.transactions(
     transactionsCategories: List<TransactionWithCategory>,
     currency: String,
