@@ -15,7 +15,7 @@
   <string name="delete">Eliminar</string>
   <string name="required">*requerido</string>
   <string name="none">Ninguno</string>
-  <string name="amount">Monto</string>
+  <string name="amount">Cantidad</string>
   <string name="subscriptions_notification_channel_name">Recordatorios de suscripciones</string>
   <string name="subscriptions_notification_channel_description">Recordatorios de suscripciones por vencer</string>
   <string name="subscriptions_notification_content_text">Necesitas pagar %1$s por una suscripción el %2$s</string>
@@ -84,5 +84,5 @@
   <string name="wallet_widget_empty">No tienes ninguna cartera</string>
   <string name="not_enough_data">Datos insuficientes</string>
   <string name="repeat">Repetir</string>
-  <string name="currency_not_found">Currency not found</string>
+  <string name="currency_not_found">Moneda no encontrada</string>
 </resources>
