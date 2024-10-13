@@ -20,6 +20,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":baselineprofile")
 include(":mobile")
+include(":wear")
 
 include(":core:common")
 include(":core:database")

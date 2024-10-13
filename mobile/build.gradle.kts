@@ -21,7 +21,6 @@ android {
             useSupportLibrary = true
         }
     }
-
     buildTypes {
         debug {
             applicationIdSuffix = CsBuildType.DEBUG.applicationIdSuffix
