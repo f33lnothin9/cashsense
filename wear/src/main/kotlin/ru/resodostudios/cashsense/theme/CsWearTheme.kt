@@ -5,10 +5,10 @@ import androidx.wear.compose.material3.MaterialTheme
 
 @Composable
 fun CsWearTheme(
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     MaterialTheme(
-        colorScheme = wearColorPalette,
+        colorScheme = wearColorScheme,
         typography = Typography,
         content = content,
     )
