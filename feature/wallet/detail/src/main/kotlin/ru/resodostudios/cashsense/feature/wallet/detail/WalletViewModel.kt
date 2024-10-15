@@ -63,7 +63,7 @@ class WalletViewModel @Inject constructor(
             financeType = NONE,
             dateType = ALL,
             availableYears = emptyList(),
-            availableMonths = emptyList(),
+            availableMonths = (1..12).toList(),
             selectedYear = 0,
             selectedMonth = 0,
         )
@@ -85,7 +85,7 @@ class WalletViewModel @Inject constructor(
             EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
             INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
         }
-        calculateAvailableDates(financeTypeTransactions)
+        calculateAvailableYears(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
             ALL -> financeTypeTransactions
             WEEK -> financeTypeTransactions.filter {
@@ -140,24 +140,13 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    private fun calculateAvailableDates(transactions: List<TransactionWithCategory>) {
-        walletFilterState.update { filterState ->
-            val availableYears = transactions
-                .map { it.transaction.timestamp.getZonedDateTime().year }
-                .toSortedSet()
-                .toList()
-            val availableMonths = transactions
-                .asSequence()
-                .filter { it.transaction.timestamp.getZonedDateTime().year == findCurrentOrLastYear(availableYears) }
-                .map { it.transaction.timestamp.getZonedDateTime().monthValue }
-                .plus(getCurrentZonedDateTime().monthValue)
-                .toSortedSet()
-                .toList()
-
-            filterState.copy(
-                availableYears = availableYears,
-                availableMonths = availableMonths,
-            )
+    private fun calculateAvailableYears(transactions: List<TransactionWithCategory>) {
+        val availableYears = transactions
+            .map { it.transaction.timestamp.getZonedDateTime().year }
+            .toSortedSet()
+            .toList()
+        walletFilterState.update {
+            it.copy(availableYears = availableYears)
         }
     }
 
@@ -210,22 +199,20 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateDateType(dateType: DateType) {
-        if (walletFilterState.value.availableYears.isNotEmpty()) {
-            walletFilterState.update {
-                it.copy(
-                    dateType = dateType,
-                    selectedYear = findCurrentOrLastYear(walletFilterState.value.availableYears),
-                    selectedMonth = findCurrentOrLastMonth(walletFilterState.value.availableMonths),
-                )
-            }
+        walletFilterState.update {
+            it.copy(
+                dateType = dateType,
+                selectedYear = findCurrentYear(walletFilterState.value.availableYears),
+                selectedMonth = findCurrentMonth(walletFilterState.value.availableMonths),
+            )
         }
     }
 
-    private fun findCurrentOrLastYear(years: List<Int>) =
-        years.find { it == getCurrentZonedDateTime().year } ?: years.last()
+    private fun findCurrentYear(years: List<Int>) =
+        years.firstOrNull { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
 
-    private fun findCurrentOrLastMonth(months: List<Int>) =
-        months.find { it == getCurrentZonedDateTime().monthValue } ?: months.last()
+    private fun findCurrentMonth(months: List<Int>) =
+        months.firstOrNull { it == getCurrentZonedDateTime().monthValue } ?: getCurrentZonedDateTime().monthValue
 
     private fun incrementSelectedDate() {
         val walletFilter = walletFilterState.value
