@@ -845,8 +845,14 @@ private fun FilterBySelectedDateTypeRow(
         modifier = modifier.fillMaxWidth(),
     ) {
         val isPreviousActive = when (walletFilter.dateType) {
-            YEAR -> walletFilter.availableYears.isNotEmpty() && walletFilter.selectedYear != walletFilter.availableYears.first()
-            MONTH -> walletFilter.availableMonths.isNotEmpty() && walletFilter.selectedMonth != walletFilter.availableMonths.first()
+            YEAR ->
+                walletFilter.availableYears.isNotEmpty() &&
+                        walletFilter.selectedYear != walletFilter.availableYears.first()
+
+            MONTH ->
+                walletFilter.availableMonths.isNotEmpty() &&
+                        walletFilter.selectedMonth != walletFilter.availableMonths.first()
+
             else -> false
         }
         IconButton(
@@ -873,8 +879,14 @@ private fun FilterBySelectedDateTypeRow(
         Text(selectedDate)
 
         val isNextActive = when (walletFilter.dateType) {
-            YEAR -> walletFilter.availableYears.isNotEmpty() && walletFilter.selectedYear != walletFilter.availableYears.last()
-            MONTH -> walletFilter.availableMonths.isNotEmpty() && walletFilter.selectedMonth != walletFilter.availableMonths.last()
+            YEAR ->
+                walletFilter.availableYears.isNotEmpty() &&
+                        walletFilter.selectedYear != walletFilter.availableYears.last()
+
+            MONTH ->
+                walletFilter.availableMonths.isNotEmpty() &&
+                        walletFilter.selectedMonth != walletFilter.availableMonths.last()
+
             else -> false
         }
         IconButton(
