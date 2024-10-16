@@ -85,4 +85,5 @@
   <string name="not_enough_data">Недостаточно данных</string>
   <string name="repeat">Повторить</string>
   <string name="currency_not_found">Валюта не найдена</string>
+  <string name="transfer">Перевести</string>
 </resources>

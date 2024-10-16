@@ -55,11 +55,7 @@ fun WalletBottomSheet(
 ) {
     CsModalBottomSheet(onDismiss) {
         if (walletDialogState.isLoading) {
-            LoadingState(
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth(),
-            )
+            LoadingState(Modifier.height(100.dp).fillMaxWidth())
         }
         if (!walletDialogState.isLoading) {
             Column {
@@ -97,6 +93,18 @@ fun WalletBottomSheet(
                             },
                         )
                     }
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(localesR.string.transfer)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        onDismiss()
+                    },
                 )
                 CsListItem(
                     headlineContent = { Text(stringResource(localesR.string.edit)) },
