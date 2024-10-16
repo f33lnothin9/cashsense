@@ -56,7 +56,7 @@ fun WalletCard(
     transactions: List<Transaction>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String, String) -> Unit,
+    onWalletMenuClick: (String, BigDecimal) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     isPrimary: Boolean = false,
@@ -114,12 +114,7 @@ fun WalletCard(
                 Text(stringResource(localesR.string.add_transaction))
             }
             IconButton(
-                onClick = {
-                    onWalletMenuClick(
-                        wallet.id,
-                        currentBalance.formatAmount(wallet.currency),
-                    )
-                },
+                onClick = { onWalletMenuClick(wallet.id, currentBalance) },
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),

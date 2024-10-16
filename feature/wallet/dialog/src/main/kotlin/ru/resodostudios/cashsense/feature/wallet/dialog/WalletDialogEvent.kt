@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
+import java.math.BigDecimal
+
 sealed interface WalletDialogEvent {
 
     data class UpdateId(val id: String) : WalletDialogEvent
@@ -8,7 +10,7 @@ sealed interface WalletDialogEvent {
 
     data class UpdateInitialBalance(val initialBalance: String) : WalletDialogEvent
 
-    data class UpdateCurrentBalance(val currentBalance: String) : WalletDialogEvent
+    data class UpdateCurrentBalance(val currentBalance: BigDecimal) : WalletDialogEvent
 
     data class UpdateCurrency(val currency: String) : WalletDialogEvent
 

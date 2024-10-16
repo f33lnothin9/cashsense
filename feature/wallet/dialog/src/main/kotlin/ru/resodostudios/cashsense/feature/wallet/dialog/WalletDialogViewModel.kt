@@ -24,6 +24,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Update
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
+import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -96,7 +97,7 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
-    private fun updateCurrentBalance(currentBalance: String) {
+    private fun updateCurrentBalance(currentBalance: BigDecimal) {
         _walletDialogUiState.update {
             it.copy(currentBalance = currentBalance)
         }
@@ -180,7 +181,7 @@ data class WalletDialogUiState(
     val id: String = "",
     val title: String = "",
     val initialBalance: String = "",
-    val currentBalance: String = "",
+    val currentBalance: BigDecimal = ZERO,
     val currentPrimaryWalletId: String = "",
     val currency: String = "",
     val isPrimary: Boolean = false,

@@ -35,6 +35,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
+import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -162,7 +163,7 @@ private fun LazyStaggeredGridScope.wallets(
     walletsState: WalletsUiState,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String, String) -> Unit,
+    onWalletMenuClick: (String, BigDecimal) -> Unit,
     highlightSelectedWallet: Boolean = false,
 ) {
     when (walletsState) {
