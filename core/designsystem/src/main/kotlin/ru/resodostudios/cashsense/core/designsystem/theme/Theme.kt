@@ -276,7 +276,7 @@ fun CsTheme(
 
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
-        motionScheme = MotionScheme.expressiveMotionScheme(),
+        motionScheme = MotionScheme.expressive(),
         typography = CsTypography,
         content = content,
     )
