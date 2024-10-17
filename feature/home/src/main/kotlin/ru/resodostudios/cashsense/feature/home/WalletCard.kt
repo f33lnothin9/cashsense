@@ -111,7 +111,11 @@ fun WalletCard(
             Button(
                 onClick = { onTransactionCreate(wallet.id) },
             ) {
-                Text(stringResource(localesR.string.add_transaction))
+                Text(
+                    text = stringResource(localesR.string.add_transaction),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
             IconButton(
                 onClick = {

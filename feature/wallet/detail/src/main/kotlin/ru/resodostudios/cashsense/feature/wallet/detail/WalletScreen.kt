@@ -550,6 +550,8 @@ private fun SharedTransitionScope.FinanceCard(
             Text(
                 text = stringResource(supportingTextId),
                 style = MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState(supportingTextId),
                     animatedVisibilityScope = animatedVisibilityScope,
@@ -631,6 +633,8 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 animatedVisibilityScope = animatedVisibilityScope,
             ),
             style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         if (graphValues.isNotEmpty() && walletFilter.dateType != ALL) {
             Box(contentAlignment = Alignment.Center) {
@@ -789,7 +793,13 @@ private fun CategoryChip(
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = { Text(category.title.toString()) },
+        label = {
+            Text(
+                text = category.title.toString(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
         leadingIcon = {
             Icon(
                 imageVector = ImageVector.vectorResource(categoryIconRes),
@@ -875,7 +885,11 @@ private fun FilterBySelectedDateTypeRow(
 
             else -> ""
         }
-        Text(selectedDate)
+        Text(
+            text = selectedDate,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
 
         val isNextActive = when (walletFilter.dateType) {
             YEAR ->
