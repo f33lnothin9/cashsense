@@ -927,7 +927,7 @@ private fun LazyListScope.transactions(
         stickyHeader {
             CsTag(
                 text = transactionGroup.key.toKotlinInstant().formatDate(),
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
             )
         }
         item { Spacer(Modifier.height(16.dp)) }

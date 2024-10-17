@@ -22,8 +22,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun IconPickerDropdownMenu(
-    @DrawableRes
-    currentIconId: Int,
+    @DrawableRes currentIconId: Int,
     onSelectedIconClick: (Int) -> Unit,
     onClick: () -> Unit = {},
 ) {
@@ -65,8 +64,7 @@ fun IconPickerDropdownMenu(
 }
 
 enum class StoredIcon(
-    @DrawableRes
-    val iconId: Int,
+    @DrawableRes val iconId: Int,
     val storedId: Int,
 ) {
     CATEGORY(CsIcons.Category, 0),
