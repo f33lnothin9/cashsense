@@ -36,7 +36,7 @@ fun CurrencyDropdownMenu(
     modifier: Modifier = Modifier,
 ) {
     var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
-    var currencySearchText by rememberSaveable { mutableStateOf(currencyCode) }
+    var currencySearchText by rememberSaveable { mutableStateOf("") }
 
     val currencies = Currency.getAvailableCurrencies()
         .filterNot { it.displayName.contains("""\d+""".toRegex()) }
@@ -50,6 +50,7 @@ fun CurrencyDropdownMenu(
     var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(currencyCode) {
+        currencySearchText = currencyCode
         if (Regex("^[A-Z]{3}$").matches(currencyCode) &&
             Currency.getInstance(currencyCode) in currencies
         ) {
