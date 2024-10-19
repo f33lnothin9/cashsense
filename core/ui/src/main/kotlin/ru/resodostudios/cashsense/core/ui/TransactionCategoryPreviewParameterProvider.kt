@@ -25,6 +25,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.parse("2024-09-13T14:20:00Z"),
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "1",
@@ -41,6 +42,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.parse("2024-08-13T14:20:00Z"),
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "2",
@@ -57,6 +59,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "10",
@@ -73,6 +76,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "10",
@@ -89,6 +93,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "1",
@@ -105,6 +110,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "8",
@@ -121,6 +127,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "8",
@@ -137,6 +144,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "1",
@@ -153,6 +161,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "11",
@@ -169,6 +178,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
                     ),
                     category = Category(
                         id = "11",

@@ -96,6 +96,7 @@ class TransactionDialogViewModel @Inject constructor(
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
             ignored = _transactionDialogUiState.value.ignored,
+            transferId = null,
         )
         val transactionCategoryCrossRef =
             _transactionDialogUiState.value.category?.id?.let { categoryId ->
