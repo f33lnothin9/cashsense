@@ -16,6 +16,7 @@ import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.util.BigDecimalConverter
 import ru.resodostudios.cashsense.core.database.util.InstantConverter
 import ru.resodostudios.cashsense.core.database.util.StatusTypeConverter
+import ru.resodostudios.cashsense.core.database.util.UuidConverter
 
 @Database(
     entities = [
@@ -36,9 +37,10 @@ import ru.resodostudios.cashsense.core.database.util.StatusTypeConverter
     exportSchema = true,
 )
 @TypeConverters(
-    InstantConverter::class,
     BigDecimalConverter::class,
+    InstantConverter::class,
     StatusTypeConverter::class,
+    UuidConverter::class,
 )
 internal abstract class CsDatabase : RoomDatabase() {
 

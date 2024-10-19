@@ -6,8 +6,8 @@ import ru.resodostudios.cashsense.core.model.data.StatusType
 internal class StatusTypeConverter {
 
     @TypeConverter
-    fun stringToStatus(value: String?) = value?.let { enumValueOf<StatusType>(it) }
+    fun statusToString(value: StatusType?) = value?.name
 
     @TypeConverter
-    fun statusToString(value: StatusType?) = value?.name
+    fun stringToStatus(value: String?) = value?.let { enumValueOf<StatusType>(it) }
 }
