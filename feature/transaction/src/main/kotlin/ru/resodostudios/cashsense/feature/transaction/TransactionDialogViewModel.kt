@@ -89,7 +89,7 @@ class TransactionDialogViewModel @Inject constructor(
         val transaction = Transaction(
             id = _transactionDialogUiState.value.transactionId.ifEmpty { Uuid.random().toString() },
             walletOwnerId = walletId.value,
-            description = _transactionDialogUiState.value.description,
+            description = _transactionDialogUiState.value.description.ifBlank { null },
             amount = _transactionDialogUiState.value.amount
                 .toBigDecimal()
                 .run { if (_transactionDialogUiState.value.transactionType == EXPENSE) negate() else abs() },
@@ -198,7 +198,7 @@ class TransactionDialogViewModel @Inject constructor(
                 _transactionDialogUiState.update {
                     it.copy(
                         transactionId = transactionCategory.transaction.id,
-                        description = transactionCategory.transaction.description.toString(),
+                        description = transactionCategory.transaction.description ?: "",
                         amount = transactionCategory.transaction.amount.abs().toString(),
                         transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
                         date = transactionCategory.transaction.timestamp,
