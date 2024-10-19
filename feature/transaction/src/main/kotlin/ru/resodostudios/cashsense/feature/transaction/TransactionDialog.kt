@@ -63,7 +63,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -181,7 +181,7 @@ fun TransactionDialog(
                     trailingContent = {
                         Switch(
                             checked = transactionDialogState.ignored,
-                            onCheckedChange = { onTransactionEvent(UpdateIgnoring(it)) },
+                            onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
                         )
                     },
                 )

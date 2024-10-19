@@ -33,7 +33,7 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -131,7 +131,7 @@ fun TransactionBottomSheet(
                         Switch(
                             checked = transactionDialogState.ignored,
                             onCheckedChange = {
-                                onTransactionEvent(UpdateIgnoring(it))
+                                onTransactionEvent(UpdateTransactionIgnoring(it))
                                 onTransactionEvent(Save)
                             },
                         )

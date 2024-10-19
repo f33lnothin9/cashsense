@@ -24,7 +24,7 @@ sealed interface TransactionDialogEvent {
 
     data class UpdateCategory(val category: Category) : TransactionDialogEvent
 
-    data class UpdateIgnoring(val ignored: Boolean) : TransactionDialogEvent
+    data class UpdateTransactionIgnoring(val ignored: Boolean) : TransactionDialogEvent
 
     data object Repeat : TransactionDialogEvent
 
