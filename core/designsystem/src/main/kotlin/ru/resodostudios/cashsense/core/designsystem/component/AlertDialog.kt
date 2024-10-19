@@ -32,28 +32,28 @@ fun CsAlertDialog(
         icon = {
             Icon(
                 imageVector = ImageVector.vectorResource(iconRes),
-                contentDescription = null
+                contentDescription = null,
             )
         },
         title = {
             Text(
                 text = stringResource(titleRes),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         text = content,
         confirmButton = {
             Button(
                 onClick = onConfirm,
-                enabled = isConfirmEnabled
+                enabled = isConfirmEnabled,
             ) {
-                Text(text = stringResource(confirmButtonTextRes))
+                Text(stringResource(confirmButtonTextRes))
             }
         },
         dismissButton = {
             TextButton(onDismiss) {
-                Text(text = stringResource(dismissButtonTextRes))
+                Text(stringResource(dismissButtonTextRes))
             }
         },
         modifier = modifier,
