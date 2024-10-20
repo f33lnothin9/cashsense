@@ -154,7 +154,7 @@ internal fun WalletScreen(
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
-    setTransactionDialogOpenState: (Boolean) -> Unit,
+    setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     walletViewModel: WalletViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
@@ -168,7 +168,7 @@ internal fun WalletScreen(
         onBackClick = onBackClick,
         onShowSnackbar = onShowSnackbar,
         openTransactionDialog = openTransactionDialog,
-        setTransactionDialogOpenState = setTransactionDialogOpenState,
+        setTransactionDialogOpen = setTransactionDialogOpen,
         onWalletEvent = walletViewModel::onWalletEvent,
         onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
@@ -183,7 +183,7 @@ internal fun WalletScreen(
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
-    setTransactionDialogOpenState: (Boolean) -> Unit,
+    setTransactionDialogOpen: (Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
@@ -286,7 +286,7 @@ internal fun WalletScreen(
                 TransactionDialog(
                     onDismiss = {
                         showTransactionDialog = false
-                        setTransactionDialogOpenState(false)
+                        setTransactionDialogOpen(false)
                     }
                 )
             }

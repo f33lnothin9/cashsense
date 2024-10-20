@@ -77,7 +77,7 @@ internal fun HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
-        setTransactionDialogOpenState = viewModel::setTransactionDialogOpenState,
+        setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
     )
 }
@@ -88,7 +88,7 @@ internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
-    setTransactionDialogOpenState: (Boolean) -> Unit,
+    setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator(
@@ -143,7 +143,7 @@ internal fun HomeListDetailScreen(
                     onShowSnackbar = onShowSnackbar,
                     onTransactionCreate = {
                         onWalletClickShowDetailPane(it)
-                        setTransactionDialogOpenState(true)
+                        setTransactionDialogOpen(true)
                     },
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                 )
@@ -162,7 +162,7 @@ internal fun HomeListDetailScreen(
                             onBackClick = listDetailNavigator::navigateBack,
                             onShowSnackbar = onShowSnackbar,
                             openTransactionDialog = openTransactionDialog,
-                            setTransactionDialogOpenState = setTransactionDialogOpenState,
+                            setTransactionDialogOpen = setTransactionDialogOpen,
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(

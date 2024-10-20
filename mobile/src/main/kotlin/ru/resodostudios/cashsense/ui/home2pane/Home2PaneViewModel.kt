@@ -30,7 +30,7 @@ class Home2PaneViewModel @Inject constructor(
         savedStateHandle[WALLET_ID_KEY] = walletId
     }
 
-    fun setTransactionDialogOpenState(isOpened: Boolean) {
-        savedStateHandle[OPEN_TRANSACTION_DIALOG_KEY] = isOpened
+    fun setTransactionDialogOpen(opened: Boolean) {
+        savedStateHandle[OPEN_TRANSACTION_DIALOG_KEY] = opened
     }
 }

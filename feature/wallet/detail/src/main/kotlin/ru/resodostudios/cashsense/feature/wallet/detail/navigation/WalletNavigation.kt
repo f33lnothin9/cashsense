@@ -24,7 +24,7 @@ fun NavGraphBuilder.walletScreen(
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
-    setTransactionDialogOpenState: (Boolean) -> Unit = {},
+    setTransactionDialogOpen: (Boolean) -> Unit = {},
 ) {
     composable<WalletRoute> {
         WalletScreen(
@@ -32,7 +32,7 @@ fun NavGraphBuilder.walletScreen(
             onBackClick = onBackClick,
             onShowSnackbar = onShowSnackbar,
             openTransactionDialog = openTransactionDialog,
-            setTransactionDialogOpenState = setTransactionDialogOpenState,
+            setTransactionDialogOpen = setTransactionDialogOpen,
         )
     }
 }
