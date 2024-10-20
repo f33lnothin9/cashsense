@@ -24,11 +24,6 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
@@ -43,9 +38,9 @@ fun HomeScreen(
     onWalletClick: (String?) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     highlightSelectedWallet: Boolean = false,
+    onTransactionCreate: (String) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
     walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
-    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
 
@@ -54,7 +49,7 @@ fun HomeScreen(
         onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
         onShowSnackbar = onShowSnackbar,
-        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
+        onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
         hideWallet = homeViewModel::hideWallet,
         undoWalletRemoval = homeViewModel::undoWalletRemoval,
@@ -68,7 +63,7 @@ internal fun HomeScreen(
     onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String?) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onTransactionEvent: (TransactionDialogEvent) -> Unit,
+    onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     hideWallet: (String) -> Unit = {},
     undoWalletRemoval: () -> Unit = {},
@@ -76,8 +71,6 @@ internal fun HomeScreen(
 ) {
     var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showWalletDialog by rememberSaveable { mutableStateOf(false) }
-
-    var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
     when (walletsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -115,11 +108,7 @@ internal fun HomeScreen(
                     wallets(
                         walletsState = walletsState,
                         onWalletClick = onWalletClick,
-                        onTransactionCreate = {
-                            onTransactionEvent(UpdateWalletId(it))
-                            onTransactionEvent(UpdateTransactionId(""))
-                            showTransactionDialog = true
-                        },
+                        onTransactionCreate = onTransactionCreate,
                         onWalletMenuClick = { walletId, currentWalletBalance ->
                             onWalletDialogEvent(UpdateId(walletId))
                             onWalletDialogEvent(UpdateCurrentBalance(currentWalletBalance))
@@ -148,11 +137,6 @@ internal fun HomeScreen(
             if (showWalletDialog) {
                 WalletDialog(
                     onDismiss = { showWalletDialog = false },
-                )
-            }
-            if (showTransactionDialog) {
-                TransactionDialog(
-                    onDismiss = { showTransactionDialog = false },
                 )
             }
         }
