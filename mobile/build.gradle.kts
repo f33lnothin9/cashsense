@@ -60,12 +60,12 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.category.list)
     implementation(projects.feature.category.dialog)
+    implementation(projects.feature.glancewidget)
     implementation(projects.feature.subscription.list)
     implementation(projects.feature.subscription.dialog)
     implementation(projects.feature.transaction)
     implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.dialog)
-    implementation(projects.feature.wallet.widget)
     implementation(projects.feature.settings)
 
     implementation(projects.core.data)

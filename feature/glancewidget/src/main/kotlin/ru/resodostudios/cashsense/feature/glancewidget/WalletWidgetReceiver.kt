@@ -1,8 +1,8 @@
-package ru.resodostudios.cashsense.wallet.widget
+package ru.resodostudios.cashsense.feature.glancewidget
 
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import ru.resodostudios.cashsense.wallet.widget.ui.WalletWidget
+import ru.resodostudios.cashsense.feature.glancewidget.ui.WalletWidget
 
 class WalletWidgetReceiver : GlanceAppWidgetReceiver() {
 

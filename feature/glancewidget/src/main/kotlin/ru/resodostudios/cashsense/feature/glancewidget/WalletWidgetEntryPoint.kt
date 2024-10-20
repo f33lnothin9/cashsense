@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.wallet.widget
+package ru.resodostudios.cashsense.feature.glancewidget
 
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
