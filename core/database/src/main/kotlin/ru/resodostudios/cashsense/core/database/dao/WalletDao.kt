@@ -16,11 +16,11 @@ interface WalletDao {
 
     @Transaction
     @Query("SELECT * FROM wallets WHERE id = :walletId")
-    fun getWalletWithTransactionsEntity(walletId: String): Flow<WalletWithTransactionsAndCategoriesEntity>
+    fun getWalletWithTransactionsAndCategoriesEntity(walletId: String): Flow<WalletWithTransactionsAndCategoriesEntity>
 
     @Transaction
     @Query("SELECT * FROM wallets")
-    fun getWalletWithTransactionsEntities(): Flow<List<WalletWithTransactionsAndCategoriesEntity>>
+    fun getWalletWithTransactionsAndCategoriesEntities(): Flow<List<WalletWithTransactionsAndCategoriesEntity>>
 
     @Upsert
     suspend fun upsertWallet(wallet: WalletEntity)

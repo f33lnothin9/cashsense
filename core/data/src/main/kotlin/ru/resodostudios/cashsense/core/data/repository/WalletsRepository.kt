@@ -8,9 +8,9 @@ interface WalletsRepository {
 
     fun getWallet(id: String): Flow<Wallet>
 
-    fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactionsAndCategories>
+    fun getWalletWithTransactionsAndCategories(walletId: String): Flow<WalletWithTransactionsAndCategories>
 
-    fun getWalletsWithTransactions(): Flow<List<WalletWithTransactionsAndCategories>>
+    fun getWalletsWithTransactionsAndCategories(): Flow<List<WalletWithTransactionsAndCategories>>
 
     suspend fun upsertWallet(wallet: Wallet)
 

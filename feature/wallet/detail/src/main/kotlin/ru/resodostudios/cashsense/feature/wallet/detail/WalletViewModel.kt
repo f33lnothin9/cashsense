@@ -70,7 +70,7 @@ class WalletViewModel @Inject constructor(
     )
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        walletsRepository.getWalletWithTransactions(walletRoute.walletId),
+        walletsRepository.getWalletWithTransactionsAndCategories(walletRoute.walletId),
         walletFilterState,
         shouldDisplayUndoTransactionState,
         lastRemovedTransactionIdState,

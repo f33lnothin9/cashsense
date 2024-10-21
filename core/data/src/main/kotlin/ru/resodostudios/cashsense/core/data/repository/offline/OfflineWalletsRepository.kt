@@ -23,11 +23,11 @@ internal class OfflineWalletsRepository @Inject constructor(
     override fun getWallet(id: String): Flow<Wallet> =
         walletDao.getWalletEntity(id).map { it.asExternalModel() }
 
-    override fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactionsAndCategories> =
-        walletDao.getWalletWithTransactionsEntity(walletId).map { it.asExternalModel() }
+    override fun getWalletWithTransactionsAndCategories(walletId: String): Flow<WalletWithTransactionsAndCategories> =
+        walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId).map { it.asExternalModel() }
 
-    override fun getWalletsWithTransactions(): Flow<List<WalletWithTransactionsAndCategories>> =
-        walletDao.getWalletWithTransactionsEntities().map { it.map(WalletWithTransactionsAndCategoriesEntity::asExternalModel) }
+    override fun getWalletsWithTransactionsAndCategories(): Flow<List<WalletWithTransactionsAndCategories>> =
+        walletDao.getWalletWithTransactionsAndCategoriesEntities().map { it.map(WalletWithTransactionsAndCategoriesEntity::asExternalModel) }
 
     override suspend fun upsertWallet(wallet: Wallet) =
         walletDao.upsertWallet(wallet.asEntity())

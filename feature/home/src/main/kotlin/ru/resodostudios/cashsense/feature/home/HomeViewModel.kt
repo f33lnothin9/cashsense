@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     private val lastRemovedWalletIdState = MutableStateFlow<String?>(null)
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
-        walletsRepository.getWalletsWithTransactions(),
+        walletsRepository.getWalletsWithTransactionsAndCategories(),
         userDataRepository.userData,
         selectedWalletId,
         shouldDisplayUndoWalletState,
