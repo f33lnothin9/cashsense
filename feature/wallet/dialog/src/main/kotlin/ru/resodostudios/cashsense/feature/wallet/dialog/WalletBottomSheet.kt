@@ -23,8 +23,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -32,106 +30,111 @@ fun WalletBottomSheet(
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
-    viewModel: WalletDialogViewModel = hiltViewModel(),
+    viewModel: WalletMenuViewModel = hiltViewModel(),
 ) {
-    val walletDialogState by viewModel.walletDialogUiState.collectAsStateWithLifecycle()
+    val walletMenuState by viewModel.walletMenuState.collectAsStateWithLifecycle()
 
     WalletBottomSheet(
-        walletDialogState = walletDialogState,
+        walletMenuState = walletMenuState,
         onDismiss = onDismiss,
+        onPrimaryChange = viewModel::setPrimaryWalletId,
         onEdit = onEdit,
         onDelete = onDelete,
-        onWalletDialogEvent = viewModel::onWalletDialogEvent,
     )
 }
 
 @Composable
 fun WalletBottomSheet(
-    walletDialogState: WalletDialogUiState,
+    walletMenuState: WalletMenuUiState,
     onDismiss: () -> Unit,
+    onPrimaryChange: (String, Boolean) -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
-        if (walletDialogState.isLoading) {
-            LoadingState(Modifier.height(100.dp).fillMaxWidth())
-        }
-        if (!walletDialogState.isLoading) {
-            Column {
-                CsListItem(
-                    headlineContent = { Text(walletDialogState.title) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Wallet),
-                            contentDescription = null,
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = walletDialogState.currentBalance.formatAmount(walletDialogState.currency),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                )
-                HorizontalDivider(Modifier.padding(16.dp))
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.primary)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Star),
-                            contentDescription = null,
-                        )
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = walletDialogState.isPrimary,
-                            onCheckedChange = {
-                                onWalletDialogEvent(UpdatePrimary(it))
-                                onWalletDialogEvent(UpdatePrimaryWalletId)
-                            },
-                        )
-                    }
-                )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.transfer)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        onDismiss()
-                    },
-                )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.edit)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        onEdit(walletDialogState.id)
-                        onDismiss()
-                    },
-                )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.delete)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        onDelete(walletDialogState.id)
-                        onDismiss()
-                    },
-                )
+        when (walletMenuState) {
+            WalletMenuUiState.Loading -> LoadingState(
+                Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+            )
+
+            is WalletMenuUiState.Success -> {
+                Column {
+                    CsListItem(
+                        headlineContent = { Text(walletMenuState.userWallet.title) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Wallet),
+                                contentDescription = null,
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = walletMenuState.userWallet.currentBalance
+                                    .formatAmount(walletMenuState.userWallet.currency),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                    )
+                    HorizontalDivider(Modifier.padding(16.dp))
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.primary)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Star),
+                                contentDescription = null,
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = walletMenuState.userWallet.isPrimary,
+                                onCheckedChange = {
+                                    onPrimaryChange(walletMenuState.userWallet.id, it)
+                                },
+                            )
+                        }
+                    )
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.transfer)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onDismiss()
+                        },
+                    )
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.edit)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onEdit(walletMenuState.userWallet.id)
+                            onDismiss()
+                        },
+                    )
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.delete)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onDelete(walletMenuState.userWallet.id)
+                            onDismiss()
+                        },
+                    )
+                }
             }
         }
     }

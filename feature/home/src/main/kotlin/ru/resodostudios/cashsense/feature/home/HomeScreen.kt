@@ -25,12 +25,8 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletMenuViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
-import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -40,14 +36,14 @@ fun HomeScreen(
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
+    walletMenuViewModel: WalletMenuViewModel = hiltViewModel(),
 ) {
     val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onWalletClick = onWalletClick,
+        onWalletMenuClick = walletMenuViewModel::updateWalletId,
         onShowSnackbar = onShowSnackbar,
         onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
@@ -60,8 +56,8 @@ fun HomeScreen(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String?) -> Unit,
+    onWalletMenuClick: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
@@ -109,9 +105,8 @@ internal fun HomeScreen(
                         walletsState = walletsState,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = onTransactionCreate,
-                        onWalletMenuClick = { walletId, currentWalletBalance ->
-                            onWalletDialogEvent(UpdateId(walletId))
-                            onWalletDialogEvent(UpdateCurrentBalance(currentWalletBalance))
+                        onWalletMenuClick = { walletId ->
+                            onWalletMenuClick(walletId)
                             showWalletBottomSheet = true
                         },
                         highlightSelectedWallet = highlightSelectedWallet,
@@ -147,7 +142,7 @@ private fun LazyStaggeredGridScope.wallets(
     walletsState: WalletsUiState,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String, BigDecimal) -> Unit,
+    onWalletMenuClick: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
 ) {
     when (walletsState) {
