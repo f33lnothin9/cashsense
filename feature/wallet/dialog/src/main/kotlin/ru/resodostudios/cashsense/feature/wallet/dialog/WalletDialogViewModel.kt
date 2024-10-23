@@ -1,10 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,11 +24,9 @@ import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 import kotlin.uuid.Uuid
-import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
     private val shortcutManager: ShortcutManager,
@@ -109,13 +105,7 @@ class WalletDialogViewModel @Inject constructor(
         viewModelScope.launch {
             if (_walletDialogUiState.value.isPrimary) {
                 userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
-                val shortLabel = context.getString(localesR.string.new_transaction)
-                val longLabel = context.getString(localesR.string.transaction_shortcut_long_label)
-                shortcutManager.addTransactionShortcut(
-                    walletId = walletId,
-                    shortLabel = shortLabel,
-                    longLabel = longLabel,
-                )
+                shortcutManager.addTransactionShortcut(walletId)
             } else if (_walletDialogUiState.value.currentPrimaryWalletId == _walletDialogUiState.value.id) {
                 userDataRepository.setPrimaryWalletId("")
                 shortcutManager.removeShortcuts()
