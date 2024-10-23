@@ -18,11 +18,9 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimaryWalletId
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
@@ -43,17 +41,15 @@ class WalletDialogViewModel @Inject constructor(
         get() = _walletDialogUiState.asStateFlow()
 
     init {
-       if (_walletDialogUiState.value.id.isEmpty()) clearWalletDialogState()
+        if (_walletDialogUiState.value.id.isEmpty()) clearWalletDialogState()
     }
 
     fun onWalletDialogEvent(event: WalletDialogEvent) {
         when (event) {
             Save -> saveWallet()
-            UpdatePrimaryWalletId -> updatePrimaryWalletId()
             is UpdateId -> updateId(event.id)
             is UpdateTitle -> updateTitle(event.title)
             is UpdateInitialBalance -> updateInitialBalance(event.initialBalance)
-            is UpdateCurrentBalance -> updateCurrentBalance(event.currentBalance)
             is UpdateCurrency -> updateCurrency(event.currency)
             is UpdatePrimary -> updatePrimary(event.isPrimary)
         }
@@ -73,7 +69,7 @@ class WalletDialogViewModel @Inject constructor(
         _walletDialogUiState.update {
             it.copy(id = wallet.id)
         }
-        updatePrimaryWalletId()
+        updatePrimaryWalletId(wallet.id)
         upsertWallet(wallet)
         clearWalletDialogState()
     }
@@ -97,12 +93,6 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
-    private fun updateCurrentBalance(currentBalance: BigDecimal) {
-        _walletDialogUiState.update {
-            it.copy(currentBalance = currentBalance)
-        }
-    }
-
     private fun updateCurrency(currency: String) {
         _walletDialogUiState.update {
             it.copy(currency = currency)
@@ -115,14 +105,14 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
-    private fun updatePrimaryWalletId() {
+    private fun updatePrimaryWalletId(walletId: String) {
         viewModelScope.launch {
             if (_walletDialogUiState.value.isPrimary) {
                 userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
                 val shortLabel = context.getString(localesR.string.new_transaction)
                 val longLabel = context.getString(localesR.string.transaction_shortcut_long_label)
                 shortcutManager.addTransactionShortcut(
-                    walletId = _walletDialogUiState.value.id,
+                    walletId = walletId,
                     shortLabel = shortLabel,
                     longLabel = longLabel,
                 )
@@ -155,17 +145,17 @@ class WalletDialogViewModel @Inject constructor(
     private fun clearWalletDialogState() {
         viewModelScope.launch {
             userDataRepository.userData
-                .onStart { _walletDialogUiState.update { it.copy(isLoading = true) } }
+                .onStart {
+                    _walletDialogUiState.value = _walletDialogUiState.value.copy(isLoading = true)
+                }
                 .collect { userData ->
-                    _walletDialogUiState.update {
-                        it.copy(
-                            id = "",
-                            title = "",
-                            initialBalance = "",
-                            isPrimary = false,
-                            currency = userData.currency.ifEmpty { "USD" },
-                        )
-                    }
+                    _walletDialogUiState.value = _walletDialogUiState.value.copy(
+                        id = "",
+                        title = "",
+                        initialBalance = "",
+                        isPrimary = false,
+                        currency = userData.currency.ifEmpty { "USD" },
+                    )
                 }
         }
     }
