@@ -11,6 +11,4 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.domain)
     implementation(projects.core.shortcuts)
-
-    implementation(projects.feature.transaction)
 }
