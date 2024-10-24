@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -62,11 +63,19 @@ fun WalletCard(
     isPrimary: Boolean = false,
 ) {
     val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
+    val border = if (selected) {
+        CardDefaults.outlinedCardBorder().copy(
+            width = 2.dp,
+            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
+        )
+    } else {
+        CardDefaults.outlinedCardBorder()
+    }
 
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
         shape = RoundedCornerShape(24.dp),
-        elevation = if (selected) CardDefaults.outlinedCardElevation(defaultElevation = 3.dp) else CardDefaults.outlinedCardElevation(),
+        border = border,
         modifier = modifier,
     ) {
         Column(

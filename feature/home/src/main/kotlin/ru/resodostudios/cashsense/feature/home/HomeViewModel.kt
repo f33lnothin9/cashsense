@@ -14,22 +14,21 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
-import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val walletsRepository: WalletsRepository,
     userDataRepository: UserDataRepository,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val homeDestination: HomeRoute = savedStateHandle.toRoute()
 
     private val selectedWalletId = savedStateHandle.getStateFlow(
-        key = WALLET_ID_KEY,
+        key = SELECTED_WALLET_ID_KEY,
         initialValue = homeDestination.walletId,
     )
 
@@ -81,6 +80,10 @@ class HomeViewModel @Inject constructor(
         lastRemovedWalletIdState.value?.let(::deleteWalletWithTransactions)
         undoWalletRemoval()
     }
+
+    fun onWalletClick(walletId: String?) {
+        savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
+    }
 }
 
 sealed interface WalletsUiState {
@@ -94,3 +97,5 @@ sealed interface WalletsUiState {
         val walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
     ) : WalletsUiState
 }
+
+private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

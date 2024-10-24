@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,8 +26,8 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletMenuViewModel
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletMenuViewModel
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -42,7 +43,10 @@ fun HomeScreen(
 
     HomeScreen(
         walletsState = walletsState,
-        onWalletClick = onWalletClick,
+        onWalletClick = {
+            homeViewModel.onWalletClick(it)
+            onWalletClick(it)
+        },
         onWalletMenuClick = walletMenuViewModel::updateWalletId,
         onShowSnackbar = onShowSnackbar,
         onTransactionCreate = onTransactionCreate,
@@ -148,22 +152,22 @@ private fun LazyStaggeredGridScope.wallets(
     when (walletsState) {
         Loading -> Unit
         is Success -> {
-            walletsState.walletsTransactionsCategories.forEach { walletTransactionsCategories ->
-                val walletId = walletTransactionsCategories.wallet.id
-                val isSelected = highlightSelectedWallet && walletId == walletsState.selectedWalletId
-                val isPrimary = walletId == walletsState.primaryWalletId
-                item(key = walletId) {
-                    WalletCard(
-                        wallet = walletTransactionsCategories.wallet,
-                        transactions = walletTransactionsCategories.transactionsWithCategories.map { it.transaction },
-                        onWalletClick = onWalletClick,
-                        onTransactionCreate = onTransactionCreate,
-                        onWalletMenuClick = onWalletMenuClick,
-                        modifier = Modifier.animateItem(),
-                        selected = isSelected,
-                        isPrimary = isPrimary,
-                    )
-                }
+            items(
+                items = walletsState.walletsTransactionsCategories,
+                key = { it.wallet.id },
+                contentType = { "walletCard" },
+            ) { walletData ->
+                val selected = highlightSelectedWallet && walletData.wallet.id == walletsState.selectedWalletId
+                WalletCard(
+                    wallet = walletData.wallet,
+                    transactions = walletData.transactionsWithCategories.map { it.transaction },
+                    onWalletClick = onWalletClick,
+                    onTransactionCreate = onTransactionCreate,
+                    onWalletMenuClick = onWalletMenuClick,
+                    modifier = Modifier.animateItem(),
+                    selected = selected,
+                    isPrimary = walletData.wallet.id == walletsState.primaryWalletId,
+                )
             }
         }
     }
