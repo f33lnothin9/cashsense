@@ -12,7 +12,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import javax.inject.Inject
 
 internal class OfflineTransactionRepository @Inject constructor(
-    private val dao: TransactionDao
+    private val dao: TransactionDao,
 ) : TransactionsRepository {
 
     override fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory> =
