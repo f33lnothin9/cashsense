@@ -6,7 +6,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
-import ru.resodostudios.cashsense.core.database.model.WalletWithTransactionsAndCategoriesEntity
+import ru.resodostudios.cashsense.core.database.model.PopulatedWallet
 
 @Dao
 interface WalletDao {
@@ -16,11 +16,11 @@ interface WalletDao {
 
     @Transaction
     @Query("SELECT * FROM wallets WHERE id = :walletId")
-    fun getWalletWithTransactionsAndCategoriesEntity(walletId: String): Flow<WalletWithTransactionsAndCategoriesEntity>
+    fun getWalletWithTransactionsAndCategoriesEntity(walletId: String): Flow<PopulatedWallet>
 
     @Transaction
     @Query("SELECT * FROM wallets")
-    fun getWalletWithTransactionsAndCategoriesEntities(): Flow<List<WalletWithTransactionsAndCategoriesEntity>>
+    fun getWalletWithTransactionsAndCategoriesEntities(): Flow<List<PopulatedWallet>>
 
     @Upsert
     suspend fun upsertWallet(wallet: WalletEntity)

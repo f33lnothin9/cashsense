@@ -7,14 +7,14 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
-import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEntity
+import ru.resodostudios.cashsense.core.database.model.PopulatedTransaction
 
 @Dao
 interface TransactionDao {
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE id = :transactionId")
-    fun getTransactionWithCategoryEntity(transactionId: String): Flow<TransactionWithCategoryEntity>
+    fun getTransactionWithCategoryEntity(transactionId: String): Flow<PopulatedTransaction>
 
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)

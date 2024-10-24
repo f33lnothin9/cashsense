@@ -1,13 +1,13 @@
 package ru.resodostudios.cashsense.core.data.model
 
-import ru.resodostudios.cashsense.core.database.model.TransactionWithCategoryEntity
-import ru.resodostudios.cashsense.core.database.model.WalletWithTransactionsAndCategoriesEntity
+import ru.resodostudios.cashsense.core.database.model.PopulatedTransaction
+import ru.resodostudios.cashsense.core.database.model.PopulatedWallet
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 
-fun WalletWithTransactionsAndCategories.asEntity() = WalletWithTransactionsAndCategoriesEntity(
+fun WalletWithTransactionsAndCategories.asEntity() = PopulatedWallet(
     wallet = wallet.asEntity(),
     transactions = transactionsWithCategories.map {
-        TransactionWithCategoryEntity(
+        PopulatedTransaction(
             transaction = it.transaction.asEntity(),
             category = it.category?.asEntity()
         )

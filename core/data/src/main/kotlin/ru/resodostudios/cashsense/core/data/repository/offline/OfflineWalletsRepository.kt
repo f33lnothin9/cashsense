@@ -7,7 +7,7 @@ import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.dao.WalletDao
-import ru.resodostudios.cashsense.core.database.model.WalletWithTransactionsAndCategoriesEntity
+import ru.resodostudios.cashsense.core.database.model.PopulatedWallet
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.datastore.CsPreferencesDataSource
 import ru.resodostudios.cashsense.core.model.data.Wallet
@@ -27,7 +27,7 @@ internal class OfflineWalletsRepository @Inject constructor(
         walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId).map { it.asExternalModel() }
 
     override fun getWalletsWithTransactionsAndCategories(): Flow<List<WalletWithTransactionsAndCategories>> =
-        walletDao.getWalletWithTransactionsAndCategoriesEntities().map { it.map(WalletWithTransactionsAndCategoriesEntity::asExternalModel) }
+        walletDao.getWalletWithTransactionsAndCategoriesEntities().map { it.map(PopulatedWallet::asExternalModel) }
 
     override suspend fun upsertWallet(wallet: Wallet) =
         walletDao.upsertWallet(wallet.asEntity())

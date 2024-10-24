@@ -6,7 +6,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
 
-data class WalletWithTransactionsAndCategoriesEntity(
+data class PopulatedWallet(
     @Embedded
     val wallet: WalletEntity,
     @Relation(
@@ -14,10 +14,10 @@ data class WalletWithTransactionsAndCategoriesEntity(
         parentColumn = "id",
         entityColumn = "wallet_owner_id",
     )
-    val transactions: List<TransactionWithCategoryEntity>,
+    val transactions: List<PopulatedTransaction>,
 )
 
-fun WalletWithTransactionsAndCategoriesEntity.asExternalModel() = WalletWithTransactionsAndCategories(
+fun PopulatedWallet.asExternalModel() = WalletWithTransactionsAndCategories(
     wallet = wallet.asExternalModel(),
     transactionsWithCategories = transactions.map {
         TransactionWithCategory(
