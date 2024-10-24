@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.core.model.data
 
-data class WalletExtended(
-    val wallet: Wallet,
+data class ExtendedUserWallet(
+    val userWallet: UserWallet,
     val transactionsWithCategories: List<TransactionWithCategory>,
 )

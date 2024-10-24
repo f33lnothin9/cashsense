@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.WalletExtended
+import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import javax.inject.Inject
@@ -94,7 +94,7 @@ sealed interface WalletsUiState {
         val selectedWalletId: String?,
         val primaryWalletId: String,
         val shouldDisplayUndoWallet: Boolean,
-        val walletsTransactionsCategories: List<WalletExtended>,
+        val walletsTransactionsCategories: List<ExtendedWallet>,
     ) : WalletsUiState
 }
 

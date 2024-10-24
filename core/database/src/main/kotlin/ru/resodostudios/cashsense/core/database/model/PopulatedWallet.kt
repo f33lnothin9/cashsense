@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.model.data.WalletExtended
+import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
 
 data class PopulatedWallet(
     @Embedded
@@ -17,7 +17,7 @@ data class PopulatedWallet(
     val transactions: List<PopulatedTransaction>,
 )
 
-fun PopulatedWallet.asExternalModel() = WalletExtended(
+fun PopulatedWallet.asExternalModel() = ExtendedWallet(
     wallet = wallet.asExternalModel(),
     transactionsWithCategories = transactions.map {
         TransactionWithCategory(
