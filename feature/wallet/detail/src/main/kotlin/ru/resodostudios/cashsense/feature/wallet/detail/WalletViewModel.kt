@@ -14,10 +14,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
@@ -39,7 +39,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanc
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
-import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.time.temporal.WeekFields
 import javax.inject.Inject
@@ -47,8 +46,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
-    walletsRepository: WalletsRepository,
     savedStateHandle: SavedStateHandle,
+    getExtendedUserWallet: GetExtendedUserWalletUseCase,
 ) : ViewModel() {
 
     private val walletRoute: WalletRoute = savedStateHandle.toRoute()
@@ -70,20 +69,15 @@ class WalletViewModel @Inject constructor(
     )
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        walletsRepository.getWalletWithTransactionsAndCategories(walletRoute.walletId),
+        getExtendedUserWallet.invoke(walletRoute.walletId),
         walletFilterState,
         shouldDisplayUndoTransactionState,
         lastRemovedTransactionIdState,
-    ) { walletTransactionsCategories, walletFilter, shouldDisplayUndoTransaction, lastRemovedTransactionId ->
-        val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
-            walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount }
-        )
-        val sortedTransactions = walletTransactionsCategories.transactionsWithCategories
-            .sortedByDescending { it.transaction.timestamp }
+    ) { extendedUserWallet, walletFilter, shouldDisplayUndoTransaction, lastRemovedTransactionId ->
         val financeTypeTransactions = when (walletFilter.financeType) {
-            NONE -> sortedTransactions
-            EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
-            INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
+            NONE -> extendedUserWallet.transactionsWithCategories
+            EXPENSES -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount < ZERO }
+            INCOME -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount > ZERO }
         }
         calculateAvailableYears(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
@@ -117,7 +111,6 @@ class WalletViewModel @Inject constructor(
         } else dateTypeTransactions
 
         Success(
-            currentBalance = currentBalance,
             walletFilter = WalletFilter(
                 availableCategories = walletFilter.availableCategories.minus(Category()),
                 selectedCategories = walletFilter.selectedCategories,
@@ -128,7 +121,7 @@ class WalletViewModel @Inject constructor(
                 selectedYear = walletFilter.selectedYear,
                 selectedMonth = walletFilter.selectedMonth,
             ),
-            wallet = walletTransactionsCategories.wallet,
+            userWallet = extendedUserWallet.userWallet,
             transactionsCategories = filteredByCategories,
             shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
         )
@@ -212,7 +205,8 @@ class WalletViewModel @Inject constructor(
         years.firstOrNull { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
 
     private fun findCurrentMonth(months: List<Int>) =
-        months.firstOrNull { it == getCurrentZonedDateTime().monthValue } ?: getCurrentZonedDateTime().monthValue
+        months.firstOrNull { it == getCurrentZonedDateTime().monthValue }
+            ?: getCurrentZonedDateTime().monthValue
 
     private fun incrementSelectedDate() {
         val walletFilter = walletFilterState.value
@@ -312,9 +306,8 @@ sealed interface WalletUiState {
     data object Loading : WalletUiState
 
     data class Success(
-        val currentBalance: BigDecimal,
         val walletFilter: WalletFilter,
-        val wallet: Wallet,
+        val userWallet: UserWallet,
         val shouldDisplayUndoTransaction: Boolean,
         val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState

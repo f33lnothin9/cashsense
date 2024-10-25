@@ -99,7 +99,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -224,19 +224,19 @@ internal fun WalletScreen(
             ) {
                 item {
                     WalletTopBar(
-                        title = walletState.wallet.title,
-                        currentBalance = walletState.currentBalance,
-                        currency = walletState.wallet.currency,
+                        title = walletState.userWallet.title,
+                        currentBalance = walletState.userWallet.currentBalance,
+                        currency = walletState.userWallet.currency,
                         showDetailActions = showDetailActions,
                         onBackClick = onBackClick,
                         onWalletEvent = onWalletEvent,
                         onNewTransactionClick = {
-                            onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                            onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
                         onEditWalletClick = {
-                            onWalletDialogEvent(UpdateId(walletState.wallet.id))
+                            onWalletDialogEvent(UpdateId(walletState.userWallet.id))
                             showWalletDialog = true
                         },
                     )
@@ -251,11 +251,11 @@ internal fun WalletScreen(
                 if (walletState.transactionsCategories.isNotEmpty()) {
                     transactions(
                         transactionsCategories = walletState.transactionsCategories,
-                        currency = walletState.wallet.currency,
+                        currency = walletState.userWallet.currency,
                         onTransactionClick = {
-                            onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                            onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(it))
-                            onTransactionEvent(UpdateCurrency(walletState.wallet.currency))
+                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
                             showTransactionBottomSheet = true
                         },
                     )
@@ -292,7 +292,7 @@ internal fun WalletScreen(
             }
             LaunchedEffect(openTransactionDialog) {
                 if (openTransactionDialog) {
-                    onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                    onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                     onTransactionEvent(UpdateTransactionId(""))
                     showTransactionDialog = true
                 }
@@ -432,7 +432,7 @@ private fun FinancePanel(
                             )
                             FinanceCard(
                                 title = expenses,
-                                currency = walletState.wallet.currency,
+                                currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.expenses,
                                 indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
@@ -444,7 +444,7 @@ private fun FinancePanel(
                             )
                             FinanceCard(
                                 title = income,
-                                currency = walletState.wallet.currency,
+                                currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
@@ -469,7 +469,7 @@ private fun FinancePanel(
                             title = expenses,
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
-                            currency = walletState.wallet.currency,
+                            currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.expenses,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
@@ -493,7 +493,7 @@ private fun FinancePanel(
                             title = income,
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
-                            currency = walletState.wallet.currency,
+                            currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.income_plural,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
@@ -958,13 +958,14 @@ fun FinancePanelDefaultPreview(
             val categories = transactionsCategories.mapNotNull { it.category }
             FinancePanel(
                 walletState = Success(
-                    wallet = Wallet(
+                    userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
                         initialBalance = ZERO,
+                        currentBalance = BigDecimal(100),
+                        isPrimary = false,
                     ),
-                    currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
                         selectedCategories = categories.take(3),
@@ -1000,13 +1001,14 @@ fun FinancePanelOpenedPreview(
 
             FinancePanel(
                 walletState = Success(
-                    wallet = Wallet(
+                    userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
                         initialBalance = ZERO,
+                        currentBalance = BigDecimal(100),
+                        isPrimary = false,
                     ),
-                    currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
                         selectedCategories = categories.take(2),

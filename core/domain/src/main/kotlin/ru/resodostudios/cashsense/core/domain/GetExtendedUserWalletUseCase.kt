@@ -29,7 +29,8 @@ class GetExtendedUserWalletUseCase @Inject constructor(
                 currency = extendedWallet.wallet.currency,
                 isPrimary = extendedWallet.wallet.id == userData.primaryWalletId,
             ),
-            transactionsWithCategories = extendedWallet.transactionsWithCategories,
+            transactionsWithCategories = extendedWallet.transactionsWithCategories
+                .sortedByDescending { it.transaction.timestamp },
         )
     }
 }
