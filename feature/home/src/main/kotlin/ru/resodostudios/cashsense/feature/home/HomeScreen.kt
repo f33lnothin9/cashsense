@@ -92,7 +92,7 @@ internal fun HomeScreen(
                 clearUndoState()
             }
 
-            if (walletsState.walletsTransactionsCategories.isNotEmpty()) {
+            if (walletsState.extendedUserWallets.isNotEmpty()) {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
                     verticalItemSpacing = 16.dp,
@@ -153,20 +153,19 @@ private fun LazyStaggeredGridScope.wallets(
         Loading -> Unit
         is Success -> {
             items(
-                items = walletsState.walletsTransactionsCategories,
-                key = { it.wallet.id },
+                items = walletsState.extendedUserWallets,
+                key = { it.userWallet.id },
                 contentType = { "walletCard" },
             ) { walletData ->
-                val selected = highlightSelectedWallet && walletData.wallet.id == walletsState.selectedWalletId
+                val selected = highlightSelectedWallet && walletData.userWallet.id == walletsState.selectedWalletId
                 WalletCard(
-                    wallet = walletData.wallet,
+                    userWallet = walletData.userWallet,
                     transactions = walletData.transactionsWithCategories.map { it.transaction },
                     onWalletClick = onWalletClick,
                     onTransactionCreate = onTransactionCreate,
                     onWalletMenuClick = onWalletMenuClick,
                     modifier = Modifier.animateItem(),
                     selected = selected,
-                    isPrimary = walletData.wallet.id == walletsState.primaryWalletId,
                 )
             }
         }

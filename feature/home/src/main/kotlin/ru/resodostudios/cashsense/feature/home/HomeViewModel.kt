@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
+import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import javax.inject.Inject
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val walletsRepository: WalletsRepository,
-    userDataRepository: UserDataRepository,
+    getExtendedUserWallets: GetExtendedUserWalletsUseCase,
 ) : ViewModel() {
 
     private val homeDestination: HomeRoute = savedStateHandle.toRoute()
@@ -36,19 +36,15 @@ class HomeViewModel @Inject constructor(
     private val lastRemovedWalletIdState = MutableStateFlow<String?>(null)
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
-        walletsRepository.getWalletsWithTransactionsAndCategories(),
-        userDataRepository.userData,
+        getExtendedUserWallets.invoke(),
         selectedWalletId,
         shouldDisplayUndoWalletState,
         lastRemovedWalletIdState,
-    ) { wallets, userData, selectedWalletId, shouldDisplayUndoWallet, lastRemovedWalletId ->
+    ) { extendedUserWallets, selectedWalletId, shouldDisplayUndoWallet, lastRemovedWalletId ->
         Success(
             selectedWalletId = selectedWalletId,
-            primaryWalletId = userData.primaryWalletId,
             shouldDisplayUndoWallet = shouldDisplayUndoWallet,
-            walletsTransactionsCategories = wallets
-                .filterNot { it.wallet.id == lastRemovedWalletId }
-                .sortedByDescending { it.wallet.id == userData.primaryWalletId },
+            extendedUserWallets = extendedUserWallets.filterNot { it.userWallet.id == lastRemovedWalletId },
         )
     }
         .stateIn(
@@ -92,9 +88,8 @@ sealed interface WalletsUiState {
 
     data class Success(
         val selectedWalletId: String?,
-        val primaryWalletId: String,
         val shouldDisplayUndoWallet: Boolean,
-        val walletsTransactionsCategories: List<ExtendedWallet>,
+        val extendedUserWallets: List<ExtendedUserWallet>,
     ) : WalletsUiState
 }
 
