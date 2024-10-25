@@ -224,9 +224,7 @@ internal fun WalletScreen(
             ) {
                 item {
                     WalletTopBar(
-                        title = walletState.userWallet.title,
-                        currentBalance = walletState.userWallet.currentBalance,
-                        currency = walletState.userWallet.currency,
+                        userWallet = walletState.userWallet,
                         showDetailActions = showDetailActions,
                         onBackClick = onBackClick,
                         onWalletEvent = onWalletEvent,
@@ -304,9 +302,7 @@ internal fun WalletScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WalletTopBar(
-    title: String,
-    currentBalance: BigDecimal,
-    currency: String,
+    userWallet: UserWallet,
     showDetailActions: Boolean,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
@@ -316,17 +312,29 @@ private fun WalletTopBar(
     TopAppBar(
         title = {
             Column {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = userWallet.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    if (showDetailActions) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Star),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+                }
                 AnimatedAmount(
-                    targetState = currentBalance,
+                    targetState = userWallet.currentBalance,
                     label = "wallet_balance",
                     content = {
                         Text(
-                            text = it.formatAmount(currency),
+                            text = it.formatAmount(userWallet.currency),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium,
