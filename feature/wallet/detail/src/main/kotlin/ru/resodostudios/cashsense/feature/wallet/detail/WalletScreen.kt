@@ -321,7 +321,7 @@ private fun WalletTopBar(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    if (showDetailActions) {
+                    if (showDetailActions && userWallet.isPrimary) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Star),
                             contentDescription = null,
