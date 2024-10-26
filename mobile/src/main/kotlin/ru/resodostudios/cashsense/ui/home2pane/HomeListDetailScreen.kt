@@ -3,11 +3,14 @@ package ru.resodostudios.cashsense.ui.home2pane
 import androidx.activity.compose.BackHandler
 import androidx.annotation.Keep
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -37,10 +40,12 @@ import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
+import ru.resodostudios.cashsense.feature.wallet.dialog.EditWalletScreen
 import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
+private const val DEEP_LINK_BASE_PATH =
+    "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
 
 // TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
 @Keep
@@ -69,16 +74,21 @@ fun NavGraphBuilder.homeListDetailScreen(
 internal fun HomeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: Home2PaneViewModel = hiltViewModel(),
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
+    val editWalletId by viewModel.editWalletId.collectAsStateWithLifecycle()
     val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
+        editWalletId = editWalletId,
         openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
+        onEditWalletClick = viewModel::onEditWalletClick,
         setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
+        windowAdaptiveInfo = windowAdaptiveInfo,
     )
 }
 
@@ -86,12 +96,16 @@ internal fun HomeListDetailScreen(
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
+    editWalletId: String?,
     openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
+    onEditWalletClick: (String) -> Unit,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    windowAdaptiveInfo: WindowAdaptiveInfo,
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator(
+        scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
         initialDestinationHistory = listOfNotNull(
             ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List),
             ThreePaneScaffoldDestinationItem<Nothing>(ListDetailPaneScaffoldRole.Detail).takeIf {
@@ -140,6 +154,10 @@ internal fun HomeListDetailScreen(
             AnimatedPane {
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
+                    onWalletEdit = {
+                        onEditWalletClick(it)
+                        listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Extra)
+                    },
                     onShowSnackbar = onShowSnackbar,
                     onTransactionCreate = {
                         onWalletClickShowDetailPane(it)
@@ -171,6 +189,16 @@ internal fun HomeListDetailScreen(
                             )
                         }
                     }
+                }
+            }
+        },
+        extraPane = {
+            AnimatedPane {
+                if (editWalletId != null) {
+                    EditWalletScreen(
+                        walletId = editWalletId,
+                        onBackClick = listDetailNavigator::navigateBack,
+                    )
                 }
             }
         },
