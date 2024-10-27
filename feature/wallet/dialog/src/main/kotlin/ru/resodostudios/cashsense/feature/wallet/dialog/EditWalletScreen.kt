@@ -51,20 +51,33 @@ fun EditWalletScreen(
     EditWalletScreen(
         editWalletState = editWalletState,
         onBackClick = onBackClick,
+        onSaveClick = viewModel::saveWallet,
+        onTitleUpdate = viewModel::updateTitle,
+        onInitialBalanceUpdate = viewModel::updateInitialBalance,
+        onCurrencyUpdate = viewModel::updateCurrency,
+        onPrimaryUpdate = viewModel::updatePrimary,
         modifier = modifier,
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditWalletScreen(
     editWalletState: EditWalletUiState,
     onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    onTitleUpdate: (String) -> Unit,
+    onInitialBalanceUpdate: (String) -> Unit,
+    onCurrencyUpdate: (String) -> Unit,
+    onPrimaryUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 88.dp),
     ) {
         TopAppBar(
             title = {
@@ -85,7 +98,13 @@ fun EditWalletScreen(
                 }
             },
             actions = {
-                IconButton(onClick = {}) {
+                IconButton(
+                    enabled = editWalletState.title.isNotBlank(),
+                    onClick = {
+                        onSaveClick()
+                        onBackClick()
+                    },
+                ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Check),
                         contentDescription = stringResource(localesR.string.add_transaction_icon_description),
@@ -99,7 +118,7 @@ fun EditWalletScreen(
         ) {
             OutlinedTextField(
                 value = editWalletState.title,
-                onValueChange = {},
+                onValueChange = onTitleUpdate,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -117,7 +136,7 @@ fun EditWalletScreen(
             )
             OutlinedTextField(
                 value = editWalletState.initialBalance,
-                onValueChange = {},
+                onValueChange = onInitialBalanceUpdate,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -134,7 +153,7 @@ fun EditWalletScreen(
             )
             CurrencyDropdownMenu(
                 currencyCode = editWalletState.currency,
-                onCurrencyClick = {},
+                onCurrencyClick = { onCurrencyUpdate(it.currencyCode) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -150,7 +169,7 @@ fun EditWalletScreen(
                 trailingContent = {
                     Switch(
                         checked = editWalletState.isPrimary,
-                        onCheckedChange = {},
+                        onCheckedChange = onPrimaryUpdate,
                     )
                 }
             )
