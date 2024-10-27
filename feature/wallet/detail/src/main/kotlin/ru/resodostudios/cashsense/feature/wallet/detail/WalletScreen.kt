@@ -135,10 +135,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateTy
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
@@ -150,27 +146,27 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletScreen(
-    showDetailActions: Boolean,
+    showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    onWalletEdit: (String) -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     walletViewModel: WalletViewModel = hiltViewModel(),
-    walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
 
     WalletScreen(
         walletState = walletState,
-        showDetailActions = showDetailActions,
+        showNavigationIcon = showNavigationIcon,
         onBackClick = onBackClick,
         onShowSnackbar = onShowSnackbar,
+        onWalletEdit = onWalletEdit,
         openTransactionDialog = openTransactionDialog,
         setTransactionDialogOpen = setTransactionDialogOpen,
         onWalletEvent = walletViewModel::onWalletEvent,
-        onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
         modifier = modifier,
     )
@@ -179,13 +175,13 @@ internal fun WalletScreen(
 @Composable
 internal fun WalletScreen(
     walletState: WalletUiState,
-    showDetailActions: Boolean,
+    showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    onWalletEdit: (String) -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -214,7 +210,6 @@ internal fun WalletScreen(
                 onWalletEvent(ClearUndoState)
             }
 
-            var showWalletDialog by rememberSaveable { mutableStateOf(false) }
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -225,7 +220,7 @@ internal fun WalletScreen(
                 item {
                     WalletTopBar(
                         userWallet = walletState.userWallet,
-                        showDetailActions = showDetailActions,
+                        showNavigationIcon = showNavigationIcon,
                         onBackClick = onBackClick,
                         onWalletEvent = onWalletEvent,
                         onNewTransactionClick = {
@@ -233,10 +228,7 @@ internal fun WalletScreen(
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
-                        onEditWalletClick = {
-                            onWalletDialogEvent(UpdateId(walletState.userWallet.id))
-                            showWalletDialog = true
-                        },
+                        onEditWalletClick = { onWalletEdit(walletState.userWallet.id) },
                     )
                 }
                 item {
@@ -269,9 +261,6 @@ internal fun WalletScreen(
                     }
                 }
             }
-            if (showWalletDialog) {
-                WalletDialog(onDismiss = { showWalletDialog = false })
-            }
 
             if (showTransactionBottomSheet) {
                 TransactionBottomSheet(
@@ -303,7 +292,7 @@ internal fun WalletScreen(
 @Composable
 private fun WalletTopBar(
     userWallet: UserWallet,
-    showDetailActions: Boolean,
+    showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onNewTransactionClick: () -> Unit,
@@ -321,7 +310,7 @@ private fun WalletTopBar(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    if (showDetailActions && userWallet.isPrimary) {
+                    if (showNavigationIcon && userWallet.isPrimary) {
                         Icon(
                             imageVector = ImageVector.vectorResource(CsIcons.Star),
                             contentDescription = null,
@@ -347,7 +336,7 @@ private fun WalletTopBar(
             }
         },
         navigationIcon = {
-            if (showDetailActions) {
+            if (showNavigationIcon) {
                 IconButton(
                     onClick = {
                         onBackClick()
@@ -368,13 +357,11 @@ private fun WalletTopBar(
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            if (showDetailActions) {
-                IconButton(onEditWalletClick) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                        contentDescription = null,
-                    )
-                }
+            IconButton(onEditWalletClick) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                    contentDescription = null,
+                )
             }
         },
         windowInsets = WindowInsets(0, 0, 0, 0),

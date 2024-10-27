@@ -175,9 +175,13 @@ internal fun HomeListDetailScreen(
                         route = DetailPaneNavHostRoute::class,
                     ) {
                         walletScreen(
-                            showDetailActions = !listDetailNavigator.isListPaneVisible(),
+                            showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onBackClick = listDetailNavigator::navigateBack,
                             onShowSnackbar = onShowSnackbar,
+                            onWalletEdit = {
+                                onEditWalletClick(it)
+                                listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Extra)
+                            },
                             openTransactionDialog = openTransactionDialog,
                             setTransactionDialogOpen = setTransactionDialogOpen,
                         )
