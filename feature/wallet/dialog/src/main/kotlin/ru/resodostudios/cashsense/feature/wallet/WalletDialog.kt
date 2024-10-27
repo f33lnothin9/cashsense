@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.dialog
+package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,11 +33,11 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.Save
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateCurrency
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateInitialBalance
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdatePrimary
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateTitle
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable

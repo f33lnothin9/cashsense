@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail
+package ru.resodostudios.cashsense.feature.wallet
 
 import ru.resodostudios.cashsense.core.model.data.Category
 

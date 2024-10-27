@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.dialog
+package ru.resodostudios.cashsense.feature.wallet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,12 +14,12 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.Save
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateCurrency
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateId
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateInitialBalance
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdatePrimary
+import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateTitle
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject

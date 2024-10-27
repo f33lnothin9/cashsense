@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.dialog
+package ru.resodostudios.cashsense.feature.wallet
 
 sealed interface WalletDialogEvent {
 
