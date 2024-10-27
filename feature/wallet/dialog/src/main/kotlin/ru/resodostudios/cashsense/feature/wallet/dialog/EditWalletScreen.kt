@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -74,105 +75,109 @@ fun EditWalletScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 88.dp),
-    ) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = stringResource(localesR.string.edit_wallet),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBackClick,
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
-                        contentDescription = null,
-                    )
-                }
-            },
-            actions = {
-                IconButton(
-                    enabled = editWalletState.title.isNotBlank(),
-                    onClick = {
-                        onSaveClick()
-                        onBackClick()
-                    },
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Check),
-                        contentDescription = stringResource(localesR.string.add_transaction_icon_description),
-                    )
-                }
-            },
-            windowInsets = WindowInsets(0, 0, 0, 0),
-        )
+    if (editWalletState.isLoading) {
+        LoadingState(Modifier.fillMaxWidth())
+    } else {
         Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            modifier = modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 88.dp),
         ) {
-            OutlinedTextField(
-                value = editWalletState.title,
-                onValueChange = onTitleUpdate,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                label = { Text(stringResource(localesR.string.title)) },
-                placeholder = { Text(stringResource(localesR.string.title) + "*") },
-                supportingText = { Text(stringResource(localesR.string.required)) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                ),
-                singleLine = true,
-            )
-            OutlinedTextField(
-                value = editWalletState.initialBalance,
-                onValueChange = onInitialBalanceUpdate,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                label = { Text(stringResource(localesR.string.initial_balance)) },
-                placeholder = { Text("0") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                ),
-                singleLine = true,
-            )
-            CurrencyDropdownMenu(
-                currencyCode = editWalletState.currency,
-                onCurrencyClick = { onCurrencyUpdate(it.currencyCode) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-            )
-            CsListItem(
-                headlineContent = { Text(stringResource(localesR.string.primary)) },
-                leadingContent = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Star),
-                        contentDescription = null,
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(localesR.string.edit_wallet),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
-                trailingContent = {
-                    Switch(
-                        checked = editWalletState.isPrimary,
-                        onCheckedChange = onPrimaryUpdate,
-                    )
-                }
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackClick,
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                            contentDescription = null,
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        enabled = editWalletState.title.isNotBlank(),
+                        onClick = {
+                            onSaveClick()
+                            onBackClick()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Check),
+                            contentDescription = stringResource(localesR.string.add_transaction_icon_description),
+                        )
+                    }
+                },
+                windowInsets = WindowInsets(0, 0, 0, 0),
             )
+            Column(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            ) {
+                OutlinedTextField(
+                    value = editWalletState.title,
+                    onValueChange = onTitleUpdate,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    label = { Text(stringResource(localesR.string.title)) },
+                    placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                    supportingText = { Text(stringResource(localesR.string.required)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    ),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = editWalletState.initialBalance,
+                    onValueChange = onInitialBalanceUpdate,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    label = { Text(stringResource(localesR.string.initial_balance)) },
+                    placeholder = { Text("0") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
+                    singleLine = true,
+                )
+                CurrencyDropdownMenu(
+                    currencyCode = editWalletState.currency,
+                    onCurrencyClick = { onCurrencyUpdate(it.currencyCode) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(localesR.string.primary)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Star),
+                            contentDescription = null,
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = editWalletState.isPrimary,
+                            onCheckedChange = onPrimaryUpdate,
+                        )
+                    }
+                )
+            }
         }
     }
 }
