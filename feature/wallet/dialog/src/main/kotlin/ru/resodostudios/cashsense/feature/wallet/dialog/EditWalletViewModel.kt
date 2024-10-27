@@ -13,7 +13,6 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
-import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 
@@ -81,7 +80,7 @@ class EditWalletViewModel @Inject constructor(
 
     fun loadWallet(id: String) {
         viewModelScope.launch {
-            _editWalletUiState.update { it.copy(isLoading = true) }
+            _editWalletUiState.value = EditWalletUiState(isLoading = true)
             val userData = userDataRepository.userData.first()
             val wallet = walletsRepository.getWallet(id).first()
             _editWalletUiState.update {
@@ -109,7 +108,6 @@ data class EditWalletUiState(
     val id: String = "",
     val title: String = "",
     val initialBalance: String = "",
-    val currentBalance: BigDecimal = ZERO,
     val currentPrimaryWalletId: String = "",
     val currency: String = "",
     val isPrimary: Boolean = false,
