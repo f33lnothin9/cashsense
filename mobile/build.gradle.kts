@@ -64,6 +64,7 @@ dependencies {
     implementation(projects.feature.subscription.list)
     implementation(projects.feature.subscription.dialog)
     implementation(projects.feature.transaction)
+    implementation(projects.feature.wallet.edit)
     implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.settings)
