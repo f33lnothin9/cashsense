@@ -25,8 +25,7 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
-import ru.resodostudios.cashsense.feature.wallet.WalletBottomSheet
-import ru.resodostudios.cashsense.feature.wallet.WalletDialog
+import ru.resodostudios.cashsense.feature.wallet.WalletMenu
 import ru.resodostudios.cashsense.feature.wallet.WalletMenuViewModel
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -72,8 +71,7 @@ internal fun HomeScreen(
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
-    var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
+    var showWalletMenu by rememberSaveable { mutableStateOf(false) }
 
     when (walletsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -114,7 +112,7 @@ internal fun HomeScreen(
                         onTransactionCreate = onTransactionCreate,
                         onWalletMenuClick = { walletId ->
                             onWalletMenuClick(walletId)
-                            showWalletBottomSheet = true
+                            showWalletMenu = true
                         },
                         highlightSelectedWallet = highlightSelectedWallet,
                     )
@@ -126,19 +124,14 @@ internal fun HomeScreen(
                 )
             }
 
-            if (showWalletBottomSheet) {
-                WalletBottomSheet(
-                    onDismiss = { showWalletBottomSheet = false },
+            if (showWalletMenu) {
+                WalletMenu(
+                    onDismiss = { showWalletMenu = false },
                     onEdit = onWalletEdit,
                     onDelete = {
                         hideWallet(it)
                         onWalletClick(null)
                     },
-                )
-            }
-            if (showWalletDialog) {
-                WalletDialog(
-                    onDismiss = { showWalletDialog = false },
                 )
             }
         }

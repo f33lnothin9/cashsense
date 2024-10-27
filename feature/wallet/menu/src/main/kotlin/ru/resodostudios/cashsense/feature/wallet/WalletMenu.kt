@@ -26,7 +26,7 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun WalletBottomSheet(
+fun WalletMenu(
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
@@ -34,7 +34,7 @@ fun WalletBottomSheet(
 ) {
     val walletMenuState by viewModel.walletMenuState.collectAsStateWithLifecycle()
 
-    WalletBottomSheet(
+    WalletMenu(
         walletMenuState = walletMenuState,
         onDismiss = onDismiss,
         onPrimaryChange = viewModel::setPrimaryWalletId,
@@ -44,7 +44,7 @@ fun WalletBottomSheet(
 }
 
 @Composable
-fun WalletBottomSheet(
+fun WalletMenu(
     walletMenuState: WalletMenuUiState,
     onDismiss: () -> Unit,
     onPrimaryChange: (String, Boolean) -> Unit,
@@ -54,9 +54,9 @@ fun WalletBottomSheet(
     CsModalBottomSheet(onDismiss) {
         when (walletMenuState) {
             WalletMenuUiState.Loading -> LoadingState(
-                Modifier
+                modifier = Modifier
                     .height(100.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
 
             is WalletMenuUiState.Success -> {
