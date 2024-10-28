@@ -33,11 +33,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.Save
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateInitialBalance
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdatePrimary
-import ru.resodostudios.cashsense.feature.wallet.WalletDialogEvent.UpdateTitle
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -49,27 +44,32 @@ fun WalletDialog(
 
     WalletDialog(
         walletDialogState = walletDialogState,
-        onWalletDialogEvent = viewModel::onWalletDialogEvent,
         onDismiss = onDismiss,
+        onWalletSave = viewModel::saveWallet,
+        onTitleUpdate = viewModel::updateTitle,
+        onInitialBalanceUpdate = viewModel::updateInitialBalance,
+        onCurrencyUpdate = viewModel::updateCurrency,
+        onPrimaryUpdate = viewModel::updatePrimary,
     )
 }
 
 @Composable
 fun WalletDialog(
     walletDialogState: WalletDialogUiState,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
+    onWalletSave: () -> Unit,
+    onTitleUpdate: (String) -> Unit,
+    onInitialBalanceUpdate: (String) -> Unit,
+    onCurrencyUpdate: (String) -> Unit,
+    onPrimaryUpdate: (Boolean) -> Unit,
 ) {
-    val dialogTitle = if (walletDialogState.id.isNotEmpty()) localesR.string.edit_wallet else localesR.string.new_wallet
-    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
-
     CsAlertDialog(
-        titleRes = dialogTitle,
-        confirmButtonTextRes = dialogConfirmText,
+        titleRes = localesR.string.new_wallet,
+        confirmButtonTextRes = localesR.string.add,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
-            onWalletDialogEvent(Save)
+            onWalletSave()
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
@@ -81,7 +81,7 @@ fun WalletDialog(
         Column(Modifier.verticalScroll(rememberScrollState())) {
             OutlinedTextField(
                 value = walletDialogState.title,
-                onValueChange = { onWalletDialogEvent(UpdateTitle(it)) },
+                onValueChange = onTitleUpdate,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
@@ -94,13 +94,13 @@ fun WalletDialog(
                     imeAction = ImeAction.Next,
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
                 ),
                 singleLine = true,
             )
             OutlinedTextField(
                 value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.cleanAndValidateAmount().first)) },
+                onValueChange = { onInitialBalanceUpdate(it.cleanAndValidateAmount().first) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -111,13 +111,13 @@ fun WalletDialog(
                     imeAction = ImeAction.Done,
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
+                    onDone = { focusManager.clearFocus() },
                 ),
                 singleLine = true,
             )
             CurrencyDropdownMenu(
                 currencyCode = walletDialogState.currency,
-                onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.currencyCode)) },
+                onCurrencyClick = { onCurrencyUpdate(it.currencyCode) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -133,15 +133,13 @@ fun WalletDialog(
                 trailingContent = {
                     Switch(
                         checked = walletDialogState.isPrimary,
-                        onCheckedChange = { onWalletDialogEvent(UpdatePrimary(it)) },
+                        onCheckedChange = onPrimaryUpdate,
                     )
                 }
             )
         }
         LaunchedEffect(Unit) {
-            if (walletDialogState.id.isEmpty()) {
-                focusRequester.requestFocus()
-            }
+            focusRequester.requestFocus()
         }
     }
 }

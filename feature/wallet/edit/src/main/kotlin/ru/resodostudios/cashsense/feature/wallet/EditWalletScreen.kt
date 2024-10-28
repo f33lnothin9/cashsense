@@ -52,7 +52,7 @@ fun EditWalletScreen(
     EditWalletScreen(
         editWalletState = editWalletState,
         onBackClick = onBackClick,
-        onSaveClick = viewModel::saveWallet,
+        onWalletSave = viewModel::saveWallet,
         onTitleUpdate = viewModel::updateTitle,
         onInitialBalanceUpdate = viewModel::updateInitialBalance,
         onCurrencyUpdate = viewModel::updateCurrency,
@@ -66,7 +66,7 @@ fun EditWalletScreen(
 fun EditWalletScreen(
     editWalletState: EditWalletUiState,
     onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
+    onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
     onInitialBalanceUpdate: (String) -> Unit,
     onCurrencyUpdate: (String) -> Unit,
@@ -105,7 +105,7 @@ fun EditWalletScreen(
                     IconButton(
                         enabled = editWalletState.title.isNotBlank(),
                         onClick = {
-                            onSaveClick()
+                            onWalletSave()
                             onBackClick()
                         },
                     ) {
