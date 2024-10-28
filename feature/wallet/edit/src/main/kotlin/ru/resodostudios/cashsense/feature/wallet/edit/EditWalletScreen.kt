@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet
+package ru.resodostudios.cashsense.feature.wallet.edit
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets

@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet
+package ru.resodostudios.cashsense.feature.wallet.add
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,14 +36,14 @@ import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun WalletDialog(
+fun AddWalletDialog(
     onDismiss: () -> Unit,
-    viewModel: WalletDialogViewModel = hiltViewModel(),
+    viewModel: AddWalletViewModel = hiltViewModel(),
 ) {
-    val walletDialogState by viewModel.walletDialogUiState.collectAsStateWithLifecycle()
+    val addWalletState by viewModel.addWalletUiState.collectAsStateWithLifecycle()
 
-    WalletDialog(
-        walletDialogState = walletDialogState,
+    AddWalletDialog(
+        addWalletState = addWalletState,
         onDismiss = onDismiss,
         onWalletSave = viewModel::saveWallet,
         onTitleUpdate = viewModel::updateTitle,
@@ -54,8 +54,8 @@ fun WalletDialog(
 }
 
 @Composable
-fun WalletDialog(
-    walletDialogState: WalletDialogUiState,
+fun AddWalletDialog(
+    addWalletState: WalletDialogUiState,
     onDismiss: () -> Unit,
     onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
@@ -72,7 +72,7 @@ fun WalletDialog(
             onWalletSave()
             onDismiss()
         },
-        isConfirmEnabled = walletDialogState.title.isNotBlank(),
+        isConfirmEnabled = addWalletState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
         val focusManager = LocalFocusManager.current
@@ -80,7 +80,7 @@ fun WalletDialog(
 
         Column(Modifier.verticalScroll(rememberScrollState())) {
             OutlinedTextField(
-                value = walletDialogState.title,
+                value = addWalletState.title,
                 onValueChange = onTitleUpdate,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -99,7 +99,7 @@ fun WalletDialog(
                 singleLine = true,
             )
             OutlinedTextField(
-                value = walletDialogState.initialBalance,
+                value = addWalletState.initialBalance,
                 onValueChange = { onInitialBalanceUpdate(it.cleanAndValidateAmount().first) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,7 +116,7 @@ fun WalletDialog(
                 singleLine = true,
             )
             CurrencyDropdownMenu(
-                currencyCode = walletDialogState.currency,
+                currencyCode = addWalletState.currency,
                 onCurrencyClick = { onCurrencyUpdate(it.currencyCode) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,7 +132,7 @@ fun WalletDialog(
                 },
                 trailingContent = {
                     Switch(
-                        checked = walletDialogState.isPrimary,
+                        checked = addWalletState.isPrimary,
                         onCheckedChange = onPrimaryUpdate,
                     )
                 }

@@ -37,10 +37,10 @@ import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KE
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.wallet.EditWalletScreen
-import ru.resodostudios.cashsense.feature.wallet.navigation.WalletRoute
-import ru.resodostudios.cashsense.feature.wallet.navigation.navigateToWallet
-import ru.resodostudios.cashsense.feature.wallet.navigation.walletScreen
+import ru.resodostudios.cashsense.feature.wallet.edit.EditWalletScreen
+import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
+import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
+import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 

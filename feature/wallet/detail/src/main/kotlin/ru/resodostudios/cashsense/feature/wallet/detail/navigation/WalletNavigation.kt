@@ -1,11 +1,11 @@
-package ru.resodostudios.cashsense.feature.wallet.navigation
+package ru.resodostudios.cashsense.feature.wallet.detail.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
-import ru.resodostudios.cashsense.feature.wallet.WalletScreen
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletScreen
 
 @Serializable
 data class WalletRoute(val walletId: String)

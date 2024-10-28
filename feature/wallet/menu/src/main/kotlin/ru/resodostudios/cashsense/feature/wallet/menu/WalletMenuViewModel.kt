@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet
+package ru.resodostudios.cashsense.feature.wallet.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

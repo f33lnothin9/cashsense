@@ -25,8 +25,8 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
-import ru.resodostudios.cashsense.feature.wallet.WalletMenu
-import ru.resodostudios.cashsense.feature.wallet.WalletMenuViewModel
+import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenu
+import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenuViewModel
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
