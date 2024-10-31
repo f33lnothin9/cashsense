@@ -37,7 +37,6 @@ import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KE
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.wallet.edit.EditWalletScreen
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
@@ -76,15 +75,12 @@ internal fun HomeListDetailScreen(
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
-    val editWalletId by viewModel.editWalletId.collectAsStateWithLifecycle()
     val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
-        editWalletId = editWalletId,
         openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
-        onEditWalletClick = viewModel::onEditWalletClick,
         setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
         windowAdaptiveInfo = windowAdaptiveInfo,
@@ -95,10 +91,8 @@ internal fun HomeListDetailScreen(
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
-    editWalletId: String?,
     openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
-    onEditWalletClick: (String) -> Unit,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
@@ -153,10 +147,6 @@ internal fun HomeListDetailScreen(
             AnimatedPane {
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
-                    onWalletEdit = {
-                        onEditWalletClick(it)
-                        listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Extra)
-                    },
                     onShowSnackbar = onShowSnackbar,
                     onTransactionCreate = {
                         onWalletClickShowDetailPane(it)
@@ -178,10 +168,6 @@ internal fun HomeListDetailScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onBackClick = listDetailNavigator::navigateBack,
                             onShowSnackbar = onShowSnackbar,
-                            onWalletEdit = {
-                                onEditWalletClick(it)
-                                listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Extra)
-                            },
                             openTransactionDialog = openTransactionDialog,
                             setTransactionDialogOpen = setTransactionDialogOpen,
                         )
@@ -192,16 +178,6 @@ internal fun HomeListDetailScreen(
                             )
                         }
                     }
-                }
-            }
-        },
-        extraPane = {
-            AnimatedPane {
-                if (editWalletId != null) {
-                    EditWalletScreen(
-                        walletId = editWalletId,
-                        onBackClick = listDetailNavigator::navigateBack,
-                    )
                 }
             }
         },

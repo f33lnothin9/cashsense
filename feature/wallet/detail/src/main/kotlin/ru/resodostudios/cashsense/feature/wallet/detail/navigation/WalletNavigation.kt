@@ -23,7 +23,6 @@ fun NavGraphBuilder.walletScreen(
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onWalletEdit: (String) -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit = {},
 ) {
@@ -32,7 +31,6 @@ fun NavGraphBuilder.walletScreen(
             showNavigationIcon = showNavigationIcon,
             onBackClick = onBackClick,
             onShowSnackbar = onShowSnackbar,
-            onWalletEdit = onWalletEdit,
             openTransactionDialog = openTransactionDialog,
             setTransactionDialogOpen = setTransactionDialogOpen,
         )

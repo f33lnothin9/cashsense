@@ -32,7 +32,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun HomeScreen(
     onWalletClick: (String?) -> Unit,
-    onWalletEdit: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
@@ -47,7 +46,6 @@ fun HomeScreen(
             homeViewModel.onWalletClick(it)
             onWalletClick(it)
         },
-        onWalletEdit = onWalletEdit,
         onWalletMenuClick = walletMenuViewModel::updateWalletId,
         onShowSnackbar = onShowSnackbar,
         onTransactionCreate = onTransactionCreate,
@@ -62,7 +60,6 @@ fun HomeScreen(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String?) -> Unit,
-    onWalletEdit: (String) -> Unit,
     onWalletMenuClick: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionCreate: (String) -> Unit,
@@ -127,7 +124,9 @@ internal fun HomeScreen(
             if (showWalletMenu) {
                 WalletMenu(
                     onDismiss = { showWalletMenu = false },
-                    onEdit = onWalletEdit,
+                    onEdit = {
+                        // TODO
+                    },
                     onDelete = {
                         hideWallet(it)
                         onWalletClick(null)

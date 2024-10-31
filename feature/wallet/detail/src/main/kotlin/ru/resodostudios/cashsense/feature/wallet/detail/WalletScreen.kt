@@ -149,7 +149,6 @@ internal fun WalletScreen(
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onWalletEdit: (String) -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -163,7 +162,6 @@ internal fun WalletScreen(
         showNavigationIcon = showNavigationIcon,
         onBackClick = onBackClick,
         onShowSnackbar = onShowSnackbar,
-        onWalletEdit = onWalletEdit,
         openTransactionDialog = openTransactionDialog,
         setTransactionDialogOpen = setTransactionDialogOpen,
         onWalletEvent = walletViewModel::onWalletEvent,
@@ -178,7 +176,6 @@ internal fun WalletScreen(
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onWalletEdit: (String) -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
@@ -228,7 +225,9 @@ internal fun WalletScreen(
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
-                        onEditWalletClick = { onWalletEdit(walletState.userWallet.id) },
+                        onEditWalletClick = {
+                            // TODO
+                        },
                     )
                 }
                 item {
