@@ -4,15 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
+import ru.resodostudios.cashsense.core.ui.WalletDialogUiState
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -24,74 +27,73 @@ class AddWalletViewModel @Inject constructor(
     private val shortcutManager: ShortcutManager,
 ) : ViewModel() {
 
-    private val _addWalletUiState = MutableStateFlow(WalletDialogUiState())
-    val addWalletUiState: StateFlow<WalletDialogUiState>
-        get() = _addWalletUiState.asStateFlow()
-
-    init {
-        loadUserData()
+    private val walletDialogState = MutableStateFlow(WalletDialogState())
+    val walletDialogUiState: StateFlow<WalletDialogUiState> = combine(
+        walletDialogState,
+        userDataRepository.userData.distinctUntilChanged(),
+    ) {
+        walletDialogState, userData ->
+        WalletDialogUiState.Success(
+            id = walletDialogState.id,
+            title = walletDialogState.title,
+            initialBalance = walletDialogState.initialBalance,
+            currency = walletDialogState.currency.ifEmpty { userData.currency.ifEmpty { "USD" } },
+            currentPrimaryWalletId = userData.primaryWalletId,
+            isPrimary = walletDialogState.isPrimary,
+        )
     }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = WalletDialogUiState.Loading,
+        )
 
     fun saveWallet() {
         val wallet = Wallet(
             id = Uuid.random().toString(),
-            title = _addWalletUiState.value.title,
-            initialBalance = if (_addWalletUiState.value.initialBalance.isEmpty()) {
+            title = walletDialogState.value.title,
+            initialBalance = if (walletDialogState.value.initialBalance.isEmpty()) {
                 ZERO
             } else {
-                _addWalletUiState.value.initialBalance.toBigDecimal()
+                walletDialogState.value.initialBalance.toBigDecimal()
             },
-            currency = _addWalletUiState.value.currency,
+            currency = walletDialogState.value.currency,
         )
-        _addWalletUiState.update {
-            it.copy(id = wallet.id)
-        }
         updatePrimaryWalletId(wallet.id)
         upsertWallet(wallet)
-        loadUserData()
+        walletDialogState.update { WalletDialogState() }
     }
 
     fun updateTitle(title: String) {
-        _addWalletUiState.update {
+        walletDialogState.update {
             it.copy(title = title)
         }
     }
 
     fun updateInitialBalance(initialBalance: String) {
-        _addWalletUiState.update {
+        walletDialogState.update {
             it.copy(initialBalance = initialBalance)
         }
     }
 
     fun updateCurrency(currency: String) {
-        _addWalletUiState.update {
+        walletDialogState.update {
             it.copy(currency = currency)
         }
     }
 
     fun updatePrimary(isPrimary: Boolean) {
-        _addWalletUiState.update {
+        walletDialogState.update {
             it.copy(isPrimary = isPrimary)
         }
     }
 
     private fun updatePrimaryWalletId(walletId: String) {
         viewModelScope.launch {
-            if (_addWalletUiState.value.isPrimary) {
-                userDataRepository.setPrimaryWalletId(_addWalletUiState.value.id)
+            if (walletDialogState.value.isPrimary) {
+                userDataRepository.setPrimaryWalletId(walletDialogState.value.id)
                 shortcutManager.addTransactionShortcut(walletId)
             }
-        }
-    }
-
-    private fun loadUserData() {
-        viewModelScope.launch {
-            _addWalletUiState.value = WalletDialogUiState(isLoading = true)
-            val userData = userDataRepository.userData.first()
-            _addWalletUiState.value = WalletDialogUiState(
-                currency = userData.currency.ifEmpty { "USD" },
-                isLoading = false,
-            )
         }
     }
 
@@ -102,11 +104,10 @@ class AddWalletViewModel @Inject constructor(
     }
 }
 
-data class WalletDialogUiState(
+data class WalletDialogState(
     val id: String = "",
     val title: String = "",
     val initialBalance: String = "",
     val currency: String = "",
     val isPrimary: Boolean = false,
-    val isLoading: Boolean = false,
 )
