@@ -44,7 +44,7 @@ fun WalletMenu(
 }
 
 @Composable
-fun WalletMenu(
+private fun WalletMenu(
     walletMenuState: WalletMenuUiState,
     onDismiss: () -> Unit,
     onPrimaryChange: (String, Boolean) -> Unit,

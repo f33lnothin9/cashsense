@@ -33,6 +33,32 @@ class AddWalletViewModel @Inject constructor(
         loadUserData()
     }
 
+    private fun loadUserData() {
+        viewModelScope.launch {
+            _walletDialogUiState.value = WalletDialogUiState(isLoading = true)
+            val userData = userDataRepository.userData.first()
+            _walletDialogUiState.value = WalletDialogUiState(
+                currency = userData.currency.ifEmpty { "USD" },
+                isLoading = false,
+            )
+        }
+    }
+
+    private fun updatePrimaryWalletId(walletId: String) {
+        viewModelScope.launch {
+            if (_walletDialogUiState.value.isPrimary) {
+                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
+                shortcutManager.addTransactionShortcut(walletId)
+            }
+        }
+    }
+
+    private fun upsertWallet(wallet: Wallet) {
+        viewModelScope.launch {
+            walletsRepository.upsertWallet(wallet)
+        }
+    }
+
     fun saveWallet() {
         val wallet = Wallet(
             id = Uuid.random().toString(),
@@ -70,32 +96,6 @@ class AddWalletViewModel @Inject constructor(
     fun updatePrimary(isPrimary: Boolean) {
         _walletDialogUiState.update {
             it.copy(isPrimary = isPrimary)
-        }
-    }
-
-    private fun loadUserData() {
-        viewModelScope.launch {
-            _walletDialogUiState.value = WalletDialogUiState(isLoading = true)
-            val userData = userDataRepository.userData.first()
-            _walletDialogUiState.value = WalletDialogUiState(
-                currency = userData.currency.ifEmpty { "USD" },
-                isLoading = false,
-            )
-        }
-    }
-
-    private fun updatePrimaryWalletId(walletId: String) {
-        viewModelScope.launch {
-            if (_walletDialogUiState.value.isPrimary) {
-                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
-                shortcutManager.addTransactionShortcut(walletId)
-            }
-        }
-    }
-
-    private fun upsertWallet(wallet: Wallet) {
-        viewModelScope.launch {
-            walletsRepository.upsertWallet(wallet)
         }
     }
 }

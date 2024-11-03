@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -44,11 +43,7 @@ fun WalletDialog(
     modifier: Modifier = Modifier,
 ) {
     if (walletDialogState.isLoading) {
-        LoadingState(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(250.dp),
-        )
+        LoadingState(modifier.fillMaxWidth())
     } else {
         val titleRes = if (walletDialogState.id.isBlank()) {
             localesR.string.new_wallet
