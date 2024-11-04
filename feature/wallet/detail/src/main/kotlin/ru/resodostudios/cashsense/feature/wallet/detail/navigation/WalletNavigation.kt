@@ -21,6 +21,7 @@ fun NavController.navigateToWallet(
 
 fun NavGraphBuilder.walletScreen(
     showNavigationIcon: Boolean,
+    onEditWallet: (String) -> Unit,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
@@ -29,6 +30,7 @@ fun NavGraphBuilder.walletScreen(
     composable<WalletRoute> {
         WalletScreen(
             showNavigationIcon = showNavigationIcon,
+            onEditWallet = onEditWallet,
             onBackClick = onBackClick,
             onShowSnackbar = onShowSnackbar,
             openTransactionDialog = openTransactionDialog,

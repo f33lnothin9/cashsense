@@ -147,6 +147,7 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 @Composable
 internal fun WalletScreen(
     showNavigationIcon: Boolean,
+    onEditWallet: (String) -> Unit,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
@@ -160,6 +161,7 @@ internal fun WalletScreen(
     WalletScreen(
         walletState = walletState,
         showNavigationIcon = showNavigationIcon,
+        onEditWallet = onEditWallet,
         onBackClick = onBackClick,
         onShowSnackbar = onShowSnackbar,
         openTransactionDialog = openTransactionDialog,
@@ -171,9 +173,10 @@ internal fun WalletScreen(
 }
 
 @Composable
-internal fun WalletScreen(
+private fun WalletScreen(
     walletState: WalletUiState,
     showNavigationIcon: Boolean,
+    onEditWallet: (String) -> Unit,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
@@ -210,6 +213,22 @@ internal fun WalletScreen(
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
 
+            if (showTransactionBottomSheet) {
+                TransactionBottomSheet(
+                    onDismiss = { showTransactionBottomSheet = false },
+                    onEdit = { showTransactionDialog = true },
+                    onDelete = { onWalletEvent(HideTransaction(it)) },
+                )
+            }
+            if (showTransactionDialog) {
+                TransactionDialog(
+                    onDismiss = {
+                        showTransactionDialog = false
+                        setTransactionDialogOpen(false)
+                    }
+                )
+            }
+
             LazyColumn(
                 contentPadding = PaddingValues(bottom = 88.dp),
                 modifier = modifier.fillMaxSize(),
@@ -225,9 +244,7 @@ internal fun WalletScreen(
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
-                        onEditWalletClick = {
-                            // TODO
-                        },
+                        onEditWalletClick = { onEditWallet(walletState.userWallet.id) },
                     )
                 }
                 item {
@@ -259,22 +276,6 @@ internal fun WalletScreen(
                         )
                     }
                 }
-            }
-
-            if (showTransactionBottomSheet) {
-                TransactionBottomSheet(
-                    onDismiss = { showTransactionBottomSheet = false },
-                    onEdit = { showTransactionDialog = true },
-                    onDelete = { onWalletEvent(HideTransaction(it)) },
-                )
-            }
-            if (showTransactionDialog) {
-                TransactionDialog(
-                    onDismiss = {
-                        showTransactionDialog = false
-                        setTransactionDialogOpen(false)
-                    }
-                )
             }
             LaunchedEffect(openTransactionDialog) {
                 if (openTransactionDialog) {

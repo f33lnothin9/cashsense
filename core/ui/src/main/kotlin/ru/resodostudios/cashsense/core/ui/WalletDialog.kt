@@ -1,7 +1,9 @@
 package ru.resodostudios.cashsense.core.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,6 +36,8 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun WalletDialog(
     walletDialogState: WalletDialogUiState,
+    @StringRes titleRes: Int,
+    @StringRes confirmButtonTextRes: Int,
     onDismiss: () -> Unit,
     onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
@@ -42,32 +46,22 @@ fun WalletDialog(
     onPrimaryUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (walletDialogState.isLoading) {
-        LoadingState(modifier.fillMaxWidth())
-    } else {
-        val titleRes = if (walletDialogState.id.isBlank()) {
-            localesR.string.new_wallet
+    CsAlertDialog(
+        titleRes = titleRes,
+        confirmButtonTextRes = confirmButtonTextRes,
+        dismissButtonTextRes = localesR.string.cancel,
+        iconRes = CsIcons.Wallet,
+        onConfirm = {
+            onWalletSave()
+            onDismiss()
+        },
+        isConfirmEnabled = walletDialogState.title.isNotBlank(),
+        onDismiss = onDismiss,
+        modifier = modifier,
+    ) {
+        if (walletDialogState.isLoading) {
+            LoadingState(Modifier.fillMaxWidth().height(320.dp))
         } else {
-            localesR.string.edit_wallet
-        }
-        val confirmButtonTextRes = if (walletDialogState.id.isBlank()) {
-            localesR.string.add
-        } else {
-            localesR.string.save
-        }
-
-        CsAlertDialog(
-            titleRes = titleRes,
-            confirmButtonTextRes = confirmButtonTextRes,
-            dismissButtonTextRes = localesR.string.cancel,
-            iconRes = CsIcons.Wallet,
-            onConfirm = {
-                onWalletSave()
-                onDismiss()
-            },
-            isConfirmEnabled = walletDialogState.title.isNotBlank(),
-            onDismiss = onDismiss,
-        ) {
             val focusManager = LocalFocusManager.current
             val focusRequester = remember { FocusRequester() }
 

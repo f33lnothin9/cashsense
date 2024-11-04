@@ -21,10 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.model.data.WalletDialogUiState
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.WalletDialog
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenu
@@ -34,6 +32,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun HomeScreen(
     onWalletClick: (String?) -> Unit,
+    onEditWallet: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
@@ -41,79 +40,50 @@ fun HomeScreen(
     walletMenuViewModel: WalletMenuViewModel = hiltViewModel(),
 ) {
     val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
-    val walletDialogState by homeViewModel.walletDialogUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        walletDialogState = walletDialogState,
         onWalletClick = {
             homeViewModel.onWalletClick(it)
             onWalletClick(it)
         },
+        onEditWallet = onEditWallet,
         onWalletMenuClick = walletMenuViewModel::updateWalletId,
         onShowSnackbar = onShowSnackbar,
         onTransactionCreate = onTransactionCreate,
-        onWalletSave = homeViewModel::saveWallet,
-        onTitleUpdate = homeViewModel::updateTitle,
-        onInitialBalanceUpdate = homeViewModel::updateInitialBalance,
-        onCurrencyUpdate = homeViewModel::updateCurrency,
-        onPrimaryUpdate = homeViewModel::updatePrimary,
         highlightSelectedWallet = highlightSelectedWallet,
         hideWallet = homeViewModel::hideWallet,
         undoWalletRemoval = homeViewModel::undoWalletRemoval,
         clearUndoState = homeViewModel::clearUndoState,
-        loadWallet = homeViewModel::loadWallet,
     )
 }
 
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    walletDialogState: WalletDialogUiState,
     onWalletClick: (String?) -> Unit,
+    onEditWallet: (String) -> Unit,
     onWalletMenuClick: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionCreate: (String) -> Unit,
-    onWalletSave: () -> Unit,
-    onTitleUpdate: (String) -> Unit,
-    onInitialBalanceUpdate: (String) -> Unit,
-    onCurrencyUpdate: (String) -> Unit,
-    onPrimaryUpdate: (Boolean) -> Unit,
     highlightSelectedWallet: Boolean = false,
     hideWallet: (String) -> Unit = {},
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
-    loadWallet: (String) -> Unit = {},
 ) {
     when (walletsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
             var showWalletMenu by rememberSaveable { mutableStateOf(false) }
-            var showWalletDialog by rememberSaveable { mutableStateOf(false) }
 
             if (showWalletMenu) {
                 WalletMenu(
                     onDismiss = { showWalletMenu = false },
-                    onEdit = { walletId ->
-                        loadWallet(walletId)
-                        showWalletDialog = true
-                    },
+                    onEdit = onEditWallet,
                     onDelete = { walletId ->
                         hideWallet(walletId)
                         onWalletClick(null)
                     },
-                )
-            }
-
-            if (showWalletDialog) {
-                WalletDialog(
-                    walletDialogState = walletDialogState,
-                    onDismiss = { showWalletDialog = false },
-                    onWalletSave = onWalletSave,
-                    onTitleUpdate = onTitleUpdate,
-                    onInitialBalanceUpdate = onInitialBalanceUpdate,
-                    onCurrencyUpdate = onCurrencyUpdate,
-                    onPrimaryUpdate = onPrimaryUpdate,
                 )
             }
 

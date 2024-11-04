@@ -74,6 +74,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
     implementation(projects.core.model)
+    implementation(projects.core.shortcuts)
     implementation(projects.core.ui)
 
     implementation(libs.androidx.activity.compose)
