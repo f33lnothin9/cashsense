@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.model.data.WalletDialogUiState
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
-import java.math.BigDecimal.ZERO
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,24 +36,6 @@ class EditWalletViewModel @Inject constructor(
 
     init {
         editWalletDestination.walletId?.let { loadWallet(it) }
-    }
-
-    private fun updatePrimaryWalletId(walletId: String) {
-        viewModelScope.launch {
-            if (_walletDialogState.value.isPrimary) {
-                userDataRepository.setPrimaryWalletId(_walletDialogState.value.id)
-                shortcutManager.addTransactionShortcut(walletId)
-            } else if (_walletDialogState.value.currentPrimaryWalletId == _walletDialogState.value.id) {
-                userDataRepository.setPrimaryWalletId("")
-                shortcutManager.removeShortcuts()
-            }
-        }
-    }
-
-    private fun upsertWallet(wallet: Wallet) {
-        viewModelScope.launch {
-            walletsRepository.upsertWallet(wallet)
-        }
     }
 
     private fun loadWallet(id: String) {
@@ -76,18 +58,34 @@ class EditWalletViewModel @Inject constructor(
     }
 
     fun saveWallet() {
+        _walletDialogState.update { it.copy(isWalletSaved = false) }
         val wallet = Wallet(
             id = _walletDialogState.value.id,
             title = _walletDialogState.value.title,
             initialBalance = if (_walletDialogState.value.initialBalance.isEmpty()) {
-                ZERO
+                BigDecimal.ZERO
             } else {
-                _walletDialogState.value.initialBalance.toBigDecimal()
+                BigDecimal(_walletDialogState.value.initialBalance)
             },
             currency = _walletDialogState.value.currency,
         )
-        updatePrimaryWalletId(wallet.id)
-        upsertWallet(wallet)
+        val updatePrimaryIdJob = viewModelScope.launch {
+            if (_walletDialogState.value.isPrimary) {
+                userDataRepository.setPrimaryWalletId(_walletDialogState.value.id)
+                shortcutManager.addTransactionShortcut(_walletDialogState.value.id)
+            } else if (_walletDialogState.value.currentPrimaryWalletId == _walletDialogState.value.id) {
+                userDataRepository.setPrimaryWalletId("")
+                shortcutManager.removeShortcuts()
+            }
+        }
+        val upsertWalletJob = viewModelScope.launch {
+            walletsRepository.upsertWallet(wallet)
+        }
+        viewModelScope.launch {
+            updatePrimaryIdJob.join()
+            upsertWalletJob.join()
+        }
+        _walletDialogState.update { it.copy(isWalletSaved = true) }
     }
 
     fun updateTitle(title: String) {

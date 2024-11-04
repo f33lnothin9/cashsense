@@ -19,7 +19,10 @@ fun AddWalletDialog(
         titleRes = localesR.string.new_wallet,
         confirmButtonTextRes = localesR.string.add,
         onDismiss = onDismiss,
-        onWalletSave = viewModel::saveWallet,
+        onWalletSave = {
+            viewModel.saveWallet()
+            onDismiss()
+        },
         onTitleUpdate = viewModel::updateTitle,
         onInitialBalanceUpdate = viewModel::updateInitialBalance,
         onCurrencyUpdate = viewModel::updateCurrency,

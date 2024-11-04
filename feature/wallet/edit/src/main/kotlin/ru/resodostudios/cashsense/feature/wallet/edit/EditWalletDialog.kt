@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet.edit
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,6 +16,12 @@ internal fun EditWalletDialog(
     viewModel: EditWalletViewModel = hiltViewModel(),
 ) {
     val walletDialogState by viewModel.walletDialogState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(walletDialogState.isWalletSaved) {
+        if (walletDialogState.isWalletSaved == true) {
+            onDismiss()
+        }
+    }
 
     WalletDialog(
         walletDialogState = walletDialogState,

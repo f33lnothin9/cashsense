@@ -51,10 +51,7 @@ fun WalletDialog(
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Wallet,
-        onConfirm = {
-            onWalletSave()
-            onDismiss()
-        },
+        onConfirm = onWalletSave,
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
         modifier = modifier,
