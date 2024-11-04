@@ -37,6 +37,7 @@ fun CsNavHost(
     ) {
         homeListDetailGraph(
             onEditWallet = navController::navigateToEditWallet,
+            onTransfer = { TODO() },
             onShowSnackbar = onShowSnackbar,
         )
         categoriesScreen(onShowSnackbar)

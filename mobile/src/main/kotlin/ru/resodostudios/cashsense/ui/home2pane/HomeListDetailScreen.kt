@@ -56,6 +56,7 @@ internal object DetailPaneNavHostRoute
 
 fun NavGraphBuilder.homeListDetailGraph(
     onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     composable<HomeRoute>(
@@ -65,6 +66,7 @@ fun NavGraphBuilder.homeListDetailGraph(
     ) {
         HomeListDetailScreen(
             onEditWallet = onEditWallet,
+            onTransfer = onTransfer,
             onShowSnackbar = onShowSnackbar,
         )
     }
@@ -73,6 +75,7 @@ fun NavGraphBuilder.homeListDetailGraph(
 @Composable
 internal fun HomeListDetailScreen(
     onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: Home2PaneViewModel = hiltViewModel(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
@@ -85,6 +88,7 @@ internal fun HomeListDetailScreen(
         openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
         onEditWallet = onEditWallet,
+        onTransfer = onTransfer,
         setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
         windowAdaptiveInfo = windowAdaptiveInfo,
@@ -98,6 +102,7 @@ internal fun HomeListDetailScreen(
     openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
     onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
@@ -173,6 +178,7 @@ internal fun HomeListDetailScreen(
                         walletScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onEditWallet = onEditWallet,
+                            onTransfer = onTransfer,
                             onBackClick = listDetailNavigator::navigateBack,
                             onShowSnackbar = onShowSnackbar,
                             openTransactionDialog = openTransactionDialog,

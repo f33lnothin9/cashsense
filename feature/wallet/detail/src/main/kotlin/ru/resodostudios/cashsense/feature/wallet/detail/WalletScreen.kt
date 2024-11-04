@@ -148,6 +148,7 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 internal fun WalletScreen(
     showNavigationIcon: Boolean,
     onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
@@ -162,6 +163,7 @@ internal fun WalletScreen(
         walletState = walletState,
         showNavigationIcon = showNavigationIcon,
         onEditWallet = onEditWallet,
+        onTransfer = onTransfer,
         onBackClick = onBackClick,
         onShowSnackbar = onShowSnackbar,
         openTransactionDialog = openTransactionDialog,
@@ -177,6 +179,7 @@ private fun WalletScreen(
     walletState: WalletUiState,
     showNavigationIcon: Boolean,
     onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
@@ -244,7 +247,8 @@ private fun WalletScreen(
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
-                        onEditWalletClick = { onEditWallet(walletState.userWallet.id) },
+                        onEditWallet = onEditWallet,
+                        onTransfer = onTransfer,
                     )
                 }
                 item {
@@ -296,7 +300,8 @@ private fun WalletTopBar(
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onNewTransactionClick: () -> Unit,
-    onEditWalletClick: () -> Unit,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -351,13 +356,19 @@ private fun WalletTopBar(
             }
         },
         actions = {
-            IconButton(onNewTransactionClick) {
+            IconButton(onClick = onNewTransactionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            IconButton(onEditWalletClick) {
+            IconButton(onClick = { onTransfer(userWallet.id) }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                    contentDescription = stringResource(localesR.string.transfer),
+                )
+            }
+            IconButton(onClick = { onEditWallet(userWallet.id) }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Edit),
                     contentDescription = null,
