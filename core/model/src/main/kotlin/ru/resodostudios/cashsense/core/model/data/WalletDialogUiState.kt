@@ -8,5 +8,5 @@ data class WalletDialogUiState(
     val currency: String = "",
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
-    val isWalletSaved: Boolean? = null,
+    val isWalletSaved: Boolean = false,
 )

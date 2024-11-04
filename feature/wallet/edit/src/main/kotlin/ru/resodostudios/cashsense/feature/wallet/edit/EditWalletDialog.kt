@@ -18,7 +18,7 @@ internal fun EditWalletDialog(
     val walletDialogState by viewModel.walletDialogState.collectAsStateWithLifecycle()
 
     LaunchedEffect(walletDialogState.isWalletSaved) {
-        if (walletDialogState.isWalletSaved == true) {
+        if (walletDialogState.isWalletSaved) {
             onDismiss()
         }
     }

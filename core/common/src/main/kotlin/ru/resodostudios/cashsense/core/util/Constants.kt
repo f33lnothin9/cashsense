@@ -5,7 +5,6 @@ object Constants {
     const val TARGET_ACTIVITY_NAME = "ru.resodostudios.cashsense.MainActivity"
 
     const val WALLET_ID_KEY = "walletId"
-    const val EDITED_WALLET_ID_KEY = "editedWalletId"
     const val OPEN_TRANSACTION_DIALOG_KEY = "openTransactionDialog"
 
     const val SUBSCRIPTIONS_PATH = "subscriptions"
