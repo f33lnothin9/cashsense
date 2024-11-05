@@ -2,12 +2,18 @@ package ru.resodostudios.cashsense.feature.transfer
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -18,9 +24,42 @@ class TransferViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    private val transferDestination: TransferRoute = savedStateHandle.toRoute()
+
     private val _transferState = MutableStateFlow(TransferUiState())
     val transferState: StateFlow<TransferUiState>
         get() = _transferState.asStateFlow()
+
+    init {
+        transferDestination.walletId?.let { loadTransfer(it) }
+    }
+
+    private fun loadTransfer(walletId: String) {
+        viewModelScope.launch {
+            _transferState.update { TransferUiState(isLoading = true) }
+            val transferWallets = walletsRepository.getWalletsWithTransactionsAndCategories()
+                .first()
+                .map { extendedWallet ->
+                    val currentBalance = extendedWallet.transactionsWithCategories
+                        .sumOf { it.transaction.amount }
+                        .plus(extendedWallet.wallet.initialBalance)
+                    TransferWallet(
+                        id = extendedWallet.wallet.id,
+                        title = extendedWallet.wallet.title,
+                        currentBalance = currentBalance,
+                        currency = extendedWallet.wallet.currency,
+                    )
+                }
+            val fromWallet = transferWallets.first { it.id == walletId }
+            _transferState.update {
+                it.copy(
+                    fromWallet = fromWallet,
+                    transferWallets = transferWallets,
+                    isLoading = false,
+                )
+            }
+        }
+    }
 }
 
 data class TransferUiState(
@@ -28,6 +67,7 @@ data class TransferUiState(
     val toWallet: TransferWallet = TransferWallet(),
     val amount: String = "",
     val exchangeRate: String = "",
+    val transferWallets: List<TransferWallet> = emptyList(),
     val isLoading: Boolean = false,
 )
 
