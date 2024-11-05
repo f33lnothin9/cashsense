@@ -86,4 +86,8 @@
   <string name="repeat">Повторить</string>
   <string name="currency_not_found">Валюта не найдена</string>
   <string name="transfer">Перевести</string>
+  <string name="new_transfer">Новый перевод</string>
+  <string name="from_wallet">С кошелька</string>
+  <string name="to_wallet">На кошелёк</string>
+  <string name="exchange_rate">Валютный курс</string>
 </resources>

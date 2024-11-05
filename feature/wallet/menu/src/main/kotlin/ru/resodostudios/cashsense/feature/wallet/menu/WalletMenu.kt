@@ -28,6 +28,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun WalletMenu(
     onDismiss: () -> Unit,
+    onTransfer: (String) -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
     viewModel: WalletMenuViewModel = hiltViewModel(),
@@ -38,6 +39,7 @@ fun WalletMenu(
         walletMenuState = walletMenuState,
         onDismiss = onDismiss,
         onPrimaryChange = viewModel::setPrimaryWalletId,
+        onTransfer = onTransfer,
         onEdit = onEdit,
         onDelete = onDelete,
     )
@@ -48,6 +50,7 @@ private fun WalletMenu(
     walletMenuState: WalletMenuUiState,
     onDismiss: () -> Unit,
     onPrimaryChange: (String, Boolean) -> Unit,
+    onTransfer: (String) -> Unit,
     onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
 ) {
@@ -105,7 +108,7 @@ private fun WalletMenu(
                             )
                         },
                         onClick = {
-                            // TODO
+                            onTransfer(walletMenuState.userWallet.id)
                             onDismiss()
                         },
                     )

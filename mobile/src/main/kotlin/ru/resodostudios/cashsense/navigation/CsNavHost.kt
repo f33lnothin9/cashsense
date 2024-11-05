@@ -13,6 +13,8 @@ import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
+import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransfer
+import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.editWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.navigateToEditWallet
 import ru.resodostudios.cashsense.ui.CsAppState
@@ -37,7 +39,7 @@ fun CsNavHost(
     ) {
         homeListDetailGraph(
             onEditWallet = navController::navigateToEditWallet,
-            onTransfer = { TODO() },
+            onTransfer = navController::navigateToTransfer,
             onShowSnackbar = onShowSnackbar,
         )
         categoriesScreen(onShowSnackbar)
@@ -47,5 +49,6 @@ fun CsNavHost(
             nestedGraphs = { licensesScreen(navController::navigateUp) },
         )
         editWalletDialog(navController::navigateUp)
+        transferDialog(navController::navigateUp)
     }
 }

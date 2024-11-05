@@ -158,6 +158,7 @@ internal fun HomeListDetailScreen(
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
                     onEditWallet = onEditWallet,
+                    onTransfer = onTransfer,
                     onShowSnackbar = onShowSnackbar,
                     onTransactionCreate = {
                         onWalletClickShowDetailPane(it)
