@@ -67,7 +67,11 @@ class TransferViewModel @Inject constructor(
         }
         if (transferWallet.currency == _transferState.value.receivingWallet.currency) {
             _transferState.update {
-                it.copy(exchangeRate = BigDecimal.ONE.toString())
+                it.copy(exchangeRate = "1")
+            }
+        } else {
+            _transferState.update {
+                it.copy(exchangeRate = "")
             }
         }
     }
@@ -78,7 +82,11 @@ class TransferViewModel @Inject constructor(
         }
         if (transferWallet.currency == _transferState.value.sendingWallet.currency) {
             _transferState.update {
-                it.copy(exchangeRate = BigDecimal.ONE.toString())
+                it.copy(exchangeRate = "1")
+            }
+        } else {
+            _transferState.update {
+                it.copy(exchangeRate = "")
             }
         }
     }

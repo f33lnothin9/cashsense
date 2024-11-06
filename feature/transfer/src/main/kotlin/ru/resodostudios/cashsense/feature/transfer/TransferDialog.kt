@@ -71,7 +71,10 @@ private fun TransferDialog(
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
         onConfirm = {},
-        isConfirmEnabled = transferState.amount.isNotBlank() && transferState.receivingWallet.id.isNotBlank(),
+        isConfirmEnabled = transferState.amount.isNotBlank() &&
+                transferState.receivingWallet.id.isNotBlank() &&
+                transferState.exchangeRate.isNotBlank() &&
+                transferState.sendingWallet != transferState.receivingWallet,
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
