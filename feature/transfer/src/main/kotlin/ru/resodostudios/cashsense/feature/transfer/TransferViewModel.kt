@@ -53,18 +53,30 @@ class TransferViewModel @Inject constructor(
             val fromWallet = transferWallets.first { it.id == walletId }
             _transferState.update {
                 it.copy(
-                    fromWallet = fromWallet,
+                    sendingWallet = fromWallet,
                     transferWallets = transferWallets,
                     isLoading = false,
                 )
             }
         }
     }
+
+    fun updateSendingWallet(transferWallet: TransferWallet) {
+        _transferState.update {
+            it.copy(sendingWallet = transferWallet)
+        }
+    }
+
+    fun updateReceivingWallet(transferWallet: TransferWallet) {
+        _transferState.update {
+            it.copy(receivingWallet = transferWallet)
+        }
+    }
 }
 
 data class TransferUiState(
-    val fromWallet: TransferWallet = TransferWallet(),
-    val toWallet: TransferWallet = TransferWallet(),
+    val sendingWallet: TransferWallet = TransferWallet(),
+    val receivingWallet: TransferWallet = TransferWallet(),
     val amount: String = "",
     val exchangeRate: String = "",
     val transferWallets: List<TransferWallet> = emptyList(),

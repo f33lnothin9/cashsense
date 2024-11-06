@@ -32,8 +32,8 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 fun CurrencyDropdownMenu(
     currencyCode: String,
     onCurrencyClick: (Currency) -> Unit,
-    dropDownHeight: Dp = 200.dp,
     modifier: Modifier = Modifier,
+    dropDownHeight: Dp = 200.dp,
 ) {
     var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
     var currencySearchText by rememberSaveable { mutableStateOf("") }

@@ -87,7 +87,8 @@
     <string name="currency_not_found">Currency not found</string>
     <string name="transfer">Transfer</string>
     <string name="new_transfer">New transfer</string>
-    <string name="from_wallet">From the wallet</string>
-    <string name="to_wallet">To the wallet</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
     <string name="exchange_rate">Exchange rate</string>
+    <string name="choose_wallet">Choose a wallet</string>
 </resources>

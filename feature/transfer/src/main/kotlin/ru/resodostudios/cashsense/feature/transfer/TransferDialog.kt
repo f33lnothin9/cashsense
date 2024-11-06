@@ -1,15 +1,24 @@
 package ru.resodostudios.cashsense.feature.transfer
 
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,6 +40,8 @@ internal fun TransferDialog(
     TransferDialog(
         transferState = transferState,
         onDismiss = onDismiss,
+        onSendingWalletUpdate = viewModel::updateSendingWallet,
+        onReceivingWalletUpdate = viewModel::updateReceivingWallet,
         modifier = modifier,
     )
 }
@@ -39,6 +50,8 @@ internal fun TransferDialog(
 private fun TransferDialog(
     transferState: TransferUiState,
     onDismiss: () -> Unit,
+    onSendingWalletUpdate: (TransferWallet) -> Unit,
+    onReceivingWalletUpdate: (TransferWallet) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CsAlertDialog(
@@ -47,7 +60,7 @@ private fun TransferDialog(
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
         onConfirm = {},
-        isConfirmEnabled = transferState.amount.isNotBlank() && transferState.toWallet.id.isNotBlank(),
+        isConfirmEnabled = transferState.amount.isNotBlank() && transferState.receivingWallet.id.isNotBlank(),
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
@@ -58,42 +71,77 @@ private fun TransferDialog(
                     .height(320.dp),
             )
         } else {
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                OutlinedTextField(
-                    value = transferState.fromWallet.title,
-                    onValueChange = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    label = { Text(stringResource(localesR.string.from_wallet)) },
-                    singleLine = true,
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                WalletDropdownMenu(
+                    title = localesR.string.from,
+                    onWalletSelect = onSendingWalletUpdate,
+                    selectedWallet = transferState.sendingWallet,
+                    availableWallets = transferState.transferWallets,
                 )
-                OutlinedTextField(
-                    value = transferState.toWallet.title,
-                    onValueChange = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    label = { Text(stringResource(localesR.string.to_wallet)) },
-                    singleLine = true,
+                WalletDropdownMenu(
+                    title = localesR.string.to,
+                    onWalletSelect = onReceivingWalletUpdate,
+                    selectedWallet = transferState.receivingWallet,
+                    availableWallets = transferState.transferWallets,
                 )
                 OutlinedTextField(
                     value = transferState.amount,
                     onValueChange = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
                     label = { Text(stringResource(localesR.string.amount)) },
                     singleLine = true,
                 )
                 OutlinedTextField(
                     value = transferState.exchangeRate,
                     onValueChange = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
                     label = { Text(stringResource(localesR.string.exchange_rate)) },
                     singleLine = true,
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WalletDropdownMenu(
+    @StringRes title: Int,
+    onWalletSelect: (TransferWallet) -> Unit,
+    selectedWallet: TransferWallet,
+    availableWallets: List<TransferWallet>,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier,
+    ) {
+        OutlinedTextField(
+            value = selectedWallet.title,
+            onValueChange = {},
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            readOnly = true,
+            singleLine = true,
+            label = { Text(stringResource(title)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            placeholder = { Text(stringResource(localesR.string.choose_wallet)) },
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            availableWallets.forEach { wallet ->
+                DropdownMenuItem(
+                    text = { Text(wallet.title) },
+                    onClick = {
+                        onWalletSelect(wallet)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }
