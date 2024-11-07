@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +35,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -165,14 +167,23 @@ private fun WalletDropdownMenu(
             label = { Text(stringResource(title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             placeholder = { Text(stringResource(localesR.string.choose_wallet)) },
+            supportingText = { Text(selectedWallet.currentBalance.formatAmount(selectedWallet.currency)) },
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
             availableWallets.forEach { wallet ->
+                val currentBalance = wallet.currentBalance.formatAmount(wallet.currency)
+                val menuText = "${wallet.title} – $currentBalance"
                 DropdownMenuItem(
-                    text = { Text(wallet.title) },
+                    text = {
+                        Text(
+                            text = menuText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
                     onClick = {
                         onWalletSelect(wallet)
                         expanded = false
