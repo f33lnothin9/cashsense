@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.WalletDialogUiState
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -130,3 +129,14 @@ fun WalletDialog(
         }
     }
 }
+
+data class WalletDialogUiState(
+    val id: String = "",
+    val title: String = "",
+    val initialBalance: String = "",
+    val currentPrimaryWalletId: String = "",
+    val currency: String = "",
+    val isPrimary: Boolean = false,
+    val isLoading: Boolean = false,
+    val isWalletSaved: Boolean = false,
+)

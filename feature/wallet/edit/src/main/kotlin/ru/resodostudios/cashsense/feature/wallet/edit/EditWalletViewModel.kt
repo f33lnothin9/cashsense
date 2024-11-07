@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.model.data.WalletDialogUiState
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
+import ru.resodostudios.cashsense.core.ui.WalletDialogUiState
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
 import java.math.BigDecimal
 import javax.inject.Inject
