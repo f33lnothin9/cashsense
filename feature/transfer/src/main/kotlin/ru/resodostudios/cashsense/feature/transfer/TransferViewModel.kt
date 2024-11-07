@@ -50,10 +50,18 @@ class TransferViewModel @Inject constructor(
                         currency = extendedWallet.wallet.currency,
                     )
                 }
-            val fromWallet = transferWallets.first { it.id == walletId }
+            val sendingWallet = transferWallets.first { it.id == walletId }
+            val receivingWallet = if (transferWallets.size == 2) {
+                transferWallets.first { it != sendingWallet }
+            } else {
+                TransferWallet()
+            }
+            val exchangeRate = if (sendingWallet.currency == receivingWallet.currency) "1" else ""
             _transferState.update {
                 it.copy(
-                    sendingWallet = fromWallet,
+                    sendingWallet = sendingWallet,
+                    receivingWallet = receivingWallet,
+                    exchangeRate = exchangeRate,
                     transferWallets = transferWallets,
                     isLoading = false,
                 )
