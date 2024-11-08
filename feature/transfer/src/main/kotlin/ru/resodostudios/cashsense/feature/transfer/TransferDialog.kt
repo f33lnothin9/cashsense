@@ -36,6 +36,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -136,6 +137,21 @@ private fun TransferDialog(
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() },
                     ),
+                    supportingText = if (transferState.amount.cleanAndValidateAmount().second && transferState.exchangeRate.cleanAndValidateAmount().second) {
+                        {
+                            val transferAmount = BigDecimal(transferState.amount)
+                                .multiply(BigDecimal(transferState.exchangeRate))
+                                .formatAmount(transferState.receivingWallet.currency)
+                            Text(
+                                text = stringResource(
+                                    localesR.string.transferred_amount,
+                                    transferAmount,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    } else null
                 )
             }
         }

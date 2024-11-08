@@ -91,4 +91,5 @@
     <string name="to">To</string>
     <string name="exchange_rate">Exchange rate</string>
     <string name="choose_wallet">Choose a wallet</string>
+    <string name="transferred_amount">%1$s will be transferred</string>
 </resources>

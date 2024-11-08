@@ -91,4 +91,5 @@
   <string name="to">На</string>
   <string name="exchange_rate">Валютный курс</string>
   <string name="choose_wallet">Выберите кошелёк</string>
+  <string name="transferred_amount">Будет переведено %1$s</string>
 </resources>
