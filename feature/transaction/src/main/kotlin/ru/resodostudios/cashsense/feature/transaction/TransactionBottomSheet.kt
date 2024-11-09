@@ -92,7 +92,7 @@ fun TransactionBottomSheet(
                     if (transactionDialogState.category != null) {
                         CsTag(
                             text = transactionDialogState.category.title.toString(),
-                            iconId = StoredIcon.asRes(transactionDialogState.category.iconId ?: 0),
+                            iconId = StoredIcon.asRes(transactionDialogState.category.iconId),
                         )
                     }
                     CsTag(

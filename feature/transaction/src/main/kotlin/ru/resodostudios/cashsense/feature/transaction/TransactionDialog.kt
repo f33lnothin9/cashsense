@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -63,8 +62,8 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -93,12 +92,15 @@ fun TransactionDialog(
 ) {
     val isLoading = transactionDialogState.isLoading || categoriesState is Loading
 
-    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.edit_transaction else localesR.string.new_transaction
-    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (titleRes, confirmButtonTextRes) = if (transactionDialogState.transactionId.isNotEmpty()) {
+        localesR.string.edit_transaction to localesR.string.save
+    } else {
+        localesR.string.new_transaction to localesR.string.add
+    }
 
     CsAlertDialog(
-        titleRes = dialogTitle,
-        confirmButtonTextRes = dialogConfirmText,
+        titleRes = titleRes,
+        confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.ReceiptLong,
         onConfirm = {
@@ -109,7 +111,11 @@ fun TransactionDialog(
         onDismiss = onDismiss,
     ) {
         if (isLoading) {
-            LoadingState(Modifier.fillMaxWidth().height(250.dp))
+            LoadingState(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp),
+            )
         } else {
             val focusManager = LocalFocusManager.current
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
@@ -285,7 +291,7 @@ private fun CategoryExposedDropdownMenuBox(
     onCategoryClick: (Category) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
+    var iconId by rememberSaveable { mutableStateOf(currentCategory?.iconId) }
 
     when (categoriesState) {
         Loading -> Unit
@@ -297,7 +303,7 @@ private fun CategoryExposedDropdownMenuBox(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryEditable),
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
                     value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},
@@ -310,6 +316,7 @@ private fun CategoryExposedDropdownMenuBox(
                         )
                     },
                     singleLine = true,
+                    enabled = categoriesState.categories.isNotEmpty(),
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -325,7 +332,7 @@ private fun CategoryExposedDropdownMenuBox(
                         },
                         onClick = {
                             onCategoryClick(Category())
-                            iconId = 0
+                            iconId = null
                             expanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -347,14 +354,16 @@ private fun CategoryExposedDropdownMenuBox(
                             },
                             onClick = {
                                 onCategoryClick(category)
-                                iconId = category.iconId ?: 0
+                                iconId = category.iconId
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                             leadingIcon = {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(
-                                        StoredIcon.asRes(category.iconId ?: 0)
+                                        StoredIcon.asRes(
+                                            category.iconId
+                                        )
                                     ),
                                     contentDescription = null,
                                 )

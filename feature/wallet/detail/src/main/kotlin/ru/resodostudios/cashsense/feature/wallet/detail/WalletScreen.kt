@@ -788,11 +788,7 @@ private fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val categoryIconRes = if (selected) {
-        CsIcons.Check
-    } else {
-        StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)
-    }
+    val categoryIconRes = if (selected) CsIcons.Check else StoredIcon.asRes(category.iconId)
     FilterChip(
         selected = selected,
         onClick = onClick,
@@ -932,16 +928,16 @@ private fun LazyListScope.transactions(
         ) { transactionCategory ->
             val transaction = transactionCategory.transaction
             val category = transactionCategory.category
-            val (icon, categoryTitle) = if (transaction.transferId != null) {
+            val (iconRes, categoryTitle) = if (transaction.transferId != null) {
                 CsIcons.SendMoney to stringResource(localesR.string.transfers)
             } else {
                 val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
-                val title = category?.title ?: stringResource(localesR.string.none)
+                val title = category?.title ?: stringResource(localesR.string.uncategorized)
                 StoredIcon.asRes(iconId) to title
             }
             TransactionItem(
                 amount = transaction.amount.formatAmount(currency, true),
-                icon = icon,
+                iconRes = iconRes,
                 categoryTitle = categoryTitle,
                 transactionStatus = transaction.status,
                 ignored = transaction.ignored,

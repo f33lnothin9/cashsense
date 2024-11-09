@@ -33,7 +33,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun TransactionItem(
     amount: String,
-    @DrawableRes icon: Int,
+    @DrawableRes iconRes: Int,
     categoryTitle: String,
     transactionStatus: StatusType,
     ignored: Boolean,
@@ -79,7 +79,7 @@ fun TransactionItem(
         },
         leadingContent = {
             Icon(
-                imageVector = ImageVector.vectorResource(icon),
+                imageVector = ImageVector.vectorResource(iconRes),
                 contentDescription = null,
             )
         },
@@ -98,7 +98,7 @@ fun TransactionItemPreview() {
                     currencyCode = "USD",
                     withPlus = true,
                 ),
-                icon = StoredIcon.FASTFOOD.storedId,
+                iconRes = StoredIcon.FASTFOOD.iconRes,
                 categoryTitle = "Fastfood",
                 transactionStatus = PENDING,
                 onClick = {},
@@ -118,7 +118,7 @@ fun TransactionItemIgnoredPreview() {
                     currencyCode = "USD",
                     withPlus = true,
                 ),
-                icon = StoredIcon.FASTFOOD.storedId,
+                iconRes = StoredIcon.FASTFOOD.iconRes,
                 categoryTitle = "Fastfood",
                 transactionStatus = PENDING,
                 onClick = {},
