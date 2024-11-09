@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -32,7 +33,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun TransactionItem(
     amount: String,
-    icon: Int,
+    @DrawableRes icon: Int,
     categoryTitle: String,
     transactionStatus: StatusType,
     ignored: Boolean,
@@ -78,7 +79,7 @@ fun TransactionItem(
         },
         leadingContent = {
             Icon(
-                imageVector = ImageVector.vectorResource(StoredIcon.asRes(icon)),
+                imageVector = ImageVector.vectorResource(icon),
                 contentDescription = null,
             )
         },

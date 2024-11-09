@@ -932,10 +932,17 @@ private fun LazyListScope.transactions(
         ) { transactionCategory ->
             val transaction = transactionCategory.transaction
             val category = transactionCategory.category
+            val (icon, categoryTitle) = if (transaction.transferId != null) {
+                CsIcons.SendMoney to stringResource(localesR.string.transfers)
+            } else {
+                val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
+                val title = category?.title ?: stringResource(localesR.string.none)
+                StoredIcon.asRes(iconId) to title
+            }
             TransactionItem(
                 amount = transaction.amount.formatAmount(currency, true),
-                icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
-                categoryTitle = category?.title ?: stringResource(localesR.string.none),
+                icon = icon,
+                categoryTitle = categoryTitle,
                 transactionStatus = transaction.status,
                 ignored = transaction.ignored,
                 onClick = { onTransactionClick(transaction.id) },

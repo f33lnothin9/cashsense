@@ -86,6 +86,7 @@
     <string name="repeat">Repeat</string>
     <string name="currency_not_found">Currency not found</string>
     <string name="transfer">Transfer</string>
+    <string name="transfers">Transfers</string>
     <string name="new_transfer">New transfer</string>
     <string name="from">From</string>
     <string name="to">To</string>
