@@ -206,6 +206,7 @@ class TransactionDialogViewModel @Inject constructor(
                         status = transactionCategory.transaction.status,
                         ignored = transactionCategory.transaction.ignored,
                         isLoading = false,
+                        isTransfer = transactionCategory.transaction.transferId != null,
                     )
                 }
             } else {
@@ -231,4 +232,5 @@ data class TransactionDialogUiState(
     val status: StatusType = COMPLETED,
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
+    val isTransfer: Boolean = false,
 )

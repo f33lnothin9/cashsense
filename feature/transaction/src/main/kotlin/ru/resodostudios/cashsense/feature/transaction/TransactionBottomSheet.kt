@@ -74,7 +74,7 @@ fun TransactionBottomSheet(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TransactionBottomSheet(
+private fun TransactionBottomSheet(
     transactionDialogState: TransactionDialogUiState,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
@@ -89,6 +89,17 @@ fun TransactionBottomSheet(
                     .fillMaxWidth(),
             )
         } else {
+            val (leadingIconRes, supportingText) = if (transactionDialogState.isTransfer) {
+                CsIcons.SendMoney to stringResource(localesR.string.transfers)
+            } else {
+                val iconRes = StoredIcon.asRes(
+                    transactionDialogState.category?.iconId
+                        ?: StoredIcon.TRANSACTION.storedId
+                )
+                val categoryTitle = transactionDialogState.category?.title
+                    ?: stringResource(localesR.string.uncategorized)
+                iconRes to categoryTitle
+            }
             Column {
                 CsListItem(
                     headlineContent = {
@@ -103,19 +114,14 @@ fun TransactionBottomSheet(
                     },
                     supportingContent = {
                         Text(
-                            text = transactionDialogState.category?.title
-                                ?: stringResource(localesR.string.uncategorized),
+                            text = supportingText,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
                     leadingContent = {
-                        val iconRes = StoredIcon.asRes(
-                            transactionDialogState.category?.iconId
-                                ?: StoredIcon.TRANSACTION.storedId
-                        )
                         Icon(
-                            imageVector = ImageVector.vectorResource(iconRes),
+                            imageVector = ImageVector.vectorResource(leadingIconRes),
                             contentDescription = null,
                         )
                     }
@@ -167,51 +173,53 @@ fun TransactionBottomSheet(
                     )
                 }
                 HorizontalDivider(Modifier.padding(16.dp))
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Block),
-                            contentDescription = null,
-                        )
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = transactionDialogState.ignored,
-                            onCheckedChange = {
-                                onTransactionEvent(UpdateTransactionIgnoring(it))
-                                onTransactionEvent(Save)
-                            },
-                        )
-                    },
-                )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.repeat)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Redo),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        onTransactionEvent(Repeat)
-                        onDismiss()
-                        onEdit()
-                    },
-                )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.edit)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        onDismiss()
-                        onEdit()
-                    },
-                )
+                if (!transactionDialogState.isTransfer) {
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Block),
+                                contentDescription = null,
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = transactionDialogState.ignored,
+                                onCheckedChange = {
+                                    onTransactionEvent(UpdateTransactionIgnoring(it))
+                                    onTransactionEvent(Save)
+                                },
+                            )
+                        },
+                    )
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Redo),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onTransactionEvent(Repeat)
+                            onDismiss()
+                            onEdit()
+                        },
+                    )
+                    CsListItem(
+                        headlineContent = { Text(stringResource(localesR.string.edit)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onDismiss()
+                            onEdit()
+                        },
+                    )
+                }
                 CsListItem(
                     headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
