@@ -27,7 +27,6 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Delete
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
@@ -70,7 +69,6 @@ class TransactionDialogViewModel @Inject constructor(
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
             Save -> saveTransaction()
-            Delete -> deleteTransaction()
             Repeat -> repeatTransaction()
             is UpdateTransactionId -> updateTransactionId(event.id)
             is UpdateWalletId -> updateWalletId(event.id)
@@ -111,12 +109,6 @@ class TransactionDialogViewModel @Inject constructor(
             if (transactionCategoryCrossRef != null) {
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
-        }
-    }
-
-    private fun deleteTransaction() {
-        viewModelScope.launch {
-            transactionsRepository.deleteTransaction(_transactionDialogUiState.value.transactionId)
         }
     }
 

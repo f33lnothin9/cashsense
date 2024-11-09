@@ -29,6 +29,4 @@ sealed interface TransactionDialogEvent {
     data object Repeat : TransactionDialogEvent
 
     data object Save : TransactionDialogEvent
-
-    data object Delete : TransactionDialogEvent
 }
