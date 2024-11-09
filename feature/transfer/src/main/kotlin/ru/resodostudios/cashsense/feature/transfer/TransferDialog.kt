@@ -17,6 +17,7 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,12 @@ internal fun TransferDialog(
 ) {
     val transferState by viewModel.transferState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(transferState.isTransferSaved) {
+        if (transferState.isTransferSaved) {
+            onDismiss()
+        }
+    }
+
     TransferDialog(
         transferState = transferState,
         onDismiss = onDismiss,
@@ -54,6 +61,7 @@ internal fun TransferDialog(
         onReceivingWalletUpdate = viewModel::updateReceivingWallet,
         onAmountUpdate = viewModel::updateAmount,
         onExchangingRateUpdate = viewModel::updateExchangingRate,
+        onTransferSave = viewModel::saveTransfer,
         modifier = modifier,
     )
 }
@@ -66,6 +74,7 @@ private fun TransferDialog(
     onReceivingWalletUpdate: (TransferWallet) -> Unit,
     onAmountUpdate: (String) -> Unit,
     onExchangingRateUpdate: (String) -> Unit,
+    onTransferSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CsAlertDialog(
@@ -73,7 +82,7 @@ private fun TransferDialog(
         confirmButtonTextRes = localesR.string.add,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
-        onConfirm = {},
+        onConfirm = onTransferSave,
         isConfirmEnabled = transferState.amount.isNotBlank() &&
                 transferState.receivingWallet.id.isNotBlank() &&
                 transferState.exchangeRate.isNotBlank() &&

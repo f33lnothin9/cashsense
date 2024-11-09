@@ -11,11 +11,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.model.data.StatusType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
 import java.math.BigDecimal
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class TransferViewModel @Inject constructor(
@@ -69,6 +73,43 @@ class TransferViewModel @Inject constructor(
         }
     }
 
+    fun saveTransfer() {
+        val transferId = Uuid.random()
+        val timestamp = Clock.System.now()
+        val withdrawalAmount = BigDecimal(transferState.value.amount)
+        val withdrawalTransaction = Transaction(
+            id = Uuid.random().toString(),
+            walletOwnerId = transferState.value.sendingWallet.id,
+            description = null,
+            amount = withdrawalAmount.negate(),
+            timestamp = timestamp,
+            status = StatusType.COMPLETED,
+            ignored = true,
+            transferId = transferId,
+        )
+        val depositTransaction = Transaction(
+            id = Uuid.random().toString(),
+            walletOwnerId = transferState.value.receivingWallet.id,
+            description = null,
+            amount = withdrawalAmount * BigDecimal(transferState.value.exchangeRate),
+            timestamp = timestamp,
+            status = StatusType.COMPLETED,
+            ignored = true,
+            transferId = transferId,
+        )
+        val upsertWithdrawalTransactionJob = viewModelScope.launch {
+            transactionsRepository.upsertTransaction(withdrawalTransaction)
+        }
+        val upsertDepositTransactionJob = viewModelScope.launch {
+            transactionsRepository.upsertTransaction(depositTransaction)
+        }
+        viewModelScope.launch {
+            upsertWithdrawalTransactionJob.join()
+            upsertDepositTransactionJob.join()
+            _transferState.update { it.copy(isTransferSaved = true) }
+        }
+    }
+
     fun updateSendingWallet(transferWallet: TransferWallet) {
         _transferState.update {
             it.copy(sendingWallet = transferWallet)
@@ -119,6 +160,7 @@ data class TransferUiState(
     val exchangeRate: String = "",
     val transferWallets: List<TransferWallet> = emptyList(),
     val isLoading: Boolean = false,
+    val isTransferSaved: Boolean = false,
 )
 
 data class TransferWallet(
