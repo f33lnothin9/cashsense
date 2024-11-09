@@ -94,4 +94,6 @@
     <string name="choose_wallet">Choose a wallet</string>
     <string name="transferred_amount">%1$s will be transferred</string>
     <string name="uncategorized">Uncategorized</string>
+    <string name="show_more">show more</string>
+    <string name="show_less">show less</string>
 </resources>

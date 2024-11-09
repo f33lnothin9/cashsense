@@ -94,4 +94,6 @@
   <string name="choose_wallet">Выберите кошелёк</string>
   <string name="transferred_amount">Будет переведено %1$s</string>
   <string name="uncategorized">Без категории</string>
+  <string name="show_more">показать больше</string>
+  <string name="show_less">показать меньше</string>
 </resources>
