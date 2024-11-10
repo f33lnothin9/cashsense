@@ -104,6 +104,7 @@ fun WalletDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
+                    enabled = walletDialogState.isCurrencyEditable,
                 )
                 CsListItem(
                     headlineContent = { Text(stringResource(localesR.string.primary)) },
@@ -139,4 +140,5 @@ data class WalletDialogUiState(
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
     val isWalletSaved: Boolean = false,
+    val isCurrencyEditable: Boolean = true,
 )
