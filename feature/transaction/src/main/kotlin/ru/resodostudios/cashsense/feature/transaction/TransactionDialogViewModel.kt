@@ -27,7 +27,6 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Delete
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
@@ -35,9 +34,9 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
@@ -70,7 +69,6 @@ class TransactionDialogViewModel @Inject constructor(
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
             Save -> saveTransaction()
-            Delete -> deleteTransaction()
             Repeat -> repeatTransaction()
             is UpdateTransactionId -> updateTransactionId(event.id)
             is UpdateWalletId -> updateWalletId(event.id)
@@ -81,7 +79,7 @@ class TransactionDialogViewModel @Inject constructor(
             is UpdateStatus -> updateStatus(event.status)
             is UpdateCategory -> updateCategory(event.category)
             is UpdateDescription -> updateDescription(event.description)
-            is UpdateIgnoring -> updateIgnoring(event.ignored)
+            is UpdateTransactionIgnoring -> updateTransactionIgnoring(event.ignored)
         }
     }
 
@@ -89,13 +87,14 @@ class TransactionDialogViewModel @Inject constructor(
         val transaction = Transaction(
             id = _transactionDialogUiState.value.transactionId.ifEmpty { Uuid.random().toString() },
             walletOwnerId = walletId.value,
-            description = _transactionDialogUiState.value.description,
+            description = _transactionDialogUiState.value.description.ifBlank { null },
             amount = _transactionDialogUiState.value.amount
                 .toBigDecimal()
                 .run { if (_transactionDialogUiState.value.transactionType == EXPENSE) negate() else abs() },
             timestamp = _transactionDialogUiState.value.date,
             status = _transactionDialogUiState.value.status,
             ignored = _transactionDialogUiState.value.ignored,
+            transferId = null,
         )
         val transactionCategoryCrossRef =
             _transactionDialogUiState.value.category?.id?.let { categoryId ->
@@ -110,12 +109,6 @@ class TransactionDialogViewModel @Inject constructor(
             if (transactionCategoryCrossRef != null) {
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
-        }
-    }
-
-    private fun deleteTransaction() {
-        viewModelScope.launch {
-            transactionsRepository.deleteTransaction(_transactionDialogUiState.value.transactionId)
         }
     }
 
@@ -172,7 +165,7 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun updateIgnoring(ignored: Boolean) {
+    private fun updateTransactionIgnoring(ignored: Boolean) {
         _transactionDialogUiState.update {
             it.copy(ignored = ignored)
         }
@@ -197,7 +190,7 @@ class TransactionDialogViewModel @Inject constructor(
                 _transactionDialogUiState.update {
                     it.copy(
                         transactionId = transactionCategory.transaction.id,
-                        description = transactionCategory.transaction.description.toString(),
+                        description = transactionCategory.transaction.description ?: "",
                         amount = transactionCategory.transaction.amount.abs().toString(),
                         transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
                         date = transactionCategory.transaction.timestamp,
@@ -205,6 +198,7 @@ class TransactionDialogViewModel @Inject constructor(
                         status = transactionCategory.transaction.status,
                         ignored = transactionCategory.transaction.ignored,
                         isLoading = false,
+                        isTransfer = transactionCategory.transaction.transferId != null,
                     )
                 }
             } else {
@@ -230,4 +224,5 @@ data class TransactionDialogUiState(
     val status: StatusType = COMPLETED,
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
+    val isTransfer: Boolean = false,
 )

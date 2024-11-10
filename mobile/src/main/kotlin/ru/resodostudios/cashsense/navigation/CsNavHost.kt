@@ -9,12 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.licensesRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
+import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransfer
+import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
+import ru.resodostudios.cashsense.feature.wallet.edit.navigation.editWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.edit.navigation.navigateToEditWallet
 import ru.resodostudios.cashsense.ui.CsAppState
-import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
+import ru.resodostudios.cashsense.ui.home2pane.homeListDetailGraph
 
 @Composable
 fun CsNavHost(
@@ -33,12 +37,18 @@ fun CsNavHost(
         popExitTransition = { fadeOut(tween(0)) },
         modifier = modifier,
     ) {
-        homeListDetailScreen(onShowSnackbar)
+        homeListDetailGraph(
+            onEditWallet = navController::navigateToEditWallet,
+            onTransfer = navController::navigateToTransfer,
+            onShowSnackbar = onShowSnackbar,
+        )
         categoriesScreen(onShowSnackbar)
         subscriptionsScreen(onShowSnackbar)
         settingsGraph(
-            onLicensesClick = { navController.navigateToLicenses() },
-            nestedGraphs = { licensesRoute(navController::navigateUp) },
+            onLicensesClick = navController::navigateToLicenses,
+            nestedGraphs = { licensesScreen(navController::navigateUp) },
         )
+        editWalletDialog(navController::navigateUp)
+        transferDialog(navController::navigateUp)
     }
 }

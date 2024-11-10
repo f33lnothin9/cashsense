@@ -53,6 +53,7 @@ object CsIcons {
     val Restaurant = R.drawable.ic_outlined_restaurant
     val School = R.drawable.ic_outlined_school
     val SelfCare = R.drawable.ic_outlined_self_care
+    val SendMoney = R.drawable.ic_outlined_send_money
     val Settings = R.drawable.ic_outlined_settings
     val SettingsFilled = R.drawable.ic_filled_settings
     val ShoppingCart = R.drawable.ic_outlined_shopping_cart

@@ -11,25 +11,24 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
-import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
+import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val walletsRepository: WalletsRepository,
-    userDataRepository: UserDataRepository,
-    savedStateHandle: SavedStateHandle,
+    getExtendedUserWallets: GetExtendedUserWalletsUseCase,
 ) : ViewModel() {
 
     private val homeDestination: HomeRoute = savedStateHandle.toRoute()
 
     private val selectedWalletId = savedStateHandle.getStateFlow(
-        key = WALLET_ID_KEY,
+        key = SELECTED_WALLET_ID_KEY,
         initialValue = homeDestination.walletId,
     )
 
@@ -37,19 +36,15 @@ class HomeViewModel @Inject constructor(
     private val lastRemovedWalletIdState = MutableStateFlow<String?>(null)
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
-        walletsRepository.getWalletsWithTransactions(),
-        userDataRepository.userData,
+        getExtendedUserWallets.invoke(),
         selectedWalletId,
         shouldDisplayUndoWalletState,
         lastRemovedWalletIdState,
-    ) { wallets, userData, selectedWalletId, shouldDisplayUndoWallet, lastRemovedWalletId ->
+    ) { extendedUserWallets, selectedWalletId, shouldDisplayUndoWallet, lastRemovedWalletId ->
         Success(
             selectedWalletId = selectedWalletId,
-            primaryWalletId = userData.primaryWalletId,
             shouldDisplayUndoWallet = shouldDisplayUndoWallet,
-            walletsTransactionsCategories = wallets
-                .filterNot { it.wallet.id == lastRemovedWalletId }
-                .sortedByDescending { it.wallet.id == userData.primaryWalletId },
+            extendedUserWallets = extendedUserWallets.filterNot { it.userWallet.id == lastRemovedWalletId },
         )
     }
         .stateIn(
@@ -81,6 +76,10 @@ class HomeViewModel @Inject constructor(
         lastRemovedWalletIdState.value?.let(::deleteWalletWithTransactions)
         undoWalletRemoval()
     }
+
+    fun onWalletClick(walletId: String?) {
+        savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
+    }
 }
 
 sealed interface WalletsUiState {
@@ -89,8 +88,9 @@ sealed interface WalletsUiState {
 
     data class Success(
         val selectedWalletId: String?,
-        val primaryWalletId: String,
         val shouldDisplayUndoWallet: Boolean,
-        val walletsTransactionsCategories: List<WalletWithTransactionsAndCategories>,
+        val extendedUserWallets: List<ExtendedUserWallet>,
     ) : WalletsUiState
 }
+
+private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"
