@@ -42,7 +42,11 @@ class EditWalletViewModel @Inject constructor(
         viewModelScope.launch {
             _walletDialogState.update { WalletDialogUiState(isLoading = true) }
             val userData = userDataRepository.userData.first()
-            val wallet = walletsRepository.getWallet(id).first()
+            val walletTransactions = walletsRepository.getWalletWithTransactionsAndCategories(id).first()
+            val wallet = walletTransactions.wallet
+            val isCurrencyEditable = walletTransactions.transactionsWithCategories
+                .map { it.transaction }
+                .all { it.transferId == null }
             _walletDialogState.update {
                 it.copy(
                     id = wallet.id,
@@ -52,6 +56,7 @@ class EditWalletViewModel @Inject constructor(
                     currentPrimaryWalletId = userData.primaryWalletId,
                     isPrimary = userData.primaryWalletId == wallet.id,
                     isLoading = false,
+                    isCurrencyEditable = isCurrencyEditable,
                 )
             }
         }

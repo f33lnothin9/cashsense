@@ -34,6 +34,7 @@ fun CurrencyDropdownMenu(
     onCurrencyClick: (Currency) -> Unit,
     modifier: Modifier = Modifier,
     dropDownHeight: Dp = 200.dp,
+    enabled: Boolean = true,
 ) {
     var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
     var currencySearchText by rememberSaveable { mutableStateOf("") }
@@ -73,6 +74,7 @@ fun CurrencyDropdownMenu(
             },
             label = { Text(stringResource(localesR.string.currency)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            enabled = enabled,
         )
         ExposedDropdownMenu(
             expanded = expanded,
