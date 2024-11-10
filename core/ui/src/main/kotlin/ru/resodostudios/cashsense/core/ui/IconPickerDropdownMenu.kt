@@ -97,7 +97,12 @@ enum class StoredIcon(
     CREDIT_CARD(CsIcons.CreditCard, 26),
     MONITORING(CsIcons.Monitoring, 27),
     MUSIC_NOTE(CsIcons.MusicNote, 28),
-    WORK(CsIcons.Work, 29);
+    WORK(CsIcons.Work, 29),
+    BITCOIN(CsIcons.Bitcoin, 30),
+    BOOK(CsIcons.Book, 31),
+    DENTISTRY(CsIcons.Dentistry, 32),
+    DIAMOND(CsIcons.Diamond, 33),
+    MOVIE(CsIcons.Movie, 34);
 
     companion object {
 
