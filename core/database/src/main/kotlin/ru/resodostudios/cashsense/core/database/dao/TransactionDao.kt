@@ -5,9 +5,10 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import ru.resodostudios.cashsense.core.database.model.PopulatedTransaction
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
-import ru.resodostudios.cashsense.core.database.model.PopulatedTransaction
+import kotlin.uuid.Uuid
 
 @Dao
 interface TransactionDao {
@@ -30,4 +31,7 @@ interface TransactionDao {
 
     @Query("DELETE FROM transactions_categories WHERE transaction_id = :transactionId")
     suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
+
+    @Query("DELETE FROM transactions WHERE transfer_id = :uuid")
+    suspend fun deleteTransfer(uuid: Uuid)
 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -163,8 +164,13 @@ class WalletViewModel @Inject constructor(
 
     fun deleteTransaction() {
         viewModelScope.launch {
-            transactionIdState.value?.let {
-                transactionsRepository.deleteTransaction(it)
+            transactionIdState.value?.let { transactionId ->
+                val transactionCategory = transactionsRepository.getTransactionWithCategory(transactionId).first()
+                if (transactionCategory.transaction.transferId != null) {
+                    transactionsRepository.deleteTransfer(transactionCategory.transaction.transferId!!)
+                } else {
+                    transactionsRepository.deleteTransaction(transactionId)
+                }
             }
         }
     }
