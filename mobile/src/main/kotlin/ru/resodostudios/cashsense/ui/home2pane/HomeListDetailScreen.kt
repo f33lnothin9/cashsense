@@ -181,7 +181,6 @@ internal fun HomeListDetailScreen(
                             onEditWallet = onEditWallet,
                             onTransfer = onTransfer,
                             onBackClick = listDetailNavigator::navigateBack,
-                            onShowSnackbar = onShowSnackbar,
                             openTransactionDialog = openTransactionDialog,
                             setTransactionDialogOpen = setTransactionDialogOpen,
                         )

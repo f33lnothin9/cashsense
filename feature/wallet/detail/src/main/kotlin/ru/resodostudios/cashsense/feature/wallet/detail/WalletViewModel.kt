@@ -28,12 +28,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
@@ -52,9 +49,6 @@ class WalletViewModel @Inject constructor(
 
     private val walletRoute: WalletRoute = savedStateHandle.toRoute()
 
-    private val shouldDisplayUndoTransactionState = MutableStateFlow(false)
-    private val lastRemovedTransactionIdState = MutableStateFlow<String?>(null)
-
     private val walletFilterState = MutableStateFlow(
         WalletFilter(
             selectedCategories = emptyList(),
@@ -68,12 +62,12 @@ class WalletViewModel @Inject constructor(
         )
     )
 
+    private val transactionIdState = MutableStateFlow<String?>(null)
+
     val walletUiState: StateFlow<WalletUiState> = combine(
         getExtendedUserWallet.invoke(walletRoute.walletId),
         walletFilterState,
-        shouldDisplayUndoTransactionState,
-        lastRemovedTransactionIdState,
-    ) { extendedUserWallet, walletFilter, shouldDisplayUndoTransaction, lastRemovedTransactionId ->
+    ) { extendedUserWallet, walletFilter ->
         val financeTypeTransactions = when (walletFilter.financeType) {
             NONE -> extendedUserWallet.transactionsWithCategories
             EXPENSES -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount < ZERO }
@@ -95,7 +89,7 @@ class WalletViewModel @Inject constructor(
 
             YEAR -> financeTypeTransactions
                 .filter { it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYear }
-        }.filterNot { it.transaction.id == lastRemovedTransactionId }
+        }
 
         calculateAvailableCategories(dateTypeTransactions)
         val filteredByCategories = if (walletFilter.selectedCategories.isNotEmpty()) {
@@ -123,7 +117,6 @@ class WalletViewModel @Inject constructor(
             ),
             userWallet = extendedUserWallet.userWallet,
             transactionsCategories = filteredByCategories,
-            shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
         )
     }
         .catch { Loading }
@@ -159,17 +152,20 @@ class WalletViewModel @Inject constructor(
             is RemoveFromSelectedCategories -> removeFromSelectedCategories(event.category)
             is UpdateFinanceType -> updateFinanceType(event.financeType)
             is UpdateDateType -> updateDateType(event.dateType)
-            is HideTransaction -> hideTransaction(event.id)
-            ClearUndoState -> clearUndoState()
-            UndoTransactionRemoval -> undoTransactionRemoval()
             DecrementSelectedDate -> decrementSelectedDate()
             IncrementSelectedDate -> incrementSelectedDate()
         }
     }
 
-    private fun deleteTransaction(id: String) {
+    fun updateTransactionId(id: String) {
+        transactionIdState.value = id
+    }
+
+    fun deleteTransaction() {
         viewModelScope.launch {
-            transactionsRepository.deleteTransaction(id)
+            transactionIdState.value?.let {
+                transactionsRepository.deleteTransaction(it)
+            }
         }
     }
 
@@ -257,24 +253,6 @@ class WalletViewModel @Inject constructor(
             else -> {}
         }
     }
-
-    private fun hideTransaction(id: String) {
-        if (lastRemovedTransactionIdState.value != null) {
-            clearUndoState()
-        }
-        shouldDisplayUndoTransactionState.value = true
-        lastRemovedTransactionIdState.value = id
-    }
-
-    private fun undoTransactionRemoval() {
-        lastRemovedTransactionIdState.value = null
-        shouldDisplayUndoTransactionState.value = false
-    }
-
-    private fun clearUndoState() {
-        lastRemovedTransactionIdState.value?.let(::deleteTransaction)
-        undoTransactionRemoval()
-    }
 }
 
 enum class FinanceType {
@@ -308,7 +286,6 @@ sealed interface WalletUiState {
     data class Success(
         val walletFilter: WalletFilter,
         val userWallet: UserWallet,
-        val shouldDisplayUndoTransaction: Boolean,
         val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState
 }

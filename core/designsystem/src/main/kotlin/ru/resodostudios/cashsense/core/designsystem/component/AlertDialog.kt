@@ -25,7 +25,7 @@ fun CsAlertDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     isConfirmEnabled: Boolean = true,
-    content: @Composable () -> Unit,
+    content: @Composable (() -> Unit)? = null,
 ) {
     AlertDialog(
         onDismissRequest = {},

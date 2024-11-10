@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -66,8 +65,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
@@ -94,6 +91,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -125,12 +123,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
@@ -150,7 +145,6 @@ internal fun WalletScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -165,12 +159,13 @@ internal fun WalletScreen(
         onEditWallet = onEditWallet,
         onTransfer = onTransfer,
         onBackClick = onBackClick,
-        onShowSnackbar = onShowSnackbar,
         openTransactionDialog = openTransactionDialog,
         setTransactionDialogOpen = setTransactionDialogOpen,
         onWalletEvent = walletViewModel::onWalletEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
         modifier = modifier,
+        updateTransactionId = walletViewModel::updateTransactionId,
+        onTransactionDelete = walletViewModel::deleteTransaction,
     )
 }
 
@@ -181,46 +176,29 @@ private fun WalletScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     modifier: Modifier = Modifier,
+    updateTransactionId: (String) -> Unit = {},
+    onTransactionDelete: () -> Unit = {},
 ) {
-    BackHandler {
-        onBackClick()
-        onWalletEvent(ClearUndoState)
-    }
-
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
-            val undoText = stringResource(localesR.string.undo)
-
-            LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
-                if (walletState.shouldDisplayUndoTransaction) {
-                    val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
-                    if (snackBarResult) {
-                        onWalletEvent(UndoTransactionRemoval)
-                    } else {
-                        onWalletEvent(ClearUndoState)
-                    }
-                }
-            }
-            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-                onWalletEvent(ClearUndoState)
-            }
-
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
+            var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
 
             if (showTransactionBottomSheet) {
                 TransactionBottomSheet(
                     onDismiss = { showTransactionBottomSheet = false },
                     onEdit = { showTransactionDialog = true },
-                    onDelete = { onWalletEvent(HideTransaction(it)) },
+                    onDelete = {
+                        updateTransactionId(it)
+                        showTransactionDeletionDialog = true
+                    },
                 )
             }
             if (showTransactionDialog) {
@@ -228,7 +206,20 @@ private fun WalletScreen(
                     onDismiss = {
                         showTransactionDialog = false
                         setTransactionDialogOpen(false)
-                    }
+                    },
+                )
+            }
+            if (showTransactionDeletionDialog) {
+                CsAlertDialog(
+                    titleRes = localesR.string.permanently_delete,
+                    confirmButtonTextRes = localesR.string.delete,
+                    dismissButtonTextRes = localesR.string.cancel,
+                    iconRes = CsIcons.Delete,
+                    onConfirm = {
+                        onTransactionDelete()
+                        showTransactionDeletionDialog = false
+                    },
+                    onDismiss = { showTransactionDeletionDialog = false },
                 )
             }
 
@@ -241,7 +232,6 @@ private fun WalletScreen(
                         userWallet = walletState.userWallet,
                         showNavigationIcon = showNavigationIcon,
                         onBackClick = onBackClick,
-                        onWalletEvent = onWalletEvent,
                         onNewTransactionClick = {
                             onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(""))
@@ -298,7 +288,6 @@ private fun WalletTopBar(
     userWallet: UserWallet,
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
-    onWalletEvent: (WalletEvent) -> Unit,
     onNewTransactionClick: () -> Unit,
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
@@ -342,12 +331,7 @@ private fun WalletTopBar(
         },
         navigationIcon = {
             if (showNavigationIcon) {
-                IconButton(
-                    onClick = {
-                        onBackClick()
-                        onWalletEvent(ClearUndoState)
-                    },
-                ) {
+                IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
                         contentDescription = null,
@@ -926,22 +910,10 @@ private fun LazyListScope.transactions(
             key = { it.transaction.id },
             contentType = { "transactionCategory" },
         ) { transactionCategory ->
-            val transaction = transactionCategory.transaction
-            val category = transactionCategory.category
-            val (iconRes, categoryTitle) = if (transaction.transferId != null) {
-                CsIcons.SendMoney to stringResource(localesR.string.transfers)
-            } else {
-                val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
-                val title = category?.title ?: stringResource(localesR.string.uncategorized)
-                StoredIcon.asRes(iconId) to title
-            }
             TransactionItem(
-                amount = transaction.amount.formatAmount(currency, true),
-                iconRes = iconRes,
-                categoryTitle = categoryTitle,
-                transactionStatus = transaction.status,
-                ignored = transaction.ignored,
-                onClick = { onTransactionClick(transaction.id) },
+                transactionCategory = transactionCategory,
+                currency = currency,
+                onClick = onTransactionClick,
                 modifier = Modifier.animateItem(),
             )
         }
@@ -986,7 +958,6 @@ fun FinancePanelDefaultPreview(
                         selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
-                    shouldDisplayUndoTransaction = false,
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
@@ -1029,9 +1000,7 @@ fun FinancePanelOpenedPreview(
                         selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
-                    shouldDisplayUndoTransaction = false,
-
-                    ),
+                ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
             )

@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,29 +20,39 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.StatusType
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
+import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
-import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionItem(
-    amount: String,
-    @DrawableRes iconRes: Int,
-    categoryTitle: String,
-    transactionStatus: StatusType,
-    ignored: Boolean,
-    onClick: () -> Unit,
+    transactionCategory: TransactionWithCategory,
+    currency: String,
+    onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val transaction = transactionCategory.transaction
+    val category = transactionCategory.category
+    val (iconRes, categoryTitle) = if (transaction.transferId != null) {
+        CsIcons.SendMoney to stringResource(localesR.string.transfers)
+    } else {
+        val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
+        val title = category?.title ?: stringResource(localesR.string.uncategorized)
+        StoredIcon.asRes(iconId) to title
+    }
+
     CsListItem(
         headlineContent = {
             Text(
-                text = amount,
+                text = transaction.amount.formatAmount(currency, true),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -57,7 +66,7 @@ fun TransactionItem(
         },
         trailingContent = {
             AnimatedVisibility(
-                visible = transactionStatus == PENDING,
+                visible = transaction.status == PENDING,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
@@ -83,8 +92,8 @@ fun TransactionItem(
                 contentDescription = null,
             )
         },
-        modifier = modifier.alpha(if (ignored) 0.38f else 1f),
-        onClick = onClick,
+        modifier = modifier.alpha(if (transaction.ignored) 0.38f else 1f),
+        onClick = { onClick(transaction.id) },
     )
 }
 
@@ -94,15 +103,25 @@ fun TransactionItemPreview() {
     CsTheme {
         Surface {
             TransactionItem(
-                amount = BigDecimal(-199.99).formatAmount(
-                    currencyCode = "USD",
-                    withPlus = true,
+                transactionCategory = TransactionWithCategory(
+                    transaction = Transaction(
+                        id = "1",
+                        walletOwnerId = "1",
+                        description = null,
+                        amount = (-25).toBigDecimal(),
+                        timestamp = Instant.parse("2024-09-13T14:20:00Z"),
+                        status = PENDING,
+                        ignored = false,
+                        transferId = null,
+                    ),
+                    category = Category(
+                        id = "1",
+                        title = "Fastfood",
+                        iconId = StoredIcon.FASTFOOD.storedId,
+                    ),
                 ),
-                iconRes = StoredIcon.FASTFOOD.iconRes,
-                categoryTitle = "Fastfood",
-                transactionStatus = PENDING,
+                currency = "USD",
                 onClick = {},
-                ignored = false,
             )
         }
     }
@@ -114,15 +133,25 @@ fun TransactionItemIgnoredPreview() {
     CsTheme {
         Surface {
             TransactionItem(
-                amount = BigDecimal(-199.99).formatAmount(
-                    currencyCode = "USD",
-                    withPlus = true,
+                transactionCategory = TransactionWithCategory(
+                    transaction = Transaction(
+                        id = "1",
+                        walletOwnerId = "1",
+                        description = null,
+                        amount = (-25).toBigDecimal(),
+                        timestamp = Instant.parse("2024-09-13T14:20:00Z"),
+                        status = PENDING,
+                        ignored = true,
+                        transferId = null,
+                    ),
+                    category = Category(
+                        id = "1",
+                        title = "Fastfood",
+                        iconId = StoredIcon.FASTFOOD.storedId,
+                    ),
                 ),
-                iconRes = StoredIcon.FASTFOOD.iconRes,
-                categoryTitle = "Fastfood",
-                transactionStatus = PENDING,
+                currency = "USD",
                 onClick = {},
-                ignored = true,
             )
         }
     }
