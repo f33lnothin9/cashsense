@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,36 +25,34 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletBottomSheet
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrentBalance
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
+import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenu
+import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenuViewModel
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun HomeScreen(
     onWalletClick: (String?) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     highlightSelectedWallet: Boolean = false,
+    onTransactionCreate: (String) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
-    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
+    walletMenuViewModel: WalletMenuViewModel = hiltViewModel(),
 ) {
     val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
-        onWalletClick = onWalletClick,
+        onWalletClick = {
+            homeViewModel.onWalletClick(it)
+            onWalletClick(it)
+        },
+        onEditWallet = onEditWallet,
+        onTransfer = onTransfer,
+        onWalletMenuClick = walletMenuViewModel::updateWalletId,
         onShowSnackbar = onShowSnackbar,
-        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
+        onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
         hideWallet = homeViewModel::hideWallet,
         undoWalletRemoval = homeViewModel::undoWalletRemoval,
@@ -64,23 +63,34 @@ fun HomeScreen(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onWalletClick: (String?) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
+    onWalletMenuClick: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onTransactionEvent: (TransactionDialogEvent) -> Unit,
+    onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     hideWallet: (String) -> Unit = {},
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
-    var showWalletBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
-
-    var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
-
     when (walletsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
+            var showWalletMenu by rememberSaveable { mutableStateOf(false) }
+
+            if (showWalletMenu) {
+                WalletMenu(
+                    onDismiss = { showWalletMenu = false },
+                    onTransfer = onTransfer,
+                    onEdit = onEditWallet,
+                    onDelete = { walletId ->
+                        hideWallet(walletId)
+                        onWalletClick(null)
+                    },
+                )
+            }
+
             val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
             val undoText = stringResource(localesR.string.undo)
 
@@ -98,7 +108,7 @@ internal fun HomeScreen(
                 clearUndoState()
             }
 
-            if (walletsState.walletsTransactionsCategories.isNotEmpty()) {
+            if (walletsState.extendedUserWallets.isNotEmpty()) {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
                     verticalItemSpacing = 16.dp,
@@ -114,15 +124,10 @@ internal fun HomeScreen(
                     wallets(
                         walletsState = walletsState,
                         onWalletClick = onWalletClick,
-                        onTransactionCreate = {
-                            onTransactionEvent(UpdateWalletId(it))
-                            onTransactionEvent(UpdateTransactionId(""))
-                            showTransactionDialog = true
-                        },
-                        onWalletMenuClick = { walletId, currentWalletBalance ->
-                            onWalletDialogEvent(UpdateId(walletId))
-                            onWalletDialogEvent(UpdateCurrentBalance(currentWalletBalance))
-                            showWalletBottomSheet = true
+                        onTransactionCreate = onTransactionCreate,
+                        onWalletMenuClick = { walletId ->
+                            onWalletMenuClick(walletId)
+                            showWalletMenu = true
                         },
                         highlightSelectedWallet = highlightSelectedWallet,
                     )
@@ -133,27 +138,6 @@ internal fun HomeScreen(
                     animationRes = R.raw.anim_wallets_empty,
                 )
             }
-
-            if (showWalletBottomSheet) {
-                WalletBottomSheet(
-                    onDismiss = { showWalletBottomSheet = false },
-                    onEdit = { showWalletDialog = true },
-                    onDelete = {
-                        hideWallet(it)
-                        onWalletClick(null)
-                    },
-                )
-            }
-            if (showWalletDialog) {
-                WalletDialog(
-                    onDismiss = { showWalletDialog = false },
-                )
-            }
-            if (showTransactionDialog) {
-                TransactionDialog(
-                    onDismiss = { showTransactionDialog = false },
-                )
-            }
         }
     }
 }
@@ -162,28 +146,27 @@ private fun LazyStaggeredGridScope.wallets(
     walletsState: WalletsUiState,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String, String) -> Unit,
+    onWalletMenuClick: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
 ) {
     when (walletsState) {
         Loading -> Unit
         is Success -> {
-            walletsState.walletsTransactionsCategories.forEach { walletTransactionsCategories ->
-                val walletId = walletTransactionsCategories.wallet.id
-                val isSelected = highlightSelectedWallet && walletId == walletsState.selectedWalletId
-                val isPrimary = walletId == walletsState.primaryWalletId
-                item(key = walletId) {
-                    WalletCard(
-                        wallet = walletTransactionsCategories.wallet,
-                        transactions = walletTransactionsCategories.transactionsWithCategories.map { it.transaction },
-                        onWalletClick = onWalletClick,
-                        onTransactionCreate = onTransactionCreate,
-                        onWalletMenuClick = onWalletMenuClick,
-                        modifier = Modifier.animateItem(),
-                        selected = isSelected,
-                        isPrimary = isPrimary,
-                    )
-                }
+            items(
+                items = walletsState.extendedUserWallets,
+                key = { it.userWallet.id },
+                contentType = { "walletCard" },
+            ) { walletData ->
+                val selected = highlightSelectedWallet && walletData.userWallet.id == walletsState.selectedWalletId
+                WalletCard(
+                    userWallet = walletData.userWallet,
+                    transactions = walletData.transactionsWithCategories.map { it.transaction },
+                    onWalletClick = onWalletClick,
+                    onTransactionCreate = onTransactionCreate,
+                    onWalletMenuClick = onWalletMenuClick,
+                    modifier = Modifier.animateItem(),
+                    selected = selected,
+                )
             }
         }
     }

@@ -40,7 +40,8 @@ internal inline fun <reified T : KotlinTopLevelExtension> Project.configureKotli
     }.apply {
         jvmToolchain(17)
         allWarningsAsErrors = warningsAsErrors.toBoolean()
-        freeCompilerArgs.add(
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
         )
     }

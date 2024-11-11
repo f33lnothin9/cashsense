@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -41,7 +42,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
@@ -52,21 +53,27 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun WalletCard(
-    wallet: Wallet,
+    userWallet: UserWallet,
     transactions: List<Transaction>,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String, String) -> Unit,
+    onWalletMenuClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    isPrimary: Boolean = false,
 ) {
-    val currentBalance = wallet.initialBalance.plus(transactions.sumOf { it.amount })
+    val border = if (selected) {
+        CardDefaults.outlinedCardBorder().copy(
+            width = 2.dp,
+            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
+        )
+    } else {
+        CardDefaults.outlinedCardBorder()
+    }
 
     OutlinedCard(
-        onClick = { onWalletClick(wallet.id) },
+        onClick = { onWalletClick(userWallet.id) },
         shape = RoundedCornerShape(24.dp),
-        elevation = if (selected) CardDefaults.outlinedCardElevation(defaultElevation = 3.dp) else CardDefaults.outlinedCardElevation(),
+        border = border,
         modifier = modifier,
     ) {
         Column(
@@ -77,17 +84,17 @@ fun WalletCard(
                 .fillMaxWidth(),
         ) {
             Text(
-                text = wallet.title,
+                text = userWallet.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
             )
             AnimatedAmount(
-                targetState = currentBalance,
+                targetState = userWallet.currentBalance,
                 label = "wallet_balance",
                 content = {
                     Text(
-                        text = it.formatAmount(wallet.currency),
+                        text = it.formatAmount(userWallet.currency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge,
@@ -96,8 +103,8 @@ fun WalletCard(
             )
             TagsSection(
                 transactions = transactions,
-                currency = wallet.currency,
-                isPrimary = isPrimary,
+                currency = userWallet.currency,
+                isPrimary = userWallet.isPrimary,
                 modifier = Modifier.padding(top = 8.dp),
             )
         }
@@ -109,17 +116,12 @@ fun WalletCard(
                 .fillMaxWidth(),
         ) {
             Button(
-                onClick = { onTransactionCreate(wallet.id) },
+                onClick = { onTransactionCreate(userWallet.id) },
             ) {
                 Text(stringResource(localesR.string.add_transaction))
             }
             IconButton(
-                onClick = {
-                    onWalletMenuClick(
-                        wallet.id,
-                        currentBalance.formatAmount(wallet.currency),
-                    )
-                },
+                onClick = { onWalletMenuClick(userWallet.id) },
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
@@ -253,18 +255,19 @@ fun WalletCardPreview() {
     CsTheme {
         Surface {
             WalletCard(
-                wallet = Wallet(
+                userWallet = UserWallet(
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
                     currency = "USD",
+                    currentBalance = BigDecimal(2499.99),
+                    isPrimary = true,
                 ),
                 transactions = emptyList(),
                 onWalletClick = {},
                 onTransactionCreate = {},
-                onWalletMenuClick = { _, _ -> },
+                onWalletMenuClick = { _ -> },
                 modifier = Modifier.padding(16.dp),
-                isPrimary = true,
             )
         }
     }

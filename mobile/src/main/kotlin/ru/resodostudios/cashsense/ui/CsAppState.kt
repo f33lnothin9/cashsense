@@ -25,6 +25,8 @@ import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettingsGraph
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
+import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
+import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -63,7 +65,10 @@ class CsAppState(
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() {
             with(currentDestination) {
-                if (this?.hasRoute<HomeRoute>() == true) return HOME
+                if (this?.hasRoute<HomeRoute>() == true ||
+                    this?.hasRoute<EditWalletRoute>() == true ||
+                    this?.hasRoute<TransferRoute>() == true
+                ) return HOME
                 if (this?.hasRoute<CategoriesRoute>() == true) return CATEGORIES
                 if (this?.hasRoute<SubscriptionsRoute>() == true) return SUBSCRIPTIONS
                 if (this?.hasRoute<SettingsRoute>() == true) return SETTINGS

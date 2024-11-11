@@ -32,11 +32,12 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 fun CurrencyDropdownMenu(
     currencyCode: String,
     onCurrencyClick: (Currency) -> Unit,
-    dropDownHeight: Dp = 200.dp,
     modifier: Modifier = Modifier,
+    dropDownHeight: Dp = 200.dp,
+    enabled: Boolean = true,
 ) {
     var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
-    var currencySearchText by rememberSaveable { mutableStateOf(currencyCode) }
+    var currencySearchText by rememberSaveable { mutableStateOf("") }
 
     val currencies = Currency.getAvailableCurrencies()
         .filterNot { it.displayName.contains("""\d+""".toRegex()) }
@@ -50,6 +51,7 @@ fun CurrencyDropdownMenu(
     var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(currencyCode) {
+        currencySearchText = currencyCode
         if (Regex("^[A-Z]{3}$").matches(currencyCode) &&
             Currency.getInstance(currencyCode) in currencies
         ) {
@@ -72,6 +74,7 @@ fun CurrencyDropdownMenu(
             },
             label = { Text(stringResource(localesR.string.currency)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            enabled = enabled,
         )
         ExposedDropdownMenu(
             expanded = expanded,
