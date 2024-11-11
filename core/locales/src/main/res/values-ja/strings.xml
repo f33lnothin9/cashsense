@@ -66,7 +66,6 @@
   <string name="expenses">費用</string>
   <string name="income_singular">収入</string>
   <string name="income_plural">収入</string>
-  <string name="transaction_deleted">取引が削除されました</string>
   <string name="transaction_shortcut_long_label">新しい取引を追加</string>
   <string name="completed">完了</string>
   <string name="pending">保留中</string>
@@ -85,4 +84,16 @@
   <string name="not_enough_data">データが不足しています</string>
   <string name="repeat">繰り返す</string>
   <string name="currency_not_found">Currency not found</string>
+  <string name="transfer">Transfer</string>
+  <string name="transfers">Transfers</string>
+  <string name="new_transfer">New transfer</string>
+  <string name="from">From</string>
+  <string name="to">To</string>
+  <string name="exchange_rate">Exchange rate</string>
+  <string name="choose_wallet">Choose a wallet</string>
+  <string name="transferred_amount">%1$s will be transferred</string>
+  <string name="uncategorized">Uncategorized</string>
+  <string name="show_more">show more</string>
+  <string name="show_less">show less</string>
+  <string name="permanently_delete">Permanently delete?</string>
 </resources>
