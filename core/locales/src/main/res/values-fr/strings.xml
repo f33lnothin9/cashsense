@@ -66,7 +66,6 @@
   <string name="expenses">Dépenses</string>
   <string name="income_singular">Revenu</string>
   <string name="income_plural">Revenus</string>
-  <string name="transaction_deleted">Transaction supprimée</string>
   <string name="transaction_shortcut_long_label">Ajouter une nouvelle transaction</string>
   <string name="completed">Terminé</string>
   <string name="pending">En attente</string>
@@ -85,4 +84,16 @@
   <string name="not_enough_data">Pas assez de données</string>
   <string name="repeat">Répéter</string>
   <string name="currency_not_found">Currency not found</string>
+  <string name="transfer">Transfer</string>
+  <string name="transfers">Transfers</string>
+  <string name="new_transfer">New transfer</string>
+  <string name="from">From</string>
+  <string name="to">To</string>
+  <string name="exchange_rate">Exchange rate</string>
+  <string name="choose_wallet">Choose a wallet</string>
+  <string name="transferred_amount">%1$s will be transferred</string>
+  <string name="uncategorized">Uncategorized</string>
+  <string name="show_more">show more</string>
+  <string name="show_less">show less</string>
+  <string name="permanently_delete">Permanently delete?</string>
 </resources>
