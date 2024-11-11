@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 26
-        versionName = "1.0.2"
+        versionCode = 27
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -69,7 +69,6 @@ dependencies {
     implementation(projects.feature.wallet.edit)
     implementation(projects.feature.wallet.menu)
     implementation(projects.feature.wallet.widget)
-
     implementation(projects.feature.settings)
 
     implementation(projects.core.data)

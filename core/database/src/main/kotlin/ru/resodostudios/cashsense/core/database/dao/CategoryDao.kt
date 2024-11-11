@@ -16,7 +16,7 @@ interface CategoryDao {
         value = """
             SELECT c.id, c.title, c.icon_id FROM categories c
             LEFT JOIN (
-                SELECT tc.category_id, COUNT(tc.category_id) AS usage_count
+                SELECT tc.category_id, count(tc.category_id) AS usage_count
                 FROM transactions_categories tc
                 GROUP BY tc.category_id
             ) AS usage ON c.id = usage.category_id
