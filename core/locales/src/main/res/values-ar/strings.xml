@@ -66,7 +66,6 @@
   <string name="expenses">النفقات</string>
   <string name="income_singular">الدخل</string>
   <string name="income_plural">الإيرادات</string>
-  <string name="transaction_deleted">تم حذف المعاملة</string>
   <string name="transaction_shortcut_long_label">إضافة معاملة جديدة</string>
   <string name="completed">مكتمل</string>
   <string name="pending">معلق</string>
@@ -85,4 +84,16 @@
   <string name="not_enough_data">البيانات غير كافية</string>
   <string name="repeat">تكرار</string>
   <string name="currency_not_found">Currency not found</string>
+  <string name="transfer">Transfer</string>
+  <string name="transfers">Transfers</string>
+  <string name="new_transfer">New transfer</string>
+  <string name="from">From</string>
+  <string name="to">To</string>
+  <string name="exchange_rate">Exchange rate</string>
+  <string name="choose_wallet">Choose a wallet</string>
+  <string name="transferred_amount">%1$s will be transferred</string>
+  <string name="uncategorized">Uncategorized</string>
+  <string name="show_more">show more</string>
+  <string name="show_less">show less</string>
+  <string name="permanently_delete">Permanently delete?</string>
 </resources>
