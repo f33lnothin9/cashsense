@@ -13,6 +13,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -37,7 +38,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
-import java.math.BigDecimal
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -79,7 +80,7 @@ private fun TransferDialog(
 ) {
     CsAlertDialog(
         titleRes = localesR.string.new_transfer,
-        confirmButtonTextRes = localesR.string.add,
+        confirmButtonTextRes = localesR.string.transfer,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
         onConfirm = onTransferSave,
@@ -106,17 +107,18 @@ private fun TransferDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 WalletDropdownMenu(
-                    title = localesR.string.from,
+                    title = localesR.string.from_wallet,
                     onWalletSelect = onSendingWalletUpdate,
                     selectedWallet = transferState.sendingWallet,
                     availableWallets = transferState.transferWallets,
                 )
                 WalletDropdownMenu(
-                    title = localesR.string.to,
+                    title = localesR.string.to_wallet,
                     onWalletSelect = onReceivingWalletUpdate,
                     selectedWallet = transferState.receivingWallet,
                     availableWallets = transferState.transferWallets,
                 )
+                HorizontalDivider()
                 OutlinedTextField(
                     value = transferState.amount,
                     onValueChange = { onAmountUpdate(it.cleanAndValidateAmount().first) },
@@ -131,6 +133,7 @@ private fun TransferDialog(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) },
                         onDone = { focusManager.clearFocus() },
                     ),
+                    prefix = { Text(Currency.getInstance(transferState.sendingWallet.currency).symbol) },
                 )
                 OutlinedTextField(
                     value = transferState.exchangeRate,
@@ -146,21 +149,14 @@ private fun TransferDialog(
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() },
                     ),
-                    supportingText = if (transferState.amount.cleanAndValidateAmount().second && transferState.exchangeRate.cleanAndValidateAmount().second) {
-                        {
-                            val transferAmount = BigDecimal(transferState.amount)
-                                .multiply(BigDecimal(transferState.exchangeRate))
-                                .formatAmount(transferState.receivingWallet.currency)
-                            Text(
-                                text = stringResource(
-                                    localesR.string.transferred_amount,
-                                    transferAmount,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    } else null
+                )
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(localesR.string.converted_amount)) },
+                    singleLine = true,
+                    prefix = { Text(Currency.getInstance(transferState.receivingWallet.currency).symbol) },
                 )
             }
         }
