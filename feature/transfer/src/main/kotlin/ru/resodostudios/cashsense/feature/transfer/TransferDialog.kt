@@ -91,6 +91,7 @@ private fun TransferDialog(
         isConfirmEnabled = transferState.amount.isNotBlank() &&
                 transferState.receivingWallet.id.isNotBlank() &&
                 transferState.exchangeRate.isNotBlank() &&
+                transferState.convertedAmount.isNotBlank() &&
                 transferState.sendingWallet != transferState.receivingWallet,
         onDismiss = onDismiss,
         modifier = modifier,

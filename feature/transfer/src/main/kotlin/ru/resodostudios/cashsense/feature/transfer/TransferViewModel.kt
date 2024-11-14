@@ -102,7 +102,7 @@ class TransferViewModel @Inject constructor(
             id = Uuid.random().toString(),
             walletOwnerId = transferState.value.receivingWallet.id,
             description = null,
-            amount = withdrawalAmount * BigDecimal(transferState.value.exchangeRate),
+            amount = BigDecimal(transferState.value.convertedAmount),
             timestamp = timestamp,
             status = StatusType.COMPLETED,
             ignored = true,
