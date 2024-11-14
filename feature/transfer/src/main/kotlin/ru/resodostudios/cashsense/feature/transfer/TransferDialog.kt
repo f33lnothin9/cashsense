@@ -64,6 +64,7 @@ internal fun TransferDialog(
         onReceivingWalletUpdate = viewModel::updateReceivingWallet,
         onAmountUpdate = viewModel::updateAmount,
         onExchangingRateUpdate = viewModel::updateExchangingRate,
+        onConvertedAmountUpdate = viewModel::updateConvertedAmount,
         onTransferSave = viewModel::saveTransfer,
         modifier = modifier,
     )
@@ -77,6 +78,7 @@ private fun TransferDialog(
     onReceivingWalletUpdate: (TransferWallet) -> Unit,
     onAmountUpdate: (String) -> Unit,
     onExchangingRateUpdate: (String) -> Unit,
+    onConvertedAmountUpdate: (String) -> Unit,
     onTransferSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -153,8 +155,8 @@ private fun TransferDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedAmountField(
-                    value = "",
-                    onValueChange = {},
+                    value = transferState.convertedAmount,
+                    onValueChange = onConvertedAmountUpdate,
                     labelRes = localesR.string.converted_amount,
                     currency = Currency.getInstance(transferState.receivingWallet.currency),
                     modifier = Modifier.fillMaxWidth(),
