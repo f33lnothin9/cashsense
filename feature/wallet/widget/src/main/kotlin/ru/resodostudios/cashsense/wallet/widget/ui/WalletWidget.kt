@@ -95,7 +95,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                     items = wallets,
                     itemId = { walletPopulated ->
                         Uuid.parse(walletPopulated.wallet.id)
-                            .toLongs { mostSignificantBits, _ -> ((mostSignificantBits shr 12) and 0xF) }
+                            .toLongs { mostSignificantBits, _ -> mostSignificantBits }
                     }
                 ) { walletPopulated ->
                     val currentBalance = walletPopulated.transactionsWithCategories
