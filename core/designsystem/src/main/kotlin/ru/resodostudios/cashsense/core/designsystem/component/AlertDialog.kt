@@ -25,35 +25,35 @@ fun CsAlertDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     isConfirmEnabled: Boolean = true,
-    content: @Composable () -> Unit,
+    content: @Composable (() -> Unit)? = null,
 ) {
     AlertDialog(
         onDismissRequest = {},
         icon = {
             Icon(
                 imageVector = ImageVector.vectorResource(iconRes),
-                contentDescription = null
+                contentDescription = null,
             )
         },
         title = {
             Text(
                 text = stringResource(titleRes),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         text = content,
         confirmButton = {
             Button(
                 onClick = onConfirm,
-                enabled = isConfirmEnabled
+                enabled = isConfirmEnabled,
             ) {
-                Text(text = stringResource(confirmButtonTextRes))
+                Text(stringResource(confirmButtonTextRes))
             }
         },
         dismissButton = {
             TextButton(onDismiss) {
-                Text(text = stringResource(dismissButtonTextRes))
+                Text(stringResource(dismissButtonTextRes))
             }
         },
         modifier = modifier,
