@@ -87,13 +87,13 @@
   <string name="transfer">Transfer</string>
   <string name="transfers">Transfers</string>
   <string name="new_transfer">New transfer</string>
-  <string name="from">From</string>
-  <string name="to">To</string>
   <string name="exchange_rate">Exchange rate</string>
   <string name="choose_wallet">Choose a wallet</string>
-  <string name="transferred_amount">%1$s will be transferred</string>
   <string name="uncategorized">Uncategorized</string>
   <string name="show_more">show more</string>
   <string name="show_less">show less</string>
   <string name="permanently_delete">Permanently delete?</string>
+  <string name="from_wallet">From wallet</string>
+  <string name="to_wallet">To wallet</string>
+  <string name="converted_amount">Converted amount</string>
 </resources>
