@@ -2,12 +2,16 @@ package ru.resodostudios.cashsense.core.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -23,6 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import java.math.BigDecimal
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,4 +102,55 @@ fun DatePickerTextField(
             DatePicker(state = datePickerState)
         }
     }
+}
+
+@Composable
+fun OutlinedAmountField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    currency: Currency,
+    @StringRes labelRes: Int,
+    modifier: Modifier = Modifier,
+    imeAction: ImeAction = ImeAction.Unspecified,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+) {
+    val isSuffixEnabled = BigDecimal(1).formatAmount("USD").first().isDigit()
+    OutlinedTextField(
+        value = value,
+        textStyle = if (isSuffixEnabled) {
+            LocalTextStyle.current.copy(textAlign = TextAlign.End)
+        } else {
+            LocalTextStyle.current
+        },
+        onValueChange = { onValueChange(it.cleanAndValidateAmount().first) },
+        label = { Text(stringResource(labelRes)) },
+        placeholder = {
+            Text(
+                text = "0.01",
+                textAlign = if (isSuffixEnabled) TextAlign.End else TextAlign.Start,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = imeAction,
+        ),
+        keyboardActions = keyboardActions,
+        prefix = if (!isSuffixEnabled) {
+            {
+                Text(currency.symbol)
+            }
+        } else {
+            null
+        },
+        suffix = if (isSuffixEnabled) {
+            {
+                Text(currency.symbol)
+            }
+        } else {
+            null
+        },
+        modifier = modifier,
+    )
 }
