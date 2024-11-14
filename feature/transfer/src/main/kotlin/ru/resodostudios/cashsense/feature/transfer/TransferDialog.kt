@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.transfer
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +14,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -126,7 +126,6 @@ private fun TransferDialog(
                     availableWallets = transferState.transferWallets,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                HorizontalDivider()
                 OutlinedAmountField(
                     value = transferState.amount,
                     onValueChange = onAmountUpdate,
@@ -155,13 +154,15 @@ private fun TransferDialog(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                OutlinedAmountField(
-                    value = transferState.convertedAmount,
-                    onValueChange = onConvertedAmountUpdate,
-                    labelRes = localesR.string.converted_amount,
-                    currency = Currency.getInstance(transferState.receivingWallet.currency),
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                AnimatedVisibility(transferState.receivingWallet.currency.isNotBlank()) {
+                    OutlinedAmountField(
+                        value = transferState.convertedAmount,
+                        onValueChange = onConvertedAmountUpdate,
+                        labelRes = localesR.string.converted_amount,
+                        currency = Currency.getInstance(transferState.receivingWallet.currency),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             }
         }
     }
@@ -192,7 +193,13 @@ private fun WalletDropdownMenu(
             label = { Text(stringResource(title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             placeholder = { Text(stringResource(localesR.string.choose_wallet)) },
-            supportingText = { Text(selectedWallet.currentBalance.formatAmount(selectedWallet.currency)) },
+            supportingText = if (selectedWallet.currency.isNotBlank()) {
+                {
+                    Text(selectedWallet.currentBalance.formatAmount(selectedWallet.currency))
+                }
+            } else {
+                null
+            },
         )
         ExposedDropdownMenu(
             expanded = expanded,
