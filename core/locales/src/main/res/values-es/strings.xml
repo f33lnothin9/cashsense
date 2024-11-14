@@ -15,7 +15,7 @@
   <string name="delete">Eliminar</string>
   <string name="required">*requerido</string>
   <string name="none">Ninguno</string>
-  <string name="amount">Monto</string>
+  <string name="amount">Cantidad</string>
   <string name="subscriptions_notification_channel_name">Recordatorios de suscripciones</string>
   <string name="subscriptions_notification_channel_description">Recordatorios de suscripciones por vencer</string>
   <string name="subscriptions_notification_content_text">Necesitas pagar %1$s por una suscripción el %2$s</string>
@@ -83,4 +83,17 @@
   <string name="wallet_widget_empty">No tienes ninguna cartera</string>
   <string name="not_enough_data">Datos insuficientes</string>
   <string name="repeat">Repetir</string>
+  <string name="currency_not_found">Moneda no encontrada</string>
+  <string name="transfer">Transferencia</string>
+  <string name="transfers">Transferencias</string>
+  <string name="new_transfer">Nueva transferencia</string>
+  <string name="exchange_rate">Tipo de cambio</string>
+  <string name="choose_wallet">Elige una billetera</string>
+  <string name="uncategorized">Sin categorizar</string>
+  <string name="show_more">mostrar más</string>
+  <string name="show_less">mostrar menos</string>
+  <string name="permanently_delete">¿Eliminar permanentemente?</string>
+  <string name="from_wallet">Desde la billetera</string>
+  <string name="to_wallet">Hacia la billetera</string>
+  <string name="converted_amount">Cantidad convertida</string>
 </resources>
