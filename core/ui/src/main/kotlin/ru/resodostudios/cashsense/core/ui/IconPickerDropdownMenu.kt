@@ -54,7 +54,7 @@ fun IconPickerDropdownMenu(
                         }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(icon.iconId),
+                            imageVector = ImageVector.vectorResource(icon.iconRes),
                             contentDescription = null,
                         )
                     }
@@ -65,8 +65,7 @@ fun IconPickerDropdownMenu(
 }
 
 enum class StoredIcon(
-    @DrawableRes
-    val iconId: Int,
+    @DrawableRes val iconRes: Int,
     val storedId: Int,
 ) {
     CATEGORY(CsIcons.Category, 0),
@@ -98,11 +97,16 @@ enum class StoredIcon(
     CREDIT_CARD(CsIcons.CreditCard, 26),
     MONITORING(CsIcons.Monitoring, 27),
     MUSIC_NOTE(CsIcons.MusicNote, 28),
-    WORK(CsIcons.Work, 29);
+    WORK(CsIcons.Work, 29),
+    BITCOIN(CsIcons.Bitcoin, 30),
+    BOOK(CsIcons.Book, 31),
+    DENTISTRY(CsIcons.Dentistry, 32),
+    DIAMOND(CsIcons.Diamond, 33),
+    MOVIE(CsIcons.Movie, 34);
 
     companion object {
 
         @DrawableRes
-        fun asRes(stored: Int): Int = entries.first { it.storedId == stored }.iconId
+        fun asRes(storedId: Int?): Int = entries.firstOrNull { it.storedId == storedId }?.iconRes ?: CATEGORY.iconRes
     }
 }

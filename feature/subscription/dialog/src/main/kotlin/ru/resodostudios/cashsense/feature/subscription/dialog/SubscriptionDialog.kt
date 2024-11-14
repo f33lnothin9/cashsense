@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
@@ -26,10 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -47,8 +49,8 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
-import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
@@ -94,11 +96,10 @@ fun SubscriptionDialog(
                 subscriptionDialogState.amount.cleanAndValidateAmount().second,
         onDismiss = onDismiss,
     ) {
-        val (titleTextField, amountTextField) = remember { FocusRequester.createRefs() }
+        val focusManager = LocalFocusManager.current
+        val focusRequester = remember { FocusRequester() }
 
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-        ) {
+        Column(Modifier.verticalScroll(rememberScrollState())) {
             OutlinedTextField(
                 value = subscriptionDialogState.title,
                 onValueChange = { onSubscriptionEvent(UpdateTitle(it)) },
@@ -106,15 +107,17 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                ),
+                singleLine = true,
                 label = { Text(stringResource(localesR.string.title)) },
                 placeholder = { Text(stringResource(localesR.string.title) + "*") },
                 supportingText = { Text(stringResource(localesR.string.required)) },
-                maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
-                    .focusRequester(titleTextField)
-                    .focusProperties { next = amountTextField },
+                    .focusRequester(focusRequester),
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
@@ -123,14 +126,23 @@ fun SubscriptionDialog(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() },
+                ),
+                singleLine = true,
                 label = { Text(stringResource(localesR.string.amount)) },
                 placeholder = { Text(stringResource(localesR.string.amount) + "*") },
                 supportingText = { Text(stringResource(localesR.string.required)) },
-                maxLines = 1,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-                    .focusRequester(amountTextField),
+                    .padding(bottom = 16.dp),
+            )
+            CurrencyDropdownMenu(
+                currencyCode = subscriptionDialogState.currency,
+                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it.currencyCode)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
             )
             DatePickerTextField(
                 value = subscriptionDialogState.paymentDate.formatDate(),
@@ -142,13 +154,6 @@ fun SubscriptionDialog(
                     .padding(bottom = 16.dp),
                 initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
                 isAllDatesEnabled = false,
-            )
-            CurrencyDropdownMenu(
-                currencyName = subscriptionDialogState.currency,
-                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it.currencyCode)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
             )
             CsListItem(
                 headlineContent = { Text(stringResource(localesR.string.reminder)) },
@@ -178,7 +183,7 @@ fun SubscriptionDialog(
         }
         LaunchedEffect(Unit) {
             if (subscriptionDialogState.id.isEmpty()) {
-                titleTextField.requestFocus()
+                focusRequester.requestFocus()
             }
         }
 

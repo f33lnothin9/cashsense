@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
@@ -23,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,6 +34,7 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -54,15 +55,15 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
+import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -89,15 +90,17 @@ fun TransactionDialog(
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val isTransactionLoading = transactionDialogState.isLoading
-    val isCategoriesLoading = categoriesState is Loading
+    val isLoading = transactionDialogState.isLoading || categoriesState is Loading
 
-    val dialogTitle = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.edit_transaction else localesR.string.new_transaction
-    val dialogConfirmText = if (transactionDialogState.transactionId.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (titleRes, confirmButtonTextRes) = if (transactionDialogState.transactionId.isNotEmpty()) {
+        localesR.string.edit_transaction to localesR.string.save
+    } else {
+        localesR.string.new_transaction to localesR.string.add
+    }
 
     CsAlertDialog(
-        titleRes = dialogTitle,
-        confirmButtonTextRes = dialogConfirmText,
+        titleRes = titleRes,
+        confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.ReceiptLong,
         onConfirm = {
@@ -107,13 +110,14 @@ fun TransactionDialog(
         isConfirmEnabled = transactionDialogState.amount.cleanAndValidateAmount().second,
         onDismiss = onDismiss,
     ) {
-        if (isTransactionLoading || isCategoriesLoading) {
+        if (isLoading) {
             LoadingState(
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
+                    .height(250.dp),
             )
         } else {
+            val focusManager = LocalFocusManager.current
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
             Column(
@@ -134,7 +138,7 @@ fun TransactionDialog(
                     label = { Text(stringResource(localesR.string.amount)) },
                     placeholder = { Text(stringResource(localesR.string.amount) + "*") },
                     supportingText = { Text(stringResource(localesR.string.required)) },
-                    maxLines = 1,
+                    singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(amountTextField)
@@ -164,8 +168,10 @@ fun TransactionDialog(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
                     label = { Text(stringResource(localesR.string.description)) },
-                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(descTextField),
@@ -181,13 +187,13 @@ fun TransactionDialog(
                     trailingContent = {
                         Switch(
                             checked = transactionDialogState.ignored,
-                            onCheckedChange = { onTransactionEvent(UpdateIgnoring(it)) },
+                            onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
                         )
                     },
                 )
             }
             LaunchedEffect(Unit) {
-                if (transactionDialogState.transactionId.isEmpty()) {
+                if (transactionDialogState.amount.isEmpty()) {
                     amountTextField.requestFocus()
                 }
             }
@@ -201,17 +207,11 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        stringResource(localesR.string.expense),
-        stringResource(localesR.string.income_singular),
+        Pair(stringResource(localesR.string.expense), CsIcons.TrendingDown),
+        Pair(stringResource(localesR.string.income_singular), CsIcons.TrendingUp),
     )
-    val chartDirectionIcons = listOf(
-        CsIcons.TrendingDown,
-        CsIcons.TrendingUp,
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        transactionTypes.forEachIndexed { index, label ->
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        transactionTypes.forEachIndexed { index, transactionType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -222,7 +222,7 @@ private fun TransactionTypeChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(chartDirectionIcons[index]),
+                            imageVector = ImageVector.vectorResource(transactionType.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -233,7 +233,7 @@ private fun TransactionTypeChoiceRow(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = transactionType.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -248,17 +248,11 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        stringResource(localesR.string.completed),
-        stringResource(localesR.string.pending),
+        Pair(stringResource(localesR.string.completed), CsIcons.CheckCircle),
+        Pair(stringResource(localesR.string.pending), CsIcons.Pending),
     )
-    val statusIcons = listOf(
-        CsIcons.CheckCircle,
-        CsIcons.Pending,
-    )
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        statusTypes.forEachIndexed { index, label ->
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        statusTypes.forEachIndexed { index, statusType ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
@@ -269,7 +263,7 @@ private fun TransactionStatusChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(statusIcons[index]),
+                            imageVector = ImageVector.vectorResource(statusType.second),
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -280,7 +274,7 @@ private fun TransactionStatusChoiceRow(
                 ),
             ) {
                 Text(
-                    text = label,
+                    text = statusType.first,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -297,7 +291,7 @@ private fun CategoryExposedDropdownMenuBox(
     onCategoryClick: (Category) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
+    var iconId by rememberSaveable { mutableStateOf(currentCategory?.iconId) }
 
     when (categoriesState) {
         Loading -> Unit
@@ -309,7 +303,7 @@ private fun CategoryExposedDropdownMenuBox(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryEditable),
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
                     value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},
@@ -321,8 +315,8 @@ private fun CategoryExposedDropdownMenuBox(
                             contentDescription = null,
                         )
                     },
-                    maxLines = 1,
                     singleLine = true,
+                    enabled = categoriesState.categories.isNotEmpty(),
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -338,7 +332,7 @@ private fun CategoryExposedDropdownMenuBox(
                         },
                         onClick = {
                             onCategoryClick(Category())
-                            iconId = 0
+                            iconId = null
                             expanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -360,14 +354,16 @@ private fun CategoryExposedDropdownMenuBox(
                             },
                             onClick = {
                                 onCategoryClick(category)
-                                iconId = category.iconId ?: 0
+                                iconId = category.iconId
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                             leadingIcon = {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(
-                                        StoredIcon.asRes(category.iconId ?: 0)
+                                        StoredIcon.asRes(
+                                            category.iconId
+                                        )
                                     ),
                                     contentDescription = null,
                                 )

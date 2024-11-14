@@ -10,14 +10,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
@@ -28,18 +29,14 @@ import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
-import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.time.temporal.WeekFields
 import javax.inject.Inject
@@ -47,14 +44,11 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
-    walletsRepository: WalletsRepository,
     savedStateHandle: SavedStateHandle,
+    getExtendedUserWallet: GetExtendedUserWalletUseCase,
 ) : ViewModel() {
 
     private val walletRoute: WalletRoute = savedStateHandle.toRoute()
-
-    private val shouldDisplayUndoTransactionState = MutableStateFlow(false)
-    private val lastRemovedTransactionIdState = MutableStateFlow<String?>(null)
 
     private val walletFilterState = MutableStateFlow(
         WalletFilter(
@@ -63,29 +57,24 @@ class WalletViewModel @Inject constructor(
             financeType = NONE,
             dateType = ALL,
             availableYears = emptyList(),
-            availableMonths = emptyList(),
+            availableMonths = (1..12).toList(),
             selectedYear = 0,
             selectedMonth = 0,
         )
     )
 
+    private val transactionIdState = MutableStateFlow<String?>(null)
+
     val walletUiState: StateFlow<WalletUiState> = combine(
-        walletsRepository.getWalletWithTransactions(walletRoute.walletId),
+        getExtendedUserWallet.invoke(walletRoute.walletId),
         walletFilterState,
-        shouldDisplayUndoTransactionState,
-        lastRemovedTransactionIdState,
-    ) { walletTransactionsCategories, walletFilter, shouldDisplayUndoTransaction, lastRemovedTransactionId ->
-        val currentBalance = walletTransactionsCategories.wallet.initialBalance.plus(
-            walletTransactionsCategories.transactionsWithCategories.sumOf { it.transaction.amount }
-        )
-        val sortedTransactions = walletTransactionsCategories.transactionsWithCategories
-            .sortedByDescending { it.transaction.timestamp }
+    ) { extendedUserWallet, walletFilter ->
         val financeTypeTransactions = when (walletFilter.financeType) {
-            NONE -> sortedTransactions
-            EXPENSES -> sortedTransactions.filter { it.transaction.amount < ZERO }
-            INCOME -> sortedTransactions.filter { it.transaction.amount > ZERO }
+            NONE -> extendedUserWallet.transactionsWithCategories
+            EXPENSES -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount < ZERO }
+            INCOME -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount > ZERO }
         }
-        calculateAvailableDates(financeTypeTransactions)
+        calculateAvailableYears(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
             ALL -> financeTypeTransactions
             WEEK -> financeTypeTransactions.filter {
@@ -101,7 +90,7 @@ class WalletViewModel @Inject constructor(
 
             YEAR -> financeTypeTransactions
                 .filter { it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYear }
-        }.filterNot { it.transaction.id == lastRemovedTransactionId }
+        }
 
         calculateAvailableCategories(dateTypeTransactions)
         val filteredByCategories = if (walletFilter.selectedCategories.isNotEmpty()) {
@@ -117,7 +106,6 @@ class WalletViewModel @Inject constructor(
         } else dateTypeTransactions
 
         Success(
-            currentBalance = currentBalance,
             walletFilter = WalletFilter(
                 availableCategories = walletFilter.availableCategories.minus(Category()),
                 selectedCategories = walletFilter.selectedCategories,
@@ -128,9 +116,8 @@ class WalletViewModel @Inject constructor(
                 selectedYear = walletFilter.selectedYear,
                 selectedMonth = walletFilter.selectedMonth,
             ),
-            wallet = walletTransactionsCategories.wallet,
+            userWallet = extendedUserWallet.userWallet,
             transactionsCategories = filteredByCategories,
-            shouldDisplayUndoTransaction = shouldDisplayUndoTransaction,
         )
     }
         .catch { Loading }
@@ -140,21 +127,13 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    private fun calculateAvailableDates(transactions: List<TransactionWithCategory>) {
-        walletFilterState.update { filterState ->
-            val availableYears = transactions
-                .map { it.transaction.timestamp.getZonedDateTime().year }
-                .toSortedSet()
-                .toList()
-            val availableMonths = transactions
-                .filter { it.transaction.timestamp.getZonedDateTime().year == findCurrentOrLastYear(availableYears) }
-                .map { it.transaction.timestamp.getZonedDateTime().monthValue }
-                .toSortedSet()
-                .toList()
-            filterState.copy(
-                availableYears = availableYears,
-                availableMonths = availableMonths,
-            )
+    private fun calculateAvailableYears(transactions: List<TransactionWithCategory>) {
+        val availableYears = transactions
+            .map { it.transaction.timestamp.getZonedDateTime().year }
+            .toSortedSet()
+            .toList()
+        walletFilterState.update {
+            it.copy(availableYears = availableYears)
         }
     }
 
@@ -174,17 +153,25 @@ class WalletViewModel @Inject constructor(
             is RemoveFromSelectedCategories -> removeFromSelectedCategories(event.category)
             is UpdateFinanceType -> updateFinanceType(event.financeType)
             is UpdateDateType -> updateDateType(event.dateType)
-            is HideTransaction -> hideTransaction(event.id)
-            ClearUndoState -> clearUndoState()
-            UndoTransactionRemoval -> undoTransactionRemoval()
             DecrementSelectedDate -> decrementSelectedDate()
             IncrementSelectedDate -> incrementSelectedDate()
         }
     }
 
-    private fun deleteTransaction(id: String) {
+    fun updateTransactionId(id: String) {
+        transactionIdState.value = id
+    }
+
+    fun deleteTransaction() {
         viewModelScope.launch {
-            transactionsRepository.deleteTransaction(id)
+            transactionIdState.value?.let { transactionId ->
+                val transactionCategory = transactionsRepository.getTransactionWithCategory(transactionId).first()
+                if (transactionCategory.transaction.transferId != null) {
+                    transactionsRepository.deleteTransfer(transactionCategory.transaction.transferId!!)
+                } else {
+                    transactionsRepository.deleteTransaction(transactionId)
+                }
+            }
         }
     }
 
@@ -207,22 +194,21 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateDateType(dateType: DateType) {
-        if (walletFilterState.value.availableYears.isNotEmpty()) {
-            walletFilterState.update {
-                it.copy(
-                    dateType = dateType,
-                    selectedYear = findCurrentOrLastYear(walletFilterState.value.availableYears),
-                    selectedMonth = findCurrentOrLastMonth(walletFilterState.value.availableMonths),
-                )
-            }
+        walletFilterState.update {
+            it.copy(
+                dateType = dateType,
+                selectedYear = findCurrentYear(walletFilterState.value.availableYears),
+                selectedMonth = findCurrentMonth(walletFilterState.value.availableMonths),
+            )
         }
     }
 
-    private fun findCurrentOrLastYear(years: List<Int>) =
-        years.find { it == getCurrentZonedDateTime().year } ?: years.last()
+    private fun findCurrentYear(years: List<Int>) =
+        years.firstOrNull { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
 
-    private fun findCurrentOrLastMonth(months: List<Int>) =
-        months.find { it == getCurrentZonedDateTime().monthValue } ?: months.last()
+    private fun findCurrentMonth(months: List<Int>) =
+        months.firstOrNull { it == getCurrentZonedDateTime().monthValue }
+            ?: getCurrentZonedDateTime().monthValue
 
     private fun incrementSelectedDate() {
         val walletFilter = walletFilterState.value
@@ -273,24 +259,6 @@ class WalletViewModel @Inject constructor(
             else -> {}
         }
     }
-
-    private fun hideTransaction(id: String) {
-        if (lastRemovedTransactionIdState.value != null) {
-            clearUndoState()
-        }
-        shouldDisplayUndoTransactionState.value = true
-        lastRemovedTransactionIdState.value = id
-    }
-
-    private fun undoTransactionRemoval() {
-        lastRemovedTransactionIdState.value = null
-        shouldDisplayUndoTransactionState.value = false
-    }
-
-    private fun clearUndoState() {
-        lastRemovedTransactionIdState.value?.let(::deleteTransaction)
-        undoTransactionRemoval()
-    }
 }
 
 enum class FinanceType {
@@ -322,10 +290,8 @@ sealed interface WalletUiState {
     data object Loading : WalletUiState
 
     data class Success(
-        val currentBalance: BigDecimal,
         val walletFilter: WalletFilter,
-        val wallet: Wallet,
-        val shouldDisplayUndoTransaction: Boolean,
+        val userWallet: UserWallet,
         val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState
 }

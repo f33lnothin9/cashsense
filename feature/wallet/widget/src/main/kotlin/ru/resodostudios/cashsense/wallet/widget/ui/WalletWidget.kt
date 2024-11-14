@@ -42,7 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
+import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
@@ -60,13 +60,13 @@ class WalletWidget : GlanceAppWidget() {
         val walletsRepository = walletsEntryPoint.walletsRepository()
 
         val initialWallets = withContext(Dispatchers.IO) {
-            walletsRepository.getWalletsWithTransactions()
+            walletsRepository.getWalletsWithTransactionsAndCategories()
                 .first()
                 .sortedByDescending { it.wallet.id }
         }
 
         provideContent {
-            val wallets by walletsRepository.getWalletsWithTransactions().collectAsState(initialWallets)
+            val wallets by walletsRepository.getWalletsWithTransactionsAndCategories().collectAsState(initialWallets)
 
             CsGlanceTheme {
                 WalletWidgetContent(wallets)
@@ -76,7 +76,7 @@ class WalletWidget : GlanceAppWidget() {
 }
 
 @Composable
-private fun WalletWidgetContent(wallets: List<WalletWithTransactionsAndCategories>) {
+private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
     Scaffold(
         titleBar = {
             TitleBar(
