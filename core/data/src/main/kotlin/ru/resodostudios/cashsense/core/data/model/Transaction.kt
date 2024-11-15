@@ -11,4 +11,5 @@ fun Transaction.asEntity() = TransactionEntity(
     description = description,
     status = status,
     ignored = ignored,
+    transferId = transferId,
 )

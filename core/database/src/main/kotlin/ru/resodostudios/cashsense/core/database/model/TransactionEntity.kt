@@ -7,6 +7,7 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
+import kotlin.uuid.Uuid
 
 @Entity(
     tableName = "transactions",
@@ -23,6 +24,8 @@ data class TransactionEntity(
     val status: StatusType,
     @ColumnInfo(defaultValue = "0")
     val ignored: Boolean,
+    @ColumnInfo(name = "transfer_id")
+    val transferId: Uuid?,
 )
 
 fun TransactionEntity.asExternalModel() = Transaction(
@@ -33,4 +36,5 @@ fun TransactionEntity.asExternalModel() = Transaction(
     timestamp = timestamp,
     status = status,
     ignored = ignored,
+    transferId = transferId,
 )

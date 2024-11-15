@@ -12,7 +12,17 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE id = :id")
     fun getCategoryEntity(id: String): Flow<CategoryEntity>
 
-    @Query("SELECT * FROM categories ORDER BY id DESC")
+    @Query(
+        value = """
+            SELECT c.id, c.title, c.icon_id FROM categories c
+            LEFT JOIN (
+                SELECT tc.category_id, count(tc.category_id) AS usage_count
+                FROM transactions_categories tc
+                GROUP BY tc.category_id
+            ) AS usage ON c.id = usage.category_id
+            ORDER BY usage.usage_count DESC;
+        """,
+    )
     fun getCategoryEntities(): Flow<List<CategoryEntity>>
 
     @Upsert

@@ -13,7 +13,7 @@ fun NavController.navigateToLicenses() = navigate(LicensesRoute) {
     launchSingleTop = true
 }
 
-fun NavGraphBuilder.licensesRoute(
+fun NavGraphBuilder.licensesScreen(
     onBackClick: () -> Unit,
 ) {
     composable<LicensesRoute> {

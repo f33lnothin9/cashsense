@@ -1,6 +1,7 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.resodostudios.cashsense.configureKotlinJvm
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import ru.resodostudios.cashsense.configureKotlin
 
 class JvmLibraryConventionPlugin : Plugin<Project> {
 
@@ -9,7 +10,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.jvm")
             }
-            configureKotlinJvm()
+            configureKotlin<KotlinJvmProjectExtension>()
         }
     }
 }
