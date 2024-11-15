@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
@@ -42,7 +43,6 @@ import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KE
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.wallet.detail.R
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
@@ -60,7 +60,9 @@ internal object WalletPlaceholderRoute
 @Serializable
 internal object DetailPaneNavHostRoute
 
-fun NavGraphBuilder.homeListDetailScreen(
+fun NavGraphBuilder.homeListDetailGraph(
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     composable<HomeRoute>(
@@ -69,6 +71,8 @@ fun NavGraphBuilder.homeListDetailScreen(
         ),
     ) {
         HomeListDetailScreen(
+            onEditWallet = onEditWallet,
+            onTransfer = onTransfer,
             onShowSnackbar = onShowSnackbar,
         )
     }
@@ -76,6 +80,8 @@ fun NavGraphBuilder.homeListDetailScreen(
 
 @Composable
 internal fun HomeListDetailScreen(
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: Home2PaneViewModel = hiltViewModel(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
@@ -87,7 +93,9 @@ internal fun HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
-        onTransactionDialogDismiss = viewModel::onTransactionDialogDismiss,
+        onEditWallet = onEditWallet,
+        onTransfer = onTransfer,
+        setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
         windowAdaptiveInfo = windowAdaptiveInfo,
     )
@@ -99,7 +107,9 @@ internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
-    onTransactionDialogDismiss: () -> Unit,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
+    setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
 ) {
@@ -129,7 +139,7 @@ internal fun HomeListDetailScreen(
     }
 
     var nestedNavHostStartRoute by remember {
-        val route = selectedWalletId?.let { WalletRoute(walletId = it) } ?: WalletPlaceholderRoute
+        val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
@@ -149,7 +159,7 @@ internal fun HomeListDetailScreen(
                     popUpTo<DetailPaneNavHostRoute>()
                 }
             } else {
-                nestedNavHostStartRoute = WalletRoute(walletId = walletId)
+                nestedNavHostStartRoute = WalletRoute(walletId)
                 nestedNavKey = Uuid.random()
             }
             scope.launch {
@@ -166,7 +176,13 @@ internal fun HomeListDetailScreen(
             AnimatedPane {
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
+                    onEditWallet = onEditWallet,
+                    onTransfer = onTransfer,
                     onShowSnackbar = onShowSnackbar,
+                    onTransactionCreate = {
+                        onWalletClickShowDetailPane(it)
+                        setTransactionDialogOpen(true)
+                    },
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                 )
             }
@@ -180,15 +196,12 @@ internal fun HomeListDetailScreen(
                         route = DetailPaneNavHostRoute::class,
                     ) {
                         walletScreen(
-                            showDetailActions = !listDetailNavigator.isListPaneVisible(),
-                            onBackClick = {
-                                scope.launch {
-                                    listDetailNavigator.navigateBack()
-                                }
-                            },
-                            onShowSnackbar = onShowSnackbar,
+                            showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
+                            onEditWallet = onEditWallet,
+                            onTransfer = onTransfer,
+                            onBackClick = listDetailNavigator::navigateBack,
                             openTransactionDialog = openTransactionDialog,
-                            onTransactionDialogDismiss = onTransactionDialogDismiss,
+                            setTransactionDialogOpen = setTransactionDialogOpen,
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(

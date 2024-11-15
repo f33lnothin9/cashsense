@@ -40,7 +40,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionBu
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
+import ru.resodostudios.cashsense.feature.wallet.add.AddWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -60,7 +60,7 @@ fun CsApp(
         CategoryDialog(onDismiss = { showCategoryDialog = false })
     }
     if (showWalletDialog) {
-        WalletDialog(onDismiss = { showWalletDialog = false })
+        AddWalletDialog(onDismiss = { showWalletDialog = false })
     }
     if (showSubscriptionDialog) {
         SubscriptionDialog(onDismiss = { showSubscriptionDialog = false })

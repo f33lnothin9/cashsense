@@ -1,21 +1,13 @@
 package ru.resodostudios.cashsense.feature.settings
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -29,43 +21,22 @@ internal fun CurrencyDialog(
 ) {
     var currencyCodeState by remember { mutableStateOf(currencyCode) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.UniversalCurrencyAlt),
-                contentDescription = null,
-            )
+    CsAlertDialog(
+        titleRes = localesR.string.choose_currency,
+        confirmButtonTextRes = localesR.string.ok,
+        dismissButtonTextRes = localesR.string.cancel,
+        iconRes = CsIcons.UniversalCurrencyAlt,
+        onConfirm = {
+            onCurrencyClick(currencyCodeState)
+            onDismiss()
         },
-        title = {
-            Text(
-                text = stringResource(localesR.string.choose_currency),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onCurrencyClick(currencyCodeState)
-                    onDismiss()
-                }
-            ) {
-                Text(stringResource(localesR.string.ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onDismiss) {
-                Text(stringResource(localesR.string.cancel))
-            }
-        },
+        onDismiss = onDismiss,
         modifier = modifier,
-        text = {
-            CurrencyDropdownMenu(
-                currencyCode = currencyCodeState,
-                onCurrencyClick = { currencyCodeState = it.currencyCode },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-    )
+    ) {
+        CurrencyDropdownMenu(
+            currencyCode = currencyCodeState,
+            onCurrencyClick = { currencyCodeState = it.currencyCode },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }

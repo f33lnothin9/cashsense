@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -65,8 +64,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
@@ -93,12 +90,13 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -124,20 +122,13 @@ import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
 import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.ClearUndoState
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.HideTransaction
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UndoTransactionRemoval
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateId
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogViewModel
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
@@ -149,73 +140,87 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletScreen(
-    showDetailActions: Boolean,
+    showNavigationIcon: Boolean,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
-    onTransactionDialogDismiss: () -> Unit,
+    setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     walletViewModel: WalletViewModel = hiltViewModel(),
-    walletDialogViewModel: WalletDialogViewModel = hiltViewModel(),
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
 
     WalletScreen(
         walletState = walletState,
-        showDetailActions = showDetailActions,
+        showNavigationIcon = showNavigationIcon,
+        onEditWallet = onEditWallet,
+        onTransfer = onTransfer,
         onBackClick = onBackClick,
-        onShowSnackbar = onShowSnackbar,
         openTransactionDialog = openTransactionDialog,
-        onTransactionDialogDismiss = onTransactionDialogDismiss,
+        setTransactionDialogOpen = setTransactionDialogOpen,
         onWalletEvent = walletViewModel::onWalletEvent,
-        onWalletDialogEvent = walletDialogViewModel::onWalletDialogEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
         modifier = modifier,
+        updateTransactionId = walletViewModel::updateTransactionId,
+        onTransactionDelete = walletViewModel::deleteTransaction,
     )
 }
 
 @Composable
-internal fun WalletScreen(
+private fun WalletScreen(
     walletState: WalletUiState,
-    showDetailActions: Boolean,
+    showNavigationIcon: Boolean,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     openTransactionDialog: Boolean,
-    onTransactionDialogDismiss: () -> Unit,
+    setTransactionDialogOpen: (Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     modifier: Modifier = Modifier,
+    updateTransactionId: (String) -> Unit = {},
+    onTransactionDelete: () -> Unit = {},
 ) {
-    BackHandler {
-        onBackClick()
-        onWalletEvent(ClearUndoState)
-    }
-
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
-            val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
-            val undoText = stringResource(localesR.string.undo)
-
-            LaunchedEffect(walletState.shouldDisplayUndoTransaction) {
-                if (walletState.shouldDisplayUndoTransaction) {
-                    val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
-                    if (snackBarResult) {
-                        onWalletEvent(UndoTransactionRemoval)
-                    } else {
-                        onWalletEvent(ClearUndoState)
-                    }
-                }
-            }
-            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-                onWalletEvent(ClearUndoState)
-            }
-
-            var showWalletDialog by rememberSaveable { mutableStateOf(false) }
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
+            var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
+
+            if (showTransactionBottomSheet) {
+                TransactionBottomSheet(
+                    onDismiss = { showTransactionBottomSheet = false },
+                    onEdit = { showTransactionDialog = true },
+                    onDelete = {
+                        updateTransactionId(it)
+                        showTransactionDeletionDialog = true
+                    },
+                )
+            }
+            if (showTransactionDialog) {
+                TransactionDialog(
+                    onDismiss = {
+                        showTransactionDialog = false
+                        setTransactionDialogOpen(false)
+                    },
+                )
+            }
+            if (showTransactionDeletionDialog) {
+                CsAlertDialog(
+                    titleRes = localesR.string.permanently_delete,
+                    confirmButtonTextRes = localesR.string.delete,
+                    dismissButtonTextRes = localesR.string.cancel,
+                    iconRes = CsIcons.Delete,
+                    onConfirm = {
+                        onTransactionDelete()
+                        showTransactionDeletionDialog = false
+                    },
+                    onDismiss = { showTransactionDeletionDialog = false },
+                )
+            }
 
             LazyColumn(
                 contentPadding = PaddingValues(bottom = 88.dp),
@@ -223,21 +228,16 @@ internal fun WalletScreen(
             ) {
                 item {
                     WalletTopBar(
-                        title = walletState.wallet.title,
-                        currentBalance = walletState.currentBalance,
-                        currency = walletState.wallet.currency,
-                        showDetailActions = showDetailActions,
+                        userWallet = walletState.userWallet,
+                        showNavigationIcon = showNavigationIcon,
                         onBackClick = onBackClick,
-                        onWalletEvent = onWalletEvent,
                         onNewTransactionClick = {
-                            onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                            onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
-                        onEditWalletClick = {
-                            onWalletDialogEvent(UpdateId(walletState.wallet.id))
-                            showWalletDialog = true
-                        },
+                        onEditWallet = onEditWallet,
+                        onTransfer = onTransfer,
                     )
                 }
                 item {
@@ -250,11 +250,11 @@ internal fun WalletScreen(
                 if (walletState.transactionsCategories.isNotEmpty()) {
                     transactions(
                         transactionsCategories = walletState.transactionsCategories,
-                        currency = walletState.wallet.currency,
+                        currency = walletState.userWallet.currency,
                         onTransactionClick = {
-                            onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                            onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(it))
-                            onTransactionEvent(UpdateCurrency(walletState.wallet.currency))
+                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
                             showTransactionBottomSheet = true
                         },
                     )
@@ -270,28 +270,9 @@ internal fun WalletScreen(
                     }
                 }
             }
-            if (showWalletDialog) {
-                WalletDialog(onDismiss = { showWalletDialog = false })
-            }
-
-            if (showTransactionBottomSheet) {
-                TransactionBottomSheet(
-                    onDismiss = { showTransactionBottomSheet = false },
-                    onEdit = { showTransactionDialog = true },
-                    onDelete = { onWalletEvent(HideTransaction(it)) },
-                )
-            }
-            if (showTransactionDialog) {
-                TransactionDialog(
-                    onDismiss = {
-                        showTransactionDialog = false
-                        onTransactionDialogDismiss()
-                    }
-                )
-            }
             LaunchedEffect(openTransactionDialog) {
                 if (openTransactionDialog) {
-                    onTransactionEvent(UpdateWalletId(walletState.wallet.id))
+                    onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                     onTransactionEvent(UpdateTransactionId(""))
                     showTransactionDialog = true
                 }
@@ -303,29 +284,39 @@ internal fun WalletScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WalletTopBar(
-    title: String,
-    currentBalance: BigDecimal,
-    currency: String,
-    showDetailActions: Boolean,
+    userWallet: UserWallet,
+    showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
-    onWalletEvent: (WalletEvent) -> Unit,
     onNewTransactionClick: () -> Unit,
-    onEditWalletClick: () -> Unit,
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
             Column {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = userWallet.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    if (showNavigationIcon && userWallet.isPrimary) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.Star),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+                }
                 AnimatedAmount(
-                    targetState = currentBalance,
+                    targetState = userWallet.currentBalance,
                     label = "wallet_balance",
                     content = {
                         Text(
-                            text = it.formatAmount(currency),
+                            text = it.formatAmount(userWallet.currency),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium,
@@ -338,13 +329,8 @@ private fun WalletTopBar(
             }
         },
         navigationIcon = {
-            if (showDetailActions) {
-                IconButton(
-                    onClick = {
-                        onBackClick()
-                        onWalletEvent(ClearUndoState)
-                    },
-                ) {
+            if (showNavigationIcon) {
+                IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
                         contentDescription = null,
@@ -353,19 +339,23 @@ private fun WalletTopBar(
             }
         },
         actions = {
-            IconButton(onNewTransactionClick) {
+            IconButton(onClick = onNewTransactionClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(CsIcons.Add),
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            if (showDetailActions) {
-                IconButton(onEditWalletClick) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                        contentDescription = null,
-                    )
-                }
+            IconButton(onClick = { onTransfer(userWallet.id) }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                    contentDescription = stringResource(localesR.string.transfer),
+                )
+            }
+            IconButton(onClick = { onEditWallet(userWallet.id) }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                    contentDescription = null,
+                )
             }
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
@@ -431,7 +421,7 @@ private fun FinancePanel(
                             )
                             FinanceCard(
                                 title = expenses,
-                                currency = walletState.wallet.currency,
+                                currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.expenses,
                                 indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
@@ -443,7 +433,7 @@ private fun FinancePanel(
                             )
                             FinanceCard(
                                 title = income,
-                                currency = walletState.wallet.currency,
+                                currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
@@ -468,7 +458,7 @@ private fun FinancePanel(
                             title = expenses,
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
-                            currency = walletState.wallet.currency,
+                            currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.expenses,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
@@ -492,7 +482,7 @@ private fun FinancePanel(
                             title = income,
                             graphValues = graphValues,
                             walletFilter = walletState.walletFilter,
-                            currency = walletState.wallet.currency,
+                            currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.income_plural,
                             onBackClick = {
                                 onWalletEvent(UpdateFinanceType(NONE))
@@ -785,11 +775,7 @@ private fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val categoryIconRes = if (selected) {
-        CsIcons.Check
-    } else {
-        StoredIcon.asRes(category.iconId ?: StoredIcon.CATEGORY.storedId)
-    }
+    val categoryIconRes = if (selected) CsIcons.Check else StoredIcon.asRes(category.iconId)
     FilterChip(
         selected = selected,
         onClick = onClick,
@@ -936,15 +922,10 @@ private fun LazyListScope.transactions(
             key = { it.transaction.id },
             contentType = { "transactionCategory" },
         ) { transactionCategory ->
-            val transaction = transactionCategory.transaction
-            val category = transactionCategory.category
             TransactionItem(
-                amount = transaction.amount.formatAmount(currency, true),
-                icon = category?.iconId ?: StoredIcon.TRANSACTION.storedId,
-                categoryTitle = category?.title ?: stringResource(localesR.string.none),
-                transactionStatus = transaction.status,
-                ignored = transaction.ignored,
-                onClick = { onTransactionClick(transaction.id) },
+                transactionCategory = transactionCategory,
+                currency = currency,
+                onClick = onTransactionClick,
                 modifier = Modifier.animateItem(),
             )
         }
@@ -970,13 +951,14 @@ fun FinancePanelDefaultPreview(
             val categories = transactionsCategories.mapNotNull { it.category }
             FinancePanel(
                 walletState = Success(
-                    wallet = Wallet(
+                    userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
                         initialBalance = ZERO,
+                        currentBalance = BigDecimal(100),
+                        isPrimary = false,
                     ),
-                    currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
                         selectedCategories = categories.take(3),
@@ -988,7 +970,6 @@ fun FinancePanelDefaultPreview(
                         selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
-                    shouldDisplayUndoTransaction = false,
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
@@ -1012,13 +993,14 @@ fun FinancePanelOpenedPreview(
 
             FinancePanel(
                 walletState = Success(
-                    wallet = Wallet(
+                    userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
                         currency = "USD",
                         initialBalance = ZERO,
+                        currentBalance = BigDecimal(100),
+                        isPrimary = false,
                     ),
-                    currentBalance = BigDecimal.valueOf(100),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
                         selectedCategories = categories.take(2),
@@ -1030,9 +1012,7 @@ fun FinancePanelOpenedPreview(
                         selectedMonth = 0,
                     ),
                     transactionsCategories = transactionsCategories,
-                    shouldDisplayUndoTransaction = false,
-
-                    ),
+                ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(16.dp),
             )

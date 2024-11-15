@@ -2,15 +2,15 @@ package ru.resodostudios.cashsense.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.model.data.WalletWithTransactionsAndCategories
+import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
 
 interface WalletsRepository {
 
     fun getWallet(id: String): Flow<Wallet>
 
-    fun getWalletWithTransactions(walletId: String): Flow<WalletWithTransactionsAndCategories>
+    fun getWalletWithTransactionsAndCategories(walletId: String): Flow<ExtendedWallet>
 
-    fun getWalletsWithTransactions(): Flow<List<WalletWithTransactionsAndCategories>>
+    fun getWalletsWithTransactionsAndCategories(): Flow<List<ExtendedWallet>>
 
     suspend fun upsertWallet(wallet: Wallet)
 
