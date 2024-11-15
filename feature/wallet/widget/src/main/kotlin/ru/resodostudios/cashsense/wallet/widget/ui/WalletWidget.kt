@@ -48,7 +48,6 @@ import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
-import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 class WalletWidget : GlanceAppWidget() {
@@ -94,8 +93,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                 items(
                     items = wallets,
                     itemId = { walletPopulated ->
-                        Uuid.parse(walletPopulated.wallet.id)
-                            .toLongs { mostSignificantBits, _ -> mostSignificantBits }
+                        walletPopulated.wallet.id.hashCode().toLong()
                     }
                 ) { walletPopulated ->
                     val currentBalance = walletPopulated.transactionsWithCategories
