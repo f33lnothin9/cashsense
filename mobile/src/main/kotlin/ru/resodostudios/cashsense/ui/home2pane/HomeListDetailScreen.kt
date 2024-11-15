@@ -1,8 +1,9 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.Keep
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -10,7 +11,6 @@ import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
-import androidx.compose.material3.adaptive.layout.PaneExpansionDragHandle
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -132,11 +133,6 @@ internal fun HomeListDetailScreen(
         ),
     )
     val scope = rememberCoroutineScope()
-    BackHandler(listDetailNavigator.canNavigateBack()) {
-        scope.launch {
-            listDetailNavigator.navigateBack()
-        }
-    }
 
     var nestedNavHostStartRoute by remember {
         val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
@@ -199,7 +195,11 @@ internal fun HomeListDetailScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onEditWallet = onEditWallet,
                             onTransfer = onTransfer,
-                            onBackClick = listDetailNavigator::navigateBack,
+                            onBackClick = {
+                                scope.launch {
+                                    listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                }
+                            },
                             openTransactionDialog = openTransactionDialog,
                             setTransactionDialogOpen = setTransactionDialogOpen,
                         )
@@ -215,9 +215,13 @@ internal fun HomeListDetailScreen(
         },
         paneExpansionState = paneExpansionState,
         paneExpansionDragHandle = {
-            PaneExpansionDragHandle(
-                state = it,
-                color = MaterialTheme.colorScheme.onSurface,
+            val interactionSource = remember { MutableInteractionSource() }
+            VerticalDragHandle(
+                modifier = Modifier.paneExpansionDraggable(
+                    state = it,
+                    minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
+                    interactionSource = interactionSource,
+                )
             )
         },
     )
