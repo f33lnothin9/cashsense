@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.net.Uri
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +27,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -66,12 +70,17 @@ private fun SettingsScreen(
         is Success -> {
             val context = LocalContext.current
             LazyColumn {
-                settings(
+                general(
                     settings = settingsState.settings,
-                    context = context,
+                    onCurrencyUpdate = onCurrencyUpdate,
+                )
+                appearance(
+                    settings = settingsState.settings,
                     onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
                     onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
-                    onCurrencyUpdate = onCurrencyUpdate,
+                )
+                about(
+                    context = context,
                     onLicensesClick = onLicensesClick,
                 )
             }
@@ -92,27 +101,26 @@ private fun SectionTitle(
     )
 }
 
-private fun LazyListScope.settings(
-    settings: UserEditableSettings,
-    context: Context,
-    onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
-    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
-    onCurrencyUpdate: (String) -> Unit,
-    onLicensesClick: () -> Unit,
-) {
-    general(
-        settings = settings,
-        onCurrencyUpdate = onCurrencyUpdate,
-    )
-    appearance(
-        settings = settings,
-        onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
-        onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
-    )
-    about(
-        context = context,
-        onLicensesClick = onLicensesClick,
-    )
+@PreviewLightDark
+@Composable
+fun SettingsScreenPreview() {
+    CsTheme {
+        Surface {
+            SettingsScreen(
+                settingsState = Success(
+                    settings = UserEditableSettings(
+                        useDynamicColor = true,
+                        darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+                        currency = "USD",
+                    )
+                ),
+                onLicensesClick = {},
+                onDynamicColorPreferenceUpdate = {},
+                onDarkThemeConfigUpdate = {},
+                onCurrencyUpdate = {},
+            )
+        }
+    }
 }
 
 private fun LazyListScope.general(
@@ -263,8 +271,9 @@ private fun LazyListScope.about(
         )
     }
     item {
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo.versionName ?: stringResource(localesR.string.none)
+        val packageInfo: PackageInfo? =
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo?.versionName ?: stringResource(localesR.string.none)
 
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.version)) },
@@ -293,5 +302,7 @@ private fun launchCustomChromeTab(
     customTabsIntent.launchUrl(context, uri)
 }
 
-private const val FEEDBACK_URL = "https://trusted-cowl-779.notion.site/14066ebc684d8010b4dbfd9e36d8cb1e?pvs=105"
-private const val PRIVACY_POLICY_URL = "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
+private const val FEEDBACK_URL =
+    "https://trusted-cowl-779.notion.site/14066ebc684d8010b4dbfd9e36d8cb1e?pvs=105"
+private const val PRIVACY_POLICY_URL =
+    "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
