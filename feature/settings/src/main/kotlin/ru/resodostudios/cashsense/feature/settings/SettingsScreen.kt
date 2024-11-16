@@ -256,5 +256,5 @@ private fun launchCustomChromeTab(
     customTabsIntent.launchUrl(context, uri)
 }
 
-private const val FEEDBACK_URL = "https://forms.gle/kQcVkZHtgD6ZMTeX7"
+private const val FEEDBACK_URL = "https://trusted-cowl-779.notion.site/14066ebc684d8010b4dbfd9e36d8cb1e?pvs=105"
 private const val PRIVACY_POLICY_URL = "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
