@@ -132,8 +132,6 @@ internal fun HomeListDetailScreen(
             PaneExpansionAnchor.Proportion(1f),
         ),
     )
-    val scope = rememberCoroutineScope()
-
     var nestedNavHostStartRoute by remember {
         val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
@@ -146,6 +144,7 @@ internal fun HomeListDetailScreen(
     val nestedNavController = key(nestedNavKey) {
         rememberNavController()
     }
+    val coroutineScope = rememberCoroutineScope()
 
     fun onWalletClickShowDetailPane(walletId: String?) {
         if (walletId != null) {
@@ -158,7 +157,7 @@ internal fun HomeListDetailScreen(
                 nestedNavHostStartRoute = WalletRoute(walletId)
                 nestedNavKey = Uuid.random()
             }
-            scope.launch {
+            coroutineScope.launch {
                 listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
             }
         } else if (listDetailNavigator.isDetailPaneVisible()) {
@@ -196,7 +195,7 @@ internal fun HomeListDetailScreen(
                             onEditWallet = onEditWallet,
                             onTransfer = onTransfer,
                             onBackClick = {
-                                scope.launch {
+                                coroutineScope.launch {
                                     listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
                                 }
                             },
