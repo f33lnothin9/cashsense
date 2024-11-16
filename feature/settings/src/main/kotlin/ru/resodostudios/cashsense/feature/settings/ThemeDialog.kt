@@ -33,7 +33,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun ThemeDialog(
     themeConfig: DarkThemeConfig,
     themeOptions: List<String>,
-    onThemeClick: (Int) -> Unit,
+    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -54,7 +54,7 @@ internal fun ThemeDialog(
         },
         confirmButton = {
             TextButton(onDismiss) {
-                Text(stringResource(localesR.string.cancel))
+                Text(stringResource(localesR.string.ok))
             }
         },
         modifier = modifier,
@@ -70,7 +70,7 @@ internal fun ThemeDialog(
                                 .selectable(
                                     selected = selected,
                                     onClick = {
-                                        onThemeClick(index)
+                                        onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
                                         onDismiss()
                                     },
                                     role = Role.RadioButton,

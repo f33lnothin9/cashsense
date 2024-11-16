@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.net.Uri
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +27,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -42,36 +46,41 @@ internal fun SettingsScreen(
     onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
-    val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
+    val settingsState by viewModel.settingsUiState.collectAsStateWithLifecycle()
 
     SettingsScreen(
-        settingsUiState = settingsUiState,
+        settingsState = settingsState,
         onLicensesClick = onLicensesClick,
-        onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
-        onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
-        onChangeCurrency = viewModel::updateCurrency,
+        onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
+        onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
+        onCurrencyUpdate = viewModel::updateCurrency,
     )
 }
 
 @Composable
 private fun SettingsScreen(
-    settingsUiState: SettingsUiState,
+    settingsState: SettingsUiState,
     onLicensesClick: () -> Unit,
-    supportDynamicColor: Boolean = supportsDynamicTheming(),
-    onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
-    onChangeCurrency: (currency: String) -> Unit,
+    onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
+    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
+    onCurrencyUpdate: (String) -> Unit,
 ) {
-    when (settingsUiState) {
+    when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
+            val context = LocalContext.current
             LazyColumn {
-                settings(
-                    settings = settingsUiState.settings,
-                    supportDynamicColor = supportDynamicColor,
-                    onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                    onChangeDarkThemeConfig = onChangeDarkThemeConfig,
-                    onChangeCurrency = onChangeCurrency,
+                general(
+                    settings = settingsState.settings,
+                    onCurrencyUpdate = onCurrencyUpdate,
+                )
+                appearance(
+                    settings = settingsState.settings,
+                    onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
+                    onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
+                )
+                about(
+                    context = context,
                     onLicensesClick = onLicensesClick,
                 )
             }
@@ -79,20 +88,52 @@ private fun SettingsScreen(
     }
 }
 
-private fun LazyListScope.settings(
-    settings: UserEditableSettings,
-    supportDynamicColor: Boolean,
-    onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
-    onChangeCurrency: (currency: String) -> Unit,
-    onLicensesClick: () -> Unit,
+@Composable
+private fun SectionTitle(
+    text: String,
+    modifier: Modifier = Modifier,
 ) {
-    item { SettingsScreenSectionTitle(stringResource(localesR.string.settings_general)) }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        modifier = modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+}
+
+@PreviewLightDark
+@Composable
+fun SettingsScreenPreview() {
+    CsTheme {
+        Surface {
+            SettingsScreen(
+                settingsState = Success(
+                    settings = UserEditableSettings(
+                        useDynamicColor = true,
+                        darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+                        currency = "USD",
+                    )
+                ),
+                onLicensesClick = {},
+                onDynamicColorPreferenceUpdate = {},
+                onDarkThemeConfigUpdate = {},
+                onCurrencyUpdate = {},
+            )
+        }
+    }
+}
+
+private fun LazyListScope.general(
+    settings: UserEditableSettings,
+    onCurrencyUpdate: (String) -> Unit,
+) {
+    item { SectionTitle(stringResource(localesR.string.settings_general)) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
-        val supportingText = settings.currency.ifEmpty {
+        val supportingText = settings.currency.ifBlank {
             stringResource(localesR.string.choose_currency)
         }
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
@@ -104,15 +145,24 @@ private fun LazyListScope.settings(
             supportingContent = { Text(supportingText) },
             onClick = { showCurrencyDialog = true },
         )
+
         if (showCurrencyDialog) {
             CurrencyDialog(
                 currencyCode = settings.currency,
                 onDismiss = { showCurrencyDialog = false },
-                onCurrencyClick = { onChangeCurrency(it) },
+                onCurrencyClick = { onCurrencyUpdate(it) },
             )
         }
     }
-    item { SettingsScreenSectionTitle(stringResource(localesR.string.settings_appearance)) }
+}
+
+private fun LazyListScope.appearance(
+    settings: UserEditableSettings,
+    supportDynamicColor: Boolean = supportsDynamicTheming(),
+    onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
+    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
+) {
+    item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
         val themeOptions = listOf(
             stringResource(localesR.string.theme_system_default),
@@ -137,7 +187,7 @@ private fun LazyListScope.settings(
             ThemeDialog(
                 themeConfig = settings.darkThemeConfig,
                 themeOptions = themeOptions,
-                onThemeClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[it]) },
+                onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                 onDismiss = { showThemeDialog = false },
             )
         }
@@ -155,17 +205,22 @@ private fun LazyListScope.settings(
                 trailingContent = {
                     Switch(
                         checked = settings.useDynamicColor,
-                        onCheckedChange = { onChangeDynamicColorPreference(it) },
+                        onCheckedChange = onDynamicColorPreferenceUpdate,
                     )
                 },
             )
         }
     }
+}
 
-    item { SettingsScreenSectionTitle(stringResource(localesR.string.about)) }
+private fun LazyListScope.about(
+    context: Context,
+    onLicensesClick: () -> Unit,
+) {
+    item { SectionTitle(stringResource(localesR.string.about)) }
     item {
-        val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
@@ -184,8 +239,8 @@ private fun LazyListScope.settings(
         )
     }
     item {
-        val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
@@ -216,9 +271,10 @@ private fun LazyListScope.settings(
         )
     }
     item {
-        val context = LocalContext.current
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo.versionName ?: stringResource(localesR.string.none)
+        val packageInfo: PackageInfo? =
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo?.versionName ?: stringResource(localesR.string.none)
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text(versionName) },
@@ -232,25 +288,21 @@ private fun LazyListScope.settings(
     }
 }
 
-@Composable
-private fun SettingsScreenSectionTitle(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-}
-
-private fun launchCustomChromeTab(context: Context, uri: Uri, @ColorInt toolbarColor: Int) {
+private fun launchCustomChromeTab(
+    context: Context,
+    uri: Uri,
+    @ColorInt toolbarColor: Int,
+) {
     val customTabBarColor = CustomTabColorSchemeParams.Builder()
-        .setToolbarColor(toolbarColor).build()
+        .setToolbarColor(toolbarColor)
+        .build()
     val customTabsIntent = CustomTabsIntent.Builder()
         .setDefaultColorSchemeParams(customTabBarColor)
         .build()
-
     customTabsIntent.launchUrl(context, uri)
 }
 
-private const val FEEDBACK_URL = "https://forms.gle/kQcVkZHtgD6ZMTeX7"
-private const val PRIVACY_POLICY_URL = "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
+private const val FEEDBACK_URL =
+    "https://trusted-cowl-779.notion.site/14066ebc684d8010b4dbfd9e36d8cb1e?pvs=105"
+private const val PRIVACY_POLICY_URL =
+    "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
