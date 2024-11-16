@@ -57,7 +57,6 @@ internal fun SettingsScreen(
 private fun SettingsScreen(
     settingsState: SettingsUiState,
     onLicensesClick: () -> Unit,
-    supportDynamicColor: Boolean = supportsDynamicTheming(),
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onCurrencyUpdate: (String) -> Unit,
@@ -65,10 +64,11 @@ private fun SettingsScreen(
     when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
+            val context = LocalContext.current
             LazyColumn {
                 settings(
                     settings = settingsState.settings,
-                    supportDynamicColor = supportDynamicColor,
+                    context = context,
                     onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
                     onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                     onCurrencyUpdate = onCurrencyUpdate,
@@ -79,13 +79,45 @@ private fun SettingsScreen(
     }
 }
 
+@Composable
+private fun SectionTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        modifier = modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
+}
+
 private fun LazyListScope.settings(
     settings: UserEditableSettings,
-    supportDynamicColor: Boolean,
+    context: Context,
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onCurrencyUpdate: (String) -> Unit,
     onLicensesClick: () -> Unit,
+) {
+    general(
+        settings = settings,
+        onCurrencyUpdate = onCurrencyUpdate,
+    )
+    appearance(
+        settings = settings,
+        onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
+        onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
+    )
+    about(
+        context = context,
+        onLicensesClick = onLicensesClick,
+    )
+}
+
+private fun LazyListScope.general(
+    settings: UserEditableSettings,
+    onCurrencyUpdate: (String) -> Unit,
 ) {
     item { SectionTitle(stringResource(localesR.string.settings_general)) }
     item {
@@ -93,6 +125,7 @@ private fun LazyListScope.settings(
         val supportingText = settings.currency.ifBlank {
             stringResource(localesR.string.choose_currency)
         }
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
@@ -104,6 +137,7 @@ private fun LazyListScope.settings(
             supportingContent = { Text(supportingText) },
             onClick = { showCurrencyDialog = true },
         )
+
         if (showCurrencyDialog) {
             CurrencyDialog(
                 currencyCode = settings.currency,
@@ -112,6 +146,14 @@ private fun LazyListScope.settings(
             )
         }
     }
+}
+
+private fun LazyListScope.appearance(
+    settings: UserEditableSettings,
+    supportDynamicColor: Boolean = supportsDynamicTheming(),
+    onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
+    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
+) {
     item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
         val themeOptions = listOf(
@@ -161,11 +203,16 @@ private fun LazyListScope.settings(
             )
         }
     }
+}
 
+private fun LazyListScope.about(
+    context: Context,
+    onLicensesClick: () -> Unit,
+) {
     item { SectionTitle(stringResource(localesR.string.about)) }
     item {
-        val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
@@ -184,8 +231,8 @@ private fun LazyListScope.settings(
         )
     }
     item {
-        val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
@@ -216,9 +263,9 @@ private fun LazyListScope.settings(
         )
     }
     item {
-        val context = LocalContext.current
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo.versionName ?: stringResource(localesR.string.none)
+
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text(versionName) },
@@ -230,16 +277,6 @@ private fun LazyListScope.settings(
             },
         )
     }
-}
-
-@Composable
-private fun SectionTitle(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-        color = MaterialTheme.colorScheme.primary,
-    )
 }
 
 private fun launchCustomChromeTab(
