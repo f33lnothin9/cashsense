@@ -87,13 +87,13 @@
   <string name="transfer">Перевести</string>
   <string name="transfers">Переводы</string>
   <string name="new_transfer">Новый перевод</string>
-  <string name="from_wallet">С кошелька</string>
-  <string name="to_wallet">На кошелёк</string>
   <string name="exchange_rate">Валютный курс</string>
   <string name="choose_wallet">Выберите кошелёк</string>
   <string name="uncategorized">Без категории</string>
   <string name="show_more">показать больше</string>
   <string name="show_less">показать меньше</string>
   <string name="permanently_delete">Удалить навсегда?</string>
+  <string name="from_wallet">С кошелька</string>
+  <string name="to_wallet">На кошелёк</string>
   <string name="converted_amount">Конвертированная сумма</string>
 </resources>
