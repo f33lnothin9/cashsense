@@ -42,36 +42,36 @@ internal fun SettingsScreen(
     onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
-    val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
+    val settingsState by viewModel.settingsUiState.collectAsStateWithLifecycle()
 
     SettingsScreen(
-        settingsUiState = settingsUiState,
+        settingsState = settingsState,
         onLicensesClick = onLicensesClick,
-        onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
-        onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
-        onChangeCurrency = viewModel::updateCurrency,
+        onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
+        onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
+        onCurrencyUpdate = viewModel::updateCurrency,
     )
 }
 
 @Composable
 private fun SettingsScreen(
-    settingsUiState: SettingsUiState,
+    settingsState: SettingsUiState,
     onLicensesClick: () -> Unit,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
-    onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
-    onChangeCurrency: (currency: String) -> Unit,
+    onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
+    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
+    onCurrencyUpdate: (String) -> Unit,
 ) {
-    when (settingsUiState) {
+    when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
             LazyColumn {
                 settings(
-                    settings = settingsUiState.settings,
+                    settings = settingsState.settings,
                     supportDynamicColor = supportDynamicColor,
-                    onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                    onChangeDarkThemeConfig = onChangeDarkThemeConfig,
-                    onChangeCurrency = onChangeCurrency,
+                    onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
+                    onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
+                    onCurrencyUpdate = onCurrencyUpdate,
                     onLicensesClick = onLicensesClick,
                 )
             }
@@ -82,15 +82,15 @@ private fun SettingsScreen(
 private fun LazyListScope.settings(
     settings: UserEditableSettings,
     supportDynamicColor: Boolean,
-    onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
-    onChangeCurrency: (currency: String) -> Unit,
+    onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
+    onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
+    onCurrencyUpdate: (String) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
     item { SectionTitle(stringResource(localesR.string.settings_general)) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
-        val supportingText = settings.currency.ifEmpty {
+        val supportingText = settings.currency.ifBlank {
             stringResource(localesR.string.choose_currency)
         }
         CsListItem(
@@ -108,7 +108,7 @@ private fun LazyListScope.settings(
             CurrencyDialog(
                 currencyCode = settings.currency,
                 onDismiss = { showCurrencyDialog = false },
-                onCurrencyClick = { onChangeCurrency(it) },
+                onCurrencyClick = { onCurrencyUpdate(it) },
             )
         }
     }
@@ -137,7 +137,7 @@ private fun LazyListScope.settings(
             ThemeDialog(
                 themeConfig = settings.darkThemeConfig,
                 themeOptions = themeOptions,
-                onThemeClick = { onChangeDarkThemeConfig(DarkThemeConfig.entries[it]) },
+                onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                 onDismiss = { showThemeDialog = false },
             )
         }
@@ -155,7 +155,7 @@ private fun LazyListScope.settings(
                 trailingContent = {
                     Switch(
                         checked = settings.useDynamicColor,
-                        onCheckedChange = { onChangeDynamicColorPreference(it) },
+                        onCheckedChange = onDynamicColorPreferenceUpdate,
                     )
                 },
             )
