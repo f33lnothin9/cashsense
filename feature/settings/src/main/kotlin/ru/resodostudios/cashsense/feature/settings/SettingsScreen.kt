@@ -87,7 +87,7 @@ private fun LazyListScope.settings(
     onChangeCurrency: (currency: String) -> Unit,
     onLicensesClick: () -> Unit,
 ) {
-    item { SettingsScreenSectionTitle(stringResource(localesR.string.settings_general)) }
+    item { SectionTitle(stringResource(localesR.string.settings_general)) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
         val supportingText = settings.currency.ifEmpty {
@@ -112,7 +112,7 @@ private fun LazyListScope.settings(
             )
         }
     }
-    item { SettingsScreenSectionTitle(stringResource(localesR.string.settings_appearance)) }
+    item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
         val themeOptions = listOf(
             stringResource(localesR.string.theme_system_default),
@@ -162,7 +162,7 @@ private fun LazyListScope.settings(
         }
     }
 
-    item { SettingsScreenSectionTitle(stringResource(localesR.string.about)) }
+    item { SectionTitle(stringResource(localesR.string.about)) }
     item {
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
@@ -233,22 +233,26 @@ private fun LazyListScope.settings(
 }
 
 @Composable
-private fun SettingsScreenSectionTitle(text: String) {
+private fun SectionTitle(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
         modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = MaterialTheme.colorScheme.primary,
     )
 }
 
-private fun launchCustomChromeTab(context: Context, uri: Uri, @ColorInt toolbarColor: Int) {
+private fun launchCustomChromeTab(
+    context: Context,
+    uri: Uri,
+    @ColorInt toolbarColor: Int,
+) {
     val customTabBarColor = CustomTabColorSchemeParams.Builder()
-        .setToolbarColor(toolbarColor).build()
+        .setToolbarColor(toolbarColor)
+        .build()
     val customTabsIntent = CustomTabsIntent.Builder()
         .setDefaultColorSchemeParams(customTabBarColor)
         .build()
-
     customTabsIntent.launchUrl(context, uri)
 }
 
