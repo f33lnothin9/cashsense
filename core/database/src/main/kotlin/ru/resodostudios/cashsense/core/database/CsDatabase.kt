@@ -14,6 +14,7 @@ import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRe
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.util.BigDecimalConverter
+import ru.resodostudios.cashsense.core.database.util.CurrencyConverter
 import ru.resodostudios.cashsense.core.database.util.InstantConverter
 import ru.resodostudios.cashsense.core.database.util.StatusTypeConverter
 import ru.resodostudios.cashsense.core.database.util.UuidConverter
@@ -39,6 +40,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
 )
 @TypeConverters(
     BigDecimalConverter::class,
+    CurrencyConverter::class,
     InstantConverter::class,
     StatusTypeConverter::class,
     UuidConverter::class,
