@@ -256,7 +256,7 @@ private fun WalletScreen(
                         onTransactionClick = {
                             onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(it))
-                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency.currencyCode))
+                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
                             showTransactionBottomSheet = true
                         },
                     )
@@ -318,7 +318,7 @@ private fun WalletTopBar(
                     label = "wallet_balance",
                     content = {
                         Text(
-                            text = it.formatAmount(userWallet.currency.currencyCode),
+                            text = it.formatAmount(userWallet.currency),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium,
@@ -528,7 +528,7 @@ private fun SharedTransitionScope.FinanceCard(
                 label = "finance_card_title",
                 content = {
                     Text(
-                        text = it.formatAmount(currency.currencyCode),
+                        text = it.formatAmount(currency),
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -605,7 +605,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             label = "detailed_finance_card",
             content = {
                 Text(
-                    text = title.formatAmount(currency.currencyCode),
+                    text = title.formatAmount(currency),
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -913,7 +913,7 @@ private fun LazyListScope.transactions(
         ) { transactionCategory ->
             TransactionItem(
                 transactionCategory = transactionCategory,
-                currency = currency.currencyCode,
+                currency = currency,
                 onClick = onTransactionClick,
                 modifier = Modifier.animateItem(),
             )

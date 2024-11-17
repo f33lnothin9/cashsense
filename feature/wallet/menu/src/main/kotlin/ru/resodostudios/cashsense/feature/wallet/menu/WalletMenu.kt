@@ -75,7 +75,7 @@ private fun WalletMenu(
                         supportingContent = {
                             Text(
                                 text = walletMenuState.userWallet.currentBalance
-                                    .formatAmount(walletMenuState.userWallet.currency.currencyCode),
+                                    .formatAmount(walletMenuState.userWallet.currency),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

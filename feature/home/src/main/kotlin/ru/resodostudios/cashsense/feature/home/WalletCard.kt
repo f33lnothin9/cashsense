@@ -95,7 +95,7 @@ fun WalletCard(
                 label = "wallet_balance",
                 content = {
                     Text(
-                        text = it.formatAmount(userWallet.currency.currencyCode),
+                        text = it.formatAmount(userWallet.currency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge,
@@ -104,7 +104,7 @@ fun WalletCard(
             )
             TagsSection(
                 transactions = transactions,
-                currency = userWallet.currency.currencyCode,
+                currency = userWallet.currency,
                 isPrimary = userWallet.isPrimary,
                 modifier = Modifier.padding(top = 8.dp),
             )
@@ -137,7 +137,7 @@ fun WalletCard(
 @Composable
 private fun TagsSection(
     transactions: List<Transaction>,
-    currency: String,
+    currency: Currency,
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
@@ -205,7 +205,7 @@ private fun TagsSection(
 @Composable
 private fun CsAnimatedTag(
     amount: BigDecimal,
-    currency: String,
+    currency: Currency,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
     shape: Shape = RoundedCornerShape(16.dp),

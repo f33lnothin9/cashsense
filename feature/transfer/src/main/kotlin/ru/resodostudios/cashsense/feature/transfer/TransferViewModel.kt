@@ -19,6 +19,7 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Currency
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -52,7 +53,7 @@ class TransferViewModel @Inject constructor(
                         id = extendedWallet.wallet.id,
                         title = extendedWallet.wallet.title,
                         currentBalance = currentBalance,
-                        currency = extendedWallet.wallet.currency.currencyCode,
+                        currency = extendedWallet.wallet.currency,
                     )
                 }
             val sendingWallet = transferWallets.first { it.id == walletId }
@@ -74,10 +75,21 @@ class TransferViewModel @Inject constructor(
         }
     }
 
+    private fun calculateAmount(convertedAmount: String, exchangeRate: String): String {
+        return if (convertedAmount.isNotBlank() && exchangeRate.isNotBlank() && BigDecimal(exchangeRate) != BigDecimal.ZERO) {
+            BigDecimal(convertedAmount)
+                .divide(BigDecimal(exchangeRate), 2, RoundingMode.HALF_UP)
+                .toString()
+        } else {
+            ""
+        }
+    }
+
     private fun calculateConvertedAmount(amount: String, exchangeRate: String): String {
         return if (amount.isNotBlank() && exchangeRate.isNotBlank()) {
             BigDecimal(amount)
-                .divide(BigDecimal(exchangeRate), 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal(exchangeRate))
+                .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP)
                 .toString()
         } else {
             ""
@@ -166,11 +178,7 @@ class TransferViewModel @Inject constructor(
     }
 
     fun updateConvertedAmount(convertedAmount: String) {
-        val amount = if (convertedAmount.isNotBlank() && _transferState.value.exchangeRate.isNotBlank()) {
-            (BigDecimal(convertedAmount) * BigDecimal(_transferState.value.exchangeRate)).toString()
-        } else {
-            ""
-        }
+        val amount = calculateAmount(convertedAmount, _transferState.value.exchangeRate)
         _transferState.update {
             it.copy(convertedAmount = convertedAmount, amount = amount)
         }
@@ -192,5 +200,5 @@ data class TransferWallet(
     val id: String = "",
     val title: String = "",
     val currentBalance: BigDecimal = BigDecimal.ZERO,
-    val currency: String = "",
+    val currency: Currency? = null,
 )

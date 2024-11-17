@@ -114,7 +114,10 @@ fun OutlinedAmountField(
     imeAction: ImeAction = ImeAction.Unspecified,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-    val isSuffixEnabled = BigDecimal(1).formatAmount("USD").first().isDigit()
+    val isSuffixEnabled = BigDecimal(1)
+        .formatAmount(currency)
+        .first()
+        .isDigit()
     OutlinedTextField(
         value = value,
         textStyle = if (isSuffixEnabled) {

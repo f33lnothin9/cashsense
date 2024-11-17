@@ -103,7 +103,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                     WalletItem(
                         walletId = walletPopulated.wallet.id,
                         title = walletPopulated.wallet.title,
-                        currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency.currencyCode),
+                        currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
                         modifier = GlanceModifier
                             .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
                             .clickable(openHomeScreen(walletPopulated.wallet.id)),

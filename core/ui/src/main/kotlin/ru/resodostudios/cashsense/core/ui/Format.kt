@@ -14,10 +14,9 @@ import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
 
-fun BigDecimal.formatAmount(currencyCode: String, withPlus: Boolean = false): String {
+fun BigDecimal.formatAmount(currency: Currency, withPlus: Boolean = false): String {
     val currencyFormat = DecimalFormat.getCurrencyInstance(Locale.getDefault())
-    val customCurrency = Currency.getInstance(currencyCode)
-    currencyFormat.currency = customCurrency
+    currencyFormat.currency = currency
 
     val formattedAmount = currencyFormat.format(this)
 

@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.NONE
+import java.util.Currency
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -146,10 +147,12 @@ class SubscriptionDialogViewModel @Inject constructor(
             userDataRepository.userData
                 .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
                 .collect { userData ->
-                    _subscriptionDialogUiState.update {
-                        SubscriptionDialogUiState(
-                            currency = userData.currency.ifEmpty { "USD" },
-                        )
+                    if (userData.currency.isNotBlank()) {
+                        _subscriptionDialogUiState.update {
+                            SubscriptionDialogUiState(
+                                currency = Currency.getInstance(userData.currency),
+                            )
+                        }
                     }
                 }
         }
@@ -172,7 +175,7 @@ data class SubscriptionDialogUiState(
     val title: String = "",
     val amount: String = "",
     val paymentDate: Instant = Clock.System.now(),
-    val currency: String = "",
+    val currency: Currency = Currency.getInstance("USD"),
     val isReminderEnabled: Boolean = false,
     val repeatingInterval: RepeatingIntervalType = NONE,
     val isLoading: Boolean = false,

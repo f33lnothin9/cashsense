@@ -42,6 +42,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.INCOME
 import java.math.BigDecimal.ZERO
+import java.util.Currency
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -123,7 +124,7 @@ class TransactionDialogViewModel @Inject constructor(
         savedStateHandle[WALLET_ID_KEY] = id
     }
 
-    private fun updateCurrency(currency: String) {
+    private fun updateCurrency(currency: Currency) {
         _transactionDialogUiState.update {
             it.copy(currency = currency)
         }
@@ -217,7 +218,7 @@ data class TransactionDialogUiState(
     val transactionId: String = "",
     val description: String = "",
     val amount: String = "",
-    val currency: String = "USD",
+    val currency: Currency = Currency.getInstance("USD"),
     val date: Instant = Clock.System.now(),
     val category: Category? = Category(),
     val transactionType: TransactionType = EXPENSE,

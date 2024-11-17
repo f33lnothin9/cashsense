@@ -130,7 +130,7 @@ private fun TransferDialog(
                     value = transferState.amount,
                     onValueChange = onAmountUpdate,
                     labelRes = localesR.string.amount,
-                    currency = Currency.getInstance(transferState.sendingWallet.currency),
+                    currency = transferState.sendingWallet.currency ?: Currency.getInstance("USD"),
                     imeAction = if (exchangeRateEnabled) ImeAction.Next else ImeAction.Done,
                     keyboardActions = KeyboardActions(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) },
@@ -154,12 +154,12 @@ private fun TransferDialog(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                AnimatedVisibility(transferState.receivingWallet.currency.isNotBlank()) {
+                AnimatedVisibility(transferState.receivingWallet.currency != null) {
                     OutlinedAmountField(
                         value = transferState.convertedAmount,
                         onValueChange = onConvertedAmountUpdate,
                         labelRes = localesR.string.converted_amount,
-                        currency = Currency.getInstance(transferState.receivingWallet.currency),
+                        currency = transferState.receivingWallet.currency!!,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -193,7 +193,7 @@ private fun WalletDropdownMenu(
             label = { Text(stringResource(title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             placeholder = { Text(stringResource(localesR.string.choose_wallet)) },
-            supportingText = if (selectedWallet.currency.isNotBlank()) {
+            supportingText = if (selectedWallet.currency != null) {
                 {
                     Text(selectedWallet.currentBalance.formatAmount(selectedWallet.currency))
                 }
@@ -206,7 +206,7 @@ private fun WalletDropdownMenu(
             onDismissRequest = { expanded = false },
         ) {
             availableWallets.forEach { wallet ->
-                val currentBalance = wallet.currentBalance.formatAmount(wallet.currency)
+                val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
                 val menuText = "${wallet.title} – $currentBalance"
                 DropdownMenuItem(
                     text = {
