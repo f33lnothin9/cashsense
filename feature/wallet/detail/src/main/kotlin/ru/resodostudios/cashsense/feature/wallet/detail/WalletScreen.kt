@@ -135,6 +135,7 @@ import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.Currency
 import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -255,7 +256,7 @@ private fun WalletScreen(
                         onTransactionClick = {
                             onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
                             onTransactionEvent(UpdateTransactionId(it))
-                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
+                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency.currencyCode))
                             showTransactionBottomSheet = true
                         },
                     )
@@ -317,7 +318,7 @@ private fun WalletTopBar(
                     label = "wallet_balance",
                     content = {
                         Text(
-                            text = it.formatAmount(userWallet.currency),
+                            text = it.formatAmount(userWallet.currency.currencyCode),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.labelMedium,
@@ -504,7 +505,7 @@ private fun FinancePanel(
 @Composable
 private fun SharedTransitionScope.FinanceCard(
     title: BigDecimal,
-    currency: String,
+    currency: Currency,
     @StringRes supportingTextId: Int,
     indicatorProgress: Float,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -527,7 +528,7 @@ private fun SharedTransitionScope.FinanceCard(
                 label = "finance_card_title",
                 content = {
                     Text(
-                        text = it.formatAmount(currency),
+                        text = it.formatAmount(currency.currencyCode),
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -560,7 +561,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     graphValues: Map<Int, BigDecimal>,
     walletFilter: WalletFilter,
-    currency: String,
+    currency: Currency,
     @StringRes supportingTextId: Int,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
@@ -604,7 +605,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             label = "detailed_finance_card",
             content = {
                 Text(
-                    text = title.formatAmount(currency),
+                    text = title.formatAmount(currency.currencyCode),
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -890,7 +891,7 @@ private fun FilterBySelectedDateTypeRow(
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.transactions(
     transactionsCategories: List<TransactionWithCategory>,
-    currency: String,
+    currency: Currency,
     onTransactionClick: (String) -> Unit,
 ) {
     val transactionsByDay = transactionsCategories
@@ -912,7 +913,7 @@ private fun LazyListScope.transactions(
         ) { transactionCategory ->
             TransactionItem(
                 transactionCategory = transactionCategory,
-                currency = currency,
+                currency = currency.currencyCode,
                 onClick = onTransactionClick,
                 modifier = Modifier.animateItem(),
             )
@@ -942,7 +943,7 @@ fun FinancePanelDefaultPreview(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
-                        currency = "USD",
+                        currency = Currency.getInstance("USD"),
                         initialBalance = ZERO,
                         currentBalance = BigDecimal(100),
                         isPrimary = false,
@@ -984,7 +985,7 @@ fun FinancePanelOpenedPreview(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
-                        currency = "USD",
+                        currency = Currency.getInstance("USD"),
                         initialBalance = ZERO,
                         currentBalance = BigDecimal(100),
                         isPrimary = false,

@@ -52,7 +52,7 @@ class TransferViewModel @Inject constructor(
                         id = extendedWallet.wallet.id,
                         title = extendedWallet.wallet.title,
                         currentBalance = currentBalance,
-                        currency = extendedWallet.wallet.currency,
+                        currency = extendedWallet.wallet.currency.currencyCode,
                     )
                 }
             val sendingWallet = transferWallets.first { it.id == walletId }

@@ -49,6 +49,7 @@ import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -94,7 +95,7 @@ fun WalletCard(
                 label = "wallet_balance",
                 content = {
                     Text(
-                        text = it.formatAmount(userWallet.currency),
+                        text = it.formatAmount(userWallet.currency.currencyCode),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyLarge,
@@ -103,7 +104,7 @@ fun WalletCard(
             )
             TagsSection(
                 transactions = transactions,
-                currency = userWallet.currency,
+                currency = userWallet.currency.currencyCode,
                 isPrimary = userWallet.isPrimary,
                 modifier = Modifier.padding(top = 8.dp),
             )
@@ -259,7 +260,7 @@ fun WalletCardPreview() {
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
-                    currency = "USD",
+                    currency = Currency.getInstance("USD"),
                     currentBalance = BigDecimal(2499.99),
                     isPrimary = true,
                 ),
