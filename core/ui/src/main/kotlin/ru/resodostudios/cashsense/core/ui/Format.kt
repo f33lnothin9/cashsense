@@ -17,7 +17,6 @@ import java.util.Locale
 fun BigDecimal.formatAmount(currency: Currency, withPlus: Boolean = false): String {
     val currencyFormat = DecimalFormat.getCurrencyInstance(Locale.getDefault())
     currencyFormat.currency = currency
-
     val formattedAmount = currencyFormat.format(this)
 
     return if (withPlus && this > BigDecimal.ZERO) "+$formattedAmount" else formattedAmount

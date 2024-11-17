@@ -30,7 +30,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyDropdownMenu(
-    currencyCode: String,
+    currency: Currency,
     onCurrencyClick: (Currency) -> Unit,
     modifier: Modifier = Modifier,
     dropDownHeight: Dp = 200.dp,
@@ -50,12 +50,10 @@ fun CurrencyDropdownMenu(
     val focusManager = LocalFocusManager.current
     var expanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(currencyCode) {
-        currencySearchText = currencyCode
-        if (Regex("^[A-Z]{3}$").matches(currencyCode) &&
-            Currency.getInstance(currencyCode) in currencies
-        ) {
-            selectedCurrency = Currency.getInstance(currencyCode)
+    LaunchedEffect(currency) {
+        currencySearchText = currency.currencyCode
+        if (currency in currencies) {
+            selectedCurrency = currency
         }
     }
 
@@ -99,7 +97,7 @@ fun CurrencyDropdownMenu(
                         expanded = false
                         focusManager.clearFocus()
                     },
-                    leadingIcon = if (currencyCode == selectionOption.currencyCode) {
+                    leadingIcon = if (currency == selectionOption) {
                         {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Check),

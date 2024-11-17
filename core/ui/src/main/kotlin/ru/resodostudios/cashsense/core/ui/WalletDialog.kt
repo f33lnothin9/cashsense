@@ -100,7 +100,7 @@ fun WalletDialog(
                     singleLine = true,
                 )
                 CurrencyDropdownMenu(
-                    currencyCode = walletDialogState.currency.currencyCode,
+                    currency = walletDialogState.currency,
                     onCurrencyClick = onCurrencyUpdate,
                     modifier = Modifier
                         .fillMaxWidth()

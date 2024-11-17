@@ -138,7 +138,7 @@ fun SubscriptionDialog(
                     .padding(bottom = 16.dp),
             )
             CurrencyDropdownMenu(
-                currencyCode = subscriptionDialogState.currency.currencyCode,
+                currency = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
