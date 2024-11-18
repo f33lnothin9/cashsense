@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -41,7 +42,7 @@ fun WalletDialog(
     onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
     onInitialBalanceUpdate: (String) -> Unit,
-    onCurrencyUpdate: (String) -> Unit,
+    onCurrencyUpdate: (Currency) -> Unit,
     onPrimaryUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -99,8 +100,8 @@ fun WalletDialog(
                     singleLine = true,
                 )
                 CurrencyDropdownMenu(
-                    currencyCode = walletDialogState.currency,
-                    onCurrencyClick = { onCurrencyUpdate(it.currencyCode) },
+                    currency = walletDialogState.currency,
+                    onCurrencyClick = onCurrencyUpdate,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
@@ -136,7 +137,7 @@ data class WalletDialogUiState(
     val title: String = "",
     val initialBalance: String = "",
     val currentPrimaryWalletId: String = "",
-    val currency: String = "",
+    val currency: Currency = Currency.getInstance("USD"),
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
     val isWalletSaved: Boolean = false,

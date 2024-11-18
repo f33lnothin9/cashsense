@@ -30,12 +30,13 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionItem(
     transactionCategory: TransactionWithCategory,
-    currency: String,
+    currency: Currency,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -120,7 +121,7 @@ fun TransactionItemPreview() {
                         iconId = StoredIcon.FASTFOOD.storedId,
                     ),
                 ),
-                currency = "USD",
+                currency = Currency.getInstance("USD"),
                 onClick = {},
             )
         }
@@ -150,7 +151,7 @@ fun TransactionItemIgnoredPreview() {
                         iconId = StoredIcon.FASTFOOD.storedId,
                     ),
                 ),
-                currency = "USD",
+                currency = Currency.getInstance("USD"),
                 onClick = {},
             )
         }

@@ -135,6 +135,7 @@ import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.Currency
 import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 import ru.resodostudios.cashsense.feature.transaction.R as transactionR
@@ -504,7 +505,7 @@ private fun FinancePanel(
 @Composable
 private fun SharedTransitionScope.FinanceCard(
     title: BigDecimal,
-    currency: String,
+    currency: Currency,
     @StringRes supportingTextId: Int,
     indicatorProgress: Float,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -560,7 +561,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     graphValues: Map<Int, BigDecimal>,
     walletFilter: WalletFilter,
-    currency: String,
+    currency: Currency,
     @StringRes supportingTextId: Int,
     onBackClick: () -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
@@ -890,7 +891,7 @@ private fun FilterBySelectedDateTypeRow(
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.transactions(
     transactionsCategories: List<TransactionWithCategory>,
-    currency: String,
+    currency: Currency,
     onTransactionClick: (String) -> Unit,
 ) {
     val transactionsByDay = transactionsCategories
@@ -942,7 +943,7 @@ fun FinancePanelDefaultPreview(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
-                        currency = "USD",
+                        currency = Currency.getInstance("USD"),
                         initialBalance = ZERO,
                         currentBalance = BigDecimal(100),
                         isPrimary = false,
@@ -984,7 +985,7 @@ fun FinancePanelOpenedPreview(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
-                        currency = "USD",
+                        currency = Currency.getInstance("USD"),
                         initialBalance = ZERO,
                         currentBalance = BigDecimal(100),
                         isPrimary = false,

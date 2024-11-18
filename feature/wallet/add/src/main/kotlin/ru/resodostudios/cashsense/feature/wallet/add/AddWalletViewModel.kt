@@ -15,6 +15,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.core.ui.WalletDialogUiState
 import java.math.BigDecimal.ZERO
+import java.util.Currency
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -38,7 +39,7 @@ class AddWalletViewModel @Inject constructor(
             _walletDialogUiState.value = WalletDialogUiState(isLoading = true)
             val userData = userDataRepository.userData.first()
             _walletDialogUiState.value = WalletDialogUiState(
-                currency = userData.currency.ifEmpty { "USD" },
+                currency = Currency.getInstance(userData.currency.ifEmpty { "USD" }),
                 isLoading = false,
             )
         }
@@ -87,7 +88,7 @@ class AddWalletViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrency(currency: String) {
+    fun updateCurrency(currency: Currency) {
         _walletDialogUiState.update {
             it.copy(currency = currency)
         }

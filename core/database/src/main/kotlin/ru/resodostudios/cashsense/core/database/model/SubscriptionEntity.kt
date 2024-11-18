@@ -8,6 +8,7 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import java.math.BigDecimal
+import java.util.Currency
 
 @Entity(
     tableName = "subscriptions",
@@ -17,7 +18,7 @@ data class SubscriptionEntity(
     val id: String,
     val title: String,
     val amount: BigDecimal,
-    val currency: String,
+    val currency: Currency,
     @ColumnInfo(name = "payment_date")
     val paymentDate: Instant,
     @Embedded(prefix = "alarm_")

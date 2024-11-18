@@ -18,6 +18,7 @@ import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.core.ui.WalletDialogUiState
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
 import java.math.BigDecimal
+import java.util.Currency
 import javax.inject.Inject
 
 @HiltViewModel
@@ -104,7 +105,7 @@ class EditWalletViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrency(currency: String) {
+    fun updateCurrency(currency: Currency) {
         _walletDialogState.update {
             it.copy(currency = currency)
         }

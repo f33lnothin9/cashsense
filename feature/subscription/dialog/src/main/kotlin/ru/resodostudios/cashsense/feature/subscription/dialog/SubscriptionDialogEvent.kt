@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import kotlinx.datetime.Instant
+import java.util.Currency
 
 sealed interface SubscriptionDialogEvent {
 
@@ -12,7 +13,7 @@ sealed interface SubscriptionDialogEvent {
 
     data class UpdatePaymentDate(val paymentDate: Instant) : SubscriptionDialogEvent
 
-    data class UpdateCurrency(val currency: String) : SubscriptionDialogEvent
+    data class UpdateCurrency(val currency: Currency) : SubscriptionDialogEvent
 
     data class UpdateReminderSwitch(val isReminderActive: Boolean) : SubscriptionDialogEvent
 

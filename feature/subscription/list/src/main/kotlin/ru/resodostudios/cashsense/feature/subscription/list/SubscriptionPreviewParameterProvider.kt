@@ -6,6 +6,7 @@ import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType
 import java.math.BigDecimal
+import java.util.Currency
 
 /**
  * This [PreviewParameterProvider](https://developer.android.com/reference/kotlin/androidx/compose/ui/tooling/preview/PreviewParameterProvider)
@@ -20,7 +21,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "Google One",
                     amount = BigDecimal(9.99),
-                    currency = "USD",
+                    currency = Currency.getInstance("USD"),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
                         id = 0,
@@ -32,7 +33,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "Apple Music",
                     amount = BigDecimal(39.99),
-                    currency = "TRY",
+                    currency = Currency.getInstance("TRY"),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = null,
                 ),
@@ -40,7 +41,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "Spotify Premium",
                     amount = BigDecimal(399.99),
-                    currency = "TRY",
+                    currency = Currency.getInstance("TRY"),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
                         id = 0,
@@ -52,7 +53,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "Yandex Plus",
                     amount = BigDecimal(99),
-                    currency = "RUB",
+                    currency = Currency.getInstance("RUB"),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
                         id = 0,
@@ -64,7 +65,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "ChatGPT Plus",
                     amount = BigDecimal(19.99),
-                    currency = "USD",
+                    currency = Currency.getInstance("USD"),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = null,
                 ),

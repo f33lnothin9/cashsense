@@ -49,6 +49,7 @@ import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -136,7 +137,7 @@ fun WalletCard(
 @Composable
 private fun TagsSection(
     transactions: List<Transaction>,
-    currency: String,
+    currency: Currency,
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
@@ -204,7 +205,7 @@ private fun TagsSection(
 @Composable
 private fun CsAnimatedTag(
     amount: BigDecimal,
-    currency: String,
+    currency: Currency,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
     shape: Shape = RoundedCornerShape(16.dp),
@@ -259,7 +260,7 @@ fun WalletCardPreview() {
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
-                    currency = "USD",
+                    currency = Currency.getInstance("USD"),
                     currentBalance = BigDecimal(2499.99),
                     isPrimary = true,
                 ),
