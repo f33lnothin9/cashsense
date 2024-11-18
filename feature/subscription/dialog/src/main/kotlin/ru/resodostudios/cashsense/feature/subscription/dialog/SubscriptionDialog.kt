@@ -49,8 +49,9 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.cleanAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.isAmountValid
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
@@ -93,7 +94,7 @@ fun SubscriptionDialog(
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
-                subscriptionDialogState.amount.cleanAndValidateAmount().second,
+                subscriptionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
     ) {
         val focusManager = LocalFocusManager.current
@@ -121,7 +122,7 @@ fun SubscriptionDialog(
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
-                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
+                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAmount())) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,

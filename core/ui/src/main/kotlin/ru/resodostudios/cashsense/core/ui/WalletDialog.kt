@@ -84,7 +84,7 @@ fun WalletDialog(
                 )
                 OutlinedTextField(
                     value = walletDialogState.initialBalance,
-                    onValueChange = { onInitialBalanceUpdate(it.cleanAndValidateAmount().first) },
+                    onValueChange = { onInitialBalanceUpdate(it.cleanAmount()) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
