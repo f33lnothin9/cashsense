@@ -38,8 +38,9 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.OutlinedAmountField
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.cleanAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.ui.isAmountValid
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -50,12 +51,6 @@ internal fun TransferDialog(
     viewModel: TransferViewModel = hiltViewModel(),
 ) {
     val transferState by viewModel.transferState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(transferState.isTransferSaved) {
-        if (transferState.isTransferSaved) {
-            onDismiss()
-        }
-    }
 
     TransferDialog(
         transferState = transferState,
@@ -82,16 +77,23 @@ private fun TransferDialog(
     onTransferSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(transferState.isTransferSaved) {
+        if (transferState.isTransferSaved) {
+            onDismiss()
+        }
+    }
+
     CsAlertDialog(
         titleRes = localesR.string.new_transfer,
         confirmButtonTextRes = localesR.string.transfer,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
         onConfirm = onTransferSave,
-        isConfirmEnabled = transferState.amount.isNotBlank() &&
+        isConfirmEnabled = transferState.amount.isAmountValid() &&
+                transferState.sendingWallet.id.isNotBlank() &&
                 transferState.receivingWallet.id.isNotBlank() &&
-                transferState.exchangeRate.isNotBlank() &&
-                transferState.convertedAmount.isNotBlank() &&
+                transferState.exchangeRate.isAmountValid() &&
+                transferState.convertedAmount.isAmountValid() &&
                 transferState.sendingWallet != transferState.receivingWallet,
         onDismiss = onDismiss,
         modifier = modifier,
@@ -140,7 +142,7 @@ private fun TransferDialog(
                 )
                 OutlinedTextField(
                     value = transferState.exchangeRate,
-                    onValueChange = { onExchangingRateUpdate(it.cleanAndValidateAmount().first) },
+                    onValueChange = { onExchangingRateUpdate(it.cleanAmount()) },
                     label = { Text(stringResource(localesR.string.exchange_rate)) },
                     placeholder = { Text("0.01") },
                     singleLine = true,

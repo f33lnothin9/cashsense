@@ -114,10 +114,11 @@ fun OutlinedAmountField(
     imeAction: ImeAction = ImeAction.Unspecified,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-    val isSuffixEnabled = BigDecimal(1)
+    val isSuffixEnabled = BigDecimal.ONE
         .formatAmount(currency)
         .first()
         .isDigit()
+
     OutlinedTextField(
         value = value,
         textStyle = if (isSuffixEnabled) {
@@ -125,7 +126,7 @@ fun OutlinedAmountField(
         } else {
             LocalTextStyle.current
         },
-        onValueChange = { onValueChange(it.cleanAndValidateAmount().first) },
+        onValueChange = { onValueChange(it.cleanAmount()) },
         label = { Text(stringResource(labelRes)) },
         placeholder = {
             Text(
