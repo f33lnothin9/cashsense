@@ -76,7 +76,7 @@ fun CsApp(
         layoutType = layoutType,
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination.isRouteInHierarchy(destination.route)
+                val selected = currentDestination.isRouteInHierarchy(destination.baseRoute)
                 item(
                     selected = selected,
                     icon = {
