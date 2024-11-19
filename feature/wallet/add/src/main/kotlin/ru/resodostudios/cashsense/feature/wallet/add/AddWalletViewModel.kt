@@ -48,7 +48,7 @@ class AddWalletViewModel @Inject constructor(
     private fun updatePrimaryWalletId(walletId: String) {
         viewModelScope.launch {
             if (_walletDialogUiState.value.isPrimary) {
-                userDataRepository.setPrimaryWalletId(_walletDialogUiState.value.id)
+                userDataRepository.setPrimaryWalletId(walletId)
                 shortcutManager.addTransactionShortcut(walletId)
             }
         }
