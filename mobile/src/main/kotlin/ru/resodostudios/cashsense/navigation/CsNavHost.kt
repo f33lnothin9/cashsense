@@ -44,7 +44,7 @@ fun CsNavHost(
             nestedDestinations = {
                 editWalletDialog(navController::navigateUp)
                 transferDialog(navController::navigateUp)
-            }
+            },
         )
         categoriesScreen(onShowSnackbar)
         subscriptionsScreen(onShowSnackbar)
