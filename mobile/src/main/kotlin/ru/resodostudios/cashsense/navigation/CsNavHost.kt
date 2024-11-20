@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
-import ru.resodostudios.cashsense.feature.settings.navigation.settingsGraph
+import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
 import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransfer
 import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
@@ -48,7 +48,7 @@ fun CsNavHost(
         )
         categoriesScreen(onShowSnackbar)
         subscriptionsScreen(onShowSnackbar)
-        settingsGraph(
+        settingsSection(
             onLicensesClick = navController::navigateToLicenses,
             nestedGraphs = { licensesScreen(navController::navigateUp) },
         )
