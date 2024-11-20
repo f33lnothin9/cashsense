@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
-import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsGraph
@@ -18,7 +17,8 @@ import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.editWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.edit.navigation.navigateToEditWallet
 import ru.resodostudios.cashsense.ui.CsAppState
-import ru.resodostudios.cashsense.ui.home2pane.homeListDetailGraph
+import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
+import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
 
 @Composable
 fun CsNavHost(
@@ -30,17 +30,21 @@ fun CsNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = HomeRoute(),
+        startDestination = HomeListDetailRoute,
         enterTransition = { slideInVertically { it / 16 } + fadeIn() },
         exitTransition = { fadeOut(tween(0)) },
         popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
         popExitTransition = { fadeOut(tween(0)) },
         modifier = modifier,
     ) {
-        homeListDetailGraph(
+        homeListDetailScreen(
             onEditWallet = navController::navigateToEditWallet,
             onTransfer = navController::navigateToTransfer,
             onShowSnackbar = onShowSnackbar,
+            nestedDestinations = {
+                editWalletDialog(navController::navigateUp)
+                transferDialog(navController::navigateUp)
+            }
         )
         categoriesScreen(onShowSnackbar)
         subscriptionsScreen(onShowSnackbar)
@@ -48,7 +52,5 @@ fun CsNavHost(
             onLicensesClick = navController::navigateToLicenses,
             nestedGraphs = { licensesScreen(navController::navigateUp) },
         )
-        editWalletDialog(navController::navigateUp)
-        transferDialog(navController::navigateUp)
     }
 }

@@ -9,6 +9,7 @@ import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
+import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -44,6 +45,7 @@ enum class TopLevelDestination(
         fabIcon = CsIcons.Wallet,
         fabTitle = localesR.string.new_wallet,
         route = HomeRoute::class,
+        baseRoute = HomeListDetailRoute::class,
     ),
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,

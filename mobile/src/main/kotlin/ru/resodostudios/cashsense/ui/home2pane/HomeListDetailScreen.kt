@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
@@ -54,21 +55,28 @@ internal object WalletPlaceholderRoute
 @Serializable
 internal object DetailPaneNavHostRoute
 
-fun NavGraphBuilder.homeListDetailGraph(
+@Serializable
+internal object HomeListDetailRoute
+
+fun NavGraphBuilder.homeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    nestedDestinations: NavGraphBuilder.() -> Unit,
 ) {
-    composable<HomeRoute>(
-        deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
-        ),
-    ) {
-        HomeListDetailScreen(
-            onEditWallet = onEditWallet,
-            onTransfer = onTransfer,
-            onShowSnackbar = onShowSnackbar,
-        )
+    navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
+        composable<HomeRoute>(
+            deepLinks = listOf(
+                navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
+            ),
+        ) {
+            HomeListDetailScreen(
+                onEditWallet = onEditWallet,
+                onTransfer = onTransfer,
+                onShowSnackbar = onShowSnackbar,
+            )
+        }
+        nestedDestinations()
     }
 }
 
