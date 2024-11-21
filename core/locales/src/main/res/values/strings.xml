@@ -96,4 +96,6 @@
     <string name="show_less">show less</string>
     <string name="permanently_delete">Permanently delete?</string>
     <string name="converted_amount">Converted amount</string>
+    <string name="primary_icon_description">Make primary</string>
+    <string name="non_primary_icon_description">Make non-primary</string>
 </resources>

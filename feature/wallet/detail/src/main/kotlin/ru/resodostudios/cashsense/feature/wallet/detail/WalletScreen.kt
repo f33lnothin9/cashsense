@@ -161,6 +161,7 @@ internal fun WalletScreen(
     WalletScreen(
         walletState = walletState,
         showNavigationIcon = showNavigationIcon,
+        onPrimaryClick = walletViewModel::setPrimaryWalletId,
         onEditWallet = onEditWallet,
         onTransfer = onTransfer,
         onBackClick = onBackClick,
@@ -178,6 +179,7 @@ internal fun WalletScreen(
 private fun WalletScreen(
     walletState: WalletUiState,
     showNavigationIcon: Boolean,
+    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
@@ -242,6 +244,7 @@ private fun WalletScreen(
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
+                        onPrimaryClick = onPrimaryClick,
                         onEditWallet = onEditWallet,
                         onTransfer = onTransfer,
                     )
@@ -294,29 +297,18 @@ private fun WalletTopBar(
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onNewTransactionClick: () -> Unit,
+    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = userWallet.title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    if (showNavigationIcon && userWallet.isPrimary) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Star),
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                }
+                Text(
+                    text = userWallet.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
                 AnimatedAmount(
                     targetState = userWallet.currentBalance,
                     label = "wallet_balance",
@@ -351,12 +343,7 @@ private fun WalletTopBar(
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            IconButton(onClick = { onTransfer(userWallet.id) }) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Star),
-                    contentDescription = null,
-                )
-            }
+            PrimaryIconButton(userWallet, onPrimaryClick)
             WalletDropdownMenu(
                 onTransferClick = { onTransfer(userWallet.id) },
                 onEditClick = { onEditWallet(userWallet.id) },
@@ -365,6 +352,83 @@ private fun WalletTopBar(
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
     )
+}
+
+@Composable
+private fun PrimaryIconButton(
+    userWallet: UserWallet,
+    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
+) {
+    val primaryIcon = if (userWallet.isPrimary) {
+        ImageVector.vectorResource(CsIcons.StarFilled)
+    } else {
+        ImageVector.vectorResource(CsIcons.Star)
+    }
+    val primaryIconContentDescription = if (userWallet.isPrimary) {
+        stringResource(localesR.string.non_primary_icon_description)
+    } else {
+        stringResource(localesR.string.primary_icon_description)
+    }
+    IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
+        Icon(
+            imageVector = primaryIcon,
+            contentDescription = primaryIconContentDescription,
+        )
+    }
+}
+
+@Composable
+private fun WalletDropdownMenu(
+    onTransferClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier.wrapContentSize(Alignment.TopStart),
+    ) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
+                contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.transfer)) },
+                onClick = onTransferClick,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                        contentDescription = null,
+                    )
+                },
+            )
+            HorizontalDivider()
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.edit)) },
+                onClick = onEditClick,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                        contentDescription = null,
+                    )
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.delete)) },
+                onClick = onDeleteClick,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -886,60 +950,6 @@ private fun FilterBySelectedDateTypeRow(
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
                 contentDescription = null,
-            )
-        }
-    }
-}
-
-@Composable
-private fun WalletDropdownMenu(
-    onTransferClick: () -> Unit,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = modifier.wrapContentSize(Alignment.TopStart),
-    ) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
-            )
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(localesR.string.transfer)) },
-                onClick = onTransferClick,
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
-                        contentDescription = null,
-                    )
-                },
-            )
-            HorizontalDivider()
-            DropdownMenuItem(
-                text = { Text(stringResource(localesR.string.edit)) },
-                onClick = onEditClick,
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                        contentDescription = null,
-                    )
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(localesR.string.delete)) },
-                onClick = onDeleteClick,
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                        contentDescription = null,
-                    )
-                },
             )
         }
     }

@@ -96,4 +96,6 @@
   <string name="show_less">показать меньше</string>
   <string name="permanently_delete">Удалить навсегда?</string>
   <string name="converted_amount">Конвертированная сумма</string>
+  <string name="primary_icon_description">Сделать основным</string>
+  <string name="non_primary_icon_description">Сделать не основным</string>
 </resources>
