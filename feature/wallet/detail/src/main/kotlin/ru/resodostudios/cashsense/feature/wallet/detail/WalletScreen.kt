@@ -26,14 +26,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -349,16 +353,15 @@ private fun WalletTopBar(
             }
             IconButton(onClick = { onTransfer(userWallet.id) }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
-                    contentDescription = stringResource(localesR.string.transfer),
-                )
-            }
-            IconButton(onClick = { onEditWallet(userWallet.id) }) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                    imageVector = ImageVector.vectorResource(CsIcons.Star),
                     contentDescription = null,
                 )
             }
+            WalletDropdownMenu(
+                onTransferClick = { onTransfer(userWallet.id) },
+                onEditClick = { onEditWallet(userWallet.id) },
+                onDeleteClick = {},
+            )
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
     )
@@ -883,6 +886,60 @@ private fun FilterBySelectedDateTypeRow(
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
                 contentDescription = null,
+            )
+        }
+    }
+}
+
+@Composable
+private fun WalletDropdownMenu(
+    onTransferClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier.wrapContentSize(Alignment.TopStart),
+    ) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
+                contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.transfer)) },
+                onClick = onTransferClick,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                        contentDescription = null,
+                    )
+                },
+            )
+            HorizontalDivider()
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.edit)) },
+                onClick = onEditClick,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                        contentDescription = null,
+                    )
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.delete)) },
+                onClick = onDeleteClick,
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        contentDescription = null,
+                    )
+                },
             )
         }
     }
