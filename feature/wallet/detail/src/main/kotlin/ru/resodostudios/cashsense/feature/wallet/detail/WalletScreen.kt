@@ -398,7 +398,10 @@ private fun WalletDropdownMenu(
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(localesR.string.transfer)) },
-                onClick = onTransferClick,
+                onClick = {
+                    onTransferClick()
+                    expanded = false
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
@@ -406,10 +409,15 @@ private fun WalletDropdownMenu(
                     )
                 },
             )
-            HorizontalDivider()
+            HorizontalDivider(
+                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+            )
             DropdownMenuItem(
                 text = { Text(stringResource(localesR.string.edit)) },
-                onClick = onEditClick,
+                onClick = {
+                    onEditClick()
+                    expanded = false
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Edit),
@@ -419,7 +427,10 @@ private fun WalletDropdownMenu(
             )
             DropdownMenuItem(
                 text = { Text(stringResource(localesR.string.delete)) },
-                onClick = onDeleteClick,
+                onClick = {
+                    onDeleteClick()
+                    expanded = false
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(CsIcons.Delete),
