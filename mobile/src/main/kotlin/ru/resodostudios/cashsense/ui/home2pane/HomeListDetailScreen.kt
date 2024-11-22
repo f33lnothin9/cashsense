@@ -90,16 +90,21 @@ internal fun HomeListDetailScreen(
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
     val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
+    val shouldDisplayUndoWallet by viewModel.shouldDisplayUndoWalletState.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         openTransactionDialog = openTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
-        onEditWallet = onEditWallet,
         onTransfer = onTransfer,
+        onEditWallet = onEditWallet,
+        onDeleteWallet = viewModel::deleteWallet,
         setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
         windowAdaptiveInfo = windowAdaptiveInfo,
+        shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+        undoWalletRemoval = viewModel::undoWalletRemoval,
+        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -109,11 +114,15 @@ internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     openTransactionDialog: Boolean,
     onWalletClick: (String) -> Unit,
-    onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
+    shouldDisplayUndoWallet: Boolean = false,
+    undoWalletRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
@@ -151,6 +160,7 @@ internal fun HomeListDetailScreen(
             } else {
                 nestedNavHostStartRoute = WalletRoute(walletId)
                 nestedNavKey = Uuid.random()
+                clearUndoState()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         } else if (listDetailNavigator.isDetailPaneVisible()) {
@@ -165,14 +175,18 @@ internal fun HomeListDetailScreen(
             AnimatedPane {
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
-                    onEditWallet = onEditWallet,
                     onTransfer = onTransfer,
-                    onShowSnackbar = onShowSnackbar,
+                    onEditWallet = onEditWallet,
+                    onDeleteWallet = onDeleteWallet,
                     onTransactionCreate = {
                         onWalletClickShowDetailPane(it)
                         setTransactionDialogOpen(true)
                     },
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
+                    onShowSnackbar = onShowSnackbar,
+                    shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+                    undoWalletRemoval = undoWalletRemoval,
+                    clearUndoState = clearUndoState,
                 )
             }
         },
@@ -187,6 +201,13 @@ internal fun HomeListDetailScreen(
                         walletScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onEditWallet = onEditWallet,
+                            onDeleteWallet = {
+                                onDeleteWallet(it)
+                                if (listDetailNavigator.isDetailPaneVisible()) {
+                                    nestedNavController.navigate(WalletPlaceholderRoute)
+                                }
+                                listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                            },
                             onTransfer = onTransfer,
                             onBackClick = listDetailNavigator::navigateBack,
                             openTransactionDialog = openTransactionDialog,

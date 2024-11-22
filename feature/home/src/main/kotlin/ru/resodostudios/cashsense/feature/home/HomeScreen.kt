@@ -32,11 +32,15 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun HomeScreen(
     onWalletClick: (String?) -> Unit,
-    onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+    shouldDisplayUndoWallet: Boolean,
+    undoWalletRemoval: () -> Unit,
+    clearUndoState: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel(),
     walletMenuViewModel: WalletMenuViewModel = hiltViewModel(),
 ) {
@@ -48,15 +52,16 @@ fun HomeScreen(
             homeViewModel.onWalletClick(it)
             onWalletClick(it)
         },
-        onEditWallet = onEditWallet,
         onTransfer = onTransfer,
+        onEditWallet = onEditWallet,
+        onDeleteWallet = onDeleteWallet,
         onWalletMenuClick = walletMenuViewModel::updateWalletId,
-        onShowSnackbar = onShowSnackbar,
         onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
-        hideWallet = homeViewModel::hideWallet,
-        undoWalletRemoval = homeViewModel::undoWalletRemoval,
-        clearUndoState = homeViewModel::clearUndoState,
+        onShowSnackbar = onShowSnackbar,
+        shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+        undoWalletRemoval = undoWalletRemoval,
+        clearUndoState = clearUndoState,
     )
 }
 
@@ -64,16 +69,34 @@ fun HomeScreen(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String?) -> Unit,
-    onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onWalletMenuClick: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionCreate: (String) -> Unit,
-    highlightSelectedWallet: Boolean = false,
-    hideWallet: (String) -> Unit = {},
-    undoWalletRemoval: () -> Unit = {},
-    clearUndoState: () -> Unit = {},
+    highlightSelectedWallet: Boolean,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+    shouldDisplayUndoWallet: Boolean,
+    undoWalletRemoval: () -> Unit,
+    clearUndoState: () -> Unit,
 ) {
+    val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
+    val undoText = stringResource(localesR.string.undo)
+
+    LaunchedEffect(shouldDisplayUndoWallet) {
+        if (shouldDisplayUndoWallet) {
+            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoText)
+            if (snackBarResult) {
+                undoWalletRemoval()
+            } else {
+                clearUndoState()
+            }
+        }
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        clearUndoState()
+    }
+
     when (walletsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
@@ -85,27 +108,10 @@ internal fun HomeScreen(
                     onTransfer = onTransfer,
                     onEdit = onEditWallet,
                     onDelete = { walletId ->
-                        hideWallet(walletId)
+                        onDeleteWallet(walletId)
                         onWalletClick(null)
                     },
                 )
-            }
-
-            val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
-            val undoText = stringResource(localesR.string.undo)
-
-            LaunchedEffect(walletsState.shouldDisplayUndoWallet) {
-                if (walletsState.shouldDisplayUndoWallet) {
-                    val snackBarResult = onShowSnackbar(walletDeletedMessage, undoText)
-                    if (snackBarResult) {
-                        undoWalletRemoval()
-                    } else {
-                        clearUndoState()
-                    }
-                }
-            }
-            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-                clearUndoState()
             }
 
             if (walletsState.extendedUserWallets.isNotEmpty()) {

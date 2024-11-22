@@ -146,10 +146,11 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletScreen(
-    showNavigationIcon: Boolean,
-    onEditWallet: (String) -> Unit,
-    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
+    onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
+    showNavigationIcon: Boolean,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -162,8 +163,9 @@ internal fun WalletScreen(
         walletState = walletState,
         showNavigationIcon = showNavigationIcon,
         onPrimaryClick = walletViewModel::setPrimaryWalletId,
-        onEditWallet = onEditWallet,
         onTransfer = onTransfer,
+        onEditWallet = onEditWallet,
+        onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         openTransactionDialog = openTransactionDialog,
         setTransactionDialogOpen = setTransactionDialogOpen,
@@ -180,8 +182,9 @@ private fun WalletScreen(
     walletState: WalletUiState,
     showNavigationIcon: Boolean,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
-    onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onBackClick: () -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
@@ -245,8 +248,9 @@ private fun WalletScreen(
                             showTransactionDialog = true
                         },
                         onPrimaryClick = onPrimaryClick,
-                        onEditWallet = onEditWallet,
-                        onTransfer = onTransfer,
+                        onTransferClick = onTransfer,
+                        onEditClick = onEditWallet,
+                        onDeleteClick = onDeleteWallet,
                     )
                 }
                 item {
@@ -298,8 +302,9 @@ private fun WalletTopBar(
     onBackClick: () -> Unit,
     onNewTransactionClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
-    onEditWallet: (String) -> Unit,
-    onTransfer: (String) -> Unit,
+    onTransferClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -345,9 +350,9 @@ private fun WalletTopBar(
             }
             PrimaryIconButton(userWallet, onPrimaryClick)
             WalletDropdownMenu(
-                onTransferClick = { onTransfer(userWallet.id) },
-                onEditClick = { onEditWallet(userWallet.id) },
-                onDeleteClick = {},
+                onTransferClick = { onTransferClick(userWallet.id) },
+                onEditClick = { onEditClick(userWallet.id) },
+                onDeleteClick = { onDeleteClick(userWallet.id) },
             )
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
