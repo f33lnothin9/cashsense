@@ -6,6 +6,7 @@ import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
@@ -24,14 +25,20 @@ internal class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var notifier: Notifier
 
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val reminderId = intent?.getIntExtra(EXTRA_REMINDER_ID, 0)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            findSubscriptionAndPostNotification(reminderId)
-            if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-                rescheduleRemindersAfterRebooting()
+        coroutineScope.launch {
+            try {
+                findSubscriptionAndPostNotification(reminderId)
+                if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
+                    rescheduleRemindersAfterRebooting()
+                }
+            } finally {
+                coroutineScope.cancel()
             }
         }
     }
