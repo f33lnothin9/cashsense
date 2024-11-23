@@ -11,8 +11,9 @@ import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.annotation.AnnotationRetention.RUNTIME
 
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(RUNTIME)
 @Qualifier
 annotation class ApplicationScope
 
