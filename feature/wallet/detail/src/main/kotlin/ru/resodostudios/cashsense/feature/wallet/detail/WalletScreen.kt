@@ -88,6 +88,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
@@ -768,7 +769,7 @@ private fun FinanceGraph(
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
             background = ShapeComponent(
-                color = MaterialTheme.colorScheme.surfaceVariant.toArgb(),
+                fill = Fill(MaterialTheme.colorScheme.surfaceVariant.toArgb()),
                 shape = CorneredShape.Pill,
                 margins = Dimensions(
                     startDp = 0f,

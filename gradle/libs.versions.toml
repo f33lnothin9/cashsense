@@ -35,7 +35,7 @@ lottie = "6.6.0"
 protobuf = "3.25.5"
 protobufPlugin = "0.9.4"
 room = "2.7.0-alpha11"
-vico = "2.0.0-beta.2"
+vico = "2.0.0-beta.3"
 
 [libraries]
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
