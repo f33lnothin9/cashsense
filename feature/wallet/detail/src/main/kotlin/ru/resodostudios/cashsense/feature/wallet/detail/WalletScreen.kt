@@ -26,14 +26,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -142,10 +146,11 @@ import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletScreen(
-    showNavigationIcon: Boolean,
-    onEditWallet: (String) -> Unit,
-    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
+    onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
+    showNavigationIcon: Boolean,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -157,8 +162,10 @@ internal fun WalletScreen(
     WalletScreen(
         walletState = walletState,
         showNavigationIcon = showNavigationIcon,
-        onEditWallet = onEditWallet,
+        onPrimaryClick = walletViewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
+        onEditWallet = onEditWallet,
+        onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         openTransactionDialog = openTransactionDialog,
         setTransactionDialogOpen = setTransactionDialogOpen,
@@ -174,8 +181,10 @@ internal fun WalletScreen(
 private fun WalletScreen(
     walletState: WalletUiState,
     showNavigationIcon: Boolean,
-    onEditWallet: (String) -> Unit,
+    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onBackClick: () -> Unit,
     openTransactionDialog: Boolean,
     setTransactionDialogOpen: (Boolean) -> Unit,
@@ -238,8 +247,10 @@ private fun WalletScreen(
                             onTransactionEvent(UpdateTransactionId(""))
                             showTransactionDialog = true
                         },
-                        onEditWallet = onEditWallet,
-                        onTransfer = onTransfer,
+                        onPrimaryClick = onPrimaryClick,
+                        onTransferClick = onTransfer,
+                        onEditClick = onEditWallet,
+                        onDeleteClick = onDeleteWallet,
                     )
                 }
                 item {
@@ -290,29 +301,19 @@ private fun WalletTopBar(
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onNewTransactionClick: () -> Unit,
-    onEditWallet: (String) -> Unit,
-    onTransfer: (String) -> Unit,
+    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
+    onTransferClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = userWallet.title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    if (showNavigationIcon && userWallet.isPrimary) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Star),
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                }
+                Text(
+                    text = userWallet.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
                 AnimatedAmount(
                     targetState = userWallet.currentBalance,
                     label = "wallet_balance",
@@ -347,21 +348,103 @@ private fun WalletTopBar(
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            IconButton(onClick = { onTransfer(userWallet.id) }) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
-                    contentDescription = stringResource(localesR.string.transfer),
-                )
-            }
-            IconButton(onClick = { onEditWallet(userWallet.id) }) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                    contentDescription = null,
-                )
-            }
+            PrimaryIconButton(userWallet, onPrimaryClick)
+            WalletDropdownMenu(
+                onTransferClick = { onTransferClick(userWallet.id) },
+                onEditClick = { onEditClick(userWallet.id) },
+                onDeleteClick = { onDeleteClick(userWallet.id) },
+            )
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
     )
+}
+
+@Composable
+private fun PrimaryIconButton(
+    userWallet: UserWallet,
+    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
+) {
+    val primaryIcon = if (userWallet.isPrimary) {
+        ImageVector.vectorResource(CsIcons.StarFilled)
+    } else {
+        ImageVector.vectorResource(CsIcons.Star)
+    }
+    val primaryIconContentDescription = if (userWallet.isPrimary) {
+        stringResource(localesR.string.non_primary_icon_description)
+    } else {
+        stringResource(localesR.string.primary_icon_description)
+    }
+    IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
+        Icon(
+            imageVector = primaryIcon,
+            contentDescription = primaryIconContentDescription,
+        )
+    }
+}
+
+@Composable
+private fun WalletDropdownMenu(
+    onTransferClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier.wrapContentSize(Alignment.TopStart),
+    ) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
+                contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.transfer)) },
+                onClick = {
+                    onTransferClick()
+                    expanded = false
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                        contentDescription = null,
+                    )
+                },
+            )
+            HorizontalDivider(
+                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.edit)) },
+                onClick = {
+                    onEditClick()
+                    expanded = false
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                        contentDescription = null,
+                    )
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(localesR.string.delete)) },
+                onClick = {
+                    onDeleteClick()
+                    expanded = false
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        contentDescription = null,
+                    )
+                },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)

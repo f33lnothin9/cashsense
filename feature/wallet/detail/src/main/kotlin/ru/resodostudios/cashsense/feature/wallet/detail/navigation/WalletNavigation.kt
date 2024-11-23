@@ -22,6 +22,7 @@ fun NavController.navigateToWallet(
 fun NavGraphBuilder.walletScreen(
     showNavigationIcon: Boolean,
     onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
     openTransactionDialog: Boolean,
@@ -31,6 +32,7 @@ fun NavGraphBuilder.walletScreen(
         WalletScreen(
             showNavigationIcon = showNavigationIcon,
             onEditWallet = onEditWallet,
+            onDeleteClick = onDeleteWallet,
             onTransfer = onTransfer,
             onBackClick = onBackClick,
             openTransactionDialog = openTransactionDialog,
