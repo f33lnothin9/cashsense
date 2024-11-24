@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -10,7 +11,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,17 +18,13 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -90,23 +86,18 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
-import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
@@ -116,7 +107,6 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
-import ru.resodostudios.cashsense.feature.transaction.TransactionItem
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
@@ -136,11 +126,9 @@ import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.util.Currency
 import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
-import ru.resodostudios.cashsense.feature.transaction.R as transactionR
 
 @Composable
 internal fun WalletScreen(
@@ -258,28 +246,15 @@ private fun WalletScreen(
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
                     )
                 }
-                if (walletState.transactionsCategories.isNotEmpty()) {
-                    transactions(
-                        transactionsCategories = walletState.transactionsCategories,
-                        currency = walletState.userWallet.currency,
-                        onTransactionClick = {
-                            onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
-                            onTransactionEvent(UpdateTransactionId(it))
-                            onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
-                            showTransactionBottomSheet = true
-                        },
-                    )
-                } else {
-                    item {
-                        EmptyState(
-                            messageRes = localesR.string.transactions_empty,
-                            animationRes = transactionR.raw.anim_transactions_empty,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(32.dp),
-                        )
-                    }
-                }
+                transactions(
+                    walletState = walletState,
+                    onTransactionClick = {
+                        onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
+                        onTransactionEvent(UpdateTransactionId(it))
+                        onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
+                        showTransactionBottomSheet = true
+                    },
+                )
             }
             LaunchedEffect(openTransactionDialog) {
                 if (openTransactionDialog) {
@@ -362,20 +337,15 @@ private fun PrimaryIconButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
-    val primaryIcon = if (userWallet.isPrimary) {
-        ImageVector.vectorResource(CsIcons.StarFilled)
+    val (@DrawableRes primaryIconRes, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
+        CsIcons.StarFilled to localesR.string.primary_icon_description
     } else {
-        ImageVector.vectorResource(CsIcons.Star)
-    }
-    val primaryIconContentDescription = if (userWallet.isPrimary) {
-        stringResource(localesR.string.non_primary_icon_description)
-    } else {
-        stringResource(localesR.string.primary_icon_description)
+        CsIcons.Star to localesR.string.non_primary_icon_description
     }
     IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
         Icon(
-            imageVector = primaryIcon,
-            contentDescription = primaryIconContentDescription,
+            imageVector = ImageVector.vectorResource(primaryIconRes),
+            contentDescription = stringResource(primaryIconContentDescriptionRes),
         )
     }
 }
@@ -899,39 +869,6 @@ private fun FilterBySelectedDateTypeRow(
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
                 contentDescription = null,
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-private fun LazyListScope.transactions(
-    transactionsCategories: List<TransactionWithCategory>,
-    currency: Currency,
-    onTransactionClick: (String) -> Unit,
-) {
-    val transactionsByDay = transactionsCategories
-        .groupBy { it.transaction.timestamp.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
-        .toSortedMap(compareByDescending { it })
-
-    transactionsByDay.forEach { transactionGroup ->
-        stickyHeader {
-            CsTag(
-                text = transactionGroup.key.toKotlinInstant().formatDate(),
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            )
-        }
-        item { Spacer(Modifier.height(16.dp)) }
-        items(
-            items = transactionGroup.value,
-            key = { it.transaction.id },
-            contentType = { "transactionCategory" },
-        ) { transactionCategory ->
-            TransactionItem(
-                transactionCategory = transactionCategory,
-                currency = currency,
-                onClick = onTransactionClick,
-                modifier = Modifier.animateItem(),
             )
         }
     }

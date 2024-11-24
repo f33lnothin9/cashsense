@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction
+package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -34,7 +34,7 @@ import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun TransactionItem(
+internal fun TransactionItem(
     transactionCategory: TransactionWithCategory,
     currency: Currency,
     onClick: (String) -> Unit,
