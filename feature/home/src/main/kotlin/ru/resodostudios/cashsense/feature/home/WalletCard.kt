@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -44,6 +43,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
@@ -57,8 +57,10 @@ fun WalletCard(
     userWallet: UserWallet,
     transactions: List<Transaction>,
     onWalletClick: (String) -> Unit,
-    onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String) -> Unit,
+    onNewTransactionClick: (String) -> Unit,
+    onTransferClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
 ) {
@@ -117,18 +119,15 @@ fun WalletCard(
                 .fillMaxWidth(),
         ) {
             Button(
-                onClick = { onTransactionCreate(userWallet.id) },
+                onClick = { onNewTransactionClick(userWallet.id) },
             ) {
                 Text(stringResource(localesR.string.add_transaction))
             }
-            IconButton(
-                onClick = { onWalletMenuClick(userWallet.id) },
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
-                )
-            }
+            WalletDropdownMenu(
+                onTransferClick = { onTransferClick(userWallet.id) },
+                onEditClick = { onEditClick(userWallet.id) },
+                onDeleteClick = { onDeleteClick(userWallet.id) },
+            )
         }
     }
 }
@@ -266,8 +265,10 @@ fun WalletCardPreview() {
                 ),
                 transactions = emptyList(),
                 onWalletClick = {},
-                onTransactionCreate = {},
-                onWalletMenuClick = { _ -> },
+                onNewTransactionClick = {},
+                onTransferClick = { _ -> },
+                onEditClick = { _ -> },
+                onDeleteClick = { _ -> },
                 modifier = Modifier.padding(16.dp),
             )
         }

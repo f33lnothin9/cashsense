@@ -26,18 +26,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -88,6 +84,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
@@ -107,6 +104,7 @@ import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
+import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
@@ -379,71 +377,6 @@ private fun PrimaryIconButton(
             imageVector = primaryIcon,
             contentDescription = primaryIconContentDescription,
         )
-    }
-}
-
-@Composable
-private fun WalletDropdownMenu(
-    onTransferClick: () -> Unit,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = modifier.wrapContentSize(Alignment.TopStart),
-    ) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
-            )
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(localesR.string.transfer)) },
-                onClick = {
-                    onTransferClick()
-                    expanded = false
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
-                        contentDescription = null,
-                    )
-                },
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(localesR.string.edit)) },
-                onClick = {
-                    onEditClick()
-                    expanded = false
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
-                        contentDescription = null,
-                    )
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(localesR.string.delete)) },
-                onClick = {
-                    onDeleteClick()
-                    expanded = false
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
-                        contentDescription = null,
-                    )
-                },
-            )
-        }
     }
 }
 
@@ -768,7 +701,7 @@ private fun FinanceGraph(
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
             background = ShapeComponent(
-                color = MaterialTheme.colorScheme.surfaceVariant.toArgb(),
+                fill = Fill(MaterialTheme.colorScheme.surfaceVariant.toArgb()),
                 shape = CorneredShape.Pill,
                 margins = Dimensions(
                     startDp = 0f,

@@ -67,7 +67,6 @@ dependencies {
     implementation(projects.feature.wallet.add)
     implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.edit)
-    implementation(projects.feature.wallet.menu)
     implementation(projects.feature.wallet.widget)
     implementation(projects.feature.settings)
 
