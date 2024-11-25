@@ -101,7 +101,6 @@ import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
@@ -137,8 +136,7 @@ internal fun WalletScreen(
     onEditWallet: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
     showNavigationIcon: Boolean,
-    openTransactionDialog: Boolean,
-    setTransactionDialogOpen: (Boolean) -> Unit,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     walletViewModel: WalletViewModel = hiltViewModel(),
     transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
@@ -153,8 +151,7 @@ internal fun WalletScreen(
         onEditWallet = onEditWallet,
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
-        openTransactionDialog = openTransactionDialog,
-        setTransactionDialogOpen = setTransactionDialogOpen,
+        navigateToTransactionDialog = navigateToTransactionDialog,
         onWalletEvent = walletViewModel::onWalletEvent,
         onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
         modifier = modifier,
@@ -172,8 +169,7 @@ private fun WalletScreen(
     onEditWallet: (String) -> Unit,
     onDeleteWallet: (String) -> Unit,
     onBackClick: () -> Unit,
-    openTransactionDialog: Boolean,
-    setTransactionDialogOpen: (Boolean) -> Unit,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -184,24 +180,20 @@ private fun WalletScreen(
         Loading -> LoadingState(modifier.fillMaxSize())
         is Success -> {
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
-            var showTransactionDialog by rememberSaveable { mutableStateOf(false) }
             var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
 
             if (showTransactionBottomSheet) {
                 TransactionBottomSheet(
                     onDismiss = { showTransactionBottomSheet = false },
-                    onEdit = { showTransactionDialog = true },
+                    onRepeatClick = { transactionId ->
+                        navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
+                    },
+                    onEdit = { transactionId ->
+                        navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
+                    },
                     onDelete = {
                         updateTransactionId(it)
                         showTransactionDeletionDialog = true
-                    },
-                )
-            }
-            if (showTransactionDialog) {
-                TransactionDialog(
-                    onDismiss = {
-                        showTransactionDialog = false
-                        setTransactionDialogOpen(false)
                     },
                 )
             }
@@ -229,9 +221,7 @@ private fun WalletScreen(
                         showNavigationIcon = showNavigationIcon,
                         onBackClick = onBackClick,
                         onNewTransactionClick = {
-                            onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
-                            onTransactionEvent(UpdateTransactionId(""))
-                            showTransactionDialog = true
+                            navigateToTransactionDialog(walletState.userWallet.id, null, false)
                         },
                         onPrimaryClick = onPrimaryClick,
                         onTransferClick = onTransfer,
@@ -255,13 +245,6 @@ private fun WalletScreen(
                         showTransactionBottomSheet = true
                     },
                 )
-            }
-            LaunchedEffect(openTransactionDialog) {
-                if (openTransactionDialog) {
-                    onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
-                    onTransactionEvent(UpdateTransactionId(""))
-                    showTransactionDialog = true
-                }
             }
         }
     }

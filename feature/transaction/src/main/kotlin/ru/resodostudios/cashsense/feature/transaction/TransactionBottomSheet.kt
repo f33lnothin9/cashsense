@@ -57,7 +57,8 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun TransactionBottomSheet(
     onDismiss: () -> Unit,
-    onEdit: () -> Unit,
+    onRepeatClick: (String) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
@@ -67,6 +68,7 @@ fun TransactionBottomSheet(
         transactionDialogState = transactionDialogState,
         onTransactionEvent = viewModel::onTransactionEvent,
         onDismiss = onDismiss,
+        onRepeatClick = onRepeatClick,
         onEdit = onEdit,
         onDelete = onDelete,
     )
@@ -78,7 +80,8 @@ private fun TransactionBottomSheet(
     transactionDialogState: TransactionDialogUiState,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
-    onEdit: () -> Unit,
+    onRepeatClick: (String) -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
@@ -203,7 +206,7 @@ private fun TransactionBottomSheet(
                         onClick = {
                             onTransactionEvent(Repeat)
                             onDismiss()
-                            onEdit()
+                            onRepeatClick(transactionDialogState.transactionId)
                         },
                     )
                     CsListItem(
@@ -216,7 +219,7 @@ private fun TransactionBottomSheet(
                         },
                         onClick = {
                             onDismiss()
-                            onEdit()
+                            onEdit(transactionDialogState.transactionId)
                         },
                     )
                 }

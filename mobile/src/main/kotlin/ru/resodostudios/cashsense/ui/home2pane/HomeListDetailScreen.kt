@@ -62,6 +62,7 @@ fun NavGraphBuilder.homeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     nestedDestinations: NavGraphBuilder.() -> Unit,
 ) {
     navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
@@ -74,6 +75,7 @@ fun NavGraphBuilder.homeListDetailScreen(
                 onEditWallet = onEditWallet,
                 onTransfer = onTransfer,
                 onShowSnackbar = onShowSnackbar,
+                navigateToTransactionDialog = navigateToTransactionDialog,
             )
         }
         nestedDestinations()
@@ -85,21 +87,20 @@ internal fun HomeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: Home2PaneViewModel = hiltViewModel(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
-    val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
     val shouldDisplayUndoWallet by viewModel.shouldDisplayUndoWalletState.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
-        openTransactionDialog = openTransactionDialog,
+        navigateToTransactionDialog = navigateToTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
         onDeleteWallet = viewModel::deleteWallet,
-        setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
         windowAdaptiveInfo = windowAdaptiveInfo,
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
@@ -112,12 +113,11 @@ internal fun HomeListDetailScreen(
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
-    openTransactionDialog: Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
     onDeleteWallet: (String) -> Unit,
-    setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
     shouldDisplayUndoWallet: Boolean = false,
@@ -178,10 +178,7 @@ internal fun HomeListDetailScreen(
                     onTransfer = onTransfer,
                     onEditWallet = onEditWallet,
                     onDeleteWallet = onDeleteWallet,
-                    onTransactionCreate = {
-                        onWalletClickShowDetailPane(it)
-                        setTransactionDialogOpen(true)
-                    },
+                    onTransactionCreate = ::onWalletClickShowDetailPane,
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                     onShowSnackbar = onShowSnackbar,
                     shouldDisplayUndoWallet = shouldDisplayUndoWallet,
@@ -210,8 +207,7 @@ internal fun HomeListDetailScreen(
                             },
                             onTransfer = onTransfer,
                             onBackClick = listDetailNavigator::navigateBack,
-                            openTransactionDialog = openTransactionDialog,
-                            setTransactionDialogOpen = setTransactionDialogOpen,
+                            navigateToTransactionDialog = navigateToTransactionDialog,
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(
