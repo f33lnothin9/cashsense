@@ -96,4 +96,6 @@
   <string name="from_wallet">Z portfela</string>
   <string name="to_wallet">Do portfela</string>
   <string name="converted_amount">Przeliczona kwota</string>
+  <string name="primary_icon_description">Make primary</string>
+  <string name="non_primary_icon_description">Make non-primary</string>
 </resources>
