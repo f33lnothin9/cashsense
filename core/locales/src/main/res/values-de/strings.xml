@@ -96,4 +96,6 @@
   <string name="from_wallet">Von Wallet</string>
   <string name="to_wallet">Zu Wallet</string>
   <string name="converted_amount">Umgewandelter Betrag</string>
+  <string name="primary_icon_description">Make primary</string>
+  <string name="non_primary_icon_description">Make non-primary</string>
 </resources>
