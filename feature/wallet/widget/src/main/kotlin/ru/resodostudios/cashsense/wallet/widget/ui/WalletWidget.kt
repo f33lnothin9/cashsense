@@ -172,6 +172,7 @@ fun WalletItem(
                         LocalContext.current.packageName,
                         TARGET_ACTIVITY_NAME,
                     )
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
             ),
             contentDescription = LocalContext.current.getString(localesR.string.add),
@@ -190,5 +191,6 @@ private fun openHomeScreen(
             LocalContext.current.packageName,
             TARGET_ACTIVITY_NAME,
         )
+        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
 )

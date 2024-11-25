@@ -34,6 +34,7 @@ internal class DynamicShortcutManager @Inject constructor(
                         context.packageName,
                         TARGET_ACTIVITY_NAME,
                     )
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
             )
             .build()
