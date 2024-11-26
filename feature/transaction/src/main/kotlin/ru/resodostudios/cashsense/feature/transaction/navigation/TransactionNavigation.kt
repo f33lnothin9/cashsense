@@ -19,8 +19,8 @@ private const val DEEP_LINK_URI_PATTERN =
 @Serializable
 data class TransactionRoute(
     val walletId: String,
-    val transactionId: String?,
-    val repeated: Boolean,
+    val transactionId: String? = null,
+    val repeated: Boolean = false,
 )
 
 fun NavController.navigateToTransactionDialog(
