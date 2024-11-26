@@ -100,12 +100,6 @@ import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
-import ru.resodostudios.cashsense.feature.transaction.TransactionBottomSheet
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionId
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
@@ -138,25 +132,24 @@ internal fun WalletScreen(
     showNavigationIcon: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    walletViewModel: WalletViewModel = hiltViewModel(),
-    transactionDialogViewModel: TransactionDialogViewModel = hiltViewModel(),
+    viewModel: WalletViewModel = hiltViewModel(),
 ) {
-    val walletState by walletViewModel.walletUiState.collectAsStateWithLifecycle()
+    val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
 
     WalletScreen(
         walletState = walletState,
         showNavigationIcon = showNavigationIcon,
-        onPrimaryClick = walletViewModel::setPrimaryWalletId,
+        onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        onWalletEvent = walletViewModel::onWalletEvent,
-        onTransactionEvent = transactionDialogViewModel::onTransactionEvent,
+        onWalletEvent = viewModel::onWalletEvent,
         modifier = modifier,
-        updateTransactionId = walletViewModel::updateTransactionId,
-        onTransactionDelete = walletViewModel::deleteTransaction,
+        updateTransactionId = viewModel::updateTransactionId,
+        onUpdateTransactionIgnoring = viewModel::updateTransactionIgnoring,
+        onDeleteTransaction = viewModel::deleteTransaction,
     )
 }
 
@@ -171,10 +164,10 @@ private fun WalletScreen(
     onBackClick: () -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onWalletEvent: (WalletEvent) -> Unit,
-    onTransactionEvent: (TransactionDialogEvent) -> Unit,
     modifier: Modifier = Modifier,
     updateTransactionId: (String) -> Unit = {},
-    onTransactionDelete: () -> Unit = {},
+    onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
+    onDeleteTransaction: () -> Unit = {},
 ) {
     when (walletState) {
         Loading -> LoadingState(modifier.fillMaxSize())
@@ -182,19 +175,19 @@ private fun WalletScreen(
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
 
-            if (showTransactionBottomSheet) {
+            if (showTransactionBottomSheet && walletState.selectedTransactionCategory != null) {
                 TransactionBottomSheet(
+                    transactionCategory = walletState.selectedTransactionCategory,
+                    currency = walletState.userWallet.currency,
                     onDismiss = { showTransactionBottomSheet = false },
+                    onIgnoreClick = onUpdateTransactionIgnoring,
                     onRepeatClick = { transactionId ->
                         navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
                     },
                     onEdit = { transactionId ->
                         navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
                     },
-                    onDelete = {
-                        updateTransactionId(it)
-                        showTransactionDeletionDialog = true
-                    },
+                    onDelete = { showTransactionDeletionDialog = true },
                 )
             }
             if (showTransactionDeletionDialog) {
@@ -204,7 +197,7 @@ private fun WalletScreen(
                     dismissButtonTextRes = localesR.string.cancel,
                     iconRes = CsIcons.Delete,
                     onConfirm = {
-                        onTransactionDelete()
+                        onDeleteTransaction()
                         showTransactionDeletionDialog = false
                     },
                     onDismiss = { showTransactionDeletionDialog = false },
@@ -239,9 +232,7 @@ private fun WalletScreen(
                 transactions(
                     walletState = walletState,
                     onTransactionClick = {
-                        onTransactionEvent(UpdateWalletId(walletState.userWallet.id))
-                        onTransactionEvent(UpdateTransactionId(it))
-                        onTransactionEvent(UpdateCurrency(walletState.userWallet.currency))
+                        updateTransactionId(it)
                         showTransactionBottomSheet = true
                     },
                 )
@@ -894,6 +885,7 @@ fun FinancePanelDefaultPreview(
                         selectedYear = 0,
                         selectedMonth = 0,
                     ),
+                    selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
                 ),
                 onWalletEvent = {},
@@ -936,6 +928,7 @@ fun FinancePanelOpenedPreview(
                         selectedYear = 2024,
                         selectedMonth = 0,
                     ),
+                    selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
                 ),
                 onWalletEvent = {},
