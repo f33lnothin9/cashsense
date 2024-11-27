@@ -117,6 +117,7 @@ class TransactionDialogViewModel @Inject constructor(
             if (transactionCategoryCrossRef != null) {
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
+            _transactionDialogUiState.update { it.copy(isTransactionSaved = true) }
         }
     }
 
@@ -226,4 +227,5 @@ data class TransactionDialogUiState(
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
     val isTransfer: Boolean = false,
+    val isTransactionSaved: Boolean = false,
 )
