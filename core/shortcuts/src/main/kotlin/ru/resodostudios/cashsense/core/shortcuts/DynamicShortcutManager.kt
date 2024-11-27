@@ -29,7 +29,7 @@ internal class DynamicShortcutManager @Inject constructor(
             .setIntent(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_BASE_PATH/$walletId//false".toUri()
+                    data = "$DEEP_LINK_BASE_PATH/$walletId/null/false".toUri()
                     component = ComponentName(
                         context.packageName,
                         TARGET_ACTIVITY_NAME,
