@@ -126,7 +126,7 @@ internal fun TransactionBottomSheet(
                     color = transactionStatusTag.third,
                 )
             }
-            if (transaction.description != null) {
+            if (transaction.description != null && transaction.description!!.isNotBlank()) {
                 Text(
                     text = stringResource(localesR.string.description),
                     style = MaterialTheme.typography.labelLarge,
