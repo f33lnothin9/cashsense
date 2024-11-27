@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,6 +41,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.INCOME
+import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionRoute
 import java.math.BigDecimal.ZERO
 import java.util.Currency
 import javax.inject.Inject
@@ -53,10 +54,11 @@ class TransactionDialogViewModel @Inject constructor(
     categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
-    private val walletId = savedStateHandle.getStateFlow(key = WALLET_ID_KEY, initialValue = "")
+    private val transactionDestination: TransactionRoute = savedStateHandle.toRoute()
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
-    val transactionDialogUiState = _transactionDialogUiState.asStateFlow()
+    val transactionDialogUiState: StateFlow<TransactionDialogUiState>
+        get() = _transactionDialogUiState.asStateFlow()
 
     val categoriesUiState: StateFlow<CategoriesUiState> =
         categoriesRepository.getCategories()
@@ -66,6 +68,11 @@ class TransactionDialogViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = Loading,
             )
+
+    init {
+        updateWalletId(transactionDestination.walletId)
+        transactionDestination.transactionId?.let(::loadTransaction)
+    }
 
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
@@ -87,7 +94,7 @@ class TransactionDialogViewModel @Inject constructor(
     private fun saveTransaction() {
         val transaction = Transaction(
             id = _transactionDialogUiState.value.transactionId.ifEmpty { Uuid.random().toString() },
-            walletOwnerId = walletId.value,
+            walletOwnerId = transactionDestination.walletId,
             description = _transactionDialogUiState.value.description.ifBlank { null },
             amount = _transactionDialogUiState.value.amount
                 .toBigDecimal()
@@ -110,6 +117,7 @@ class TransactionDialogViewModel @Inject constructor(
             if (transactionCategoryCrossRef != null) {
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
+            _transactionDialogUiState.update { it.copy(isTransactionSaved = true) }
         }
     }
 
@@ -117,7 +125,6 @@ class TransactionDialogViewModel @Inject constructor(
         _transactionDialogUiState.update {
             it.copy(transactionId = id)
         }
-        loadTransaction()
     }
 
     private fun updateWalletId(id: String) {
@@ -181,29 +188,28 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun loadTransaction() {
+    private fun loadTransaction(id: String) {
         viewModelScope.launch {
-            if (_transactionDialogUiState.value.transactionId.isNotEmpty()) {
-                val transactionCategory = transactionsRepository
-                    .getTransactionWithCategory(_transactionDialogUiState.value.transactionId)
-                    .onStart { _transactionDialogUiState.update { it.copy(isLoading = true) } }
-                    .first()
-                _transactionDialogUiState.update {
-                    it.copy(
-                        transactionId = transactionCategory.transaction.id,
-                        description = transactionCategory.transaction.description ?: "",
-                        amount = transactionCategory.transaction.amount.abs().toString(),
-                        transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
-                        date = transactionCategory.transaction.timestamp,
-                        category = transactionCategory.category,
-                        status = transactionCategory.transaction.status,
-                        ignored = transactionCategory.transaction.ignored,
-                        isLoading = false,
-                        isTransfer = transactionCategory.transaction.transferId != null,
-                    )
-                }
+            _transactionDialogUiState.update { TransactionDialogUiState(isLoading = true) }
+            val transactionCategory = transactionsRepository.getTransactionWithCategory(id).first()
+            val (transactionId, date) = if (transactionDestination.repeated) {
+                "" to Clock.System.now()
             } else {
-                _transactionDialogUiState.update { TransactionDialogUiState() }
+                id to transactionCategory.transaction.timestamp
+            }
+            _transactionDialogUiState.update {
+                it.copy(
+                    transactionId = transactionId,
+                    description = transactionCategory.transaction.description ?: "",
+                    amount = transactionCategory.transaction.amount.abs().toString(),
+                    transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
+                    date = date,
+                    category = transactionCategory.category,
+                    status = transactionCategory.transaction.status,
+                    ignored = transactionCategory.transaction.ignored,
+                    isLoading = false,
+                    isTransfer = transactionCategory.transaction.transferId != null,
+                )
             }
         }
     }
@@ -226,4 +232,5 @@ data class TransactionDialogUiState(
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
     val isTransfer: Boolean = false,
+    val isTransactionSaved: Boolean = false,
 )

@@ -16,7 +16,6 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import javax.inject.Inject
@@ -35,10 +34,6 @@ class Home2PaneViewModel @Inject constructor(
         key = WALLET_ID_KEY,
         initialValue = homeDestination.walletId,
     )
-    val openTransactionDialog: StateFlow<Boolean> = savedStateHandle.getStateFlow(
-        key = OPEN_TRANSACTION_DIALOG_KEY,
-        initialValue = homeDestination.openTransactionDialog,
-    )
 
     private val lastRemovedWalletState = MutableStateFlow<ExtendedUserWallet?>(null)
     private val _shouldDisplayUndoWalletState = MutableStateFlow(false)
@@ -47,10 +42,6 @@ class Home2PaneViewModel @Inject constructor(
 
     fun onWalletClick(walletId: String?) {
         savedStateHandle[WALLET_ID_KEY] = walletId
-    }
-
-    fun setTransactionDialogOpen(opened: Boolean) {
-        savedStateHandle[OPEN_TRANSACTION_DIALOG_KEY] = opened
     }
 
     fun deleteWallet(walletId: String) {

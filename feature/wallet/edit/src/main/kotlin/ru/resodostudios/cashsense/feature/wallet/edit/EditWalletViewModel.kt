@@ -36,7 +36,7 @@ class EditWalletViewModel @Inject constructor(
         get() = _walletDialogState.asStateFlow()
 
     init {
-        editWalletDestination.walletId?.let { loadWallet(it) }
+        editWalletDestination.walletId?.let(::loadWallet)
     }
 
     private fun loadWallet(id: String) {
@@ -63,6 +63,18 @@ class EditWalletViewModel @Inject constructor(
         }
     }
 
+    private fun updatePrimaryWalletId(id: String) {
+        viewModelScope.launch {
+            if (_walletDialogState.value.isPrimary) {
+                userDataRepository.setPrimaryWalletId(id)
+                shortcutManager.addTransactionShortcut(id)
+            } else if (_walletDialogState.value.currentPrimaryWalletId == id) {
+                userDataRepository.setPrimaryWalletId("")
+                shortcutManager.removeShortcuts()
+            }
+        }
+    }
+
     fun saveWallet() {
         val wallet = Wallet(
             id = _walletDialogState.value.id,
@@ -74,21 +86,9 @@ class EditWalletViewModel @Inject constructor(
             },
             currency = _walletDialogState.value.currency,
         )
-        val updatePrimaryIdJob = viewModelScope.launch {
-            if (_walletDialogState.value.isPrimary) {
-                userDataRepository.setPrimaryWalletId(wallet.id)
-                shortcutManager.addTransactionShortcut(wallet.id)
-            } else if (_walletDialogState.value.currentPrimaryWalletId == wallet.id) {
-                userDataRepository.setPrimaryWalletId("")
-                shortcutManager.removeShortcuts()
-            }
-        }
-        val upsertWalletJob = viewModelScope.launch {
-            walletsRepository.upsertWallet(wallet)
-        }
         viewModelScope.launch {
-            updatePrimaryIdJob.join()
-            upsertWalletJob.join()
+            updatePrimaryWalletId(wallet.id)
+            walletsRepository.upsertWallet(wallet)
             _walletDialogState.update { it.copy(isWalletSaved = true) }
         }
     }

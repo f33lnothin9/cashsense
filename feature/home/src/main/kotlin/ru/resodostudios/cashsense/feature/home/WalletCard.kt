@@ -171,7 +171,7 @@ private fun TagsSection(
         ) {
             CsTag(
                 text = stringResource(localesR.string.primary),
-                iconId = CsIcons.Star,
+                iconId = CsIcons.StarFilled,
             )
         }
         AnimatedVisibility(

@@ -34,7 +34,6 @@ import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
-import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
@@ -44,7 +43,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
+private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
 
 // TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
 @Keep
@@ -62,6 +61,7 @@ fun NavGraphBuilder.homeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     nestedDestinations: NavGraphBuilder.() -> Unit,
 ) {
     navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
@@ -74,6 +74,7 @@ fun NavGraphBuilder.homeListDetailScreen(
                 onEditWallet = onEditWallet,
                 onTransfer = onTransfer,
                 onShowSnackbar = onShowSnackbar,
+                navigateToTransactionDialog = navigateToTransactionDialog,
             )
         }
         nestedDestinations()
@@ -85,21 +86,20 @@ internal fun HomeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: Home2PaneViewModel = hiltViewModel(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
-    val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
     val shouldDisplayUndoWallet by viewModel.shouldDisplayUndoWalletState.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
-        openTransactionDialog = openTransactionDialog,
+        navigateToTransactionDialog = navigateToTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
         onDeleteWallet = viewModel::deleteWallet,
-        setTransactionDialogOpen = viewModel::setTransactionDialogOpen,
         onShowSnackbar = onShowSnackbar,
         windowAdaptiveInfo = windowAdaptiveInfo,
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
@@ -112,12 +112,11 @@ internal fun HomeListDetailScreen(
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
-    openTransactionDialog: Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
     onDeleteWallet: (String) -> Unit,
-    setTransactionDialogOpen: (Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
     shouldDisplayUndoWallet: Boolean = false,
@@ -178,10 +177,7 @@ internal fun HomeListDetailScreen(
                     onTransfer = onTransfer,
                     onEditWallet = onEditWallet,
                     onDeleteWallet = onDeleteWallet,
-                    onTransactionCreate = {
-                        onWalletClickShowDetailPane(it)
-                        setTransactionDialogOpen(true)
-                    },
+                    onTransactionCreate = ::onWalletClickShowDetailPane,
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                     onShowSnackbar = onShowSnackbar,
                     shouldDisplayUndoWallet = shouldDisplayUndoWallet,
@@ -210,8 +206,7 @@ internal fun HomeListDetailScreen(
                             },
                             onTransfer = onTransfer,
                             onBackClick = listDetailNavigator::navigateBack,
-                            openTransactionDialog = openTransactionDialog,
-                            setTransactionDialogOpen = setTransactionDialogOpen,
+                            navigateToTransactionDialog = navigateToTransactionDialog,
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(

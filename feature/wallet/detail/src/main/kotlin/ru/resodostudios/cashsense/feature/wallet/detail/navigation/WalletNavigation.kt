@@ -25,8 +25,7 @@ fun NavGraphBuilder.walletScreen(
     onDeleteWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    openTransactionDialog: Boolean,
-    setTransactionDialogOpen: (Boolean) -> Unit = {},
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
 ) {
     composable<WalletRoute> {
         WalletScreen(
@@ -35,8 +34,7 @@ fun NavGraphBuilder.walletScreen(
             onDeleteClick = onDeleteWallet,
             onTransfer = onTransfer,
             onBackClick = onBackClick,
-            openTransactionDialog = openTransactionDialog,
-            setTransactionDialogOpen = setTransactionDialogOpen,
+            navigateToTransactionDialog = navigateToTransactionDialog,
         )
     }
 }
