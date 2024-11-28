@@ -36,30 +36,25 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryBottomSheet
 import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateCategoryId
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogViewModel
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun CategoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,
-    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
-    categoryDialogViewModel: CategoryDialogViewModel = hiltViewModel(),
+    viewModel: CategoriesViewModel = hiltViewModel(),
 ) {
-    val categoriesState by categoriesViewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     CategoriesScreen(
         categoriesState = categoriesState,
         onShowSnackbar = onShowSnackbar,
         modifier = modifier,
-        onCategoryEvent = categoryDialogViewModel::onCategoryEvent,
-        deleteCategory = categoriesViewModel::deleteCategory,
-        undoCategoryRemoval = categoriesViewModel::undoCategoryRemoval,
-        clearUndoState = categoriesViewModel::clearUndoState,
+        onUpdateCategoryId = viewModel::updateCategoryId,
+        deleteCategory = viewModel::deleteCategory,
+        undoCategoryRemoval = viewModel::undoCategoryRemoval,
+        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -67,7 +62,7 @@ internal fun CategoriesScreen(
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onCategoryEvent: (CategoryDialogEvent) -> Unit,
+    onUpdateCategoryId: (String) -> Unit,
     modifier: Modifier = Modifier,
     deleteCategory: (String) -> Unit = {},
     undoCategoryRemoval: () -> Unit = {},
@@ -109,13 +104,14 @@ internal fun CategoriesScreen(
                     categories(
                         categoriesState = categoriesState,
                         onCategoryClick = {
-                            onCategoryEvent(UpdateCategoryId(it))
+                            onUpdateCategoryId(it)
                             showCategoryBottomSheet = true
                         },
                     )
                 }
-                if (showCategoryBottomSheet) {
+                if (showCategoryBottomSheet && categoriesState.selectedCategory != null) {
                     CategoryBottomSheet(
+                        category = categoriesState.selectedCategory!!,
                         onDismiss = { showCategoryBottomSheet = false },
                         onEdit = { showCategoryDialog = true },
                         onDelete = deleteCategory,
@@ -176,8 +172,9 @@ private fun CategoriesScreenPreview(
                 categoriesState = Success(
                     shouldDisplayUndoCategory = false,
                     categories = categories,
+                    selectedCategory = null,
                 ),
-                onCategoryEvent = {},
+                onUpdateCategoryId = {},
             )
         }
     }

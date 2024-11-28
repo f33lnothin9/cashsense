@@ -25,17 +25,28 @@ class CategoriesViewModel @Inject constructor(
 
     private val shouldDisplayUndoCategoryState = MutableStateFlow(false)
     private val lastRemovedCategoryState = MutableStateFlow<Pair<Category, List<String>>?>(null)
+    private val selectedCategoryIdState = MutableStateFlow<String?>(null)
 
     val categoriesUiState: StateFlow<CategoriesUiState> = combine(
         shouldDisplayUndoCategoryState,
         categoriesRepository.getCategories(),
-        CategoriesUiState::Success,
-    )
+        selectedCategoryIdState,
+    ) { shouldDisplayUndoCategory, categories, selectedCategoryId ->
+        CategoriesUiState.Success(
+            shouldDisplayUndoCategory = shouldDisplayUndoCategory,
+            categories = categories,
+            selectedCategory = categories.firstOrNull { it.id == selectedCategoryId },
+        )
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = CategoriesUiState.Loading,
         )
+
+    fun updateCategoryId(id: String) {
+        selectedCategoryIdState.value = id
+    }
 
     fun deleteCategory(id: String) {
         viewModelScope.launch {
