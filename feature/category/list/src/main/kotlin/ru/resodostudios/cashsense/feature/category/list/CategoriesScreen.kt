@@ -57,7 +57,7 @@ internal fun CategoriesScreen(
         onShowSnackbar = onShowSnackbar,
         modifier = modifier,
         onCategoryEvent = categoryDialogViewModel::onCategoryEvent,
-        hideCategory = categoriesViewModel::hideCategory,
+        deleteCategory = categoriesViewModel::deleteCategory,
         undoCategoryRemoval = categoriesViewModel::undoCategoryRemoval,
         clearUndoState = categoriesViewModel::clearUndoState,
     )
@@ -69,7 +69,7 @@ internal fun CategoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onCategoryEvent: (CategoryDialogEvent) -> Unit,
     modifier: Modifier = Modifier,
-    hideCategory: (String) -> Unit = {},
+    deleteCategory: (String) -> Unit = {},
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
@@ -107,7 +107,7 @@ internal fun CategoriesScreen(
                     CategoryBottomSheet(
                         onDismiss = { showCategoryBottomSheet = false },
                         onEdit = { showCategoryDialog = true },
-                        onDelete = hideCategory,
+                        onDelete = deleteCategory,
                     )
                 }
                 if (showCategoryDialog) {

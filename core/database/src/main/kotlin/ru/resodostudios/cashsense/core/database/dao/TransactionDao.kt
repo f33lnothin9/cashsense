@@ -17,6 +17,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE id = :transactionId")
     fun getTransactionWithCategoryEntity(transactionId: String): Flow<PopulatedTransaction>
 
+    @Query("SELECT * FROM transactions_categories WHERE category_id = :categoryId")
+    fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRefEntity>>
+
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)
 

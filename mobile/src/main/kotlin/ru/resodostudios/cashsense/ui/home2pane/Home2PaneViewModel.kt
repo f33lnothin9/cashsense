@@ -65,20 +65,18 @@ class Home2PaneViewModel @Inject constructor(
                 it.transactionsWithCategories.forEach { transactionWithCategory ->
                     transactionsRepository.upsertTransaction(transactionWithCategory.transaction)
                     if (transactionWithCategory.category != null) {
-                        val crossRef = transactionWithCategory.category?.id?.let { categoryId ->
-                            TransactionCategoryCrossRef(
+                        transactionWithCategory.category?.id?.let { categoryId ->
+                            val crossRef = TransactionCategoryCrossRef(
                                 transactionId = transactionWithCategory.transaction.id,
                                 categoryId = categoryId,
                             )
-                        }
-                        if (crossRef != null) {
                             transactionsRepository.upsertTransactionCategoryCrossRef(crossRef)
                         }
                     }
                 }
             }
+            clearUndoState()
         }
-        clearUndoState()
     }
 
     fun clearUndoState() {
