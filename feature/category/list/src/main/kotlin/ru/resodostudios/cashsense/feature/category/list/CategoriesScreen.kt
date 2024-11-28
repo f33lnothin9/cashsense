@@ -97,12 +97,23 @@ internal fun CategoriesScreen(
                 var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
                 var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
-                CategoriesGrid(
-                    categoriesState = categoriesState,
-                    onCategoryEvent = onCategoryEvent,
-                    onShowCategoryBottomSheetChange = { showCategoryBottomSheet = true },
-                    modifier = modifier,
-                )
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(300.dp),
+                    contentPadding = PaddingValues(
+                        bottom = 88.dp,
+                    ),
+                    modifier = modifier
+                        .fillMaxSize()
+                        .testTag("categories:list"),
+                ) {
+                    categories(
+                        categoriesState = categoriesState,
+                        onCategoryClick = {
+                            onCategoryEvent(UpdateCategoryId(it))
+                            showCategoryBottomSheet = true
+                        },
+                    )
+                }
                 if (showCategoryBottomSheet) {
                     CategoryBottomSheet(
                         onDismiss = { showCategoryBottomSheet = false },
@@ -121,32 +132,6 @@ internal fun CategoriesScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun CategoriesGrid(
-    categoriesState: CategoriesUiState,
-    onCategoryEvent: (CategoryDialogEvent) -> Unit,
-    onShowCategoryBottomSheetChange: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
-        contentPadding = PaddingValues(
-            bottom = 88.dp,
-        ),
-        modifier = modifier
-            .fillMaxSize()
-            .testTag("categories:list"),
-    ) {
-        categories(
-            categoriesState = categoriesState,
-            onCategoryClick = {
-                onCategoryEvent(UpdateCategoryId(it))
-                onShowCategoryBottomSheetChange()
-            },
-        )
     }
 }
 
@@ -180,19 +165,19 @@ private fun LazyGridScope.categories(
 
 @Preview
 @Composable
-private fun CategoriesGridPreview(
+private fun CategoriesScreenPreview(
     @PreviewParameter(CategoryPreviewParameterProvider::class)
     categories: List<Category>,
 ) {
     CsTheme {
         Surface {
-            CategoriesGrid(
+            CategoriesScreen(
+                onShowSnackbar = { _, _ -> false },
                 categoriesState = Success(
                     shouldDisplayUndoCategory = false,
                     categories = categories,
                 ),
                 onCategoryEvent = {},
-                onShowCategoryBottomSheetChange = {},
             )
         }
     }
