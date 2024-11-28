@@ -9,10 +9,10 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.settings.SettingsScreen
 
 @Serializable
-data object SettingsBaseRoute
+object SettingsBaseRoute
 
 @Serializable
-data object SettingsRoute
+object SettingsRoute
 
 fun NavController.navigateToSettings(navOptions: NavOptions? = null) =
     navigate(route = SettingsRoute, navOptions)

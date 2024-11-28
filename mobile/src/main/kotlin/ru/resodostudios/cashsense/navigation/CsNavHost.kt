@@ -7,7 +7,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.categoryDialog
+import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesSection
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
@@ -50,7 +51,12 @@ fun CsNavHost(
                 transactionDialog(navController::navigateUp)
             },
         )
-        categoriesScreen(onShowSnackbar)
+        categoriesSection(
+            onShowSnackbar = onShowSnackbar,
+            nestedGraphs = {
+                categoryDialog(navController::navigateUp)
+            }
+        )
         subscriptionsScreen(onShowSnackbar)
         settingsSection(
             onLicensesClick = navController::navigateToLicenses,

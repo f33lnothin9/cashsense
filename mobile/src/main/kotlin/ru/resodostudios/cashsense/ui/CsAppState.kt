@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
@@ -71,7 +72,9 @@ class CsAppState(
                     this?.hasRoute<TransferRoute>() == true ||
                     this?.hasRoute<TransactionRoute>() == true
                 ) return HOME
-                if (this?.hasRoute<CategoriesRoute>() == true) return CATEGORIES
+                if (this?.hasRoute<CategoriesRoute>() == true ||
+                    this?.hasRoute<CategoryDialogRoute>() == true
+                ) return CATEGORIES
                 if (this?.hasRoute<SubscriptionsRoute>() == true) return SUBSCRIPTIONS
                 if (this?.hasRoute<SettingsRoute>() == true) return SETTINGS
             }
