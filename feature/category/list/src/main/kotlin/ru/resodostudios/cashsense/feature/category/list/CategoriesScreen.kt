@@ -36,11 +36,11 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun CategoriesScreen(
+    onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     modifier: Modifier = Modifier,
     viewModel: CategoriesViewModel = hiltViewModel(),
@@ -49,6 +49,7 @@ internal fun CategoriesScreen(
 
     CategoriesScreen(
         categoriesState = categoriesState,
+        onEditCategory = onEditCategory,
         onShowSnackbar = onShowSnackbar,
         modifier = modifier,
         onUpdateCategoryId = viewModel::updateCategoryId,
@@ -61,6 +62,7 @@ internal fun CategoriesScreen(
 @Composable
 internal fun CategoriesScreen(
     categoriesState: CategoriesUiState,
+    onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onUpdateCategoryId: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -90,7 +92,6 @@ internal fun CategoriesScreen(
 
             if (categoriesState.categories.isNotEmpty()) {
                 var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
-                var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
 
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
@@ -113,12 +114,9 @@ internal fun CategoriesScreen(
                     CategoryBottomSheet(
                         category = categoriesState.selectedCategory!!,
                         onDismiss = { showCategoryBottomSheet = false },
-                        onEdit = { showCategoryDialog = true },
+                        onEdit = onEditCategory,
                         onDelete = deleteCategory,
                     )
-                }
-                if (showCategoryDialog) {
-                    CategoryDialog(onDismiss = { showCategoryDialog = false })
                 }
             } else {
                 EmptyState(
@@ -169,6 +167,7 @@ private fun CategoriesScreenPreview(
         Surface {
             CategoriesScreen(
                 onShowSnackbar = { _, _ -> false },
+                onEditCategory = {},
                 categoriesState = Success(
                     shouldDisplayUndoCategory = false,
                     categories = categories,

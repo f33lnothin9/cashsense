@@ -2,6 +2,8 @@ package ru.resodostudios.cashsense.feature.category.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -24,9 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.ui.IconPickerDropdownMenu
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.Save
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateIcon
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialogEvent.UpdateTitle
+import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -38,7 +38,9 @@ fun CategoryDialog(
 
     CategoryDialog(
         categoryDialogState = categoryDialogState,
-        onCategoryEvent = viewModel::onCategoryEvent,
+        onSaveCategory = viewModel::saveCategory,
+        onUpdateTitle = viewModel::updateTitle,
+        onUpdateIconId = viewModel::updateIconId,
         onDismiss = onDismiss,
     )
 }
@@ -46,55 +48,70 @@ fun CategoryDialog(
 @Composable
 fun CategoryDialog(
     categoryDialogState: CategoryDialogUiState,
-    onCategoryEvent: (CategoryDialogEvent) -> Unit,
+    onSaveCategory: () -> Unit,
+    onUpdateTitle: (String) -> Unit,
+    onUpdateIconId: (Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val dialogTitle = if (categoryDialogState.id.isNotEmpty()) localesR.string.edit_category else localesR.string.new_category
     val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+
+    LaunchedEffect(categoryDialogState.isCategorySaved) {
+        if (categoryDialogState.isCategorySaved) {
+            onDismiss()
+        }
+    }
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Category,
-        onConfirm = {
-            onCategoryEvent(Save)
-            onDismiss()
-        },
+        onConfirm = onSaveCategory,
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {
-        val focusManager = LocalFocusManager.current
-        val focusRequester = remember { FocusRequester() }
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-        ) {
-            OutlinedTextField(
-                value = categoryDialogState.title,
-                onValueChange = { onCategoryEvent(UpdateTitle(it)) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done,
-                ),
-                label = { Text(stringResource(localesR.string.icon_and_title)) },
-                placeholder = { Text(stringResource(localesR.string.title) + "*") },
-                supportingText = { Text(stringResource(localesR.string.required)) },
-                maxLines = 1,
-                leadingIcon = {
-                    IconPickerDropdownMenu(
-                        currentIconId = categoryDialogState.iconId,
-                        onSelectedIconClick = { onCategoryEvent(UpdateIcon(it)) },
-                        onClick = { focusManager.clearFocus() },
-                    )
-                },
-                modifier = Modifier.focusRequester(focusRequester),
+        if (categoryDialogState.isLoading) {
+            LoadingState(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp),
             )
-        }
-        LaunchedEffect(Unit) {
-            if (categoryDialogState.id.isEmpty()) {
-                focusRequester.requestFocus()
+        } else {
+            val focusManager = LocalFocusManager.current
+            val focusRequester = remember { FocusRequester() }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
+                OutlinedTextField(
+                    value = categoryDialogState.title,
+                    onValueChange = onUpdateTitle,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done,
+                    ),
+                    label = { Text(stringResource(localesR.string.icon_and_title)) },
+                    placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                    supportingText = { Text(stringResource(localesR.string.required)) },
+                    maxLines = 1,
+                    leadingIcon = {
+                        IconPickerDropdownMenu(
+                            currentIconId = categoryDialogState.iconId,
+                            onSelectedIconClick = onUpdateIconId,
+                            onClick = { focusManager.clearFocus() },
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                )
+            }
+            LaunchedEffect(categoryDialogState.title) {
+                if (categoryDialogState.title.isBlank()) {
+                    focusRequester.requestFocus()
+                }
             }
         }
     }

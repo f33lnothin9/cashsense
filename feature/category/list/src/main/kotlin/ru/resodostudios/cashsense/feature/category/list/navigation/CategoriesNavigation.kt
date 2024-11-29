@@ -18,6 +18,7 @@ fun NavController.navigateToCategories(navOptions: NavOptions? = null) =
     navigate(route = CategoriesRoute, navOptions)
 
 fun NavGraphBuilder.categoriesSection(
+    onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
@@ -25,7 +26,10 @@ fun NavGraphBuilder.categoriesSection(
         startDestination = CategoriesRoute,
     ) {
         composable<CategoriesRoute> {
-            CategoriesScreen(onShowSnackbar)
+            CategoriesScreen(
+                onEditCategory = onEditCategory,
+                onShowSnackbar= onShowSnackbar,
+            )
         }
         nestedGraphs()
     }

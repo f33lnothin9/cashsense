@@ -22,7 +22,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun CategoryBottomSheet(
     category: Category,
     onDismiss: () -> Unit,
-    onEdit: () -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
@@ -47,7 +47,7 @@ internal fun CategoryBottomSheet(
                 },
                 onClick = {
                     onDismiss()
-                    onEdit()
+                    onEdit(category.id.toString())
                 },
             )
             CsListItem(

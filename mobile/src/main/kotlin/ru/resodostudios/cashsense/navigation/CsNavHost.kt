@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.categoryDialog
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesSection
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
@@ -52,6 +53,7 @@ fun CsNavHost(
             },
         )
         categoriesSection(
+            onEditCategory = navController::navigateToCategoryDialog,
             onShowSnackbar = onShowSnackbar,
             nestedGraphs = {
                 categoryDialog(navController::navigateUp)
