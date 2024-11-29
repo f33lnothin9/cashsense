@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -23,8 +24,10 @@ class CategoryDialogViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val categoryDialogDestination: CategoryDialogRoute = savedStateHandle.toRoute()
+
     private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
-    val categoryDialogUiState = _categoryDialogUiState.asStateFlow()
+    val categoryDialogUiState: StateFlow<CategoryDialogUiState>
+        get() = _categoryDialogUiState.asStateFlow()
 
     init {
         categoryDialogDestination.categoryId?.let(::loadCategory)
@@ -46,7 +49,7 @@ class CategoryDialogViewModel @Inject constructor(
 
     fun saveCategory() {
         val category = Category(
-            id = _categoryDialogUiState.value.id.ifEmpty { Uuid.random().toString() },
+            id = _categoryDialogUiState.value.id.ifBlank { Uuid.random().toString() },
             title = _categoryDialogUiState.value.title,
             iconId = _categoryDialogUiState.value.iconId,
         )
