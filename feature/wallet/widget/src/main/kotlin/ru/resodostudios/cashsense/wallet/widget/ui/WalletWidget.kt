@@ -167,7 +167,7 @@ fun WalletItem(
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId//false".toUri()
+                    data = "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
                     component = ComponentName(
                         LocalContext.current.packageName,
                         TARGET_ACTIVITY_NAME,

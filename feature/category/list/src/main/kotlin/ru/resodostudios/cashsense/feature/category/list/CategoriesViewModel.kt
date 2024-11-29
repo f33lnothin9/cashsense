@@ -7,28 +7,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
+    private val transactionsRepository: TransactionsRepository,
 ) : ViewModel() {
 
     private val shouldDisplayUndoCategoryState = MutableStateFlow(false)
-    private val lastRemovedCategoryIdState = MutableStateFlow<String?>(null)
+    private val lastRemovedCategoryState = MutableStateFlow<Pair<Category, List<String>>?>(null)
+    private val selectedCategoryIdState = MutableStateFlow<String?>(null)
 
     val categoriesUiState: StateFlow<CategoriesUiState> = combine(
-        categoriesRepository.getCategories(),
         shouldDisplayUndoCategoryState,
-        lastRemovedCategoryIdState,
-    ) { categories, shouldDisplayUndoCategory, lastRemovedCategoryId ->
+        categoriesRepository.getCategories(),
+        selectedCategoryIdState,
+    ) { shouldDisplayUndoCategory, categories, selectedCategoryId ->
         CategoriesUiState.Success(
-            shouldDisplayUndoCategory,
-            categories.filterNot { it.id == lastRemovedCategoryId },
+            shouldDisplayUndoCategory = shouldDisplayUndoCategory,
+            categories = categories,
+            selectedCategory = categories.firstOrNull { it.id == selectedCategoryId },
         )
     }
         .stateIn(
@@ -37,27 +44,42 @@ class CategoriesViewModel @Inject constructor(
             initialValue = CategoriesUiState.Loading,
         )
 
-    private fun deleteCategory(id: String) {
-        viewModelScope.launch {
-            categoriesRepository.deleteCategory(id)
-        }
+    fun updateCategoryId(id: String) {
+        selectedCategoryIdState.value = id
     }
 
-    fun hideCategory(id: String) {
-        if (lastRemovedCategoryIdState.value != null) {
-            clearUndoState()
+    fun deleteCategory(id: String) {
+        viewModelScope.launch {
+            val category = categoriesRepository.getCategory(id).first()
+            val transactionIds = transactionsRepository.getTransactionCategoryCrossRefs(id)
+                .first()
+                .map { it.transactionId }
+            lastRemovedCategoryState.value = Pair(category, transactionIds)
+            categoriesRepository.deleteCategory(id)
+            shouldDisplayUndoCategoryState.value = true
         }
-        shouldDisplayUndoCategoryState.value = true
-        lastRemovedCategoryIdState.value = id
     }
 
     fun undoCategoryRemoval() {
-        lastRemovedCategoryIdState.value = null
-        shouldDisplayUndoCategoryState.value = false
+        viewModelScope.launch {
+            lastRemovedCategoryState.value?.let {
+                categoriesRepository.upsertCategory(it.first)
+                it.second.forEach { transactionId ->
+                    it.first.id?.let { categoryId ->
+                        val crossRef = TransactionCategoryCrossRef(
+                            transactionId = transactionId,
+                            categoryId = categoryId,
+                        )
+                        transactionsRepository.upsertTransactionCategoryCrossRef(crossRef)
+                    }
+                }
+            }
+            clearUndoState()
+        }
     }
 
     fun clearUndoState() {
-        lastRemovedCategoryIdState.value?.let(::deleteCategory)
-        undoCategoryRemoval()
+        lastRemovedCategoryState.value = null
+        shouldDisplayUndoCategoryState.value = false
     }
 }

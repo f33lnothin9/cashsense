@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesBaseRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsBaseRoute
@@ -55,6 +56,7 @@ enum class TopLevelDestination(
         fabIcon = CsIcons.Add,
         fabTitle = localesR.string.new_category,
         route = CategoriesRoute::class,
+        baseRoute = CategoriesBaseRoute::class,
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.AutoRenew,

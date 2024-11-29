@@ -10,6 +10,8 @@ interface TransactionsRepository {
 
     fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory>
 
+    fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRef>>
+
     suspend fun upsertTransaction(transaction: Transaction)
 
     suspend fun deleteTransaction(id: String)
