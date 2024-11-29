@@ -6,9 +6,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,10 +14,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -27,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
@@ -35,7 +30,6 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -139,18 +133,11 @@ private fun LazyGridScope.categories(
             items(
                 items = categoriesState.categories,
                 key = { it.id!! },
-                contentType = { "category" },
             ) { category ->
-                CsListItem(
-                    headlineContent = { Text(category.title.toString()) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId)),
-                            contentDescription = null,
-                        )
-                    },
+                CategoryItem(
+                    category = category,
+                    onClick = onCategoryClick,
                     modifier = Modifier.animateItem(),
-                    onClick = { onCategoryClick(category.id.toString()) },
                 )
             }
         }
