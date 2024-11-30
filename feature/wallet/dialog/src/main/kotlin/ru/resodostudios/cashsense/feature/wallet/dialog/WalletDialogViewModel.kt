@@ -72,7 +72,6 @@ class WalletDialogViewModel @Inject constructor(
                 .all { it.transferId == null }
             _walletDialogState.update {
                 it.copy(
-                    id = wallet.id,
                     title = wallet.title,
                     initialBalance = wallet.initialBalance.toString(),
                     currency = wallet.currency,

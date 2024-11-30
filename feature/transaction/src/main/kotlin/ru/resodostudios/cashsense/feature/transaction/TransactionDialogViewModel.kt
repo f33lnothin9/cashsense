@@ -190,16 +190,20 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun loadTransaction(id: String) {
         viewModelScope.launch {
-            _transactionDialogUiState.update { TransactionDialogUiState(isLoading = true) }
+            _transactionDialogUiState.update {
+                TransactionDialogUiState(
+                    transactionId = if (transactionDestination.repeated) "" else id,
+                    isLoading = true,
+                )
+            }
             val transactionCategory = transactionsRepository.getTransactionWithCategory(id).first()
-            val (transactionId, date) = if (transactionDestination.repeated) {
-                "" to Clock.System.now()
+            val date = if (transactionDestination.repeated) {
+                Clock.System.now()
             } else {
-                id to transactionCategory.transaction.timestamp
+                transactionCategory.transaction.timestamp
             }
             _transactionDialogUiState.update {
                 it.copy(
-                    transactionId = transactionId,
                     description = transactionCategory.transaction.description ?: "",
                     amount = transactionCategory.transaction.amount.abs().toString(),
                     transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
