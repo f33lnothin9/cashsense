@@ -28,7 +28,7 @@ import ru.resodostudios.cashsense.feature.subscription.list.navigation.Subscript
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionRoute
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
-import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -68,7 +68,7 @@ class CsAppState(
         @Composable get() {
             with(currentDestination) {
                 if (this?.hasRoute<HomeRoute>() == true ||
-                    this?.hasRoute<EditWalletRoute>() == true ||
+                    this?.hasRoute<WalletDialogRoute>() == true ||
                     this?.hasRoute<TransferRoute>() == true ||
                     this?.hasRoute<TransactionRoute>() == true
                 ) return HOME

@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionBu
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
-import ru.resodostudios.cashsense.feature.wallet.add.AddWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -54,12 +54,8 @@ fun CsApp(
     appState: CsAppState,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
     var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
-    if (showWalletDialog) {
-        AddWalletDialog(onDismiss = { showWalletDialog = false })
-    }
     if (showSubscriptionDialog) {
         SubscriptionDialog(onDismiss = { showSubscriptionDialog = false })
     }
@@ -105,7 +101,7 @@ fun CsApp(
                             iconRes = destination.fabIcon,
                             onClick = {
                                 when (destination) {
-                                    HOME -> showWalletDialog = true
+                                    HOME -> appState.navController.navigateToWalletDialog()
                                     CATEGORIES -> appState.navController.navigateToCategoryDialog()
                                     SUBSCRIPTIONS -> showSubscriptionDialog = true
                                     else -> {}

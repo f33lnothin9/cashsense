@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.edit
+package ru.resodostudios.cashsense.feature.wallet.dialog
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,35 +15,57 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
-import ru.resodostudios.cashsense.core.ui.WalletDialogUiState
-import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
-class EditWalletViewModel @Inject constructor(
+class WalletDialogViewModel @Inject constructor(
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
     private val shortcutManager: ShortcutManager,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val editWalletDestination: EditWalletRoute = savedStateHandle.toRoute()
+    private val walletDialogDestination: WalletDialogRoute = savedStateHandle.toRoute()
 
     private val _walletDialogState = MutableStateFlow(WalletDialogUiState())
     val walletDialogState: StateFlow<WalletDialogUiState>
         get() = _walletDialogState.asStateFlow()
 
     init {
-        editWalletDestination.walletId?.let(::loadWallet)
+        if (walletDialogDestination.walletId != null) {
+            loadWallet(walletDialogDestination.walletId)
+        } else {
+            loadUserData()
+        }
+    }
+
+    private fun loadUserData() {
+        viewModelScope.launch {
+            _walletDialogState.update { WalletDialogUiState(isLoading = true) }
+            val userData = userDataRepository.userData.first()
+            _walletDialogState.update {
+                WalletDialogUiState(
+                    currency = Currency.getInstance(userData.currency.ifEmpty { "USD" }),
+                )
+            }
+        }
     }
 
     private fun loadWallet(id: String) {
         viewModelScope.launch {
-            _walletDialogState.update { WalletDialogUiState(isLoading = true) }
+            _walletDialogState.update {
+                WalletDialogUiState(
+                    id = id,
+                    isLoading = true,
+                )
+            }
             val userData = userDataRepository.userData.first()
-            val walletTransactions = walletsRepository.getWalletWithTransactionsAndCategories(id).first()
+            val walletTransactions = walletsRepository.getWalletWithTransactionsAndCategories(id)
+                .first()
             val wallet = walletTransactions.wallet
             val isCurrencyEditable = walletTransactions.transactionsWithCategories
                 .map { it.transaction }
@@ -77,7 +99,7 @@ class EditWalletViewModel @Inject constructor(
 
     fun saveWallet() {
         val wallet = Wallet(
-            id = _walletDialogState.value.id,
+            id = _walletDialogState.value.id.ifBlank { Uuid.random().toString() },
             title = _walletDialogState.value.title,
             initialBalance = if (_walletDialogState.value.initialBalance.isEmpty()) {
                 BigDecimal.ZERO
@@ -117,3 +139,15 @@ class EditWalletViewModel @Inject constructor(
         }
     }
 }
+
+data class WalletDialogUiState(
+    val id: String = "",
+    val title: String = "",
+    val initialBalance: String = "",
+    val currentPrimaryWalletId: String = "",
+    val currency: Currency = Currency.getInstance("USD"),
+    val isPrimary: Boolean = false,
+    val isLoading: Boolean = false,
+    val isWalletSaved: Boolean = false,
+    val isCurrencyEditable: Boolean = true,
+)
