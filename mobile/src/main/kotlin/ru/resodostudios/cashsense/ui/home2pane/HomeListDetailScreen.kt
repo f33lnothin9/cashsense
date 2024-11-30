@@ -177,7 +177,9 @@ internal fun HomeListDetailScreen(
                     onTransfer = onTransfer,
                     onEditWallet = onEditWallet,
                     onDeleteWallet = onDeleteWallet,
-                    onTransactionCreate = ::onWalletClickShowDetailPane,
+                    onTransactionCreate = {
+                        navigateToTransactionDialog(it, null, false)
+                    },
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
                     onShowSnackbar = onShowSnackbar,
                     shouldDisplayUndoWallet = shouldDisplayUndoWallet,

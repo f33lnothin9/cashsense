@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.INCOME
-import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionRoute
+import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionDialogRoute
 import java.math.BigDecimal.ZERO
 import java.util.Currency
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class TransactionDialogViewModel @Inject constructor(
     categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
-    private val transactionDestination: TransactionRoute = savedStateHandle.toRoute()
+    private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
     val transactionDialogUiState: StateFlow<TransactionDialogUiState>

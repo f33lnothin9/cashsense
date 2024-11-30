@@ -69,7 +69,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun TransactionDialog(
+internal fun TransactionDialog(
     onDismiss: () -> Unit,
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
@@ -85,7 +85,7 @@ fun TransactionDialog(
 }
 
 @Composable
-fun TransactionDialog(
+private fun TransactionDialog(
     transactionDialogState: TransactionDialogUiState,
     categoriesState: CategoriesUiState,
     onDismiss: () -> Unit,
