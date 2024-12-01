@@ -13,13 +13,13 @@ import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesSec
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsSection
 import ru.resodostudios.cashsense.feature.transaction.navigation.navigateToTransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.navigation.transactionDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransfer
 import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.walletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.walletDialog
 import ru.resodostudios.cashsense.ui.CsAppState
 import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
 import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
@@ -57,9 +57,14 @@ fun CsNavHost(
             onShowSnackbar = onShowSnackbar,
             nestedGraphs = {
                 categoryDialog(navController::navigateUp)
-            }
+            },
         )
-        subscriptionsScreen(onShowSnackbar)
+        subscriptionsSection(
+            onShowSnackbar = onShowSnackbar,
+            nestedGraphs = {
+
+            },
+        )
         settingsSection(
             onLicensesClick = navController::navigateToLicenses,
             nestedGraphs = { licensesScreen(navController::navigateUp) },
