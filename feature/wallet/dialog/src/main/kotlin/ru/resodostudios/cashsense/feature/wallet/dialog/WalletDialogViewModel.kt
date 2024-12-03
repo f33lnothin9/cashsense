@@ -98,7 +98,7 @@ class WalletDialogViewModel @Inject constructor(
 
     fun saveWallet() {
         val wallet = Wallet(
-            id = _walletDialogState.value.id.ifBlank { Uuid.random().toString() },
+            id = _walletDialogState.value.id.ifBlank { Uuid.random().toHexString() },
             title = _walletDialogState.value.title,
             initialBalance = if (_walletDialogState.value.initialBalance.isEmpty()) {
                 BigDecimal.ZERO

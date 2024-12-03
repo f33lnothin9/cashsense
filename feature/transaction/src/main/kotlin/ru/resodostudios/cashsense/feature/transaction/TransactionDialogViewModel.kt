@@ -93,7 +93,7 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction() {
         val transaction = Transaction(
-            id = _transactionDialogUiState.value.transactionId.ifEmpty { Uuid.random().toString() },
+            id = _transactionDialogUiState.value.transactionId.ifBlank { Uuid.random().toHexString() },
             walletOwnerId = transactionDestination.walletId,
             description = _transactionDialogUiState.value.description.ifBlank { null },
             amount = _transactionDialogUiState.value.amount

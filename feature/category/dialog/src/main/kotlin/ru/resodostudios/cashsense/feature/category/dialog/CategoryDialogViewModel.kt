@@ -49,7 +49,7 @@ class CategoryDialogViewModel @Inject constructor(
 
     fun saveCategory() {
         val category = Category(
-            id = _categoryDialogUiState.value.id.ifBlank { Uuid.random().toString() },
+            id = _categoryDialogUiState.value.id.ifBlank { Uuid.random().toHexString() },
             title = _categoryDialogUiState.value.title,
             iconId = _categoryDialogUiState.value.iconId,
         )
