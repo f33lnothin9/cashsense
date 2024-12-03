@@ -13,6 +13,7 @@ import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesSec
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.subscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsSection
 import ru.resodostudios.cashsense.feature.transaction.navigation.navigateToTransactionDialog
@@ -61,6 +62,7 @@ fun CsNavHost(
             },
         )
         subscriptionsSection(
+            onEditSubscription = navController::navigateToSubscriptionDialog,
             onShowSnackbar = onShowSnackbar,
             nestedGraphs = {
                 subscriptionDialog(navController::navigateUp)

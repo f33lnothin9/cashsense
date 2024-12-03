@@ -23,6 +23,7 @@ fun NavController.navigateToSubscriptions(navOptions: NavOptions) =
     navigate(route = SubscriptionsRoute, navOptions)
 
 fun NavGraphBuilder.subscriptionsSection(
+    onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
@@ -36,7 +37,10 @@ fun NavGraphBuilder.subscriptionsSection(
                 ),
             ),
         ) {
-            SubscriptionsScreen(onShowSnackbar)
+            SubscriptionsScreen(
+                onEditSubscription = onEditSubscription,
+                onShowSnackbar = onShowSnackbar,
+            )
         }
         nestedGraphs()
     }

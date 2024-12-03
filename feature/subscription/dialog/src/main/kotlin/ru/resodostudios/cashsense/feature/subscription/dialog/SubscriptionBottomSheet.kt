@@ -38,7 +38,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun SubscriptionBottomSheet(
     onDismiss: () -> Unit,
-    onEdit: () -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
     viewModel: SubscriptionDialogViewModel = hiltViewModel(),
 ) {
@@ -57,7 +57,7 @@ fun SubscriptionBottomSheet(
 fun SubscriptionBottomSheet(
     subscriptionDialogState: SubscriptionDialogUiState,
     onDismiss: () -> Unit,
-    onEdit: () -> Unit,
+    onEdit: (String) -> Unit,
     onDelete: (String) -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
@@ -128,7 +128,7 @@ fun SubscriptionBottomSheet(
                     },
                     onClick = {
                         onDismiss()
-                        onEdit()
+                        onEdit(subscriptionDialogState.id)
                     },
                 )
                 CsListItem(

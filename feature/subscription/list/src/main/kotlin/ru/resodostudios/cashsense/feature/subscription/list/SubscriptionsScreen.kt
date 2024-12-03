@@ -27,7 +27,6 @@ import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionBottomSheet
-import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateId
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogViewModel
@@ -37,6 +36,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun SubscriptionsScreen(
+    onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     subscriptionsViewModel: SubscriptionsViewModel = hiltViewModel(),
     subscriptionDialogViewModel: SubscriptionDialogViewModel = hiltViewModel(),
@@ -45,6 +45,7 @@ internal fun SubscriptionsScreen(
 
     SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
+        onEditSubscription = onEditSubscription,
         onShowSnackbar = onShowSnackbar,
         onSubscriptionEvent = subscriptionDialogViewModel::onSubscriptionEvent,
         hideSubscription = subscriptionsViewModel::hideSubscription,
@@ -56,6 +57,7 @@ internal fun SubscriptionsScreen(
 @Composable
 internal fun SubscriptionsScreen(
     subscriptionsState: SubscriptionsUiState,
+    onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     hideSubscription: (String) -> Unit = {},
@@ -83,7 +85,6 @@ internal fun SubscriptionsScreen(
             }
 
             var showSubscriptionBottomSheet by rememberSaveable { mutableStateOf(false) }
-            var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
 
             if (subscriptionsState.subscriptions.isNotEmpty()) {
                 SubscriptionsGrid(
@@ -94,13 +95,8 @@ internal fun SubscriptionsScreen(
                 if (showSubscriptionBottomSheet) {
                     SubscriptionBottomSheet(
                         onDismiss = { showSubscriptionBottomSheet = false },
-                        onEdit = { showSubscriptionDialog = true },
+                        onEdit = onEditSubscription,
                         onDelete = hideSubscription,
-                    )
-                }
-                if (showSubscriptionDialog) {
-                    SubscriptionDialog(
-                        onDismiss = { showSubscriptionDialog = false },
                     )
                 }
             } else {
