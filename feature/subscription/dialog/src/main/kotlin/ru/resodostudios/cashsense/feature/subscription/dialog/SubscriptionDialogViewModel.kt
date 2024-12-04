@@ -46,7 +46,8 @@ class SubscriptionDialogViewModel @Inject constructor(
     fun onSubscriptionEvent(event: SubscriptionDialogEvent) {
         when (event) {
             SubscriptionDialogEvent.Save -> {
-                val subscriptionId = _subscriptionDialogUiState.value.id.ifBlank { Uuid.random().toHexString() }
+                val subscriptionId = _subscriptionDialogUiState.value.id
+                    .ifBlank { Uuid.random().toHexString() }
                 var reminder: Reminder? = null
 
                 if (_subscriptionDialogUiState.value.isReminderEnabled) {
@@ -82,7 +83,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                 _subscriptionDialogUiState.update {
                     it.copy(id = event.id)
                 }
-                loadSubscription()
+                loadSubscription(event.id)
             }
 
             is SubscriptionDialogEvent.UpdateTitle -> {
@@ -123,11 +124,10 @@ class SubscriptionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun loadSubscription() {
+    private fun loadSubscription(id: String) {
         viewModelScope.launch {
-            val subscription = subscriptionsRepository.getSubscription(_subscriptionDialogUiState.value.id)
-                .onStart { _subscriptionDialogUiState.update { it.copy(isLoading = true) } }
-                .first()
+            _subscriptionDialogUiState.update { it.copy(isLoading = true) }
+            val subscription = subscriptionsRepository.getSubscription(id).first()
             _subscriptionDialogUiState.update {
                 SubscriptionDialogUiState(
                     id = subscription.id,
@@ -136,7 +136,7 @@ class SubscriptionDialogViewModel @Inject constructor(
                     paymentDate = subscription.paymentDate,
                     currency = subscription.currency,
                     isReminderEnabled = subscription.reminder != null,
-                    repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval ?: 0),
+                    repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval),
                 )
             }
         }
@@ -159,7 +159,8 @@ class SubscriptionDialogViewModel @Inject constructor(
     }
 }
 
-fun getRepeatingIntervalType(repeatingInterval: Long): RepeatingIntervalType =
+
+fun getRepeatingIntervalType(repeatingInterval: Long?): RepeatingIntervalType =
     RepeatingIntervalType.entries.firstOrNull { it.period == repeatingInterval } ?: NONE
 
 enum class RepeatingIntervalType(val period: Long) {
