@@ -43,11 +43,11 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun SubscriptionCard(
     subscription: Subscription,
-    onClick: (String) -> Unit,
+    onClick: (Subscription) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
-        onClick = { onClick(subscription.id) },
+        onClick = { onClick(subscription) },
         shape = RoundedCornerShape(24.dp),
         modifier = modifier,
     ) {

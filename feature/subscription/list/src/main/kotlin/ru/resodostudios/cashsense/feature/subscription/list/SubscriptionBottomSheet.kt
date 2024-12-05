@@ -37,7 +37,7 @@ internal fun SubscriptionBottomSheet(
     subscription: Subscription,
     onDismiss: () -> Unit,
     onEdit: (String) -> Unit,
-    onDelete: (String) -> Unit,
+    onDelete: () -> Unit,
 ) {
     CsModalBottomSheet(onDismiss) {
         Column {
@@ -110,7 +110,7 @@ internal fun SubscriptionBottomSheet(
                 },
                 onClick = {
                     onDismiss()
-                    onDelete(subscription.id)
+                    onDelete()
                 },
             )
         }

@@ -42,8 +42,8 @@ internal fun SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
         onEditSubscription = onEditSubscription,
         onShowSnackbar = onShowSnackbar,
-        onUpdateSubscriptionId = viewModel::updateSubscriptionId,
-        hideSubscription = viewModel::hideSubscription,
+        onSelectSubscription = viewModel::updateSelectedSubscription,
+        onDeleteSubscription = viewModel::deleteSubscription,
         undoSubscriptionRemoval = viewModel::undoSubscriptionRemoval,
         clearUndoState = viewModel::clearUndoState,
     )
@@ -54,8 +54,8 @@ internal fun SubscriptionsScreen(
     subscriptionsState: SubscriptionsUiState,
     onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onUpdateSubscriptionId: (String) -> Unit,
-    hideSubscription: (String) -> Unit = {},
+    onSelectSubscription: (Subscription) -> Unit,
+    onDeleteSubscription: () -> Unit = {},
     undoSubscriptionRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
@@ -85,7 +85,7 @@ internal fun SubscriptionsScreen(
                 SubscriptionsGrid(
                     subscriptions = subscriptionsState.subscriptions,
                     onSubscriptionClick = {
-                        onUpdateSubscriptionId(it)
+                        onSelectSubscription(it)
                         showSubscriptionBottomSheet = true
                     },
                 )
@@ -94,7 +94,7 @@ internal fun SubscriptionsScreen(
                         subscription = subscriptionsState.selectedSubscription,
                         onDismiss = { showSubscriptionBottomSheet = false },
                         onEdit = onEditSubscription,
-                        onDelete = hideSubscription,
+                        onDelete = onDeleteSubscription,
                     )
                 }
             } else {
@@ -110,7 +110,7 @@ internal fun SubscriptionsScreen(
 @Composable
 private fun SubscriptionsGrid(
     subscriptions: List<Subscription>,
-    onSubscriptionClick: (String) -> Unit,
+    onSubscriptionClick: (Subscription) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
