@@ -26,10 +26,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionBottomSheet
-import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent
-import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateId
-import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogViewModel
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsUiState.Loading
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsUiState.Success
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -38,19 +34,18 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun SubscriptionsScreen(
     onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    subscriptionsViewModel: SubscriptionsViewModel = hiltViewModel(),
-    subscriptionDialogViewModel: SubscriptionDialogViewModel = hiltViewModel(),
+    viewModel: SubscriptionsViewModel = hiltViewModel(),
 ) {
-    val subscriptionsState by subscriptionsViewModel.subscriptionsUiState.collectAsStateWithLifecycle()
+    val subscriptionsState by viewModel.subscriptionsUiState.collectAsStateWithLifecycle()
 
     SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
         onEditSubscription = onEditSubscription,
         onShowSnackbar = onShowSnackbar,
-        onSubscriptionEvent = subscriptionDialogViewModel::onSubscriptionEvent,
-        hideSubscription = subscriptionsViewModel::hideSubscription,
-        undoSubscriptionRemoval = subscriptionsViewModel::undoSubscriptionRemoval,
-        clearUndoState = subscriptionsViewModel::clearUndoState,
+        onUpdateSubscriptionId = viewModel::updateSubscriptionId,
+        hideSubscription = viewModel::hideSubscription,
+        undoSubscriptionRemoval = viewModel::undoSubscriptionRemoval,
+        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -59,7 +54,7 @@ internal fun SubscriptionsScreen(
     subscriptionsState: SubscriptionsUiState,
     onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
+    onUpdateSubscriptionId: (String) -> Unit,
     hideSubscription: (String) -> Unit = {},
     undoSubscriptionRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
@@ -89,11 +84,14 @@ internal fun SubscriptionsScreen(
             if (subscriptionsState.subscriptions.isNotEmpty()) {
                 SubscriptionsGrid(
                     subscriptions = subscriptionsState.subscriptions,
-                    onSubscriptionEvent = onSubscriptionEvent,
-                    onShowSubscriptionBottomSheetChange = { showSubscriptionBottomSheet = true },
+                    onSubscriptionClick = {
+                        onUpdateSubscriptionId(it)
+                        showSubscriptionBottomSheet = true
+                    },
                 )
-                if (showSubscriptionBottomSheet) {
+                if (showSubscriptionBottomSheet && subscriptionsState.selectedSubscription != null) {
                     SubscriptionBottomSheet(
+                        subscription = subscriptionsState.selectedSubscription,
                         onDismiss = { showSubscriptionBottomSheet = false },
                         onEdit = onEditSubscription,
                         onDelete = hideSubscription,
@@ -112,8 +110,7 @@ internal fun SubscriptionsScreen(
 @Composable
 private fun SubscriptionsGrid(
     subscriptions: List<Subscription>,
-    onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
-    onShowSubscriptionBottomSheetChange: () -> Unit,
+    onSubscriptionClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -131,10 +128,7 @@ private fun SubscriptionsGrid(
         items(subscriptions) { subscription ->
             SubscriptionCard(
                 subscription = subscription,
-                onClick = { id ->
-                    onSubscriptionEvent(UpdateId(id))
-                    onShowSubscriptionBottomSheetChange()
-                },
+                onClick = onSubscriptionClick,
                 modifier = Modifier.animateItem(),
             )
         }
@@ -151,8 +145,7 @@ private fun SubscriptionsGridPreview(
         Surface {
             SubscriptionsGrid(
                 subscriptions = subscriptions,
-                onSubscriptionEvent = {},
-                onShowSubscriptionBottomSheetChange = {},
+                onSubscriptionClick = {},
             )
         }
     }

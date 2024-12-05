@@ -20,14 +20,17 @@ class SubscriptionsViewModel @Inject constructor(
 
     private val shouldDisplayUndoSubscriptionState = MutableStateFlow(false)
     private val lastRemovedSubscriptionIdState = MutableStateFlow<String?>(null)
+    private val selectedSubscriptionIdState = MutableStateFlow<String?>(null)
 
     val subscriptionsUiState: StateFlow<SubscriptionsUiState> = combine(
         subscriptionsRepository.getSubscriptions(),
         shouldDisplayUndoSubscriptionState,
         lastRemovedSubscriptionIdState,
-    ) { subscriptions, shouldDisplayUndoSubscription, lastRemovedSubscriptionId ->
+        selectedSubscriptionIdState,
+    ) { subscriptions, shouldDisplayUndoSubscription, lastRemovedSubscriptionId, selectedSubscriptionId ->
         SubscriptionsUiState.Success(
             shouldDisplayUndoSubscription,
+            subscriptions.find { it.id == selectedSubscriptionId },
             subscriptions.filterNot { it.id == lastRemovedSubscriptionId },
         )
     }
@@ -41,6 +44,10 @@ class SubscriptionsViewModel @Inject constructor(
         viewModelScope.launch {
             subscriptionsRepository.deleteSubscription(id)
         }
+    }
+
+    fun updateSubscriptionId(id: String) {
+        selectedSubscriptionIdState.value = id
     }
 
     fun hideSubscription(id: String) {
@@ -68,6 +75,7 @@ sealed interface SubscriptionsUiState {
 
     data class Success(
         val shouldDisplayUndoSubscription: Boolean,
+        val selectedSubscription: Subscription?,
         val subscriptions: List<Subscription>,
     ) : SubscriptionsUiState
 }
