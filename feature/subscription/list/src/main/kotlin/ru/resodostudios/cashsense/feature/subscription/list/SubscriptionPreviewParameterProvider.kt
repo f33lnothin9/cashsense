@@ -3,8 +3,9 @@ package ru.resodostudios.cashsense.feature.subscription.list
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Reminder
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType
 import java.math.BigDecimal
 import java.util.Currency
 
@@ -26,7 +27,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     reminder = Reminder(
                         id = 0,
                         notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = RepeatingIntervalType.MONTHLY.period,
+                        repeatingInterval = MONTHLY.period,
                     ),
                 ),
                 Subscription(
@@ -46,7 +47,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     reminder = Reminder(
                         id = 0,
                         notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = RepeatingIntervalType.YEARLY.period,
+                        repeatingInterval = YEARLY.period,
                     ),
                 ),
                 Subscription(
@@ -58,7 +59,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     reminder = Reminder(
                         id = 0,
                         notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = RepeatingIntervalType.MONTHLY.period,
+                        repeatingInterval = MONTHLY.period,
                     ),
                 ),
                 Subscription(

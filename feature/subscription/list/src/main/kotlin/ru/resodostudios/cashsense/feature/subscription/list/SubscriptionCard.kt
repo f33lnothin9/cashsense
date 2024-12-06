@@ -26,15 +26,15 @@ import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.DAILY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.WEEKLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.DAILY
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.MONTHLY
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.WEEKLY
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.YEARLY
-import ru.resodostudios.cashsense.feature.subscription.dialog.getRepeatingIntervalType
 import java.math.BigDecimal
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR

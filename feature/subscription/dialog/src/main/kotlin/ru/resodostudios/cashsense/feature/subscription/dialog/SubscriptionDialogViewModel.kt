@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
-import android.app.AlarmManager.INTERVAL_DAY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +22,10 @@ import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.Reminder
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.NONE
+import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -157,18 +158,6 @@ class SubscriptionDialogViewModel @Inject constructor(
                 }
         }
     }
-}
-
-
-fun getRepeatingIntervalType(repeatingInterval: Long?): RepeatingIntervalType =
-    RepeatingIntervalType.entries.firstOrNull { it.period == repeatingInterval } ?: NONE
-
-enum class RepeatingIntervalType(val period: Long) {
-    NONE(0L),
-    DAILY(INTERVAL_DAY),
-    WEEKLY(7 * INTERVAL_DAY),
-    MONTHLY(30 * INTERVAL_DAY),
-    YEARLY(365 * INTERVAL_DAY),
 }
 
 data class SubscriptionDialogUiState(
