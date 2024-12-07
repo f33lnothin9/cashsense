@@ -2,7 +2,7 @@ package ru.resodostudios.cashsense.core.data.util
 
 import ru.resodostudios.cashsense.core.model.data.Reminder
 
-interface AlarmScheduler {
+interface ReminderScheduler {
 
     fun schedule(reminder: Reminder)
 
