@@ -6,8 +6,6 @@ import java.util.Currency
 
 sealed interface SubscriptionDialogEvent {
 
-    data class UpdateId(val id: String) : SubscriptionDialogEvent
-
     data class UpdateTitle(val title: String) : SubscriptionDialogEvent
 
     data class UpdateAmount(val amount: String) : SubscriptionDialogEvent

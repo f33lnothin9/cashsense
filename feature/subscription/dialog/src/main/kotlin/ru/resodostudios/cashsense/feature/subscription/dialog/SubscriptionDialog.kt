@@ -82,8 +82,11 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.edit_subscription else localesR.string.new_subscription
-    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (dialogTitle, dialogConfirmText) = if (subscriptionDialogState.id.isNotEmpty()) {
+        localesR.string.edit_subscription to localesR.string.save
+    } else {
+        localesR.string.new_subscription to localesR.string.add
+    }
 
     CsAlertDialog(
         titleRes = dialogTitle,
