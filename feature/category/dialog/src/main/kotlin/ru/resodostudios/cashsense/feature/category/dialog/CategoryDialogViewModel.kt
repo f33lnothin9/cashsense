@@ -56,7 +56,6 @@ class CategoryDialogViewModel @Inject constructor(
         viewModelScope.launch {
             categoriesRepository.upsertCategory(category)
         }
-        _categoryDialogUiState.update { it.copy(isCategorySaved = true) }
     }
 
     fun updateTitle(title: String) {
@@ -77,5 +76,4 @@ data class CategoryDialogUiState(
     val title: String = "",
     val iconId: Int = 0,
     val isLoading: Boolean = false,
-    val isCategorySaved: Boolean = false,
 )
