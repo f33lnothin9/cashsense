@@ -12,7 +12,7 @@ interface UserDataRepository {
 
     suspend fun setDynamicColorPreference(useDynamicColor: Boolean)
 
-    suspend fun setPrimaryWalletId(id: String)
+    suspend fun setPrimaryWalletId(id: String, isPrimary: Boolean)
 
     suspend fun setCurrency(currency: String)
 }

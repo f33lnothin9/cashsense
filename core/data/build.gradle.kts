@@ -20,6 +20,7 @@ dependencies {
 
     implementation(projects.core.designsystem)
     implementation(projects.core.notifications)
+    implementation(projects.core.shortcuts)
 
     implementation(libs.kotlinx.serialization.json)
 }

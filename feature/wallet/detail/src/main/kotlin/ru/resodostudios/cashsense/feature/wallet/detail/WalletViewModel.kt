@@ -20,7 +20,6 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
-import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
@@ -47,7 +46,6 @@ import javax.inject.Inject
 class WalletViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val userDataRepository: UserDataRepository,
-    private val shortcutManager: ShortcutManager,
     savedStateHandle: SavedStateHandle,
     getExtendedUserWallet: GetExtendedUserWalletUseCase,
 ) : ViewModel() {
@@ -197,13 +195,7 @@ class WalletViewModel @Inject constructor(
 
     fun setPrimaryWalletId(id: String, isPrimary: Boolean) {
         viewModelScope.launch {
-            if (isPrimary) {
-                userDataRepository.setPrimaryWalletId(id)
-                shortcutManager.addTransactionShortcut(id)
-            } else {
-                userDataRepository.setPrimaryWalletId("")
-                shortcutManager.removeShortcuts()
-            }
+            userDataRepository.setPrimaryWalletId(id, isPrimary)
         }
     }
 

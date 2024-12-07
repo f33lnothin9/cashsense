@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,16 +46,8 @@ internal fun WalletDialog(
 ) {
     val walletDialogState by viewModel.walletDialogState.collectAsStateWithLifecycle()
 
-    val (titleRes, confirmButtonTextRes) = if (walletDialogState.id.isNotBlank()) {
-        localesR.string.edit_wallet to localesR.string.save
-    } else {
-        localesR.string.new_wallet to localesR.string.add
-    }
-
     WalletDialog(
         walletDialogState = walletDialogState,
-        titleRes = titleRes,
-        confirmButtonTextRes = confirmButtonTextRes,
         onDismiss = onDismiss,
         onWalletSave = viewModel::saveWallet,
         onTitleUpdate = viewModel::updateTitle,
@@ -70,8 +61,6 @@ internal fun WalletDialog(
 @Composable
 private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
-    @StringRes titleRes: Int = localesR.string.new_wallet,
-    @StringRes confirmButtonTextRes: Int = localesR.string.add,
     onDismiss: () -> Unit,
     onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
@@ -80,10 +69,10 @@ private fun WalletDialog(
     onPrimaryUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(walletDialogState.isWalletSaved) {
-        if (walletDialogState.isWalletSaved) {
-            onDismiss()
-        }
+    val (titleRes, confirmButtonTextRes) = if (walletDialogState.id.isNotBlank()) {
+        localesR.string.edit_wallet to localesR.string.save
+    } else {
+        localesR.string.new_wallet to localesR.string.add
     }
 
     CsAlertDialog(
@@ -91,7 +80,10 @@ private fun WalletDialog(
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Wallet,
-        onConfirm = onWalletSave,
+        onConfirm = {
+            onWalletSave()
+            onDismiss()
+        },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
         modifier = modifier,
