@@ -47,6 +47,7 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.cleanAmount
@@ -81,8 +82,11 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.edit_subscription else localesR.string.new_subscription
-    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (dialogTitle, dialogConfirmText) = if (subscriptionDialogState.id.isNotEmpty()) {
+        localesR.string.edit_subscription to localesR.string.save
+    } else {
+        localesR.string.new_subscription to localesR.string.add
+    }
 
     CsAlertDialog(
         titleRes = dialogTitle,

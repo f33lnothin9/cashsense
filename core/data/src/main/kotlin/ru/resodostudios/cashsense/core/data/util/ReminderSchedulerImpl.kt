@@ -9,14 +9,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import javax.inject.Inject
 
-internal class NotificationAlarmScheduler @Inject constructor(
+internal class ReminderSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) : AlarmScheduler {
+) : ReminderScheduler {
 
     private val alarmManager: AlarmManager = checkNotNull(context.getSystemService<AlarmManager>())
 
     private fun createPendingIntent(reminderId: Int): PendingIntent {
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
+        val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
             putExtra(EXTRA_REMINDER_ID, reminderId)
         }
 

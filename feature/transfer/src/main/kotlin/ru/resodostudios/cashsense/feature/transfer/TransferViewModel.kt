@@ -101,7 +101,7 @@ class TransferViewModel @Inject constructor(
         val timestamp = Clock.System.now()
         val withdrawalAmount = BigDecimal(transferState.value.amount)
         val withdrawalTransaction = Transaction(
-            id = Uuid.random().toString(),
+            id = Uuid.random().toHexString(),
             walletOwnerId = transferState.value.sendingWallet.id,
             description = null,
             amount = withdrawalAmount.negate(),
@@ -111,7 +111,7 @@ class TransferViewModel @Inject constructor(
             transferId = transferId,
         )
         val depositTransaction = Transaction(
-            id = Uuid.random().toString(),
+            id = Uuid.random().toHexString(),
             walletOwnerId = transferState.value.receivingWallet.id,
             description = null,
             amount = BigDecimal(transferState.value.convertedAmount),

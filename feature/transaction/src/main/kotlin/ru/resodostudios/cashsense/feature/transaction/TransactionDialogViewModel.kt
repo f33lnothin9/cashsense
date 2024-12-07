@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateWalletId
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.EXPENSE
 import ru.resodostudios.cashsense.feature.transaction.TransactionType.INCOME
-import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionRoute
+import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionDialogRoute
 import java.math.BigDecimal.ZERO
 import java.util.Currency
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class TransactionDialogViewModel @Inject constructor(
     categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
-    private val transactionDestination: TransactionRoute = savedStateHandle.toRoute()
+    private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
     val transactionDialogUiState: StateFlow<TransactionDialogUiState>
@@ -93,7 +93,7 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction() {
         val transaction = Transaction(
-            id = _transactionDialogUiState.value.transactionId.ifEmpty { Uuid.random().toString() },
+            id = _transactionDialogUiState.value.transactionId.ifBlank { Uuid.random().toHexString() },
             walletOwnerId = transactionDestination.walletId,
             description = _transactionDialogUiState.value.description.ifBlank { null },
             amount = _transactionDialogUiState.value.amount
@@ -190,16 +190,20 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun loadTransaction(id: String) {
         viewModelScope.launch {
-            _transactionDialogUiState.update { TransactionDialogUiState(isLoading = true) }
+            _transactionDialogUiState.update {
+                TransactionDialogUiState(
+                    transactionId = if (transactionDestination.repeated) "" else id,
+                    isLoading = true,
+                )
+            }
             val transactionCategory = transactionsRepository.getTransactionWithCategory(id).first()
-            val (transactionId, date) = if (transactionDestination.repeated) {
-                "" to Clock.System.now()
+            val date = if (transactionDestination.repeated) {
+                Clock.System.now()
             } else {
-                id to transactionCategory.transaction.timestamp
+                transactionCategory.transaction.timestamp
             }
             _transactionDialogUiState.update {
                 it.copy(
-                    transactionId = transactionId,
                     description = transactionCategory.transaction.description ?: "",
                     amount = transactionCategory.transaction.amount.abs().toString(),
                     transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,

@@ -53,13 +53,10 @@ fun CategoryDialog(
     onUpdateIconId: (Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (categoryDialogState.id.isNotEmpty()) localesR.string.edit_category else localesR.string.new_category
-    val dialogConfirmText = if (categoryDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
-
-    LaunchedEffect(categoryDialogState.isCategorySaved) {
-        if (categoryDialogState.isCategorySaved) {
-            onDismiss()
-        }
+    val (dialogTitle, dialogConfirmText) = if (categoryDialogState.id.isNotEmpty()) {
+        localesR.string.edit_category to localesR.string.save
+    } else {
+        localesR.string.new_category to localesR.string.add
     }
 
     CsAlertDialog(
@@ -67,7 +64,10 @@ fun CategoryDialog(
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Category,
-        onConfirm = onSaveCategory,
+        onConfirm = {
+            onSaveCategory()
+            onDismiss()
+        },
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
     ) {

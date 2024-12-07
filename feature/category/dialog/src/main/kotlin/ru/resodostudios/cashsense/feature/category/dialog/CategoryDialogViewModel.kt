@@ -49,14 +49,13 @@ class CategoryDialogViewModel @Inject constructor(
 
     fun saveCategory() {
         val category = Category(
-            id = _categoryDialogUiState.value.id.ifBlank { Uuid.random().toString() },
+            id = _categoryDialogUiState.value.id.ifBlank { Uuid.random().toHexString() },
             title = _categoryDialogUiState.value.title,
             iconId = _categoryDialogUiState.value.iconId,
         )
         viewModelScope.launch {
             categoriesRepository.upsertCategory(category)
         }
-        _categoryDialogUiState.update { it.copy(isCategorySaved = true) }
     }
 
     fun updateTitle(title: String) {
@@ -77,5 +76,4 @@ data class CategoryDialogUiState(
     val title: String = "",
     val iconId: Int = 0,
     val isLoading: Boolean = false,
-    val isCategorySaved: Boolean = false,
 )

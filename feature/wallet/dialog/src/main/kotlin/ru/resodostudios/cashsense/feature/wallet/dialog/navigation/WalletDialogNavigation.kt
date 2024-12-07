@@ -1,29 +1,29 @@
-package ru.resodostudios.cashsense.feature.wallet.edit.navigation
+package ru.resodostudios.cashsense.feature.wallet.dialog.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.dialog
 import kotlinx.serialization.Serializable
-import ru.resodostudios.cashsense.feature.wallet.edit.EditWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
 
 @Serializable
-data class EditWalletRoute(
+data class WalletDialogRoute(
     val walletId: String? = null,
 )
 
-fun NavController.navigateToEditWallet(
+fun NavController.navigateToWalletDialog(
     walletId: String? = null,
     navOptions: NavOptionsBuilder.() -> Unit = {},
-) = navigate(route = EditWalletRoute(walletId)) {
+) = navigate(route = WalletDialogRoute(walletId)) {
     navOptions()
 }
 
-fun NavGraphBuilder.editWalletDialog(
+fun NavGraphBuilder.walletDialog(
     onDismiss: () -> Unit,
 ) {
-    dialog<EditWalletRoute> {
-        EditWalletDialog(
+    dialog<WalletDialogRoute> {
+        WalletDialog(
             onDismiss = onDismiss,
         )
     }

@@ -1,11 +1,10 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import kotlinx.datetime.Instant
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import java.util.Currency
 
 sealed interface SubscriptionDialogEvent {
-
-    data class UpdateId(val id: String) : SubscriptionDialogEvent
 
     data class UpdateTitle(val title: String) : SubscriptionDialogEvent
 

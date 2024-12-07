@@ -35,7 +35,7 @@ class CategoriesViewModel @Inject constructor(
         CategoriesUiState.Success(
             shouldDisplayUndoCategory = shouldDisplayUndoCategory,
             categories = categories,
-            selectedCategory = categories.firstOrNull { it.id == selectedCategoryId },
+            selectedCategory = categories.find { it.id == selectedCategoryId },
         )
     }
         .stateIn(

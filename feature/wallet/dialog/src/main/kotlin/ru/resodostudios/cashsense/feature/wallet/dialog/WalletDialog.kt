@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.ui
+package ru.resodostudios.cashsense.feature.wallet.dialog
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -27,17 +28,50 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
+import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.cleanAmount
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun WalletDialog(
+internal fun WalletDialog(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: WalletDialogViewModel = hiltViewModel(),
+) {
+    val walletDialogState by viewModel.walletDialogState.collectAsStateWithLifecycle()
+
+    val (titleRes, confirmButtonTextRes) = if (walletDialogState.id.isNotBlank()) {
+        localesR.string.edit_wallet to localesR.string.save
+    } else {
+        localesR.string.new_wallet to localesR.string.add
+    }
+
+    WalletDialog(
+        walletDialogState = walletDialogState,
+        titleRes = titleRes,
+        confirmButtonTextRes = confirmButtonTextRes,
+        onDismiss = onDismiss,
+        onWalletSave = viewModel::saveWallet,
+        onTitleUpdate = viewModel::updateTitle,
+        onInitialBalanceUpdate = viewModel::updateInitialBalance,
+        onCurrencyUpdate = viewModel::updateCurrency,
+        onPrimaryUpdate = viewModel::updatePrimary,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
-    @StringRes titleRes: Int,
-    @StringRes confirmButtonTextRes: Int,
+    @StringRes titleRes: Int = localesR.string.new_wallet,
+    @StringRes confirmButtonTextRes: Int = localesR.string.add,
     onDismiss: () -> Unit,
     onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
@@ -46,6 +80,12 @@ fun WalletDialog(
     onPrimaryUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(walletDialogState.isWalletSaved) {
+        if (walletDialogState.isWalletSaved) {
+            onDismiss()
+        }
+    }
+
     CsAlertDialog(
         titleRes = titleRes,
         confirmButtonTextRes = confirmButtonTextRes,
@@ -57,7 +97,11 @@ fun WalletDialog(
         modifier = modifier,
     ) {
         if (walletDialogState.isLoading) {
-            LoadingState(Modifier.fillMaxWidth().height(320.dp))
+            LoadingState(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp),
+            )
         } else {
             val focusManager = LocalFocusManager.current
             val focusRequester = remember { FocusRequester() }
@@ -131,15 +175,3 @@ fun WalletDialog(
         }
     }
 }
-
-data class WalletDialogUiState(
-    val id: String = "",
-    val title: String = "",
-    val initialBalance: String = "",
-    val currentPrimaryWalletId: String = "",
-    val currency: Currency = Currency.getInstance("USD"),
-    val isPrimary: Boolean = false,
-    val isLoading: Boolean = false,
-    val isWalletSaved: Boolean = false,
-    val isCurrencyEditable: Boolean = true,
-)
