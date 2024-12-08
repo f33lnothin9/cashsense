@@ -96,4 +96,6 @@
   <string name="from_wallet">지갑에서</string>
   <string name="to_wallet">지갑으로</string>
   <string name="converted_amount">변환된 금액</string>
+  <string name="primary_icon_description">Make primary</string>
+  <string name="non_primary_icon_description">Make non-primary</string>
 </resources>
