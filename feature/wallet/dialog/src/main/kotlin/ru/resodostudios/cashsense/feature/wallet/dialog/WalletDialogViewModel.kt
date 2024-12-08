@@ -83,19 +83,19 @@ class WalletDialogViewModel @Inject constructor(
     }
 
     fun saveWallet() {
-        val wallet = Wallet(
-            id = _walletDialogState.value.id.ifBlank { Uuid.random().toHexString() },
-            title = _walletDialogState.value.title,
-            initialBalance = if (_walletDialogState.value.initialBalance.isEmpty()) {
-                BigDecimal.ZERO
-            } else {
-                BigDecimal(_walletDialogState.value.initialBalance)
-            },
-            currency = _walletDialogState.value.currency,
-        )
         viewModelScope.launch {
-            userDataRepository.setPrimaryWalletId(wallet.id, _walletDialogState.value.isPrimary)
+            val wallet = Wallet(
+                id = _walletDialogState.value.id.ifBlank { Uuid.random().toHexString() },
+                title = _walletDialogState.value.title,
+                initialBalance = if (_walletDialogState.value.initialBalance.isEmpty()) {
+                    BigDecimal.ZERO
+                } else {
+                    BigDecimal(_walletDialogState.value.initialBalance)
+                },
+                currency = _walletDialogState.value.currency,
+            )
             walletsRepository.upsertWallet(wallet)
+            userDataRepository.setPrimaryWalletId(wallet.id, _walletDialogState.value.isPrimary)
         }
     }
 
