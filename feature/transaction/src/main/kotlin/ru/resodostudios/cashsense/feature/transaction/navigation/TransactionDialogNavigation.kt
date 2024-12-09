@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.transaction.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.dialog
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
@@ -27,9 +26,8 @@ fun NavController.navigateToTransactionDialog(
     walletId: String,
     transactionId: String? = null,
     repeated: Boolean = false,
-    navOptions: NavOptionsBuilder.() -> Unit = {},
 ) = navigate(route = TransactionDialogRoute(walletId, transactionId, repeated)) {
-    navOptions()
+    launchSingleTop = true
 }
 
 fun NavGraphBuilder.transactionDialog(

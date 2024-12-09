@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.transfer.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.dialog
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.transfer.TransferDialog
@@ -14,9 +13,8 @@ data class TransferRoute(
 
 fun NavController.navigateToTransfer(
     walletId: String? = null,
-    navOptions: NavOptionsBuilder.() -> Unit = {},
 ) = navigate(route = TransferRoute(walletId)) {
-    navOptions()
+    launchSingleTop = true
 }
 
 fun NavGraphBuilder.transferDialog(
