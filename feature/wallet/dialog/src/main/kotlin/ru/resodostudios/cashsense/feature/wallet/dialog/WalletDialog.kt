@@ -32,10 +32,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.cleanAmount
+import java.math.BigDecimal
 import java.util.Currency
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -62,7 +65,7 @@ internal fun WalletDialog(
 private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
     onDismiss: () -> Unit,
-    onWalletSave: () -> Unit,
+    onWalletSave: (Wallet, Boolean) -> Unit,
     onTitleUpdate: (String) -> Unit,
     onInitialBalanceUpdate: (String) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
@@ -81,7 +84,17 @@ private fun WalletDialog(
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Wallet,
         onConfirm = {
-            onWalletSave()
+            val wallet = Wallet(
+                id = walletDialogState.id.ifBlank { Uuid.random().toHexString() },
+                title = walletDialogState.title,
+                initialBalance = if (walletDialogState.initialBalance.isBlank()) {
+                    BigDecimal.ZERO
+                } else {
+                    BigDecimal(walletDialogState.initialBalance)
+                },
+                currency = walletDialogState.currency,
+            )
+            onWalletSave(wallet, walletDialogState.isPrimary)
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),

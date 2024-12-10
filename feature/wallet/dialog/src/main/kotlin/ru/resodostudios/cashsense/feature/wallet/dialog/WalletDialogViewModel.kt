@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,14 +15,10 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.network.CsDispatchers.IO
-import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
-import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
-import kotlin.uuid.Uuid
 
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
@@ -31,7 +26,6 @@ class WalletDialogViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val walletDialogDestination: WalletDialogRoute = savedStateHandle.toRoute()
@@ -89,22 +83,10 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveWallet() {
-        viewModelScope.launch {
-            appScope.launch(ioDispatcher) {
-                val wallet = Wallet(
-                    id = _walletDialogState.value.id.ifBlank { Uuid.random().toHexString() },
-                    title = _walletDialogState.value.title,
-                    initialBalance = if (_walletDialogState.value.initialBalance.isBlank()) {
-                        BigDecimal.ZERO
-                    } else {
-                        BigDecimal(_walletDialogState.value.initialBalance)
-                    },
-                    currency = _walletDialogState.value.currency,
-                )
-                walletsRepository.upsertWallet(wallet)
-                userDataRepository.setPrimaryWalletId(wallet.id, _walletDialogState.value.isPrimary)
-            }.join()
+    fun saveWallet(wallet: Wallet, isPrimary: Boolean) {
+        appScope.launch {
+            walletsRepository.upsertWallet(wallet)
+            userDataRepository.setPrimaryWalletId(wallet.id, isPrimary)
         }
     }
 
