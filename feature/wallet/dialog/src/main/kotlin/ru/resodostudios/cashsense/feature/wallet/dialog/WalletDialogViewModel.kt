@@ -86,7 +86,7 @@ class WalletDialogViewModel @Inject constructor(
     fun saveWallet(wallet: Wallet, isPrimary: Boolean) {
         appScope.launch {
             walletsRepository.upsertWallet(wallet)
-            userDataRepository.setPrimaryWalletId(wallet.id, isPrimary)
+            userDataRepository.setPrimaryWallet(wallet.id, isPrimary)
         }
     }
 

@@ -195,7 +195,7 @@ class WalletViewModel @Inject constructor(
 
     fun setPrimaryWalletId(id: String, isPrimary: Boolean) {
         viewModelScope.launch {
-            userDataRepository.setPrimaryWalletId(id, isPrimary)
+            userDataRepository.setPrimaryWallet(id, isPrimary)
         }
     }
 

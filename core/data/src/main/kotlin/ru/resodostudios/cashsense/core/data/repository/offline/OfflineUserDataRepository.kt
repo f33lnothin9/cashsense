@@ -22,7 +22,7 @@ internal class OfflineUserDataRepository @Inject constructor(
     override suspend fun setDynamicColorPreference(useDynamicColor: Boolean) =
         csPreferencesDataSource.setDynamicColorPreference(useDynamicColor)
 
-    override suspend fun setPrimaryWalletId(id: String, isPrimary: Boolean) {
+    override suspend fun setPrimaryWallet(id: String, isPrimary: Boolean) {
         if (isPrimary) {
             csPreferencesDataSource.setPrimaryWalletId(id)
             shortcutManager.addTransactionShortcut(id)
