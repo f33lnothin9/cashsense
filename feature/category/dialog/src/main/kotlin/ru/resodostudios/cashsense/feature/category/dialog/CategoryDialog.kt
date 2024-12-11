@@ -25,8 +25,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.IconPickerDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -48,7 +50,7 @@ fun CategoryDialog(
 @Composable
 fun CategoryDialog(
     categoryDialogState: CategoryDialogUiState,
-    onSaveCategory: () -> Unit,
+    onSaveCategory: (Category) -> Unit,
     onUpdateTitle: (String) -> Unit,
     onUpdateIconId: (Int) -> Unit,
     onDismiss: () -> Unit,
@@ -65,7 +67,12 @@ fun CategoryDialog(
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Category,
         onConfirm = {
-            onSaveCategory()
+            val category = Category(
+                id = categoryDialogState.id.ifBlank { Uuid.random().toHexString() },
+                title = categoryDialogState.title,
+                iconId = categoryDialogState.iconId,
+            )
+            onSaveCategory(category)
             onDismiss()
         },
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
