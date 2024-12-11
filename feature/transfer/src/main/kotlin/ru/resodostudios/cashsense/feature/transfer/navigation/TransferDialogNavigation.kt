@@ -7,20 +7,20 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.transfer.TransferDialog
 
 @Serializable
-data class TransferRoute(
+data class TransferDialogRoute(
     val walletId: String? = null,
 )
 
-fun NavController.navigateToTransfer(
+fun NavController.navigateToTransferDialog(
     walletId: String? = null,
-) = navigate(route = TransferRoute(walletId)) {
+) = navigate(route = TransferDialogRoute(walletId)) {
     launchSingleTop = true
 }
 
 fun NavGraphBuilder.transferDialog(
     onDismiss: () -> Unit,
 ) {
-    dialog<TransferRoute> {
+    dialog<TransferDialogRoute> {
         TransferDialog(
             onDismiss = onDismiss,
         )

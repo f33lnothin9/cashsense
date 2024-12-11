@@ -52,9 +52,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun TransferDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: TransferViewModel = hiltViewModel(),
+    viewModel: TransferDialogViewModel = hiltViewModel(),
 ) {
-    val transferState by viewModel.transferState.collectAsStateWithLifecycle()
+    val transferState by viewModel.transferDialogState.collectAsStateWithLifecycle()
 
     TransferDialog(
         transferState = transferState,
@@ -71,7 +71,7 @@ internal fun TransferDialog(
 
 @Composable
 private fun TransferDialog(
-    transferState: TransferUiState,
+    transferState: TransferDialogUiState,
     onDismiss: () -> Unit,
     onSendingWalletUpdate: (TransferWallet) -> Unit,
     onReceivingWalletUpdate: (TransferWallet) -> Unit,

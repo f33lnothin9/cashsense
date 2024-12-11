@@ -28,7 +28,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.Subscri
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionDialogRoute
-import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
+import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
@@ -70,7 +70,7 @@ class CsAppState(
             with(currentDestination) {
                 if (this?.hasRoute<HomeRoute>() == true ||
                     this?.hasRoute<WalletDialogRoute>() == true ||
-                    this?.hasRoute<TransferRoute>() == true ||
+                    this?.hasRoute<TransferDialogRoute>() == true ||
                     this?.hasRoute<TransactionDialogRoute>() == true
                 ) return HOME
                 if (this?.hasRoute<CategoriesRoute>() == true ||
