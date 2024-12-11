@@ -18,7 +18,6 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,14 +33,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.StatusType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.OutlinedAmountField
 import ru.resodostudios.cashsense.core.ui.cleanAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.isAmountValid
+import java.math.BigDecimal
 import java.util.Currency
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -74,21 +78,41 @@ private fun TransferDialog(
     onAmountUpdate: (String) -> Unit,
     onExchangingRateUpdate: (String) -> Unit,
     onConvertedAmountUpdate: (String) -> Unit,
-    onTransferSave: () -> Unit,
+    onTransferSave: (Transaction, Transaction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(transferState.isTransferSaved) {
-        if (transferState.isTransferSaved) {
-            onDismiss()
-        }
-    }
-
     CsAlertDialog(
         titleRes = localesR.string.new_transfer,
         confirmButtonTextRes = localesR.string.transfer,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
-        onConfirm = onTransferSave,
+        onConfirm = {
+            val transferId = Uuid.random()
+            val timestamp = Clock.System.now()
+            val withdrawalAmount = BigDecimal(transferState.amount)
+            val withdrawalTransaction = Transaction(
+                id = Uuid.random().toHexString(),
+                walletOwnerId = transferState.sendingWallet.id,
+                description = null,
+                amount = withdrawalAmount.negate(),
+                timestamp = timestamp,
+                status = StatusType.COMPLETED,
+                ignored = true,
+                transferId = transferId,
+            )
+            val depositTransaction = Transaction(
+                id = Uuid.random().toHexString(),
+                walletOwnerId = transferState.receivingWallet.id,
+                description = null,
+                amount = BigDecimal(transferState.convertedAmount),
+                timestamp = timestamp,
+                status = StatusType.COMPLETED,
+                ignored = true,
+                transferId = transferId,
+            )
+            onTransferSave(withdrawalTransaction, depositTransaction)
+            onDismiss()
+        },
         isConfirmEnabled = transferState.amount.isAmountValid() &&
                 transferState.sendingWallet.id.isNotBlank() &&
                 transferState.receivingWallet.id.isNotBlank() &&

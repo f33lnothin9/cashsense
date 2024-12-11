@@ -5,29 +5,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Currency
 import javax.inject.Inject
-import kotlin.uuid.Uuid
 
 @HiltViewModel
 class TransferViewModel @Inject constructor(
     private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
     savedStateHandle: SavedStateHandle,
+    @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
     private val transferDestination: TransferRoute = savedStateHandle.toRoute()
@@ -37,7 +37,7 @@ class TransferViewModel @Inject constructor(
         get() = _transferState.asStateFlow()
 
     init {
-        transferDestination.walletId?.let { loadTransfer(it) }
+        transferDestination.walletId?.let(::loadTransfer)
     }
 
     private fun loadTransfer(walletId: String) {
@@ -96,40 +96,10 @@ class TransferViewModel @Inject constructor(
         }
     }
 
-    fun saveTransfer() {
-        val transferId = Uuid.random()
-        val timestamp = Clock.System.now()
-        val withdrawalAmount = BigDecimal(transferState.value.amount)
-        val withdrawalTransaction = Transaction(
-            id = Uuid.random().toHexString(),
-            walletOwnerId = transferState.value.sendingWallet.id,
-            description = null,
-            amount = withdrawalAmount.negate(),
-            timestamp = timestamp,
-            status = StatusType.COMPLETED,
-            ignored = true,
-            transferId = transferId,
-        )
-        val depositTransaction = Transaction(
-            id = Uuid.random().toHexString(),
-            walletOwnerId = transferState.value.receivingWallet.id,
-            description = null,
-            amount = BigDecimal(transferState.value.convertedAmount),
-            timestamp = timestamp,
-            status = StatusType.COMPLETED,
-            ignored = true,
-            transferId = transferId,
-        )
-        val upsertWithdrawalTransactionJob = viewModelScope.launch {
+    fun saveTransfer(withdrawalTransaction: Transaction, depositTransaction: Transaction) {
+        appScope.launch {
             transactionsRepository.upsertTransaction(withdrawalTransaction)
-        }
-        val upsertDepositTransactionJob = viewModelScope.launch {
             transactionsRepository.upsertTransaction(depositTransaction)
-        }
-        viewModelScope.launch {
-            upsertWithdrawalTransactionJob.join()
-            upsertDepositTransactionJob.join()
-            _transferState.update { it.copy(isTransferSaved = true) }
         }
     }
 
@@ -193,7 +163,6 @@ data class TransferUiState(
     val convertedAmount: String = "",
     val transferWallets: List<TransferWallet> = emptyList(),
     val isLoading: Boolean = false,
-    val isTransferSaved: Boolean = false,
 )
 
 data class TransferWallet(
