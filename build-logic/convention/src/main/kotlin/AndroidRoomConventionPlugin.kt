@@ -10,13 +10,14 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("androidx.room")
-            pluginManager.apply("com.google.devtools.ksp")
+            with(pluginManager) {
+                apply("androidx.room")
+                apply("com.google.devtools.ksp")
+            }
 
             extensions.configure<KspExtension> {
                 arg("room.generateKotlin", "true")
             }
-
             extensions.configure<RoomExtension> {
                 schemaDirectory("$projectDir/schemas")
             }

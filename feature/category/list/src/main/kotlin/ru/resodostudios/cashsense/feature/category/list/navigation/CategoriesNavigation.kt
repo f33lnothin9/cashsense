@@ -15,7 +15,7 @@ object CategoriesBaseRoute
 object CategoriesRoute
 
 fun NavController.navigateToCategories(navOptions: NavOptions? = null) =
-    navigate(route = CategoriesRoute, navOptions)
+    navigate(route = CategoriesBaseRoute, navOptions)
 
 fun NavGraphBuilder.categoriesSection(
     onEditCategory: (String) -> Unit,
