@@ -96,6 +96,6 @@
   <string name="from_wallet">ウォレットから</string>
   <string name="to_wallet">ウォレットへ</string>
   <string name="converted_amount">変換された金額</string>
-  <string name="primary_icon_description">Make primary</string>
-  <string name="non_primary_icon_description">Make non-primary</string>
+  <string name="primary_icon_description">主要に設定</string>
+  <string name="non_primary_icon_description">非主要に設定</string>
 </resources>
