@@ -96,4 +96,6 @@
   <string name="from_wallet">من المحفظة</string>
   <string name="to_wallet">إلى المحفظة</string>
   <string name="converted_amount">المبلغ المحول</string>
+  <string name="primary_icon_description">جعله رئيسياً</string>
+  <string name="non_primary_icon_description">جعله غير رئيس</string>
 </resources>
