@@ -43,11 +43,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus.Denied
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.cleanAmount
@@ -60,6 +69,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateReminderSwitch
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateRepeatingInterval
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateTitle
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -94,7 +104,32 @@ fun SubscriptionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.AutoRenew,
         onConfirm = {
-            onSubscriptionEvent(Save)
+            val subscriptionId = subscriptionDialogState.id.ifBlank { Uuid.random().toHexString() }
+            var reminder: Reminder? = null
+
+            if (subscriptionDialogState.isReminderEnabled) {
+                val timeZone = TimeZone.currentSystemDefault()
+                val currentInstant = subscriptionDialogState.paymentDate
+                val currentDateTime = currentInstant.toLocalDateTime(timeZone)
+                val previousDate = currentDateTime.date.minus(1, DateTimeUnit.DAY)
+                val notificationDate = LocalDateTime(previousDate, LocalTime(9, 0))
+                    .toInstant(timeZone)
+                reminder = Reminder(
+                    id = subscriptionId.hashCode(),
+                    notificationDate = notificationDate,
+                    repeatingInterval = subscriptionDialogState.repeatingInterval.period,
+                )
+            }
+
+            val subscription = Subscription(
+                id = subscriptionId,
+                title = subscriptionDialogState.title,
+                amount = subscriptionDialogState.amount.toBigDecimal(),
+                paymentDate = subscriptionDialogState.paymentDate,
+                currency = subscriptionDialogState.currency,
+                reminder = reminder,
+            )
+            onSubscriptionEvent(Save(subscription))
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
@@ -153,7 +188,15 @@ fun SubscriptionDialog(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = localesR.string.payment_date,
                 iconId = CsIcons.Calendar,
-                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                onDateClick = {
+                    onSubscriptionEvent(
+                        UpdatePaymentDate(
+                            Instant.fromEpochMilliseconds(
+                                it
+                            )
+                        )
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
