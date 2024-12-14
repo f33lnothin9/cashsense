@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -148,7 +149,7 @@ private fun TransactionDialog(
                         .focusRequester(amountTextField)
                         .focusProperties { next = descTextField },
                 )
-                CategoryExposedDropdownMenuBox(
+                CategoryDropdownMenu(
                     currentCategory = transactionDialogState.category,
                     categoriesState = categoriesState,
                     onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
@@ -289,13 +290,13 @@ private fun TransactionStatusChoiceRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CategoryExposedDropdownMenuBox(
+private fun CategoryDropdownMenu(
     currentCategory: Category?,
     categoriesState: CategoriesUiState,
     onCategoryClick: (Category) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var iconId by rememberSaveable { mutableStateOf(currentCategory?.iconId) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
     when (categoriesState) {
         Loading -> Unit
@@ -336,14 +337,14 @@ private fun CategoryExposedDropdownMenuBox(
                         },
                         onClick = {
                             onCategoryClick(Category())
-                            iconId = null
+                            iconId = 0
                             expanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         leadingIcon = {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Category),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         },
                     )
@@ -358,7 +359,7 @@ private fun CategoryExposedDropdownMenuBox(
                             },
                             onClick = {
                                 onCategoryClick(category)
-                                iconId = category.iconId
+                                iconId = category.iconId ?: 0
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
