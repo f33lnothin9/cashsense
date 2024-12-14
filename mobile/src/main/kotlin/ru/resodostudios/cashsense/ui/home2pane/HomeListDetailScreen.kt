@@ -2,6 +2,10 @@ package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.Keep
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -195,6 +199,8 @@ internal fun HomeListDetailScreen(
                         navController = nestedNavController,
                         startDestination = nestedNavHostStartRoute,
                         route = DetailPaneNavHostRoute::class,
+                        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
+                        exitTransition = { fadeOut(snap()) },
                     ) {
                         walletScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
