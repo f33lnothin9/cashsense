@@ -96,6 +96,6 @@
   <string name="from_wallet">Desde la billetera</string>
   <string name="to_wallet">Hacia la billetera</string>
   <string name="converted_amount">Cantidad convertida</string>
-  <string name="primary_icon_description">Make primary</string>
-  <string name="non_primary_icon_description">Make non-primary</string>
+  <string name="primary_icon_description">Establecer como principal</string>
+  <string name="non_primary_icon_description">Establecer como no principal</string>
 </resources>
