@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.navigation
 
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -37,11 +37,11 @@ fun CsNavHost(
     NavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
-        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
-        exitTransition = { fadeOut(tween(0)) },
-        popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
-        popExitTransition = { fadeOut(tween(0)) },
         modifier = modifier,
+        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
+        exitTransition = { fadeOut(snap()) },
+        popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
+        popExitTransition = { fadeOut(snap()) },
     ) {
         homeListDetailScreen(
             onEditWallet = navController::navigateToWalletDialog,
