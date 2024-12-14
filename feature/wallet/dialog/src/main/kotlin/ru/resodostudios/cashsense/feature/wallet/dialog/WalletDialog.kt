@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,10 +32,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.cleanAmount
+import java.math.BigDecimal
 import java.util.Currency
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -47,16 +49,8 @@ internal fun WalletDialog(
 ) {
     val walletDialogState by viewModel.walletDialogState.collectAsStateWithLifecycle()
 
-    val (titleRes, confirmButtonTextRes) = if (walletDialogState.id.isNotBlank()) {
-        localesR.string.edit_wallet to localesR.string.save
-    } else {
-        localesR.string.new_wallet to localesR.string.add
-    }
-
     WalletDialog(
         walletDialogState = walletDialogState,
-        titleRes = titleRes,
-        confirmButtonTextRes = confirmButtonTextRes,
         onDismiss = onDismiss,
         onWalletSave = viewModel::saveWallet,
         onTitleUpdate = viewModel::updateTitle,
@@ -70,20 +64,18 @@ internal fun WalletDialog(
 @Composable
 private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
-    @StringRes titleRes: Int = localesR.string.new_wallet,
-    @StringRes confirmButtonTextRes: Int = localesR.string.add,
     onDismiss: () -> Unit,
-    onWalletSave: () -> Unit,
+    onWalletSave: (Wallet, Boolean) -> Unit,
     onTitleUpdate: (String) -> Unit,
     onInitialBalanceUpdate: (String) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
     onPrimaryUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(walletDialogState.isWalletSaved) {
-        if (walletDialogState.isWalletSaved) {
-            onDismiss()
-        }
+    val (titleRes, confirmButtonTextRes) = if (walletDialogState.id.isNotBlank()) {
+        localesR.string.edit_wallet to localesR.string.save
+    } else {
+        localesR.string.new_wallet to localesR.string.add
     }
 
     CsAlertDialog(
@@ -91,7 +83,20 @@ private fun WalletDialog(
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.Wallet,
-        onConfirm = onWalletSave,
+        onConfirm = {
+            val wallet = Wallet(
+                id = walletDialogState.id.ifBlank { Uuid.random().toHexString() },
+                title = walletDialogState.title,
+                initialBalance = if (walletDialogState.initialBalance.isBlank()) {
+                    BigDecimal.ZERO
+                } else {
+                    BigDecimal(walletDialogState.initialBalance)
+                },
+                currency = walletDialogState.currency,
+            )
+            onWalletSave(wallet, walletDialogState.isPrimary)
+            onDismiss()
+        },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
         modifier = modifier,

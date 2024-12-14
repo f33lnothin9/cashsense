@@ -27,7 +27,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         SubscriptionEntity::class,
         TransactionCategoryCrossRefEntity::class,
     ],
-    version = 7,
+    version = 8,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
@@ -35,6 +35,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         AutoMigration(from = 4, to = 5),
         AutoMigration(from = 5, to = 6),
         AutoMigration(from = 6, to = 7),
+        AutoMigration(from = 7, to = 8),
     ],
     exportSchema = true,
 )

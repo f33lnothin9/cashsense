@@ -20,7 +20,7 @@ object SubscriptionsRoute
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$SUBSCRIPTIONS_PATH"
 
 fun NavController.navigateToSubscriptions(navOptions: NavOptions) =
-    navigate(route = SubscriptionsRoute, navOptions)
+    navigate(route = SubscriptionsBaseRoute, navOptions)
 
 fun NavGraphBuilder.subscriptionsSection(
     onEditSubscription: (String) -> Unit,

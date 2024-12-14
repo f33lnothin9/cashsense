@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.wallet.dialog.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.dialog
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialog
@@ -14,9 +13,8 @@ data class WalletDialogRoute(
 
 fun NavController.navigateToWalletDialog(
     walletId: String? = null,
-    navOptions: NavOptionsBuilder.() -> Unit = {},
 ) = navigate(route = WalletDialogRoute(walletId)) {
-    navOptions()
+    launchSingleTop = true
 }
 
 fun NavGraphBuilder.walletDialog(

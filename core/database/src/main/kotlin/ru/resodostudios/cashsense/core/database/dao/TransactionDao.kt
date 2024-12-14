@@ -26,9 +26,6 @@ interface TransactionDao {
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteTransaction(id: String)
 
-    @Query("DELETE FROM transactions WHERE wallet_owner_id = :walletId")
-    suspend fun deleteTransactions(walletId: String)
-
     @Upsert
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRefEntity)
 
