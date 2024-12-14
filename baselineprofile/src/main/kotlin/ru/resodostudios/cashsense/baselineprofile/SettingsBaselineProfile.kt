@@ -4,9 +4,9 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
 import ru.resodostudios.cashsense.PACKAGE_NAME
-import ru.resodostudios.cashsense.subscriptions.goToSubscriptionsScreen
+import ru.resodostudios.cashsense.settings.goToSettingsScreen
 
-class SubscriptionsBaselineProfile {
+class SettingsBaselineProfile {
 
     @get:Rule
     val baselineProfileRule = BaselineProfileRule()
@@ -15,6 +15,6 @@ class SubscriptionsBaselineProfile {
     fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
         startActivityAndWait()
 
-        goToSubscriptionsScreen()
+        goToSettingsScreen()
     }
 }

@@ -15,7 +15,6 @@ class CategoriesBaselineProfile {
     fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
         startActivityAndWait()
 
-        // Navigate to categories screen
         goToCategoriesScreen()
     }
 }
