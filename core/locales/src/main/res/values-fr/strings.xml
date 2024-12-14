@@ -96,6 +96,6 @@
   <string name="from_wallet">Du portefeuille</string>
   <string name="to_wallet">Au portefeuille</string>
   <string name="converted_amount">Montant converti</string>
-  <string name="primary_icon_description">Make primary</string>
-  <string name="non_primary_icon_description">Make non-primary</string>
+  <string name="primary_icon_description">Définir comme principal</string>
+  <string name="non_primary_icon_description">Définir comme non principal</string>
 </resources>
