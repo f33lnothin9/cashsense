@@ -96,6 +96,6 @@
   <string name="from_wallet">वॉलेट से</string>
   <string name="to_wallet">वॉलेट तक</string>
   <string name="converted_amount">परिवर्तित राशि</string>
-  <string name="primary_icon_description">Make primary</string>
-  <string name="non_primary_icon_description">Make non-primary</string>
+  <string name="primary_icon_description">मुख्य बनाएं</string>
+  <string name="non_primary_icon_description">गैर-मुख्य बनाएं</string>
 </resources>
