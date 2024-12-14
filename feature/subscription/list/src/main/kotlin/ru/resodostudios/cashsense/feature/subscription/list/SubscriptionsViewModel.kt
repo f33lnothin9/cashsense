@@ -19,46 +19,47 @@ class SubscriptionsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val shouldDisplayUndoSubscriptionState = MutableStateFlow(false)
-    private val lastRemovedSubscriptionIdState = MutableStateFlow<String?>(null)
+    private val lastRemovedSubscriptionState = MutableStateFlow<Subscription?>(null)
+    private val selectedSubscriptionState = MutableStateFlow<Subscription?>(null)
 
     val subscriptionsUiState: StateFlow<SubscriptionsUiState> = combine(
         subscriptionsRepository.getSubscriptions(),
         shouldDisplayUndoSubscriptionState,
-        lastRemovedSubscriptionIdState,
-    ) { subscriptions, shouldDisplayUndoSubscription, lastRemovedSubscriptionId ->
-        SubscriptionsUiState.Success(
-            shouldDisplayUndoSubscription,
-            subscriptions.filterNot { it.id == lastRemovedSubscriptionId },
-        )
-    }
+        selectedSubscriptionState,
+        SubscriptionsUiState::Success,
+    )
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = SubscriptionsUiState.Loading,
         )
 
-    private fun deleteSubscription(id: String) {
+    fun deleteSubscription() {
         viewModelScope.launch {
-            subscriptionsRepository.deleteSubscription(id)
+            lastRemovedSubscriptionState.value = selectedSubscriptionState.value
+            selectedSubscriptionState.value?.id?.let {
+                subscriptionsRepository.deleteSubscription(it)
+            }
+            shouldDisplayUndoSubscriptionState.value = true
         }
     }
 
-    fun hideSubscription(id: String) {
-        if (lastRemovedSubscriptionIdState.value != null) {
-            clearUndoState()
-        }
-        shouldDisplayUndoSubscriptionState.value = true
-        lastRemovedSubscriptionIdState.value = id
+    fun updateSelectedSubscription(subscription: Subscription) {
+        selectedSubscriptionState.value = subscription
     }
 
     fun undoSubscriptionRemoval() {
-        lastRemovedSubscriptionIdState.value = null
-        shouldDisplayUndoSubscriptionState.value = false
+        viewModelScope.launch {
+            lastRemovedSubscriptionState.value?.let {
+                subscriptionsRepository.upsertSubscription(it)
+            }
+            clearUndoState()
+        }
     }
 
     fun clearUndoState() {
-        lastRemovedSubscriptionIdState.value?.let(::deleteSubscription)
-        undoSubscriptionRemoval()
+        lastRemovedSubscriptionState.value = null
+        shouldDisplayUndoSubscriptionState.value = false
     }
 }
 
@@ -67,7 +68,8 @@ sealed interface SubscriptionsUiState {
     data object Loading : SubscriptionsUiState
 
     data class Success(
-        val shouldDisplayUndoSubscription: Boolean,
         val subscriptions: List<Subscription>,
+        val shouldDisplayUndoSubscription: Boolean,
+        val selectedSubscription: Subscription?,
     ) : SubscriptionsUiState
 }

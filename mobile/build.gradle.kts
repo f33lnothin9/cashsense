@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 29
-        versionName = "1.1.2"
+        versionCode = 31
+        versionName = "1.2.0-beta01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -32,7 +32,7 @@ android {
             applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
             signingConfig = signingConfigs.named("debug").get()
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     androidResources {
@@ -64,15 +64,14 @@ dependencies {
     implementation(projects.feature.subscription.dialog)
     implementation(projects.feature.transaction)
     implementation(projects.feature.transfer)
-    implementation(projects.feature.wallet.add)
     implementation(projects.feature.wallet.detail)
-    implementation(projects.feature.wallet.edit)
-    implementation(projects.feature.wallet.menu)
+    implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.wallet.widget)
     implementation(projects.feature.settings)
 
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
     implementation(projects.core.model)
     implementation(projects.core.shortcuts)
     implementation(projects.core.ui)

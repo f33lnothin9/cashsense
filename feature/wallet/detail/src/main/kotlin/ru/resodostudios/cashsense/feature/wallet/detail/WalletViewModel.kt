@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -44,6 +45,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
+    private val userDataRepository: UserDataRepository,
     savedStateHandle: SavedStateHandle,
     getExtendedUserWallet: GetExtendedUserWalletUseCase,
 ) : ViewModel() {
@@ -63,12 +65,13 @@ class WalletViewModel @Inject constructor(
         )
     )
 
-    private val transactionIdState = MutableStateFlow<String?>(null)
+    private val selectedTransactionIdState = MutableStateFlow<String?>(null)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         getExtendedUserWallet.invoke(walletRoute.walletId),
         walletFilterState,
-    ) { extendedUserWallet, walletFilter ->
+        selectedTransactionIdState,
+    ) { extendedUserWallet, walletFilter, selectedTransactionId ->
         val financeTypeTransactions = when (walletFilter.financeType) {
             NONE -> extendedUserWallet.transactionsWithCategories
             EXPENSES -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount < ZERO }
@@ -117,6 +120,9 @@ class WalletViewModel @Inject constructor(
                 selectedMonth = walletFilter.selectedMonth,
             ),
             userWallet = extendedUserWallet.userWallet,
+            selectedTransactionCategory = selectedTransactionId?.let { id ->
+                filteredByCategories.firstOrNull { it.transaction.id == id }
+            },
             transactionsCategories = filteredByCategories,
         )
     }
@@ -159,19 +165,37 @@ class WalletViewModel @Inject constructor(
     }
 
     fun updateTransactionId(id: String) {
-        transactionIdState.value = id
+        selectedTransactionIdState.value = id
     }
 
     fun deleteTransaction() {
         viewModelScope.launch {
-            transactionIdState.value?.let { transactionId ->
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(transactionId).first()
+            selectedTransactionIdState.value?.let { id ->
+                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
+                    .first()
                 if (transactionCategory.transaction.transferId != null) {
                     transactionsRepository.deleteTransfer(transactionCategory.transaction.transferId!!)
                 } else {
-                    transactionsRepository.deleteTransaction(transactionId)
+                    transactionsRepository.deleteTransaction(id)
                 }
             }
+        }
+    }
+
+    fun updateTransactionIgnoring(ignored: Boolean) {
+        viewModelScope.launch {
+            selectedTransactionIdState.value?.let { id ->
+                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
+                    .first()
+                val transaction = transactionCategory.transaction.copy(ignored = ignored)
+                transactionsRepository.upsertTransaction(transaction)
+            }
+        }
+    }
+
+    fun setPrimaryWalletId(id: String, isPrimary: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setPrimaryWallet(id, isPrimary)
         }
     }
 
@@ -292,6 +316,7 @@ sealed interface WalletUiState {
     data class Success(
         val walletFilter: WalletFilter,
         val userWallet: UserWallet,
+        val selectedTransactionCategory: TransactionWithCategory?,
         val transactionsCategories: List<TransactionWithCategory>,
     ) : WalletUiState
 }

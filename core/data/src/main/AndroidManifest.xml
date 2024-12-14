@@ -5,7 +5,7 @@
 
     <application>
         <receiver
-            android:name=".util.AlarmReceiver"
+            android:name=".util.ReminderBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

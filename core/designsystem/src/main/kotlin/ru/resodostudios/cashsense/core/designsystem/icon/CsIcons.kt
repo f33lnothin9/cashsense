@@ -66,6 +66,7 @@ object CsIcons {
     val SmokingRooms = R.drawable.ic_outlined_smoking_rooms
     val SportsEsports = R.drawable.ic_outlined_sports_esports
     val Star = R.drawable.ic_outlined_star
+    val StarFilled = R.drawable.ic_filled_star
     val Travel = R.drawable.ic_outlined_travel
     val TrendingDown = R.drawable.ic_outlined_trending_down
     val TrendingUp = R.drawable.ic_outlined_trending_up
