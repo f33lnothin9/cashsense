@@ -11,4 +11,6 @@ object Constants {
     const val SUBSCRIPTIONS_PATH = "subscriptions"
     const val HOME_PATH = "home"
     const val TRANSACTION_PATH = "transaction"
+
+    const val USD_CURRENCY_CODE = "USD"
 }

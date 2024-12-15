@@ -37,6 +37,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
 import java.util.Currency
@@ -112,7 +113,7 @@ fun SettingsScreenPreview() {
                     settings = UserEditableSettings(
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-                        currency = Currency.getInstance("USD"),
+                        currency = getUsdCurrency(),
                     )
                 ),
                 onLicensesClick = {},

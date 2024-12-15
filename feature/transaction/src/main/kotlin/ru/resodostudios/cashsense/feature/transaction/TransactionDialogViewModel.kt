@@ -27,6 +27,7 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
@@ -228,7 +229,7 @@ data class TransactionDialogUiState(
     val transactionId: String = "",
     val description: String = "",
     val amount: String = "",
-    val currency: Currency = Currency.getInstance("USD"),
+    val currency: Currency = getUsdCurrency(),
     val date: Instant = Clock.System.now(),
     val category: Category? = Category(),
     val transactionType: TransactionType = EXPENSE,

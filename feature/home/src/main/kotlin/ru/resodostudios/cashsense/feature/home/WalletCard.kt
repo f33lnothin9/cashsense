@@ -47,6 +47,7 @@ import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.util.Currency
@@ -259,7 +260,7 @@ fun WalletCardPreview() {
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
-                    currency = Currency.getInstance("USD"),
+                    currency = getUsdCurrency(),
                     currentBalance = BigDecimal(2499.99),
                     isPrimary = true,
                 ),

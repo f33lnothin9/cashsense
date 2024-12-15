@@ -35,8 +35,8 @@ import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -114,7 +114,7 @@ fun SubscriptionCardPreview() {
                     id = "",
                     title = "Spotify Premium",
                     amount = BigDecimal(14.99),
-                    currency = Currency.getInstance("USD"),
+                    currency = getUsdCurrency(),
                     paymentDate = Clock.System.now(),
                     reminder = null,
                 ),

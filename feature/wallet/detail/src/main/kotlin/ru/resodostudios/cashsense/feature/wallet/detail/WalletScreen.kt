@@ -100,6 +100,7 @@ import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
@@ -870,7 +871,7 @@ fun FinancePanelDefaultPreview(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
-                        currency = Currency.getInstance("USD"),
+                        currency = getUsdCurrency(),
                         initialBalance = ZERO,
                         currentBalance = BigDecimal(100),
                         isPrimary = false,
@@ -913,7 +914,7 @@ fun FinancePanelOpenedPreview(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
-                        currency = Currency.getInstance("USD"),
+                        currency = getUsdCurrency(),
                         initialBalance = ZERO,
                         currentBalance = BigDecimal(100),
                         isPrimary = false,

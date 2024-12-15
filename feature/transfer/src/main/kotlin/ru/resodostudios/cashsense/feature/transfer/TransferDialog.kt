@@ -43,8 +43,8 @@ import ru.resodostudios.cashsense.core.ui.OutlinedAmountField
 import ru.resodostudios.cashsense.core.ui.cleanAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.isAmountValid
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.util.Currency
 import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -156,7 +156,7 @@ private fun TransferDialog(
                     value = transferState.amount,
                     onValueChange = onAmountUpdate,
                     labelRes = localesR.string.amount,
-                    currency = transferState.sendingWallet.currency ?: Currency.getInstance("USD"),
+                    currency = transferState.sendingWallet.currency ?: getUsdCurrency(),
                     imeAction = if (exchangeRateEnabled) ImeAction.Next else ImeAction.Done,
                     keyboardActions = KeyboardActions(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) },

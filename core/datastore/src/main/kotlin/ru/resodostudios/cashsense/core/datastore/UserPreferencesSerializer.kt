@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.datastore
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
+import ru.resodostudios.cashsense.core.util.getDefaultCurrency
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
@@ -28,7 +29,5 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
 
 internal fun getCustomDefaultValues(): UserPreferences =
     UserPreferences.newBuilder()
-        .setCurrency(DEFAULT_CURRENCY)
+        .setCurrency(getDefaultCurrency().currencyCode)
         .build()
-
-private const val DEFAULT_CURRENCY = "USD"
