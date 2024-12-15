@@ -16,6 +16,7 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import java.util.Currency
 import javax.inject.Inject
@@ -48,7 +49,7 @@ class WalletDialogViewModel @Inject constructor(
             val userData = userDataRepository.userData.first()
             _walletDialogState.update {
                 WalletDialogUiState(
-                    currency = Currency.getInstance(userData.currency.ifEmpty { "USD" }),
+                    currency = Currency.getInstance(userData.currency),
                 )
             }
         }
@@ -120,7 +121,7 @@ data class WalletDialogUiState(
     val title: String = "",
     val initialBalance: String = "",
     val currentPrimaryWalletId: String = "",
-    val currency: Currency = Currency.getInstance("USD"),
+    val currency: Currency = getUsdCurrency(),
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,
     val isCurrencyEditable: Boolean = true,
