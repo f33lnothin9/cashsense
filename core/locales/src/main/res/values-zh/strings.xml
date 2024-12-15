@@ -86,7 +86,7 @@
   <string name="currency_not_found">未找到货币</string>
   <string name="transfer">转账</string>
   <string name="transfers">转账</string>
-  <string name="new_transfer">新建转帐</string>
+  <string name="new_transfer">新建转账</string>
   <string name="exchange_rate">汇率</string>
   <string name="choose_wallet">选择钱包</string>
   <string name="uncategorized">未分类</string>
