@@ -25,7 +25,7 @@ class SettingsViewModel @Inject constructor(
                     settings = UserEditableSettings(
                         useDynamicColor = userData.useDynamicColor,
                         darkThemeConfig = userData.darkThemeConfig,
-                        currency = Currency.getInstance(userData.currency.ifBlank { "USD" }),
+                        currency = Currency.getInstance(userData.currency),
                     )
                 )
             }

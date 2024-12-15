@@ -12,7 +12,7 @@ import javax.inject.Inject
  */
 class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
 
-    override val defaultValue: UserPreferences = UserPreferences.getDefaultInstance()
+    override val defaultValue: UserPreferences = getCustomDefaultValues()
 
     override suspend fun readFrom(input: InputStream): UserPreferences =
         try {
@@ -25,3 +25,10 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
         t.writeTo(output)
     }
 }
+
+internal fun getCustomDefaultValues(): UserPreferences =
+    UserPreferences.newBuilder()
+        .setCurrency(DEFAULT_CURRENCY)
+        .build()
+
+private const val DEFAULT_CURRENCY = "USD"

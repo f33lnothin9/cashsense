@@ -17,9 +17,8 @@ class CsPreferencesDataSource @Inject constructor(
 ) {
     val userData = userPreferences.data
         .catch {
-            if (it !is IOException) throw it
             Log.e(TAG, "Failed to read user preferences.", it)
-            emit(UserPreferences.getDefaultInstance())
+            emit(getCustomDefaultValues())
         }
         .map {
             UserData(
