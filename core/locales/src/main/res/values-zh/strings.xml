@@ -69,7 +69,7 @@
   <string name="transaction_shortcut_long_label">添加新交易</string>
   <string name="completed">已完成</string>
   <string name="pending">待处理</string>
-  <string name="transaction_ignore">在计算时忽略</string>
+  <string name="transaction_ignore">不纳入计算</string>
   <string name="week">周</string>
   <string name="month">月</string>
   <string name="year">年</string>
