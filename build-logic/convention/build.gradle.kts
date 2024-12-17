@@ -27,43 +27,43 @@ tasks {
 gradlePlugin {
     plugins {
         register("androidApplicationCompose") {
-            id = "cashsense.android.application.compose"
+            id = libs.plugins.cashsense.android.application.compose.get().pluginId
             implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
         register("androidApplication") {
-            id = "cashsense.android.application"
+            id = libs.plugins.cashsense.android.application.asProvider().get().pluginId
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidLibraryCompose") {
-            id = "cashsense.android.library.compose"
+            id = libs.plugins.cashsense.android.library.compose.get().pluginId
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
         register("androidLibrary") {
-            id = "cashsense.android.library"
+            id = libs.plugins.cashsense.android.library.asProvider().get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
         }
         register("androidFeature") {
-            id = "cashsense.android.feature"
+            id = libs.plugins.cashsense.android.feature.get().pluginId
             implementationClass = "AndroidFeatureConventionPlugin"
         }
         register("androidTest") {
-            id = "cashsense.android.test"
+            id = libs.plugins.cashsense.android.test.get().pluginId
             implementationClass = "AndroidTestConventionPlugin"
         }
         register("androidRoom") {
-            id = "cashsense.android.room"
+            id = libs.plugins.cashsense.android.room.get().pluginId
             implementationClass = "AndroidRoomConventionPlugin"
         }
         register("androidFirebase") {
-            id = "cashsense.android.application.firebase"
+            id = libs.plugins.cashsense.android.application.firebase.get().pluginId
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"
         }
         register("hilt") {
-            id = "cashsense.hilt"
+            id = libs.plugins.cashsense.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
         }
         register("jvmLibrary") {
-            id = "cashsense.jvm.library"
+            id = libs.plugins.cashsense.jvm.library.get().pluginId
             implementationClass = "JvmLibraryConventionPlugin"
         }
     }
