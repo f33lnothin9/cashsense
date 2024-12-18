@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.settings
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +22,7 @@ internal fun CurrencyDialog(
     var currencyState by rememberSaveable { mutableStateOf(currency) }
 
     CsAlertDialog(
-        titleRes = localesR.string.choose_currency,
+        titleRes = localesR.string.currency,
         confirmButtonTextRes = localesR.string.ok,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.UniversalCurrencyAlt,
@@ -37,7 +36,6 @@ internal fun CurrencyDialog(
         CurrencyDropdownMenu(
             currency = currencyState,
             onCurrencyClick = { currencyState = it },
-            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

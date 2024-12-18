@@ -41,7 +41,6 @@
   <string name="licenses">உரிமங்கள்</string>
   <string name="version">பதிப்பு</string>
   <string name="feedback">கருத்து</string>
-  <string name="choose_currency">உங்கள் இயல்புநிலை நாணயத்தைத் தேர்ந்தெடுக்கவும்</string>
   <string name="new_subscription">புதிய சந்தா</string>
   <string name="edit_subscription">சந்தாவைத் திருத்தவும்</string>
   <string name="payment_date">பணம் செலுத்தும் தேதி</string>

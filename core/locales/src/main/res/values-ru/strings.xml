@@ -41,7 +41,6 @@
   <string name="licenses">Лицензии</string>
   <string name="version">Версия</string>
   <string name="feedback">Обратная связь</string>
-  <string name="choose_currency">Выберите валюту по умолчанию</string>
   <string name="new_subscription">Новая подписка</string>
   <string name="edit_subscription">Изменение подписки</string>
   <string name="payment_date">Дата платежа</string>

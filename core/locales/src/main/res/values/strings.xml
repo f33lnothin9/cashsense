@@ -41,7 +41,6 @@
     <string name="licenses">Licenses</string>
     <string name="version">Version</string>
     <string name="feedback">Feedback</string>
-    <string name="choose_currency">Choose your default currency</string>
     <string name="new_subscription">New subscription</string>
     <string name="edit_subscription">Edit subscription</string>
     <string name="payment_date">Payment date</string>

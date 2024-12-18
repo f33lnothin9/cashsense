@@ -41,7 +41,6 @@
   <string name="licenses">라이선스</string>
   <string name="version">버전</string>
   <string name="feedback">피드백</string>
-  <string name="choose_currency">기본 통화를 선택하세요</string>
   <string name="new_subscription">새 구독</string>
   <string name="edit_subscription">구독 편집</string>
   <string name="payment_date">지불 날짜</string>
