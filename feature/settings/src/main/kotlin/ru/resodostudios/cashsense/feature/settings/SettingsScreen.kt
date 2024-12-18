@@ -71,7 +71,9 @@ private fun SettingsScreen(
         Loading -> LoadingState(Modifier.fillMaxSize())
         is Success -> {
             val context = LocalContext.current
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+            ) {
                 general(
                     settings = settingsState.settings,
                     onCurrencyUpdate = onCurrencyUpdate,
