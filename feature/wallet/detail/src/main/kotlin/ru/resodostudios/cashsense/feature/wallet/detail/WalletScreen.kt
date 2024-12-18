@@ -265,18 +265,17 @@ private fun WalletTopBar(
                 AnimatedAmount(
                     targetState = userWallet.currentBalance,
                     label = "wallet_balance",
-                    content = {
-                        Text(
-                            text = it.formatAmount(userWallet.currency),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .zIndex(-1f),
-                )
+                ) {
+                    Text(
+                        text = it.formatAmount(userWallet.currency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
             }
         },
         navigationIcon = {
@@ -487,19 +486,18 @@ private fun SharedTransitionScope.FinanceCard(
             AnimatedAmount(
                 targetState = title,
                 label = "finance_card_title",
-                content = {
-                    Text(
-                        text = it.formatAmount(currency),
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
-            )
+            )  {
+                Text(
+                    text = it.formatAmount(currency),
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             Text(
                 text = stringResource(supportingTextId),
                 style = MaterialTheme.typography.labelMedium,
@@ -564,19 +562,18 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
-            content = {
-                Text(
-                    text = title.formatAmount(currency),
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
             modifier = Modifier.sharedBounds(
                 sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                 animatedVisibilityScope = animatedVisibilityScope,
             ),
-        )
+        ) {
+            Text(
+                text = title.formatAmount(currency),
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Text(
             text = stringResource(supportingTextId),
             modifier = Modifier.sharedBounds(

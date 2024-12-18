@@ -96,15 +96,14 @@ fun WalletCard(
             AnimatedAmount(
                 targetState = userWallet.currentBalance,
                 label = "wallet_balance",
-                content = {
-                    Text(
-                        text = it.formatAmount(userWallet.currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-            )
+            ) {
+                Text(
+                    text = it.formatAmount(userWallet.currency),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             TagsSection(
                 transactions = transactions,
                 currency = userWallet.currency,
@@ -237,15 +236,14 @@ private fun CsAnimatedTag(
             AnimatedAmount(
                 targetState = amount,
                 label = "animated_tag",
-                content = {
-                    Text(
-                        text = it.formatAmount(currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
-            )
+            ) {
+                Text(
+                    text = it.formatAmount(currency),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
     }
 }
