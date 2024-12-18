@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -96,11 +97,12 @@ private fun SettingsScreen(
 private fun SectionTitle(
     text: String,
     modifier: Modifier = Modifier,
+    topPadding: Dp = 32.dp,
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
-        modifier = modifier.padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+        modifier = modifier.padding(top = topPadding, bottom = 16.dp, start = 16.dp, end = 16.dp),
         color = MaterialTheme.colorScheme.primary,
     )
 }
@@ -131,7 +133,7 @@ private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
 ) {
-    item { SectionTitle(stringResource(localesR.string.settings_general)) }
+    item { SectionTitle(text = stringResource(localesR.string.settings_general), topPadding = 10.dp) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
