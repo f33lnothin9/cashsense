@@ -17,8 +17,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -90,37 +92,32 @@ internal fun HomeScreen(
 
     when (walletsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
+        Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
         is Success -> {
-            if (walletsState.extendedUserWallets.isNotEmpty()) {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(300.dp),
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 88.dp,
-                    ),
-                ) {
-                    wallets(
-                        walletsState = walletsState,
-                        onWalletClick = onWalletClick,
-                        onTransactionCreate = onTransactionCreate,
-                        onTransferClick = onTransfer,
-                        onEditClick = onEditWallet,
-                        onDeleteClick = { walletId ->
-                            onDeleteWallet(walletId)
-                            onWalletClick(null)
-                        },
-                        highlightSelectedWallet = highlightSelectedWallet,
-                    )
-                }
-            } else {
-                EmptyState(
-                    messageRes = localesR.string.home_empty,
-                    animationRes = R.raw.anim_wallets_empty,
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(300.dp),
+                verticalItemSpacing = 16.dp,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 88.dp,
+                ),
+            ) {
+                wallets(
+                    extendedUserWallets = walletsState.extendedUserWallets,
+                    selectedWalletId = walletsState.selectedWalletId,
+                    onWalletClick = onWalletClick,
+                    onTransactionCreate = onTransactionCreate,
+                    onTransferClick = onTransfer,
+                    onEditClick = onEditWallet,
+                    onDeleteClick = { walletId ->
+                        onDeleteWallet(walletId)
+                        onWalletClick(null)
+                    },
+                    highlightSelectedWallet = highlightSelectedWallet,
                 )
             }
         }
@@ -128,7 +125,8 @@ internal fun HomeScreen(
 }
 
 private fun LazyStaggeredGridScope.wallets(
-    walletsState: WalletsUiState,
+    extendedUserWallets: List<ExtendedUserWallet>,
+    selectedWalletId: String?,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onTransferClick: (String) -> Unit,
@@ -136,27 +134,22 @@ private fun LazyStaggeredGridScope.wallets(
     onDeleteClick: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
 ) {
-    when (walletsState) {
-        Loading -> Unit
-        is Success -> {
-            items(
-                items = walletsState.extendedUserWallets,
-                key = { it.userWallet.id },
-                contentType = { "walletCard" },
-            ) { walletData ->
-                val selected = highlightSelectedWallet && walletData.userWallet.id == walletsState.selectedWalletId
-                WalletCard(
-                    userWallet = walletData.userWallet,
-                    transactions = walletData.transactionsWithCategories.map { it.transaction },
-                    onWalletClick = onWalletClick,
-                    onNewTransactionClick = onTransactionCreate,
-                    onTransferClick = onTransferClick,
-                    onEditClick = onEditClick,
-                    onDeleteClick = onDeleteClick,
-                    modifier = Modifier.animateItem(),
-                    selected = selected,
-                )
-            }
-        }
+    items(
+        items = extendedUserWallets,
+        key = { it.userWallet.id },
+        contentType = { "walletCard" },
+    ) { walletData ->
+        val selected = highlightSelectedWallet && walletData.userWallet.id == selectedWalletId
+        WalletCard(
+            userWallet = walletData.userWallet,
+            transactions = walletData.transactionsWithCategories.map { it.transaction },
+            onWalletClick = onWalletClick,
+            onNewTransactionClick = onTransactionCreate,
+            onTransferClick = onTransferClick,
+            onEditClick = onEditClick,
+            onDeleteClick = onDeleteClick,
+            modifier = Modifier.animateItem(),
+            selected = selected,
+        )
     }
 }
