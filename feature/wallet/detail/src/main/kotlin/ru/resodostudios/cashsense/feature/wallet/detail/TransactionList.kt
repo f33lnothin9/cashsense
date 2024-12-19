@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -17,7 +16,6 @@ import ru.resodostudios.cashsense.core.ui.formatDate
 import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalFoundationApi::class)
 internal fun LazyListScope.transactions(
     walletState: WalletUiState,
     onTransactionClick: (String) -> Unit,

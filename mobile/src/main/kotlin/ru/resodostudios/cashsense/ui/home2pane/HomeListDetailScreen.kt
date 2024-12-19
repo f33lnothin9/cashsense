@@ -1,13 +1,13 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.annotation.Keep
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
-import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -224,7 +224,9 @@ internal fun HomeListDetailScreen(
                                 if (listDetailNavigator.isDetailPaneVisible()) {
                                     nestedNavController.navigate(WalletPlaceholderRoute)
                                 }
-                                listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                coroutineScope.launch {
+                                    listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                }
                             },
                             onTransfer = onTransfer,
                             onBackClick = {
