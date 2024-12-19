@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.ui
+package ru.resodostudios.cashsense.core.ui.util
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant

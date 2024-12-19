@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.ui
+package ru.resodostudios.cashsense.core.ui.util
 
 /**
  * Cleans a string representing a monetary amount.
