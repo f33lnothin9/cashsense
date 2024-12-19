@@ -22,11 +22,10 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -38,9 +37,9 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
-import ru.resodostudios.cashsense.feature.category.dialog.CategoryDialog
-import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
-import ru.resodostudios.cashsense.feature.wallet.add.AddWalletDialog
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -52,20 +51,6 @@ fun CsApp(
     appState: CsAppState,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    var showCategoryDialog by rememberSaveable { mutableStateOf(false) }
-    var showWalletDialog by rememberSaveable { mutableStateOf(false) }
-    var showSubscriptionDialog by rememberSaveable { mutableStateOf(false) }
-
-    if (showCategoryDialog) {
-        CategoryDialog(onDismiss = { showCategoryDialog = false })
-    }
-    if (showWalletDialog) {
-        AddWalletDialog(onDismiss = { showWalletDialog = false })
-    }
-    if (showSubscriptionDialog) {
-        SubscriptionDialog(onDismiss = { showSubscriptionDialog = false })
-    }
-
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
@@ -74,11 +59,15 @@ fun CsApp(
         layoutType = layoutType,
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination.isRouteInHierarchy(destination.route)
+                val selected = currentDestination.isRouteInHierarchy(destination.baseRoute)
                 item(
                     selected = selected,
                     icon = {
-                        val navItemIcon = if (selected) destination.selectedIcon else destination.unselectedIcon
+                        val navItemIcon = if (selected) {
+                            destination.selectedIcon
+                        } else {
+                            destination.unselectedIcon
+                        }
                         Icon(
                             imageVector = ImageVector.vectorResource(navItemIcon),
                             contentDescription = null,
@@ -107,9 +96,9 @@ fun CsApp(
                             iconRes = destination.fabIcon,
                             onClick = {
                                 when (destination) {
-                                    HOME -> showWalletDialog = true
-                                    CATEGORIES -> showCategoryDialog = true
-                                    SUBSCRIPTIONS -> showSubscriptionDialog = true
+                                    HOME -> appState.navController.navigateToWalletDialog()
+                                    CATEGORIES -> appState.navController.navigateToCategoryDialog()
+                                    SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
                                     else -> {}
                                 }
                             },

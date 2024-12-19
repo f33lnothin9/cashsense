@@ -37,8 +37,10 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -63,7 +65,7 @@ private fun SettingsScreen(
     onLicensesClick: () -> Unit,
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
-    onCurrencyUpdate: (String) -> Unit,
+    onCurrencyUpdate: (Currency) -> Unit,
 ) {
     when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -111,7 +113,7 @@ fun SettingsScreenPreview() {
                     settings = UserEditableSettings(
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-                        currency = "USD",
+                        currency = getUsdCurrency(),
                     )
                 ),
                 onLicensesClick = {},
@@ -125,14 +127,11 @@ fun SettingsScreenPreview() {
 
 private fun LazyListScope.general(
     settings: UserEditableSettings,
-    onCurrencyUpdate: (String) -> Unit,
+    onCurrencyUpdate: (Currency) -> Unit,
 ) {
     item { SectionTitle(stringResource(localesR.string.settings_general)) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
-        val supportingText = settings.currency.ifBlank {
-            stringResource(localesR.string.choose_currency)
-        }
 
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.currency)) },
@@ -142,15 +141,15 @@ private fun LazyListScope.general(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(supportingText) },
+            supportingContent = { Text(settings.currency.currencyCode) },
             onClick = { showCurrencyDialog = true },
         )
 
         if (showCurrencyDialog) {
             CurrencyDialog(
-                currencyCode = settings.currency,
+                currency = settings.currency,
                 onDismiss = { showCurrencyDialog = false },
-                onCurrencyClick = { onCurrencyUpdate(it) },
+                onCurrencyClick = onCurrencyUpdate,
             )
         }
     }

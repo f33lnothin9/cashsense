@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,8 +56,9 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.cleanAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.isAmountValid
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
@@ -68,7 +70,7 @@ import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Upd
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun TransactionDialog(
+internal fun TransactionDialog(
     onDismiss: () -> Unit,
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
@@ -84,7 +86,7 @@ fun TransactionDialog(
 }
 
 @Composable
-fun TransactionDialog(
+private fun TransactionDialog(
     transactionDialogState: TransactionDialogUiState,
     categoriesState: CategoriesUiState,
     onDismiss: () -> Unit,
@@ -98,16 +100,19 @@ fun TransactionDialog(
         localesR.string.new_transaction to localesR.string.add
     }
 
+    LaunchedEffect(transactionDialogState.isTransactionSaved) {
+        if (transactionDialogState.isTransactionSaved) {
+            onDismiss()
+        }
+    }
+
     CsAlertDialog(
         titleRes = titleRes,
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.ReceiptLong,
-        onConfirm = {
-            onTransactionEvent(Save)
-            onDismiss()
-        },
-        isConfirmEnabled = transactionDialogState.amount.cleanAndValidateAmount().second,
+        onConfirm = { onTransactionEvent(Save) },
+        isConfirmEnabled = transactionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
     ) {
         if (isLoading) {
@@ -130,7 +135,7 @@ fun TransactionDialog(
                 )
                 OutlinedTextField(
                     value = transactionDialogState.amount,
-                    onValueChange = { onTransactionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
+                    onValueChange = { onTransactionEvent(UpdateAmount(it.cleanAmount())) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
@@ -144,7 +149,7 @@ fun TransactionDialog(
                         .focusRequester(amountTextField)
                         .focusProperties { next = descTextField },
                 )
-                CategoryExposedDropdownMenuBox(
+                CategoryDropdownMenu(
                     currentCategory = transactionDialogState.category,
                     categoriesState = categoriesState,
                     onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
@@ -285,13 +290,13 @@ private fun TransactionStatusChoiceRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CategoryExposedDropdownMenuBox(
+private fun CategoryDropdownMenu(
     currentCategory: Category?,
     categoriesState: CategoriesUiState,
     onCategoryClick: (Category) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var iconId by rememberSaveable { mutableStateOf(currentCategory?.iconId) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
     when (categoriesState) {
         Loading -> Unit
@@ -332,14 +337,14 @@ private fun CategoryExposedDropdownMenuBox(
                         },
                         onClick = {
                             onCategoryClick(Category())
-                            iconId = null
+                            iconId = 0
                             expanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         leadingIcon = {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Category),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         },
                     )
@@ -354,7 +359,7 @@ private fun CategoryExposedDropdownMenuBox(
                             },
                             onClick = {
                                 onCategoryClick(category)
-                                iconId = category.iconId
+                                iconId = category.iconId ?: 0
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,

@@ -4,10 +4,14 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesBaseRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.SettingsGraph
+import ru.resodostudios.cashsense.feature.settings.navigation.SettingsBaseRoute
+import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
+import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -21,7 +25,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
  * @param titleTextId Resource ID for the title text of the destination.
  * @param fabIcon Resource ID for the Floating Action Button (FAB) icon, if applicable.
  * @param fabTitle Resource ID for the FAB title text, if applicable.
- * @param route The Kotlin class representing the route for this destination.
+ * @param route The route to use when navigating to this destination.
+ * @param baseRoute The highest ancestor of this destination. Defaults to [route], meaning that
+ * there is a single destination in that section of the app (no nested destinations).
  */
 enum class TopLevelDestination(
     @DrawableRes val selectedIcon: Int,
@@ -31,6 +37,7 @@ enum class TopLevelDestination(
     @DrawableRes val fabIcon: Int?,
     @StringRes val fabTitle: Int?,
     val route: KClass<*>,
+    val baseRoute: KClass<*> = route,
 ) {
     HOME(
         selectedIcon = CsIcons.HomeFilled,
@@ -40,6 +47,7 @@ enum class TopLevelDestination(
         fabIcon = CsIcons.Wallet,
         fabTitle = localesR.string.new_wallet,
         route = HomeRoute::class,
+        baseRoute = HomeListDetailRoute::class,
     ),
     CATEGORIES(
         selectedIcon = CsIcons.CategoryFilled,
@@ -49,6 +57,7 @@ enum class TopLevelDestination(
         fabIcon = CsIcons.Add,
         fabTitle = localesR.string.new_category,
         route = CategoriesRoute::class,
+        baseRoute = CategoriesBaseRoute::class,
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.AutoRenew,
@@ -58,6 +67,7 @@ enum class TopLevelDestination(
         fabIcon = CsIcons.Add,
         fabTitle = localesR.string.new_subscription,
         route = SubscriptionsRoute::class,
+        baseRoute = SubscriptionsBaseRoute::class,
     ),
     SETTINGS(
         selectedIcon = CsIcons.SettingsFilled,
@@ -66,6 +76,7 @@ enum class TopLevelDestination(
         titleTextId = localesR.string.settings_title,
         fabIcon = null,
         fabTitle = null,
-        route = SettingsGraph::class,
+        route = SettingsRoute::class,
+        baseRoute = SettingsBaseRoute::class,
     )
 }

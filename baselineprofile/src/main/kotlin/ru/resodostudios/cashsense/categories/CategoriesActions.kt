@@ -10,5 +10,5 @@ fun MacrobenchmarkScope.goToCategoriesScreen() {
     waitForObjectOnTopAppBar(By.text("Categories"))
 
     // Wait until content is loaded by checking if categories are loaded
-    device.wait(Until.gone(By.res("loadingCircle")), 2_500)
+    device.wait(Until.gone(By.res("loadingCircle")), 1_000)
 }

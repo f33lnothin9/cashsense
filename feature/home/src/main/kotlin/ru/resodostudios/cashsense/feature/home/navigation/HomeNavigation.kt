@@ -7,14 +7,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HomeRoute(
     val walletId: String? = null,
-    val openTransactionDialog: Boolean = false,
 )
 
 fun NavController.navigateToHome(
     walletId: String? = null,
-    openTransactionDialog: Boolean = false,
     navOptions: NavOptions? = null,
 ) = navigate(
-    route = HomeRoute(walletId, openTransactionDialog),
+    route = HomeRoute(walletId),
     navOptions = navOptions,
 )

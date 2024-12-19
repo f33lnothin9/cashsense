@@ -17,16 +17,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
 import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettingsGraph
+import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettings
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionDialogRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
-import ru.resodostudios.cashsense.feature.transfer.navigation.TransferRoute
-import ru.resodostudios.cashsense.feature.wallet.edit.navigation.EditWalletRoute
+import ru.resodostudios.cashsense.feature.transaction.navigation.TransactionDialogRoute
+import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -66,11 +69,16 @@ class CsAppState(
         @Composable get() {
             with(currentDestination) {
                 if (this?.hasRoute<HomeRoute>() == true ||
-                    this?.hasRoute<EditWalletRoute>() == true ||
-                    this?.hasRoute<TransferRoute>() == true
+                    this?.hasRoute<WalletDialogRoute>() == true ||
+                    this?.hasRoute<TransferDialogRoute>() == true ||
+                    this?.hasRoute<TransactionDialogRoute>() == true
                 ) return HOME
-                if (this?.hasRoute<CategoriesRoute>() == true) return CATEGORIES
-                if (this?.hasRoute<SubscriptionsRoute>() == true) return SUBSCRIPTIONS
+                if (this?.hasRoute<CategoriesRoute>() == true ||
+                    this?.hasRoute<CategoryDialogRoute>() == true
+                ) return CATEGORIES
+                if (this?.hasRoute<SubscriptionsRoute>() == true ||
+                    this?.hasRoute<SubscriptionDialogRoute>() == true
+                ) return SUBSCRIPTIONS
                 if (this?.hasRoute<SettingsRoute>() == true) return SETTINGS
             }
             return null
@@ -99,7 +107,7 @@ class CsAppState(
                 HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
-                SETTINGS -> navController.navigateToSettingsGraph(topLevelNavOptions)
+                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
             }
         }
     }

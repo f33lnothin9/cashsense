@@ -15,7 +15,6 @@ class SubscriptionsBaselineProfile {
     fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
         startActivityAndWait()
 
-        // Navigate to subscriptions screen
         goToSubscriptionsScreen()
     }
 }

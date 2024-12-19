@@ -18,7 +18,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,28 +33,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.StatusType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.OutlinedAmountField
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
+import ru.resodostudios.cashsense.core.ui.cleanAmount
 import ru.resodostudios.cashsense.core.ui.formatAmount
-import java.util.Currency
+import ru.resodostudios.cashsense.core.ui.isAmountValid
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import java.math.BigDecimal
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun TransferDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: TransferViewModel = hiltViewModel(),
+    viewModel: TransferDialogViewModel = hiltViewModel(),
 ) {
-    val transferState by viewModel.transferState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(transferState.isTransferSaved) {
-        if (transferState.isTransferSaved) {
-            onDismiss()
-        }
-    }
+    val transferState by viewModel.transferDialogState.collectAsStateWithLifecycle()
 
     TransferDialog(
         transferState = transferState,
@@ -72,14 +71,14 @@ internal fun TransferDialog(
 
 @Composable
 private fun TransferDialog(
-    transferState: TransferUiState,
+    transferState: TransferDialogUiState,
     onDismiss: () -> Unit,
     onSendingWalletUpdate: (TransferWallet) -> Unit,
     onReceivingWalletUpdate: (TransferWallet) -> Unit,
     onAmountUpdate: (String) -> Unit,
     onExchangingRateUpdate: (String) -> Unit,
     onConvertedAmountUpdate: (String) -> Unit,
-    onTransferSave: () -> Unit,
+    onTransferSave: (Transaction, Transaction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CsAlertDialog(
@@ -87,11 +86,38 @@ private fun TransferDialog(
         confirmButtonTextRes = localesR.string.transfer,
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.SendMoney,
-        onConfirm = onTransferSave,
-        isConfirmEnabled = transferState.amount.isNotBlank() &&
+        onConfirm = {
+            val transferId = Uuid.random()
+            val timestamp = Clock.System.now()
+            val withdrawalAmount = BigDecimal(transferState.amount)
+            val withdrawalTransaction = Transaction(
+                id = Uuid.random().toHexString(),
+                walletOwnerId = transferState.sendingWallet.id,
+                description = null,
+                amount = withdrawalAmount.negate(),
+                timestamp = timestamp,
+                status = StatusType.COMPLETED,
+                ignored = true,
+                transferId = transferId,
+            )
+            val depositTransaction = Transaction(
+                id = Uuid.random().toHexString(),
+                walletOwnerId = transferState.receivingWallet.id,
+                description = null,
+                amount = BigDecimal(transferState.convertedAmount),
+                timestamp = timestamp,
+                status = StatusType.COMPLETED,
+                ignored = true,
+                transferId = transferId,
+            )
+            onTransferSave(withdrawalTransaction, depositTransaction)
+            onDismiss()
+        },
+        isConfirmEnabled = transferState.amount.isAmountValid() &&
+                transferState.sendingWallet.id.isNotBlank() &&
                 transferState.receivingWallet.id.isNotBlank() &&
-                transferState.exchangeRate.isNotBlank() &&
-                transferState.convertedAmount.isNotBlank() &&
+                transferState.exchangeRate.isAmountValid() &&
+                transferState.convertedAmount.isAmountValid() &&
                 transferState.sendingWallet != transferState.receivingWallet,
         onDismiss = onDismiss,
         modifier = modifier,
@@ -130,7 +156,7 @@ private fun TransferDialog(
                     value = transferState.amount,
                     onValueChange = onAmountUpdate,
                     labelRes = localesR.string.amount,
-                    currency = Currency.getInstance(transferState.sendingWallet.currency),
+                    currency = transferState.sendingWallet.currency ?: getUsdCurrency(),
                     imeAction = if (exchangeRateEnabled) ImeAction.Next else ImeAction.Done,
                     keyboardActions = KeyboardActions(
                         onNext = { focusManager.moveFocus(FocusDirection.Down) },
@@ -140,7 +166,7 @@ private fun TransferDialog(
                 )
                 OutlinedTextField(
                     value = transferState.exchangeRate,
-                    onValueChange = { onExchangingRateUpdate(it.cleanAndValidateAmount().first) },
+                    onValueChange = { onExchangingRateUpdate(it.cleanAmount()) },
                     label = { Text(stringResource(localesR.string.exchange_rate)) },
                     placeholder = { Text("0.01") },
                     singleLine = true,
@@ -154,12 +180,12 @@ private fun TransferDialog(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                AnimatedVisibility(transferState.receivingWallet.currency.isNotBlank()) {
+                AnimatedVisibility(transferState.receivingWallet.currency != null) {
                     OutlinedAmountField(
                         value = transferState.convertedAmount,
                         onValueChange = onConvertedAmountUpdate,
                         labelRes = localesR.string.converted_amount,
-                        currency = Currency.getInstance(transferState.receivingWallet.currency),
+                        currency = transferState.receivingWallet.currency!!,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -193,7 +219,7 @@ private fun WalletDropdownMenu(
             label = { Text(stringResource(title)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             placeholder = { Text(stringResource(localesR.string.choose_wallet)) },
-            supportingText = if (selectedWallet.currency.isNotBlank()) {
+            supportingText = if (selectedWallet.currency != null) {
                 {
                     Text(selectedWallet.currentBalance.formatAmount(selectedWallet.currency))
                 }
@@ -206,7 +232,7 @@ private fun WalletDropdownMenu(
             onDismissRequest = { expanded = false },
         ) {
             availableWallets.forEach { wallet ->
-                val currentBalance = wallet.currentBalance.formatAmount(wallet.currency)
+                val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
                 val menuText = "${wallet.title} – $currentBalance"
                 DropdownMenuItem(
                     text = {

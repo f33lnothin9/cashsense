@@ -1,7 +1,13 @@
 pluginManagement {
     includeBuild("build-logic")
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -9,7 +15,13 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
     }
 }
@@ -41,9 +53,7 @@ include(":feature:subscription:list")
 include(":feature:subscription:dialog")
 include(":feature:transaction")
 include(":feature:transfer")
-include(":feature:wallet:add")
 include(":feature:wallet:detail")
-include(":feature:wallet:edit")
-include(":feature:wallet:menu")
+include(":feature:wallet:dialog")
 include(":feature:wallet:widget")
 include(":feature:settings")

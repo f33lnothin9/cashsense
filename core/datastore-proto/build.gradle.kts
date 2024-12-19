@@ -25,6 +25,14 @@ protobuf {
     }
 }
 
+androidComponents.beforeVariants {
+    android.sourceSets.forEach {
+        val buildDir = layout.buildDirectory.get().asFile
+        it.java.srcDir(buildDir.resolve("generated/source/proto/${it.name}/java"))
+        it.kotlin.srcDir(buildDir.resolve("generated/source/proto/${it.name}/kotlin"))
+    }
+}
+
 dependencies {
     api(libs.protobuf.kotlin.lite)
 }

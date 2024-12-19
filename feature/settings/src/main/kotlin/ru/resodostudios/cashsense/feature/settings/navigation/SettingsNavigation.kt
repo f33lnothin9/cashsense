@@ -9,19 +9,19 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.settings.SettingsScreen
 
 @Serializable
-data object SettingsGraph
+object SettingsBaseRoute
 
 @Serializable
-data object SettingsRoute
+object SettingsRoute
 
-fun NavController.navigateToSettingsGraph(navOptions: NavOptions? = null) =
-    navigate(route = SettingsGraph, navOptions)
+fun NavController.navigateToSettings(navOptions: NavOptions? = null) =
+    navigate(route = SettingsBaseRoute, navOptions)
 
-fun NavGraphBuilder.settingsGraph(
+fun NavGraphBuilder.settingsSection(
     onLicensesClick: () -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
-    navigation<SettingsGraph>(
+    navigation<SettingsBaseRoute>(
         startDestination = SettingsRoute,
     ) {
         composable<SettingsRoute> {

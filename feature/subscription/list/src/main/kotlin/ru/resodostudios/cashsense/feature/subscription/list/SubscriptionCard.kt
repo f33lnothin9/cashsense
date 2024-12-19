@@ -26,15 +26,16 @@ import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.DAILY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.WEEKLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.formatAmount
 import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.DAILY
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.MONTHLY
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.WEEKLY
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType.YEARLY
-import ru.resodostudios.cashsense.feature.subscription.dialog.getRepeatingIntervalType
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -42,11 +43,11 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun SubscriptionCard(
     subscription: Subscription,
-    onClick: (String) -> Unit,
+    onClick: (Subscription) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
-        onClick = { onClick(subscription.id) },
+        onClick = { onClick(subscription) },
         shape = RoundedCornerShape(24.dp),
         modifier = modifier,
     ) {
@@ -113,7 +114,7 @@ fun SubscriptionCardPreview() {
                     id = "",
                     title = "Spotify Premium",
                     amount = BigDecimal(14.99),
-                    currency = "USD",
+                    currency = getUsdCurrency(),
                     paymentDate = Clock.System.now(),
                     reminder = null,
                 ),
