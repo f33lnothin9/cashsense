@@ -110,7 +110,7 @@ class WalletViewModel @Inject constructor(
 
         Success(
             walletFilter = WalletFilter(
-                availableCategories = walletFilter.availableCategories.minus(Category()),
+                availableCategories = walletFilter.availableCategories,
                 selectedCategories = walletFilter.selectedCategories,
                 financeType = walletFilter.financeType,
                 dateType = walletFilter.dateType,
