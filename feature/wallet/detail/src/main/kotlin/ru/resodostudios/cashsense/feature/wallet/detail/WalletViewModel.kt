@@ -121,7 +121,7 @@ class WalletViewModel @Inject constructor(
             ),
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
-                filteredByCategories.firstOrNull { it.transaction.id == id }
+                filteredByCategories.find { it.transaction.id == id }
             },
             transactionsCategories = filteredByCategories,
         )
@@ -145,9 +145,9 @@ class WalletViewModel @Inject constructor(
 
     private fun calculateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
         val availableCategories = transactionsCategories
-            .map { it.category }
+            .mapNotNull { it.category }
             .toSet()
-            .filterNotNull()
+            .toList()
         walletFilterState.update {
             it.copy(availableCategories = availableCategories)
         }
@@ -228,10 +228,10 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun findCurrentYear(years: List<Int>) =
-        years.firstOrNull { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
+        years.find { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
 
     private fun findCurrentMonth(months: List<Int>) =
-        months.firstOrNull { it == getCurrentZonedDateTime().monthValue }
+        months.find { it == getCurrentZonedDateTime().monthValue }
             ?: getCurrentZonedDateTime().monthValue
 
     private fun incrementSelectedDate() {

@@ -72,7 +72,7 @@ enum class StoredIcon(
     ACCOUNT_BALANCE(CsIcons.AccountBalance, 1),
     APPAREL(CsIcons.Apparel, 2),
     CHAIR(CsIcons.Chair, 3),
-    EXERCISE(CsIcons.Exercise,4),
+    EXERCISE(CsIcons.Exercise, 4),
     FASTFOOD(CsIcons.Fastfood, 5),
     DIRECTIONS_BUS(CsIcons.DirectionsBus, 6),
     HANDYMAN(CsIcons.Handyman, 7),
@@ -107,6 +107,6 @@ enum class StoredIcon(
     companion object {
 
         @DrawableRes
-        fun asRes(storedId: Int?): Int = entries.firstOrNull { it.storedId == storedId }?.iconRes ?: CATEGORY.iconRes
+        fun asRes(storedId: Int?): Int = entries.find { it.storedId == storedId }?.iconRes ?: CATEGORY.iconRes
     }
 }
