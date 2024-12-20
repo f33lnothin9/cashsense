@@ -97,4 +97,5 @@
   <string name="converted_amount">Конвертированная сумма</string>
   <string name="primary_icon_description">Сделать основным</string>
   <string name="non_primary_icon_description">Сделать не основным</string>
+  <string name="total_balance">Итоговый баланс</string>
 </resources>

@@ -1,25 +1,43 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
@@ -102,10 +120,12 @@ internal fun HomeScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    top = 16.dp,
                     bottom = 88.dp,
                 ),
             ) {
+                financeOverviewSection(
+                    wallets = walletsState.extendedUserWallets,
+                )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
                     selectedWalletId = walletsState.selectedWalletId,
@@ -151,5 +171,57 @@ private fun LazyStaggeredGridScope.wallets(
             modifier = Modifier.animateItem(),
             selected = selected,
         )
+    }
+}
+
+private fun LazyStaggeredGridScope.financeOverviewSection(
+    wallets: List<ExtendedUserWallet>,
+) {
+    val firstCurrency = wallets.first().userWallet.currency
+    val visible = wallets.size >= 2 && wallets.all { it.userWallet.currency == firstCurrency }
+
+    if (visible) {
+        item(
+            span = StaggeredGridItemSpan.FullLine,
+        ) {
+            val borderBrush = Brush.verticalGradient(listOf(Color.Transparent, MaterialTheme.colorScheme.outlineVariant))
+            val cardShape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            OutlinedCard(
+                shape = cardShape,
+                border = BorderStroke(1.dp, borderBrush),
+                modifier = Modifier.shadow(
+                    ambientColor = MaterialTheme.colorScheme.primary,
+                    elevation = 3.dp,
+                    spotColor = MaterialTheme.colorScheme.primary,
+                    shape = cardShape,
+                )
+            ) {
+                val totalBalance = wallets
+                    .map { it.userWallet }
+                    .sumOf { it.currentBalance }
+                CsListItem(
+                    leadingContent = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                            contentDescription = null,
+                        )
+                    },
+                    headlineContent = {
+                        AnimatedAmount(
+                            targetState = totalBalance,
+                            label = "total_balance",
+                        ) {
+                            Text(
+                                text = totalBalance.formatAmount(firstCurrency),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    },
+                    overlineContent = { Text(stringResource(localesR.string.total_balance)) },
+                    modifier = Modifier.fillMaxWidth().animateItem(),
+                )
+            }
+        }
     }
 }
