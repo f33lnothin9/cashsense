@@ -15,12 +15,22 @@ import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
 
-fun BigDecimal.formatAmount(currency: Currency, withPlus: Boolean = false): String {
-    val currencyFormat = DecimalFormat.getCurrencyInstance(Locale.getDefault())
-    currencyFormat.currency = currency
-    val formattedAmount = currencyFormat.format(this)
+private val currencyFormatCache = mutableMapOf<Pair<Currency, Locale>, DecimalFormat>()
 
-    return if (withPlus && this > BigDecimal.ZERO) "+$formattedAmount" else formattedAmount
+fun BigDecimal.formatAmount(
+    currency: Currency,
+    withPlus: Boolean = false,
+    locale: Locale = Locale.getDefault(),
+): String {
+    val currencyFormat = currencyFormatCache.getOrPut(currency to locale) {
+        DecimalFormat.getCurrencyInstance(locale).apply {
+            minimumFractionDigits = 0
+            maximumFractionDigits = 2
+            this.currency = currency
+        } as DecimalFormat
+    }
+    val formattedAmount = currencyFormat.format(this)
+    return if (withPlus && this.signum() == 1) "+$formattedAmount" else formattedAmount
 }
 
 @Composable
