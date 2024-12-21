@@ -40,9 +40,9 @@ import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.OutlinedAmountField
-import ru.resodostudios.cashsense.core.ui.cleanAmount
-import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.core.ui.isAmountValid
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import kotlin.uuid.Uuid

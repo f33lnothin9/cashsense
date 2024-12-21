@@ -88,6 +88,7 @@ internal fun SubscriptionsScreen(
                         onSelectSubscription(it)
                         showSubscriptionBottomSheet = true
                     },
+                    modifier = Modifier.fillMaxSize(),
                 )
                 if (showSubscriptionBottomSheet && subscriptionsState.selectedSubscription != null) {
                     SubscriptionBottomSheet(

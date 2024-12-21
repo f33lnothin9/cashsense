@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
@@ -25,6 +26,7 @@ class Home2PaneViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
+    private val userDataRepository: UserDataRepository,
     private val getExtendedUserWallet: GetExtendedUserWalletUseCase,
 ) : ViewModel() {
 
@@ -62,6 +64,9 @@ class Home2PaneViewModel @Inject constructor(
                     currency = it.userWallet.currency,
                 )
                 walletsRepository.upsertWallet(wallet)
+                if (it.userWallet.isPrimary) {
+                    userDataRepository.setPrimaryWallet(wallet.id, true)
+                }
                 it.transactionsWithCategories.forEach { transactionWithCategory ->
                     transactionsRepository.upsertTransaction(transactionWithCategory.transaction)
                     if (transactionWithCategory.category != null) {

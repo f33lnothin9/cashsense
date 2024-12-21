@@ -21,7 +21,7 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.SUBSCRIPTIONS_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME

@@ -20,8 +20,8 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
-import ru.resodostudios.cashsense.core.ui.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.ui.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
@@ -110,7 +110,7 @@ class WalletViewModel @Inject constructor(
 
         Success(
             walletFilter = WalletFilter(
-                availableCategories = walletFilter.availableCategories.minus(Category()),
+                availableCategories = walletFilter.availableCategories,
                 selectedCategories = walletFilter.selectedCategories,
                 financeType = walletFilter.financeType,
                 dateType = walletFilter.dateType,
@@ -121,7 +121,7 @@ class WalletViewModel @Inject constructor(
             ),
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
-                filteredByCategories.firstOrNull { it.transaction.id == id }
+                filteredByCategories.find { it.transaction.id == id }
             },
             transactionsCategories = filteredByCategories,
         )
@@ -145,9 +145,9 @@ class WalletViewModel @Inject constructor(
 
     private fun calculateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
         val availableCategories = transactionsCategories
-            .map { it.category }
+            .mapNotNull { it.category }
             .toSet()
-            .filterNotNull()
+            .toList()
         walletFilterState.update {
             it.copy(availableCategories = availableCategories)
         }
@@ -228,10 +228,10 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun findCurrentYear(years: List<Int>) =
-        years.firstOrNull { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
+        years.find { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
 
     private fun findCurrentMonth(months: List<Int>) =
-        months.firstOrNull { it == getCurrentZonedDateTime().monthValue }
+        months.find { it == getCurrentZonedDateTime().monthValue }
             ?: getCurrentZonedDateTime().monthValue
 
     private fun incrementSelectedDate() {

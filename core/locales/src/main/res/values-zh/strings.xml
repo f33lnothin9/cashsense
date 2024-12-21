@@ -41,7 +41,6 @@
   <string name="licenses">许可</string>
   <string name="version">版本</string>
   <string name="feedback">反馈</string>
-  <string name="choose_currency">选择您的默认货币</string>
   <string name="new_subscription">新建订阅</string>
   <string name="edit_subscription">编辑订阅</string>
   <string name="payment_date">付款日期</string>

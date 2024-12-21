@@ -59,9 +59,9 @@ import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
-import ru.resodostudios.cashsense.core.ui.cleanAmount
-import ru.resodostudios.cashsense.core.ui.formatDate
-import ru.resodostudios.cashsense.core.ui.isAmountValid
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency

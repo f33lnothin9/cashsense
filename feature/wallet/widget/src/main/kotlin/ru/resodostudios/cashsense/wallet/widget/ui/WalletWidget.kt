@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
-import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME

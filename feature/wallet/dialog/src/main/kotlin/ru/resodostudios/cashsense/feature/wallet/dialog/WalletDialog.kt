@@ -35,7 +35,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import java.math.BigDecimal
 import java.util.Currency
 import kotlin.uuid.Uuid
