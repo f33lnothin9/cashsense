@@ -49,7 +49,6 @@ import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.math.BigDecimal.ZERO
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -140,22 +139,26 @@ private fun TagsSection(
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
-    val expenses by remember(transactions) {
+    val currentMonthTransactions by remember(transactions) {
         derivedStateOf {
-            transactions
-                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount < ZERO && !it.ignored }
+            transactions.filter {
+                it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+            }
+        }
+    }
+    val expenses by remember(currentMonthTransactions) {
+        derivedStateOf {
+            currentMonthTransactions
+                .filter { it.amount.signum() == -1 }
                 .sumOf { it.amount }
                 .abs()
         }
     }
-    val income by remember(transactions) {
+    val income by remember(currentMonthTransactions) {
         derivedStateOf {
-            transactions
-                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount > ZERO && !it.ignored }
+            currentMonthTransactions
+                .filter { it.amount.signum() == 1 }
                 .sumOf { it.amount }
-                .abs()
         }
     }
 
@@ -175,7 +178,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = expenses != ZERO,
+            visible = expenses.signum() == 1,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -187,7 +190,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = income != ZERO,
+            visible = income.signum() == 1,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {

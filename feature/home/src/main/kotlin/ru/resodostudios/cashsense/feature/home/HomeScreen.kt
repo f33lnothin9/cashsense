@@ -17,7 +17,9 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -38,6 +40,8 @@ import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
@@ -184,17 +188,57 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
         item(
             span = StaggeredGridItemSpan.FullLine,
         ) {
-            val borderBrush = Brush.verticalGradient(listOf(Color.Transparent, MaterialTheme.colorScheme.outlineVariant))
-            val cardShape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            val transactions = wallets.flatMap { wallet ->
+                wallet.transactionsWithCategories.map { it.transaction }
+            }
+            val currentMonthTransactions by remember(transactions) {
+                derivedStateOf {
+                    transactions.filter {
+                        it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+                    }
+                }
+            }
+            val expenses by remember(currentMonthTransactions) {
+                derivedStateOf {
+                    currentMonthTransactions
+                        .filter { it.amount.signum() == -1 }
+                        .sumOf { it.amount }
+                        .abs()
+                }
+            }
+            val income by remember(currentMonthTransactions) {
+                derivedStateOf {
+                    currentMonthTransactions
+                        .filter { it.amount.signum() == 1 }
+                        .sumOf { it.amount }
+                }
+            }
+
+            val showBadIndicator = expenses > income
+            val color = if (showBadIndicator) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.outlineVariant
+            }
+            val borderBrush = Brush.verticalGradient(
+                colors = listOf(Color.Transparent, color),
+                startY = 20.0f,
+                endY = 400.0f,
+            )
+            val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
             OutlinedCard(
-                shape = cardShape,
+                shape = shape,
                 border = BorderStroke(1.dp, borderBrush),
-                modifier = Modifier.shadow(
-                    ambientColor = MaterialTheme.colorScheme.primary,
-                    elevation = 3.dp,
-                    spotColor = MaterialTheme.colorScheme.primary,
-                    shape = cardShape,
-                )
+                modifier = if (showBadIndicator) {
+                    Modifier.shadow(
+                        ambientColor = color,
+                        elevation = 12.dp,
+                        spotColor = color,
+                        shape = shape,
+                    )
+                } else {
+                    Modifier
+                },
             ) {
                 val totalBalance = wallets
                     .map { it.userWallet }
@@ -219,7 +263,9 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                         }
                     },
                     overlineContent = { Text(stringResource(localesR.string.total_balance)) },
-                    modifier = Modifier.fillMaxWidth().animateItem(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItem(),
                 )
             }
         }
