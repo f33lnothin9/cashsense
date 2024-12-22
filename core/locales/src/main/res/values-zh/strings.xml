@@ -41,7 +41,6 @@
   <string name="licenses">许可</string>
   <string name="version">版本</string>
   <string name="feedback">反馈</string>
-  <string name="choose_currency">选择您的默认货币</string>
   <string name="new_subscription">新建订阅</string>
   <string name="edit_subscription">编辑订阅</string>
   <string name="payment_date">付款日期</string>
@@ -98,4 +97,5 @@
   <string name="converted_amount">兑换金额</string>
   <string name="primary_icon_description">设为主要</string>
   <string name="non_primary_icon_description">设为非主要</string>
+  <string name="total_balance">总余额</string>
 </resources>
