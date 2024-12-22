@@ -97,4 +97,5 @@
   <string name="converted_amount">மாற்றிய மொத்தம்</string>
   <string name="primary_icon_description">முதன்மையாக்கு</string>
   <string name="non_primary_icon_description">முதன்மையாக்காதே</string>
+  <string name="total_balance">மொத்த இருப்பு</string>
 </resources>

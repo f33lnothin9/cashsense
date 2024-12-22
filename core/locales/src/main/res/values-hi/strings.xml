@@ -97,4 +97,5 @@
   <string name="converted_amount">परिवर्तित राशि</string>
   <string name="primary_icon_description">मुख्य बनाएं</string>
   <string name="non_primary_icon_description">गैर-मुख्य बनाएं</string>
+  <string name="total_balance">कुल शेष</string>
 </resources>
