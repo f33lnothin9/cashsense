@@ -97,4 +97,5 @@
   <string name="converted_amount">Cantidad convertida</string>
   <string name="primary_icon_description">Establecer como principal</string>
   <string name="non_primary_icon_description">Establecer como no principal</string>
+  <string name="total_balance">Saldo total</string>
 </resources>

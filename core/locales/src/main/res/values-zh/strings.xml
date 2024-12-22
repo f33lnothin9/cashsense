@@ -68,7 +68,7 @@
   <string name="transaction_shortcut_long_label">添加新交易</string>
   <string name="completed">已完成</string>
   <string name="pending">待处理</string>
-  <string name="transaction_ignore">在计算时忽略</string>
+  <string name="transaction_ignore">不纳入计算</string>
   <string name="week">周</string>
   <string name="month">月</string>
   <string name="year">年</string>
@@ -85,7 +85,7 @@
   <string name="currency_not_found">未找到货币</string>
   <string name="transfer">转账</string>
   <string name="transfers">转账</string>
-  <string name="new_transfer">新建转帐</string>
+  <string name="new_transfer">新建转账</string>
   <string name="exchange_rate">汇率</string>
   <string name="choose_wallet">选择钱包</string>
   <string name="uncategorized">未分类</string>
@@ -97,4 +97,5 @@
   <string name="converted_amount">兑换金额</string>
   <string name="primary_icon_description">设为主要</string>
   <string name="non_primary_icon_description">设为非主要</string>
+  <string name="total_balance">总余额</string>
 </resources>
