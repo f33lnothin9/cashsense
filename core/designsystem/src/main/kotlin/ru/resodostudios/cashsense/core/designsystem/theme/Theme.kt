@@ -248,11 +248,11 @@ private val highContrastDarkColorScheme = darkColorScheme(
 @Composable
 fun CsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    disableDynamicTheming: Boolean = true,
+    dynamicTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
-        !disableDynamicTheming && supportsDynamicTheming() -> {
+        dynamicTheme && supportsDynamicTheming() -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
