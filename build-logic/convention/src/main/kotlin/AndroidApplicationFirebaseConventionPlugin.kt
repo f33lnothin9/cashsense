@@ -14,7 +14,7 @@ class AndroidApplicationFirebaseConventionPlugin : Plugin<Project> {
 
             dependencies {
                 val bom = libs.findLibrary("firebase-bom").get()
-                add("implementation", platform(bom))
+                "implementation"(platform(bom))
                 "implementation"(libs.findLibrary("firebase.analytics").get())
                 "implementation"(libs.findLibrary("firebase.crashlytics").get())
             }
