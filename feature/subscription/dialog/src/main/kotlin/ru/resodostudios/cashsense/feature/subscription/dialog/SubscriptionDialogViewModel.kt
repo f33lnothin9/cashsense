@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -36,8 +35,7 @@ class SubscriptionDialogViewModel @Inject constructor(
     private val subscriptionDialogDestination: SubscriptionDialogRoute = savedStateHandle.toRoute()
 
     private val _subscriptionDialogUiState = MutableStateFlow(SubscriptionDialogUiState())
-    val subscriptionDialogUiState: StateFlow<SubscriptionDialogUiState>
-        get() = _subscriptionDialogUiState.asStateFlow()
+    val subscriptionDialogUiState = _subscriptionDialogUiState.asStateFlow()
 
     init {
         if (subscriptionDialogDestination.subscriptionId != null) {

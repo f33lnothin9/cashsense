@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -32,8 +31,7 @@ class WalletDialogViewModel @Inject constructor(
     private val walletDialogDestination: WalletDialogRoute = savedStateHandle.toRoute()
 
     private val _walletDialogState = MutableStateFlow(WalletDialogUiState())
-    val walletDialogState: StateFlow<WalletDialogUiState>
-        get() = _walletDialogState.asStateFlow()
+    val walletDialogState = _walletDialogState.asStateFlow()
 
     init {
         if (walletDialogDestination.walletId != null) {
