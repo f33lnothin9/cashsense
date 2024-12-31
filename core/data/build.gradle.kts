@@ -17,6 +17,7 @@ dependencies {
     api(projects.core.common)
     api(projects.core.database)
     api(projects.core.datastore)
+    api(projects.core.network)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.notifications)
