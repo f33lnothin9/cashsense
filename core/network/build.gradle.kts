@@ -5,6 +5,9 @@ plugins {
 }
 
 android {
+    buildFeatures {
+        buildConfig = true
+    }
     namespace = "ru.resodostudios.cashsense.core.network"
     testOptions {
         unitTests {
@@ -18,4 +21,7 @@ dependencies {
     api(projects.core.model)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp.logging)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
 }
