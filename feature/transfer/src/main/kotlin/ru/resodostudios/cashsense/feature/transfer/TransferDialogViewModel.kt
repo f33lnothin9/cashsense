@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -33,8 +32,7 @@ class TransferDialogViewModel @Inject constructor(
     private val transferDialogDestination: TransferDialogRoute = savedStateHandle.toRoute()
 
     private val _transferDialogState = MutableStateFlow(TransferDialogUiState())
-    val transferDialogState: StateFlow<TransferDialogUiState>
-        get() = _transferDialogState.asStateFlow()
+    val transferDialogState = _transferDialogState.asStateFlow()
 
     init {
         transferDialogDestination.walletId?.let(::loadTransfer)

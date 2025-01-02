@@ -79,8 +79,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
@@ -635,7 +635,7 @@ private fun FinanceGraph(
     val marker = rememberDefaultCartesianMarker(
         label = TextComponent(
             textSizeSp = 14f,
-            padding = Dimensions(
+            padding = Insets(
                 startDp = 8f,
                 endDp = 8f,
                 topDp = 4f,
@@ -645,7 +645,7 @@ private fun FinanceGraph(
             background = ShapeComponent(
                 fill = Fill(MaterialTheme.colorScheme.surfaceVariant.toArgb()),
                 shape = CorneredShape.Pill,
-                margins = Dimensions(
+                margins = Insets(
                     startDp = 0f,
                     endDp = 0f,
                     topDp = 0f,
@@ -673,7 +673,7 @@ private fun FinanceGraph(
                     guideline = null,
                     line = null,
                     tick = rememberAxisTickComponent(
-                        margins = Dimensions(
+                        margins = Insets(
                             startDp = 0f,
                             endDp = 0f,
                             topDp = 2f,

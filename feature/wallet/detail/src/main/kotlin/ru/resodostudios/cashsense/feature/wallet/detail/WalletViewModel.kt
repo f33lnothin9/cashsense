@@ -136,6 +136,7 @@ class WalletViewModel @Inject constructor(
     private fun calculateAvailableYears(transactions: List<TransactionWithCategory>) {
         val availableYears = transactions
             .map { it.transaction.timestamp.getZonedDateTime().year }
+            .plus(getCurrentZonedDateTime().year)
             .toSortedSet()
             .toList()
         walletFilterState.update {
