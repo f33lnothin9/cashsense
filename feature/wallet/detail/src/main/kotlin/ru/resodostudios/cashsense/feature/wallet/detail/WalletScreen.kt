@@ -98,6 +98,7 @@ import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -119,6 +120,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
+import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Currency
 import java.util.Locale
@@ -490,7 +492,7 @@ private fun SharedTransitionScope.FinanceCard(
                     sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
-            )  {
+            ) {
                 Text(
                     text = it.formatAmount(currency),
                     fontWeight = FontWeight.SemiBold,
@@ -766,7 +768,6 @@ private fun FilterDateTypeSelectorRow(
                 ),
                 onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
                 selected = walletFilter.dateType == DateType.entries[index],
-                enabled = walletFilter.availableYears.isNotEmpty(),
             ) {
                 Text(
                     text = label,
@@ -789,20 +790,8 @@ private fun FilterBySelectedDateTypeRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
-        val isPreviousActive = when (walletFilter.dateType) {
-            YEAR ->
-                walletFilter.availableYears.isNotEmpty() &&
-                        walletFilter.selectedYear != walletFilter.availableYears.first()
-
-            MONTH ->
-                walletFilter.availableMonths.isNotEmpty() &&
-                        walletFilter.selectedMonth != walletFilter.availableMonths.first()
-
-            else -> false
-        }
         IconButton(
             onClick = { onWalletEvent(DecrementSelectedDate) },
-            enabled = isPreviousActive,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronLeft),
@@ -811,32 +800,32 @@ private fun FilterBySelectedDateTypeRow(
         }
 
         val selectedDate = when (walletFilter.dateType) {
-            YEAR -> walletFilter.selectedYear.toString()
-            MONTH -> Month(walletFilter.selectedMonth)
-                .getDisplayName(
-                    TextStyle.FULL_STANDALONE,
-                    Locale.getDefault(),
-                )
-                .replaceFirstChar { it.uppercaseChar() }
+            YEAR -> walletFilter.selectedYearMonth.year.toString()
+            MONTH -> {
+                val monthName = Month(walletFilter.selectedYearMonth.monthValue)
+                    .getDisplayName(
+                        TextStyle.FULL_STANDALONE,
+                        Locale.getDefault()
+                    )
+                    .replaceFirstChar { it.uppercaseChar() }
 
+                if (walletFilter.selectedYearMonth.year != getCurrentYear()) {
+                    "$monthName ${walletFilter.selectedYearMonth.year}"
+                } else {
+                    monthName
+                }
+            }
             else -> ""
         }
-        Text(selectedDate)
 
-        val isNextActive = when (walletFilter.dateType) {
-            YEAR ->
-                walletFilter.availableYears.isNotEmpty() &&
-                        walletFilter.selectedYear != walletFilter.availableYears.last()
+        Text(
+            text = selectedDate,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
 
-            MONTH ->
-                walletFilter.availableMonths.isNotEmpty() &&
-                        walletFilter.selectedMonth != walletFilter.availableMonths.last()
-
-            else -> false
-        }
         IconButton(
             onClick = { onWalletEvent(IncrementSelectedDate) },
-            enabled = isNextActive,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
@@ -878,10 +867,7 @@ fun FinancePanelDefaultPreview(
                         selectedCategories = categories.take(3),
                         financeType = NONE,
                         dateType = YEAR,
-                        availableYears = emptyList(),
-                        availableMonths = emptyList(),
-                        selectedYear = 0,
-                        selectedMonth = 0,
+                        selectedYearMonth = YearMonth.of(2025, 1),
                     ),
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
@@ -921,10 +907,7 @@ fun FinancePanelOpenedPreview(
                         selectedCategories = categories.take(2),
                         financeType = EXPENSES,
                         dateType = YEAR,
-                        availableYears = listOf(2023, 2024),
-                        availableMonths = emptyList(),
-                        selectedYear = 2024,
-                        selectedMonth = 0,
+                        selectedYearMonth = YearMonth.of(2025, 1),
                     ),
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
