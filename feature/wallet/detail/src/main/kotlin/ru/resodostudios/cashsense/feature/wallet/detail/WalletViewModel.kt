@@ -20,6 +20,8 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
+import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
@@ -77,7 +79,7 @@ class WalletViewModel @Inject constructor(
             EXPENSES -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount < ZERO }
             INCOME -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount > ZERO }
         }
-        calculateAvailableYears(financeTypeTransactions)
+        getAvailableYears(financeTypeTransactions)
         val dateTypeTransactions = when (walletFilter.dateType) {
             ALL -> financeTypeTransactions
             WEEK -> financeTypeTransactions.filter {
@@ -95,7 +97,7 @@ class WalletViewModel @Inject constructor(
                 .filter { it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYear }
         }
 
-        calculateAvailableCategories(dateTypeTransactions)
+        getAvailableCategories(dateTypeTransactions)
         val filteredByCategories = if (walletFilter.selectedCategories.isNotEmpty()) {
             dateTypeTransactions
                 .filter { walletFilter.selectedCategories.contains(it.category) }
@@ -133,10 +135,10 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    private fun calculateAvailableYears(transactions: List<TransactionWithCategory>) {
+    private fun getAvailableYears(transactions: List<TransactionWithCategory>) {
         val availableYears = transactions
             .map { it.transaction.timestamp.getZonedDateTime().year }
-            .plus(getCurrentZonedDateTime().year)
+            .plus(getCurrentYear())
             .toSortedSet()
             .toList()
         walletFilterState.update {
@@ -144,7 +146,7 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun calculateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
+    private fun getAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
         val availableCategories = transactionsCategories
             .mapNotNull { it.category }
             .toSet()
@@ -229,11 +231,10 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun findCurrentYear(years: List<Int>) =
-        years.find { it == getCurrentZonedDateTime().year } ?: getCurrentZonedDateTime().year
+        years.find { it == getCurrentYear() } ?: getCurrentYear()
 
     private fun findCurrentMonth(months: List<Int>) =
-        months.find { it == getCurrentZonedDateTime().monthValue }
-            ?: getCurrentZonedDateTime().monthValue
+        months.find { it == getCurrentMonth() } ?: getCurrentMonth()
 
     private fun incrementSelectedDate() {
         val walletFilter = walletFilterState.value
