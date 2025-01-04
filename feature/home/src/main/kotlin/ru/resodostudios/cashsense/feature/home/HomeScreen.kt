@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -35,6 +38,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -90,10 +94,10 @@ internal fun HomeScreen(
     onDeleteWallet: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-    shouldDisplayUndoWallet: Boolean,
-    undoWalletRemoval: () -> Unit,
-    clearUndoState: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
+    shouldDisplayUndoWallet: Boolean = false,
+    undoWalletRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
     val undoText = stringResource(localesR.string.undo)
@@ -267,6 +271,66 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                         .animateItem(),
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenLoadingPreview() {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Loading,
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenEmptyPreview() {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Empty,
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPopulatedPreview(
+    @PreviewParameter(ExtendedUserWalletPreviewParameterProvider::class)
+    extendedUserWallets: List<ExtendedUserWallet>,
+) {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Success(
+                    selectedWalletId = null,
+                    extendedUserWallets = extendedUserWallets,
+                ),
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
         }
     }
 }
