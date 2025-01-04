@@ -222,8 +222,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
             }
             val borderBrush = Brush.verticalGradient(
                 colors = listOf(Color.Transparent, color),
-                startY = 20.0f,
-                endY = 400.0f,
+                startY = 15.0f,
             )
             val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
             OutlinedCard(
