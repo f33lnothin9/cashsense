@@ -1,8 +1,11 @@
 package ru.resodostudios.cashsense.core.network
 
-import ru.resodostudios.cashsense.core.network.model.NetworkCurrencyRate
+import ru.resodostudios.cashsense.core.network.model.NetworkCurrencyExchangeRate
 
 interface CsNetworkDataSource {
 
-    suspend fun getCurrencyRate(baseCurrencyCode: String, targetCurrencyCode: String): NetworkCurrencyRate
+    suspend fun getCurrencyExchangeRate(
+        baseCurrencyCode: String,
+        targetCurrencyCode: String,
+    ): NetworkCurrencyExchangeRate
 }

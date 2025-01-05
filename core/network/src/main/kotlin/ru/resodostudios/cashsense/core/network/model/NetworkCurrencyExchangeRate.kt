@@ -4,11 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetworkCurrencyRate(
+data class NetworkCurrencyExchangeRate(
     @SerialName("base")
     val base: String? = null,
     @SerialName("mid")
-    val mid: Double? = null,
+    val exchangeRate: Double? = null,
     @SerialName("target")
     val target: String? = null,
     @SerialName("timestamp")

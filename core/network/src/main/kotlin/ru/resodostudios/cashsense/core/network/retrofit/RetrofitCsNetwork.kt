@@ -11,17 +11,17 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.resodostudios.cashsense.core.network.CsNetworkDataSource
-import ru.resodostudios.cashsense.core.network.model.NetworkCurrencyRate
+import ru.resodostudios.cashsense.core.network.model.NetworkCurrencyExchangeRate
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private interface RetrofitCsNetworkApi {
 
     @GET(value = "{base}")
-    suspend fun getCurrencyRate(
+    suspend fun getCurrencyExchangeRate(
         @Path("base") baseCurrencyCode: String,
         @Query("target") targetCurrencyCode: String,
-    ): NetworkResponse<NetworkCurrencyRate>
+    ): NetworkResponse<NetworkCurrencyExchangeRate>
 }
 
 private const val CS_BASE_URL = "https://hexarate.paikama.co/api/rates/latest/"
@@ -56,8 +56,9 @@ internal class RetrofitCsNetwork @Inject constructor(
             .create(RetrofitCsNetworkApi::class.java)
     }
 
-    override suspend fun getCurrencyRate(
+    override suspend fun getCurrencyExchangeRate(
         baseCurrencyCode: String,
         targetCurrencyCode: String,
-    ): NetworkCurrencyRate = networkApi.getCurrencyRate(baseCurrencyCode, targetCurrencyCode).data
+    ): NetworkCurrencyExchangeRate =
+        networkApi.getCurrencyExchangeRate(baseCurrencyCode, targetCurrencyCode).data
 }
