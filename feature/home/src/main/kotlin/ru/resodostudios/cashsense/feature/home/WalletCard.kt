@@ -44,12 +44,11 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
-import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.core.ui.getZonedDateTime
-import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.math.BigDecimal.ZERO
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -96,15 +95,14 @@ fun WalletCard(
             AnimatedAmount(
                 targetState = userWallet.currentBalance,
                 label = "wallet_balance",
-                content = {
-                    Text(
-                        text = it.formatAmount(userWallet.currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-            )
+            ) {
+                Text(
+                    text = it.formatAmount(userWallet.currency),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             TagsSection(
                 transactions = transactions,
                 currency = userWallet.currency,
@@ -145,22 +143,26 @@ private fun TagsSection(
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
-    val expenses by remember(transactions) {
+    val currentMonthTransactions by remember(transactions) {
         derivedStateOf {
-            transactions
-                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount < ZERO && !it.ignored }
+            transactions.filter {
+                it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+            }
+        }
+    }
+    val expenses by remember(currentMonthTransactions) {
+        derivedStateOf {
+            currentMonthTransactions
+                .filter { it.amount.signum() == -1 }
                 .sumOf { it.amount }
                 .abs()
         }
     }
-    val income by remember(transactions) {
+    val income by remember(currentMonthTransactions) {
         derivedStateOf {
-            transactions
-                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount > ZERO && !it.ignored }
+            currentMonthTransactions
+                .filter { it.amount.signum() == 1 }
                 .sumOf { it.amount }
-                .abs()
         }
     }
 
@@ -180,7 +182,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = expenses != ZERO,
+            visible = expenses.signum() == 1,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -192,7 +194,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = income != ZERO,
+            visible = income.signum() == 1,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -241,15 +243,14 @@ private fun CsAnimatedTag(
             AnimatedAmount(
                 targetState = amount,
                 label = "animated_tag",
-                content = {
-                    Text(
-                        text = it.formatAmount(currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
-            )
+            ) {
+                Text(
+                    text = it.formatAmount(currency),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
     }
 }

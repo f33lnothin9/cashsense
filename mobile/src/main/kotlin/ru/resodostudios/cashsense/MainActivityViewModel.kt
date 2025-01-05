@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.DARK
+import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
+import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.LIGHT
 import ru.resodostudios.cashsense.core.model.data.UserData
 import javax.inject.Inject
 
@@ -30,5 +33,20 @@ sealed interface MainActivityUiState {
 
     data object Loading : MainActivityUiState
 
-    data class Success(val userData: UserData) : MainActivityUiState
+    data class Success(val userData: UserData) : MainActivityUiState {
+        override val shouldUseDynamicTheming = userData.useDynamicColor
+
+        override fun shouldUseDarkTheme(isSystemDarkTheme: Boolean) =
+            when (userData.darkThemeConfig) {
+                FOLLOW_SYSTEM -> isSystemDarkTheme
+                LIGHT -> false
+                DARK -> true
+            }
+    }
+
+    fun shouldKeepSplashScreen() = this is Loading
+
+    val shouldUseDynamicTheming: Boolean get() = false
+
+    fun shouldUseDarkTheme(isSystemDarkTheme: Boolean) = isSystemDarkTheme
 }

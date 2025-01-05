@@ -41,7 +41,6 @@
   <string name="licenses">Licenze</string>
   <string name="version">Versione</string>
   <string name="feedback">Feedback</string>
-  <string name="choose_currency">Scegli la tua valuta predefinita</string>
   <string name="new_subscription">Nuovo abbonamento</string>
   <string name="edit_subscription">Modifica abbonamento</string>
   <string name="payment_date">Data di pagamento</string>
@@ -98,4 +97,5 @@
   <string name="converted_amount">Importo convertito</string>
   <string name="primary_icon_description">Imposta come principale</string>
   <string name="non_primary_icon_description">Imposta come non principale</string>
+  <string name="total_balance">Saldo totale</string>
 </resources>

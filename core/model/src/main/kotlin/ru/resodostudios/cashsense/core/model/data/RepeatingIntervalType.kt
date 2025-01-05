@@ -11,4 +11,4 @@ enum class RepeatingIntervalType(val period: Long) {
 }
 
 fun getRepeatingIntervalType(repeatingInterval: Long?): RepeatingIntervalType =
-    RepeatingIntervalType.entries.firstOrNull { it.period == repeatingInterval } ?: NONE
+    RepeatingIntervalType.entries.find { it.period == repeatingInterval } ?: NONE

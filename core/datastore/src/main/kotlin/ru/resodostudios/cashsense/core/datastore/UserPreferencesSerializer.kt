@@ -30,4 +30,5 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
 internal fun getCustomDefaultValues(): UserPreferences =
     UserPreferences.newBuilder()
         .setCurrency(getDefaultCurrency().currencyCode)
+        .setUseDynamicColor(true)
         .build()

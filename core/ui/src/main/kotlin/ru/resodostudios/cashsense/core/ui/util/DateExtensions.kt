@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.ui
+package ru.resodostudios.cashsense.core.ui.util
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -17,3 +17,7 @@ fun LocalDateTime.isInCurrentMonthAndYear(): Boolean {
     val currentDate = getCurrentZonedDateTime()
     return this.year == currentDate.year && this.month == currentDate.month
 }
+
+fun getCurrentYear(): Int = getCurrentZonedDateTime().year
+
+fun getCurrentMonth(): Int = getCurrentZonedDateTime().monthValue

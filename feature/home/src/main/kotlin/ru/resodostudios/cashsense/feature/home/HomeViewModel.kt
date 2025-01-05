@@ -29,8 +29,16 @@ class HomeViewModel @Inject constructor(
     val walletsUiState: StateFlow<WalletsUiState> = combine(
         selectedWalletId,
         getExtendedUserWallets.invoke(),
-        WalletsUiState::Success,
-    )
+    ) { selectedWalletId, extendedUserWallets ->
+        if (extendedUserWallets.isEmpty()) {
+            WalletsUiState.Empty
+        } else {
+            WalletsUiState.Success(
+                selectedWalletId = selectedWalletId,
+                extendedUserWallets = extendedUserWallets,
+            )
+        }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -45,6 +53,8 @@ class HomeViewModel @Inject constructor(
 sealed interface WalletsUiState {
 
     data object Loading : WalletsUiState
+
+    data object Empty : WalletsUiState
 
     data class Success(
         val selectedWalletId: String?,

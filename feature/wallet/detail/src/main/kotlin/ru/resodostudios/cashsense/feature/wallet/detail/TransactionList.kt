@@ -12,7 +12,7 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.ui.EmptyState
-import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -25,13 +25,18 @@ internal fun LazyListScope.transactions(
         is WalletUiState.Success -> {
             if (walletState.transactionsCategories.isNotEmpty()) {
                 val transactionsByDay = walletState.transactionsCategories
-                    .groupBy { it.transaction.timestamp.toJavaInstant().truncatedTo(ChronoUnit.DAYS) }
+                    .groupBy {
+                        it.transaction.timestamp
+                            .toJavaInstant()
+                            .truncatedTo(ChronoUnit.DAYS)
+                            .toKotlinInstant()
+                    }
                     .toSortedMap(compareByDescending { it })
 
                 transactionsByDay.forEach { transactionGroup ->
                     stickyHeader {
                         CsTag(
-                            text = transactionGroup.key.toKotlinInstant().formatDate(),
+                            text = transactionGroup.key.formatDate(),
                             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                         )
                     }

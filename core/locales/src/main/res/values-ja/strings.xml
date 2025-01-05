@@ -41,7 +41,6 @@
   <string name="licenses">ライセンス</string>
   <string name="version">バージョン</string>
   <string name="feedback">フィードバック</string>
-  <string name="choose_currency">デフォルト通貨を選択</string>
   <string name="new_subscription">新しいサブスクリプション</string>
   <string name="edit_subscription">サブスクリプションを編集</string>
   <string name="payment_date">支払日</string>
@@ -98,4 +97,5 @@
   <string name="converted_amount">変換された金額</string>
   <string name="primary_icon_description">主要に設定</string>
   <string name="non_primary_icon_description">非主要に設定</string>
+  <string name="total_balance">合計残高</string>
 </resources>

@@ -32,9 +32,9 @@ import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.WEEKLY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
-import ru.resodostudios.cashsense.core.ui.FormatDateType.DATE
-import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR

@@ -23,8 +23,8 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                add("implementation", libs.findLibrary("room.runtime").get())
-                add("ksp", libs.findLibrary("room.compiler").get())
+                "implementation"(libs.findLibrary("room.runtime").get())
+                "ksp"(libs.findLibrary("room.compiler").get())
             }
         }
     }

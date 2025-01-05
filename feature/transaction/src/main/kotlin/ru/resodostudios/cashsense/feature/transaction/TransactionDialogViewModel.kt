@@ -58,8 +58,7 @@ class TransactionDialogViewModel @Inject constructor(
     private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
-    val transactionDialogUiState: StateFlow<TransactionDialogUiState>
-        get() = _transactionDialogUiState.asStateFlow()
+    val transactionDialogUiState = _transactionDialogUiState.asStateFlow()
 
     val categoriesUiState: StateFlow<CategoriesUiState> =
         categoriesRepository.getCategories()
