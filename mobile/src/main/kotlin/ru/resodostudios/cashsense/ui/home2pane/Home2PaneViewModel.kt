@@ -39,8 +39,7 @@ class Home2PaneViewModel @Inject constructor(
 
     private val lastRemovedWalletState = MutableStateFlow<ExtendedUserWallet?>(null)
     private val _shouldDisplayUndoWalletState = MutableStateFlow(false)
-    val shouldDisplayUndoWalletState: StateFlow<Boolean>
-        get() = _shouldDisplayUndoWalletState.asStateFlow()
+    val shouldDisplayUndoWalletState = _shouldDisplayUndoWalletState.asStateFlow()
 
     fun onWalletClick(walletId: String?) {
         savedStateHandle[WALLET_ID_KEY] = walletId
