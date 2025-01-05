@@ -7,10 +7,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,18 +16,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.tracing.trace
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
-import ru.resodostudios.cashsense.MainActivityUiState.Success
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.ui.CsApp
 import ru.resodostudios.cashsense.ui.rememberCsAppState
+import ru.resodostudios.cashsense.util.isSystemInDarkTheme
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -45,41 +44,47 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        var uiState: MainActivityUiState by mutableStateOf(Loading)
+        var themeSettings by mutableStateOf(
+            ThemeSettings(
+                darkTheme = resources.configuration.isSystemInDarkTheme,
+                dynamicTheme = Loading.shouldUseDynamicTheming,
+            ),
+        )
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState
-                    .onEach { uiState = it }
-                    .collect()
+                combine(
+                    isSystemInDarkTheme(),
+                    viewModel.uiState,
+                ) { systemDark, uiState ->
+                    ThemeSettings(
+                        darkTheme = uiState.shouldUseDarkTheme(systemDark),
+                        dynamicTheme = uiState.shouldUseDynamicTheming,
+                    )
+                }
+                    .onEach { themeSettings = it }
+                    .map { it.darkTheme }
+                    .distinctUntilChanged()
+                    .collect { darkTheme ->
+                        trace("csEdgeToEdge") {
+                            enableEdgeToEdge(
+                                statusBarStyle = SystemBarStyle.auto(
+                                    lightScrim = Color.TRANSPARENT,
+                                    darkScrim = Color.TRANSPARENT,
+                                ) { darkTheme },
+                                navigationBarStyle = SystemBarStyle.auto(
+                                    lightScrim = lightScrim,
+                                    darkScrim = darkScrim,
+                                ) { darkTheme },
+                            )
+                        }
+                    }
             }
         }
 
-        splashScreen.setKeepOnScreenCondition {
-            when (uiState) {
-                Loading -> true
-                is Success -> false
-            }
-        }
-
-        enableEdgeToEdge()
+        splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
         setContent {
-            val darkTheme = shouldUseDarkTheme(uiState)
-            DisposableEffect(darkTheme) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT,
-                    ) { darkTheme },
-                    navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim,
-                        darkScrim,
-                    ) { darkTheme },
-                )
-                onDispose {}
-            }
-
             val appState = rememberCsAppState(
                 timeZoneMonitor = timeZoneMonitor,
             )
@@ -90,8 +95,8 @@ class MainActivity : ComponentActivity() {
                 LocalTimeZone provides currentTimeZone,
             ) {
                 CsTheme(
-                    darkTheme = darkTheme,
-                    disableDynamicTheming = shouldDisableDynamicTheming(uiState),
+                    darkTheme = themeSettings.darkTheme,
+                    dynamicTheme = themeSettings.dynamicTheme,
                 ) {
                     CsApp(appState)
                 }
@@ -100,32 +105,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
- * Returns `true` if the dynamic color is disabled, as a function of the [uiState].
- */
-@Composable
-private fun shouldDisableDynamicTheming(
-    uiState: MainActivityUiState,
-): Boolean = when (uiState) {
-    Loading -> false
-    is Success -> !uiState.userData.useDynamicColor
-}
-
-/**
- * Returns `true` if dark theme should be used, as a function of the [uiState] and the
- * current system context.
- */
-@Composable
-private fun shouldUseDarkTheme(
-    uiState: MainActivityUiState,
-): Boolean = when (uiState) {
-    Loading -> isSystemInDarkTheme()
-    is Success -> when (uiState.userData.darkThemeConfig) {
-        DarkThemeConfig.FOLLOW_SYSTEM -> isSystemInDarkTheme()
-        DarkThemeConfig.LIGHT -> false
-        DarkThemeConfig.DARK -> true
-    }
-}
-
 private val lightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
 private val darkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
+
+data class ThemeSettings(
+    val darkTheme: Boolean,
+    val dynamicTheme: Boolean,
+)

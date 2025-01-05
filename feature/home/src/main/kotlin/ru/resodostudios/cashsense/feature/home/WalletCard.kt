@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -44,11 +43,13 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.formatAmount
-import ru.resodostudios.cashsense.core.ui.getZonedDateTime
-import ru.resodostudios.cashsense.core.ui.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.math.BigDecimal.ZERO
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -56,8 +57,10 @@ fun WalletCard(
     userWallet: UserWallet,
     transactions: List<Transaction>,
     onWalletClick: (String) -> Unit,
-    onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String) -> Unit,
+    onNewTransactionClick: (String) -> Unit,
+    onTransferClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
 ) {
@@ -92,15 +95,14 @@ fun WalletCard(
             AnimatedAmount(
                 targetState = userWallet.currentBalance,
                 label = "wallet_balance",
-                content = {
-                    Text(
-                        text = it.formatAmount(userWallet.currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                },
-            )
+            ) {
+                Text(
+                    text = it.formatAmount(userWallet.currency),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             TagsSection(
                 transactions = transactions,
                 currency = userWallet.currency,
@@ -116,18 +118,15 @@ fun WalletCard(
                 .fillMaxWidth(),
         ) {
             Button(
-                onClick = { onTransactionCreate(userWallet.id) },
+                onClick = { onNewTransactionClick(userWallet.id) },
             ) {
                 Text(stringResource(localesR.string.add_transaction))
             }
-            IconButton(
-                onClick = { onWalletMenuClick(userWallet.id) },
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
-                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
-                )
-            }
+            WalletDropdownMenu(
+                onTransferClick = { onTransferClick(userWallet.id) },
+                onEditClick = { onEditClick(userWallet.id) },
+                onDeleteClick = { onDeleteClick(userWallet.id) },
+            )
         }
     }
 }
@@ -136,26 +135,30 @@ fun WalletCard(
 @Composable
 private fun TagsSection(
     transactions: List<Transaction>,
-    currency: String,
+    currency: Currency,
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
-    val expenses by remember(transactions) {
+    val currentMonthTransactions by remember(transactions) {
         derivedStateOf {
-            transactions
-                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount < ZERO && !it.ignored }
+            transactions.filter {
+                it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+            }
+        }
+    }
+    val expenses by remember(currentMonthTransactions) {
+        derivedStateOf {
+            currentMonthTransactions
+                .filter { it.amount.signum() == -1 }
                 .sumOf { it.amount }
                 .abs()
         }
     }
-    val income by remember(transactions) {
+    val income by remember(currentMonthTransactions) {
         derivedStateOf {
-            transactions
-                .filter { it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() }
-                .filter { it.amount > ZERO && !it.ignored }
+            currentMonthTransactions
+                .filter { it.amount.signum() == 1 }
                 .sumOf { it.amount }
-                .abs()
         }
     }
 
@@ -171,11 +174,11 @@ private fun TagsSection(
         ) {
             CsTag(
                 text = stringResource(localesR.string.primary),
-                iconId = CsIcons.Star,
+                iconId = CsIcons.StarFilled,
             )
         }
         AnimatedVisibility(
-            visible = expenses != ZERO,
+            visible = expenses.signum() == 1,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -187,7 +190,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = income != ZERO,
+            visible = income.signum() == 1,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -204,7 +207,7 @@ private fun TagsSection(
 @Composable
 private fun CsAnimatedTag(
     amount: BigDecimal,
-    currency: String,
+    currency: Currency,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
     shape: Shape = RoundedCornerShape(16.dp),
@@ -236,15 +239,14 @@ private fun CsAnimatedTag(
             AnimatedAmount(
                 targetState = amount,
                 label = "animated_tag",
-                content = {
-                    Text(
-                        text = it.formatAmount(currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
-            )
+            ) {
+                Text(
+                    text = it.formatAmount(currency),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
     }
 }
@@ -259,14 +261,16 @@ fun WalletCardPreview() {
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
-                    currency = "USD",
+                    currency = getUsdCurrency(),
                     currentBalance = BigDecimal(2499.99),
                     isPrimary = true,
                 ),
                 transactions = emptyList(),
                 onWalletClick = {},
-                onTransactionCreate = {},
-                onWalletMenuClick = { _ -> },
+                onNewTransactionClick = {},
+                onTransferClick = { _ -> },
+                onEditClick = { _ -> },
+                onDeleteClick = { _ -> },
                 modifier = Modifier.padding(16.dp),
             )
         }

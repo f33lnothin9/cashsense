@@ -15,7 +15,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
 
 val lightScheme = lightColorScheme(
@@ -249,11 +248,11 @@ private val highContrastDarkColorScheme = darkColorScheme(
 @Composable
 fun CsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    disableDynamicTheming: Boolean = true,
+    dynamicTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
-        !disableDynamicTheming && supportsDynamicTheming() -> {
+        dynamicTheme && supportsDynamicTheming() -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
@@ -281,12 +280,10 @@ fun CsTheme(
 @Composable
 fun selectSchemeForContrast(darkTheme: Boolean): ColorScheme {
     val context = LocalContext.current
-    val isPreview = LocalInspectionMode.current
 
     var colorScheme = if (darkTheme) darkScheme else lightScheme
 
-    // TODO(b/336693596): UIModeManager is not yet supported in preview
-    if (!isPreview && isContrastAvailable()) {
+    if (supportsContrastTheming()) {
         val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
         val contrastLevel = uiModeManager.contrast
 
@@ -310,4 +307,4 @@ fun selectSchemeForContrast(darkTheme: Boolean): ColorScheme {
 fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-fun isContrastAvailable(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+fun supportsContrastTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE

@@ -41,7 +41,6 @@
   <string name="licenses">Licencias</string>
   <string name="version">Versión</string>
   <string name="feedback">Retroalimentación</string>
-  <string name="choose_currency">Elige tu moneda predeterminada</string>
   <string name="new_subscription">Nueva suscripción</string>
   <string name="edit_subscription">Editar suscripción</string>
   <string name="payment_date">Fecha de pago</string>
@@ -96,4 +95,7 @@
   <string name="from_wallet">Desde la billetera</string>
   <string name="to_wallet">Hacia la billetera</string>
   <string name="converted_amount">Cantidad convertida</string>
+  <string name="primary_icon_description">Establecer como principal</string>
+  <string name="non_primary_icon_description">Establecer como no principal</string>
+  <string name="total_balance">Saldo total</string>
 </resources>

@@ -30,6 +30,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.math.BigDecimal
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -114,7 +116,11 @@ fun OutlinedAmountField(
     imeAction: ImeAction = ImeAction.Unspecified,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-    val isSuffixEnabled = BigDecimal(1).formatAmount("USD").first().isDigit()
+    val isSuffixEnabled = BigDecimal.ONE
+        .formatAmount(currency)
+        .first()
+        .isDigit()
+
     OutlinedTextField(
         value = value,
         textStyle = if (isSuffixEnabled) {
@@ -122,7 +128,7 @@ fun OutlinedAmountField(
         } else {
             LocalTextStyle.current
         },
-        onValueChange = { onValueChange(it.cleanAndValidateAmount().first) },
+        onValueChange = { onValueChange(it.cleanAmount()) },
         label = { Text(stringResource(labelRes)) },
         placeholder = {
             Text(

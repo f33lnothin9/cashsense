@@ -43,14 +43,25 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus.Denied
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.model.data.Reminder
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.DatePickerTextField
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
-import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
@@ -58,6 +69,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateReminderSwitch
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateRepeatingInterval
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateTitle
+import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -80,8 +92,11 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.edit_subscription else localesR.string.new_subscription
-    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (dialogTitle, dialogConfirmText) = if (subscriptionDialogState.id.isNotEmpty()) {
+        localesR.string.edit_subscription to localesR.string.save
+    } else {
+        localesR.string.new_subscription to localesR.string.add
+    }
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -89,11 +104,36 @@ fun SubscriptionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         iconRes = CsIcons.AutoRenew,
         onConfirm = {
-            onSubscriptionEvent(Save)
+            val subscriptionId = subscriptionDialogState.id.ifBlank { Uuid.random().toHexString() }
+            var reminder: Reminder? = null
+
+            if (subscriptionDialogState.isReminderEnabled) {
+                val timeZone = TimeZone.currentSystemDefault()
+                val currentInstant = subscriptionDialogState.paymentDate
+                val currentDateTime = currentInstant.toLocalDateTime(timeZone)
+                val previousDate = currentDateTime.date.minus(1, DateTimeUnit.DAY)
+                val notificationDate = LocalDateTime(previousDate, LocalTime(9, 0))
+                    .toInstant(timeZone)
+                reminder = Reminder(
+                    id = subscriptionId.hashCode(),
+                    notificationDate = notificationDate,
+                    repeatingInterval = subscriptionDialogState.repeatingInterval.period,
+                )
+            }
+
+            val subscription = Subscription(
+                id = subscriptionId,
+                title = subscriptionDialogState.title,
+                amount = subscriptionDialogState.amount.toBigDecimal(),
+                paymentDate = subscriptionDialogState.paymentDate,
+                currency = subscriptionDialogState.currency,
+                reminder = reminder,
+            )
+            onSubscriptionEvent(Save(subscription))
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
-                subscriptionDialogState.amount.cleanAndValidateAmount().second,
+                subscriptionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
     ) {
         val focusManager = LocalFocusManager.current
@@ -121,7 +161,7 @@ fun SubscriptionDialog(
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
-                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
+                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAmount())) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
@@ -138,8 +178,8 @@ fun SubscriptionDialog(
                     .padding(bottom = 16.dp),
             )
             CurrencyDropdownMenu(
-                currencyCode = subscriptionDialogState.currency,
-                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it.currencyCode)) },
+                currency = subscriptionDialogState.currency,
+                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -148,7 +188,15 @@ fun SubscriptionDialog(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = localesR.string.payment_date,
                 iconId = CsIcons.Calendar,
-                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                onDateClick = {
+                    onSubscriptionEvent(
+                        UpdatePaymentDate(
+                            Instant.fromEpochMilliseconds(
+                                it
+                            )
+                        )
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),

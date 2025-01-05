@@ -10,6 +10,4 @@ android {
 dependencies {
     implementation(projects.core.data)
     implementation(projects.core.locales)
-
-    implementation(projects.feature.category.dialog)
 }

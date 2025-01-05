@@ -22,19 +22,19 @@ fun NavController.navigateToWallet(
 fun NavGraphBuilder.walletScreen(
     showNavigationIcon: Boolean,
     onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    openTransactionDialog: Boolean,
-    setTransactionDialogOpen: (Boolean) -> Unit = {},
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
 ) {
     composable<WalletRoute> {
         WalletScreen(
             showNavigationIcon = showNavigationIcon,
             onEditWallet = onEditWallet,
+            onDeleteClick = onDeleteWallet,
             onTransfer = onTransfer,
             onBackClick = onBackClick,
-            openTransactionDialog = openTransactionDialog,
-            setTransactionDialogOpen = setTransactionDialogOpen,
+            navigateToTransactionDialog = navigateToTransactionDialog,
         )
     }
 }

@@ -17,14 +17,14 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE id = :transactionId")
     fun getTransactionWithCategoryEntity(transactionId: String): Flow<PopulatedTransaction>
 
+    @Query("SELECT * FROM transactions_categories WHERE category_id = :categoryId")
+    fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRefEntity>>
+
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)
 
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteTransaction(id: String)
-
-    @Query("DELETE FROM transactions WHERE wallet_owner_id = :walletId")
-    suspend fun deleteTransactions(walletId: String)
 
     @Upsert
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRefEntity)

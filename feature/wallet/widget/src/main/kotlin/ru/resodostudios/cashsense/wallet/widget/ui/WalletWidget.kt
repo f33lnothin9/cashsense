@@ -45,10 +45,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
-import ru.resodostudios.cashsense.core.ui.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -165,7 +166,17 @@ fun WalletItem(
         }
         CircleIconButton(
             imageProvider = ImageProvider(CsIcons.Add),
-            onClick = openHomeScreen(walletId, true),
+            onClick = actionStartActivity(
+                Intent().apply {
+                    action = Intent.ACTION_VIEW
+                    data = "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
+                    component = ComponentName(
+                        LocalContext.current.packageName,
+                        TARGET_ACTIVITY_NAME,
+                    )
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+            ),
             contentDescription = LocalContext.current.getString(localesR.string.add),
         )
     }
@@ -174,15 +185,15 @@ fun WalletItem(
 @Composable
 private fun openHomeScreen(
     walletId: String? = null,
-    startAddTransaction: Boolean = false,
 ): Action = actionStartActivity(
     Intent().apply {
         action = Intent.ACTION_VIEW
-        data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId/$startAddTransaction".toUri()
+        data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId".toUri()
         component = ComponentName(
             LocalContext.current.packageName,
             TARGET_ACTIVITY_NAME,
         )
+        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
 )
 

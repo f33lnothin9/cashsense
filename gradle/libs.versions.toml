@@ -1,7 +1,7 @@
 [versions]
-aboutLibraries = "11.2.3"
-accompanist = "0.36.0"
-androidGradlePlugin = "8.7.2"
+aboutLibraries = "11.4.0"
+accompanist = "0.37.0"
+androidGradlePlugin = "8.7.3"
 androidxActivityCompose = "1.9.3"
 androidxBrowser = "1.8.0"
 androidxCore = "1.15.0"
@@ -11,7 +11,7 @@ androidxGlance = "1.1.1"
 androidxHiltNavigationCompose = "1.2.0"
 androidxLifecycle = "2.8.7"
 androidxMacroBenchmark = "1.3.3"
-androidxNavigation = "2.8.4"
+androidxNavigation = "2.8.5"
 androidxProfileinstaller = "1.4.1"
 androidxTestCore = "1.6.1"
 androidxTestEspresso = "3.6.1"
@@ -20,22 +20,21 @@ androidxTestRules = "1.6.1"
 androidxTestRunner = "1.6.2"
 androidxTestUiAutomator = "2.3.0"
 androidxTracing = "1.3.0-alpha02"
-composeBom = "2024.11.00"
-firebaseBom = "33.5.1"
+composeBom = "2024.12.01"
+firebaseBom = "33.7.0"
 firebaseCrashlyticsPlugin = "3.0.2"
-firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.4.2"
-hilt = "2.52"
-kotlin = "2.0.21"
-kotlinxCoroutines = "1.9.0"
+hilt = "2.54"
+kotlin = "2.1.0"
+kotlinxCoroutines = "1.10.1"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.7.3"
-ksp = "2.0.21-1.0.27"
-lottie = "6.6.0"
-protobuf = "3.25.5"
+ksp = "2.1.0-1.0.29"
+lottie = "6.6.2"
+protobuf = "4.29.2"
 protobufPlugin = "0.9.4"
-room = "2.7.0-alpha11"
-vico = "2.0.0-beta.2"
+room = "2.7.0-alpha12"
+vico = "2.0.0-beta.7"
 
 [libraries]
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
@@ -83,7 +82,6 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
-firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
@@ -101,7 +99,6 @@ vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
-firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
@@ -114,7 +111,6 @@ android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark"}
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
-firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

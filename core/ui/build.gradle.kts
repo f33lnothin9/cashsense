@@ -15,5 +15,7 @@ dependencies {
     api(projects.core.locales)
     api(projects.core.model)
 
+    implementation(projects.core.common)
+
     implementation(libs.lottie.compose)
 }

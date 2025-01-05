@@ -41,7 +41,6 @@
   <string name="licenses">라이선스</string>
   <string name="version">버전</string>
   <string name="feedback">피드백</string>
-  <string name="choose_currency">기본 통화를 선택하세요</string>
   <string name="new_subscription">새 구독</string>
   <string name="edit_subscription">구독 편집</string>
   <string name="payment_date">지불 날짜</string>
@@ -96,4 +95,7 @@
   <string name="from_wallet">지갑에서</string>
   <string name="to_wallet">지갑으로</string>
   <string name="converted_amount">변환된 금액</string>
+  <string name="primary_icon_description">주요로 설정</string>
+  <string name="non_primary_icon_description">비주요로 설정</string>
+  <string name="total_balance">총 잔액</string>
 </resources>

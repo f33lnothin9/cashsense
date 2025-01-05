@@ -1,62 +1,90 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
-import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenu
-import ru.resodostudios.cashsense.feature.wallet.menu.WalletMenuViewModel
+import java.math.BigDecimal
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun HomeScreen(
     onWalletClick: (String?) -> Unit,
-    onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
-    homeViewModel: HomeViewModel = hiltViewModel(),
-    walletMenuViewModel: WalletMenuViewModel = hiltViewModel(),
+    onShowSnackbar: suspend (String, String?) -> Boolean,
+    shouldDisplayUndoWallet: Boolean,
+    undoWalletRemoval: () -> Unit,
+    clearUndoState: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val walletsState by homeViewModel.walletsUiState.collectAsStateWithLifecycle()
+    val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
         onWalletClick = {
-            homeViewModel.onWalletClick(it)
+            viewModel.onWalletClick(it)
             onWalletClick(it)
         },
-        onEditWallet = onEditWallet,
         onTransfer = onTransfer,
-        onWalletMenuClick = walletMenuViewModel::updateWalletId,
-        onShowSnackbar = onShowSnackbar,
+        onEditWallet = onEditWallet,
+        onDeleteWallet = onDeleteWallet,
         onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
-        hideWallet = homeViewModel::hideWallet,
-        undoWalletRemoval = homeViewModel::undoWalletRemoval,
-        clearUndoState = homeViewModel::clearUndoState,
+        onShowSnackbar = onShowSnackbar,
+        shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+        undoWalletRemoval = undoWalletRemoval,
+        clearUndoState = clearUndoState,
     )
 }
 
@@ -64,78 +92,63 @@ fun HomeScreen(
 internal fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String?) -> Unit,
-    onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
-    onWalletMenuClick: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    highlightSelectedWallet: Boolean = false,
-    hideWallet: (String) -> Unit = {},
+    highlightSelectedWallet: Boolean,
+    onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
+    shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
-    when (walletsState) {
-        Loading -> LoadingState(Modifier.fillMaxSize())
-        is Success -> {
-            var showWalletMenu by rememberSaveable { mutableStateOf(false) }
+    val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
+    val undoText = stringResource(localesR.string.undo)
 
-            if (showWalletMenu) {
-                WalletMenu(
-                    onDismiss = { showWalletMenu = false },
-                    onTransfer = onTransfer,
-                    onEdit = onEditWallet,
-                    onDelete = { walletId ->
-                        hideWallet(walletId)
-                        onWalletClick(null)
-                    },
-                )
-            }
-
-            val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
-            val undoText = stringResource(localesR.string.undo)
-
-            LaunchedEffect(walletsState.shouldDisplayUndoWallet) {
-                if (walletsState.shouldDisplayUndoWallet) {
-                    val snackBarResult = onShowSnackbar(walletDeletedMessage, undoText)
-                    if (snackBarResult) {
-                        undoWalletRemoval()
-                    } else {
-                        clearUndoState()
-                    }
-                }
-            }
-            LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+    LaunchedEffect(shouldDisplayUndoWallet) {
+        if (shouldDisplayUndoWallet) {
+            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoText)
+            if (snackBarResult) {
+                undoWalletRemoval()
+            } else {
                 clearUndoState()
             }
+        }
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        clearUndoState()
+    }
 
-            if (walletsState.extendedUserWallets.isNotEmpty()) {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(300.dp),
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.testTag("home:wallets"),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 88.dp,
-                    ),
-                ) {
-                    wallets(
-                        walletsState = walletsState,
-                        onWalletClick = onWalletClick,
-                        onTransactionCreate = onTransactionCreate,
-                        onWalletMenuClick = { walletId ->
-                            onWalletMenuClick(walletId)
-                            showWalletMenu = true
-                        },
-                        highlightSelectedWallet = highlightSelectedWallet,
-                    )
-                }
-            } else {
-                EmptyState(
-                    messageRes = localesR.string.home_empty,
-                    animationRes = R.raw.anim_wallets_empty,
+    when (walletsState) {
+        Loading -> LoadingState(Modifier.fillMaxSize())
+        Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
+        is Success -> {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(300.dp),
+                verticalItemSpacing = 16.dp,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 88.dp,
+                ),
+            ) {
+                financeOverviewSection(
+                    wallets = walletsState.extendedUserWallets,
+                )
+                wallets(
+                    extendedUserWallets = walletsState.extendedUserWallets,
+                    selectedWalletId = walletsState.selectedWalletId,
+                    onWalletClick = onWalletClick,
+                    onTransactionCreate = onTransactionCreate,
+                    onTransferClick = onTransfer,
+                    onEditClick = onEditWallet,
+                    onDeleteClick = { walletId ->
+                        onDeleteWallet(walletId)
+                        onWalletClick(null)
+                    },
+                    highlightSelectedWallet = highlightSelectedWallet,
                 )
             }
         }
@@ -143,31 +156,208 @@ internal fun HomeScreen(
 }
 
 private fun LazyStaggeredGridScope.wallets(
-    walletsState: WalletsUiState,
+    extendedUserWallets: List<ExtendedUserWallet>,
+    selectedWalletId: String?,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
-    onWalletMenuClick: (String) -> Unit,
+    onTransferClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
 ) {
-    when (walletsState) {
-        Loading -> Unit
-        is Success -> {
-            items(
-                items = walletsState.extendedUserWallets,
-                key = { it.userWallet.id },
-                contentType = { "walletCard" },
-            ) { walletData ->
-                val selected = highlightSelectedWallet && walletData.userWallet.id == walletsState.selectedWalletId
-                WalletCard(
-                    userWallet = walletData.userWallet,
-                    transactions = walletData.transactionsWithCategories.map { it.transaction },
-                    onWalletClick = onWalletClick,
-                    onTransactionCreate = onTransactionCreate,
-                    onWalletMenuClick = onWalletMenuClick,
-                    modifier = Modifier.animateItem(),
-                    selected = selected,
-                )
+    items(
+        items = extendedUserWallets,
+        key = { it.userWallet.id },
+        contentType = { "walletCard" },
+    ) { walletData ->
+        val selected = highlightSelectedWallet && walletData.userWallet.id == selectedWalletId
+        WalletCard(
+            userWallet = walletData.userWallet,
+            transactions = walletData.transactionsWithCategories.map { it.transaction },
+            onWalletClick = onWalletClick,
+            onNewTransactionClick = onTransactionCreate,
+            onTransferClick = onTransferClick,
+            onEditClick = onEditClick,
+            onDeleteClick = onDeleteClick,
+            modifier = Modifier.animateItem(),
+            selected = selected,
+        )
+    }
+}
+
+private fun LazyStaggeredGridScope.financeOverviewSection(
+    wallets: List<ExtendedUserWallet>,
+) {
+    val firstCurrency = wallets.first().userWallet.currency
+    val visible = wallets.size >= 2 && wallets.all { it.userWallet.currency == firstCurrency }
+
+    if (visible) {
+        item(span = StaggeredGridItemSpan.FullLine) {
+            val transactions = wallets.flatMap { wallet ->
+                wallet.transactionsWithCategories.map { it.transaction }
             }
+            val currentMonthTransactions by remember(transactions) {
+                derivedStateOf {
+                    transactions.filter {
+                        it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+                    }
+                }
+            }
+            val expenses by remember(currentMonthTransactions) {
+                derivedStateOf {
+                    currentMonthTransactions
+                        .filter { it.amount.signum() == -1 }
+                        .sumOf { it.amount }
+                        .abs()
+                }
+            }
+            val income by remember(currentMonthTransactions) {
+                derivedStateOf {
+                    currentMonthTransactions
+                        .filter { it.amount.signum() == 1 }
+                        .sumOf { it.amount }
+                }
+            }
+            val totalBalance = wallets
+                .map { it.userWallet }
+                .sumOf { it.currentBalance }
+
+            TotalBalanceCard(
+                showBadIndicator = expenses > income,
+                totalBalance = totalBalance,
+                firstCurrency = firstCurrency,
+                modifier = Modifier.animateItem(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun TotalBalanceCard(
+    showBadIndicator: Boolean,
+    totalBalance: BigDecimal,
+    firstCurrency: Currency,
+    modifier: Modifier = Modifier,
+) {
+    val color = if (showBadIndicator) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
+    }
+    val borderBrush = Brush.verticalGradient(
+        colors = listOf(Color.Transparent, color),
+        startY = 15.0f,
+    )
+    val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+    OutlinedCard(
+        shape = shape,
+        border = BorderStroke(1.dp, borderBrush),
+        modifier = if (showBadIndicator) {
+            modifier.shadow(
+                ambientColor = color,
+                elevation = 12.dp,
+                spotColor = color,
+                shape = shape,
+            )
+        } else {
+            modifier
+        },
+    ) {
+        CsListItem(
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                    contentDescription = null,
+                )
+            },
+            headlineContent = {
+                AnimatedAmount(
+                    targetState = totalBalance,
+                    label = "total_balance",
+                ) {
+                    Text(
+                        text = totalBalance.formatAmount(firstCurrency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            },
+            overlineContent = { Text(stringResource(localesR.string.total_balance)) },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenLoadingPreview() {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Loading,
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenEmptyPreview() {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Empty,
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPopulatedPreview(
+    @PreviewParameter(ExtendedUserWalletPreviewParameterProvider::class)
+    extendedUserWallets: List<ExtendedUserWallet>,
+) {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Success(
+                    selectedWalletId = null,
+                    extendedUserWallets = extendedUserWallets,
+                ),
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TotalBalanceCardPreview() {
+    CsTheme {
+        Surface {
+            TotalBalanceCard(
+                showBadIndicator = true,
+                totalBalance = BigDecimal(1549000),
+                firstCurrency = getUsdCurrency(),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            )
         }
     }
 }

@@ -24,13 +24,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.util.getValidCurrencies
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyDropdownMenu(
-    currencyCode: String,
+    currency: Currency,
     onCurrencyClick: (Currency) -> Unit,
     modifier: Modifier = Modifier,
     dropDownHeight: Dp = 200.dp,
@@ -39,9 +40,7 @@ fun CurrencyDropdownMenu(
     var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
     var currencySearchText by rememberSaveable { mutableStateOf("") }
 
-    val currencies = Currency.getAvailableCurrencies()
-        .filterNot { it.displayName.contains("""\d+""".toRegex()) }
-        .sortedBy { it.currencyCode }
+    val currencies = getValidCurrencies()
     val filteredCurrencies = currencies.filter {
         it.currencyCode.contains(currencySearchText, ignoreCase = true) ||
                 it.displayName.contains(currencySearchText, ignoreCase = true)
@@ -50,12 +49,10 @@ fun CurrencyDropdownMenu(
     val focusManager = LocalFocusManager.current
     var expanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(currencyCode) {
-        currencySearchText = currencyCode
-        if (Regex("^[A-Z]{3}$").matches(currencyCode) &&
-            Currency.getInstance(currencyCode) in currencies
-        ) {
-            selectedCurrency = Currency.getInstance(currencyCode)
+    LaunchedEffect(currency) {
+        currencySearchText = currency.currencyCode
+        if (currency in currencies) {
+            selectedCurrency = currency
         }
     }
 
@@ -99,7 +96,7 @@ fun CurrencyDropdownMenu(
                         expanded = false
                         focusManager.clearFocus()
                     },
-                    leadingIcon = if (currencyCode == selectionOption.currencyCode) {
+                    leadingIcon = if (currency == selectionOption) {
                         {
                             Icon(
                                 imageVector = ImageVector.vectorResource(CsIcons.Check),

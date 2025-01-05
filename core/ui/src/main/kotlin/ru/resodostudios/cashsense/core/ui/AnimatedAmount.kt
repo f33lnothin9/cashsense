@@ -15,8 +15,8 @@ import java.math.BigDecimal
 fun AnimatedAmount(
     targetState: BigDecimal,
     label: String,
-    content: @Composable AnimatedContentScope.(targetState: BigDecimal) -> Unit,
     modifier: Modifier = Modifier,
+    content: @Composable AnimatedContentScope.(targetState: BigDecimal) -> Unit,
 ) {
     AnimatedContent(
         targetState = targetState,

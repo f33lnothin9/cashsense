@@ -4,19 +4,33 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.category.list.CategoriesScreen
 
 @Serializable
-data object CategoriesRoute
+object CategoriesBaseRoute
 
-fun NavController.navigateToCategories(navOptions: NavOptions) =
-    navigate(route = CategoriesRoute, navOptions)
+@Serializable
+object CategoriesRoute
 
-fun NavGraphBuilder.categoriesScreen(
+fun NavController.navigateToCategories(navOptions: NavOptions? = null) =
+    navigate(route = CategoriesBaseRoute, navOptions)
+
+fun NavGraphBuilder.categoriesSection(
+    onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {
-    composable<CategoriesRoute> {
-        CategoriesScreen(onShowSnackbar)
+    navigation<CategoriesBaseRoute>(
+        startDestination = CategoriesRoute,
+    ) {
+        composable<CategoriesRoute> {
+            CategoriesScreen(
+                onEditCategory = onEditCategory,
+                onShowSnackbar= onShowSnackbar,
+            )
+        }
+        nestedGraphs()
     }
 }

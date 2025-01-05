@@ -41,7 +41,6 @@
   <string name="licenses">लाइसेंस</string>
   <string name="version">संस्करण</string>
   <string name="feedback">प्रतिक्रिया</string>
-  <string name="choose_currency">अपनी डिफ़ॉल्ट मुद्रा चुनें</string>
   <string name="new_subscription">नई सदस्यता</string>
   <string name="edit_subscription">संपादित सदस्यता</string>
   <string name="payment_date">भुगतान तिथि</string>
@@ -96,4 +95,7 @@
   <string name="from_wallet">वॉलेट से</string>
   <string name="to_wallet">वॉलेट तक</string>
   <string name="converted_amount">परिवर्तित राशि</string>
+  <string name="primary_icon_description">मुख्य बनाएं</string>
+  <string name="non_primary_icon_description">गैर-मुख्य बनाएं</string>
+  <string name="total_balance">कुल शेष</string>
 </resources>

@@ -3,8 +3,10 @@ package ru.resodostudios.cashsense.feature.subscription.list
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Reminder
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.feature.subscription.dialog.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 
 /**
@@ -20,19 +22,19 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "Google One",
                     amount = BigDecimal(9.99),
-                    currency = "USD",
+                    currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
                         id = 0,
                         notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = RepeatingIntervalType.MONTHLY.period,
+                        repeatingInterval = MONTHLY.period,
                     ),
                 ),
                 Subscription(
                     id = "0",
                     title = "Apple Music",
                     amount = BigDecimal(39.99),
-                    currency = "TRY",
+                    currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = null,
                 ),
@@ -40,31 +42,31 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     id = "0",
                     title = "Spotify Premium",
                     amount = BigDecimal(399.99),
-                    currency = "TRY",
+                    currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
                         id = 0,
                         notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = RepeatingIntervalType.YEARLY.period,
+                        repeatingInterval = YEARLY.period,
                     ),
                 ),
                 Subscription(
                     id = "0",
                     title = "Yandex Plus",
                     amount = BigDecimal(99),
-                    currency = "RUB",
+                    currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
                         id = 0,
                         notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = RepeatingIntervalType.MONTHLY.period,
+                        repeatingInterval = MONTHLY.period,
                     ),
                 ),
                 Subscription(
                     id = "0",
                     title = "ChatGPT Plus",
                     amount = BigDecimal(19.99),
-                    currency = "USD",
+                    currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = null,
                 ),

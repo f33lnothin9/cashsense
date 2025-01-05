@@ -41,7 +41,6 @@
   <string name="licenses">Lizenz</string>
   <string name="version">Version</string>
   <string name="feedback">Feedback</string>
-  <string name="choose_currency">Wählen Sie Ihre Standardwährung</string>
   <string name="new_subscription">Neues Abonnement</string>
   <string name="edit_subscription">Abonnement bearbeiten</string>
   <string name="payment_date">Zahlungsdatum</string>
@@ -96,4 +95,7 @@
   <string name="from_wallet">Von Wallet</string>
   <string name="to_wallet">Zu Wallet</string>
   <string name="converted_amount">Umgewandelter Betrag</string>
+  <string name="primary_icon_description">Als Haupt festlegen</string>
+  <string name="non_primary_icon_description">Als nicht Haupt festlegen</string>
+  <string name="total_balance">Gesamtsaldo</string>
 </resources>

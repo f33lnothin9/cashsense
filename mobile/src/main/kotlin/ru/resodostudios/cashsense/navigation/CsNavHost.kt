@@ -1,24 +1,30 @@
 package ru.resodostudios.cashsense.navigation
 
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
-import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.categoryDialog
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesSection
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
-import ru.resodostudios.cashsense.feature.settings.navigation.settingsGraph
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
-import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransfer
+import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.subscriptionDialog
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsSection
+import ru.resodostudios.cashsense.feature.transaction.navigation.navigateToTransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.navigation.transactionDialog
+import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
-import ru.resodostudios.cashsense.feature.wallet.edit.navigation.editWalletDialog
-import ru.resodostudios.cashsense.feature.wallet.edit.navigation.navigateToEditWallet
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.walletDialog
 import ru.resodostudios.cashsense.ui.CsAppState
-import ru.resodostudios.cashsense.ui.home2pane.homeListDetailGraph
+import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
+import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
 
 @Composable
 fun CsNavHost(
@@ -30,25 +36,41 @@ fun CsNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = HomeRoute(),
-        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
-        exitTransition = { fadeOut(tween(0)) },
-        popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
-        popExitTransition = { fadeOut(tween(0)) },
+        startDestination = HomeListDetailRoute,
         modifier = modifier,
+        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
+        exitTransition = { fadeOut(snap()) },
+        popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
+        popExitTransition = { fadeOut(snap()) },
     ) {
-        homeListDetailGraph(
-            onEditWallet = navController::navigateToEditWallet,
-            onTransfer = navController::navigateToTransfer,
+        homeListDetailScreen(
+            onEditWallet = navController::navigateToWalletDialog,
+            onTransfer = navController::navigateToTransferDialog,
+            navigateToTransactionDialog = navController::navigateToTransactionDialog,
             onShowSnackbar = onShowSnackbar,
+            nestedDestinations = {
+                walletDialog(navController::navigateUp)
+                transferDialog(navController::navigateUp)
+                transactionDialog(navController::navigateUp)
+            },
         )
-        categoriesScreen(onShowSnackbar)
-        subscriptionsScreen(onShowSnackbar)
-        settingsGraph(
+        categoriesSection(
+            onEditCategory = navController::navigateToCategoryDialog,
+            onShowSnackbar = onShowSnackbar,
+            nestedGraphs = {
+                categoryDialog(navController::navigateUp)
+            },
+        )
+        subscriptionsSection(
+            onEditSubscription = navController::navigateToSubscriptionDialog,
+            onShowSnackbar = onShowSnackbar,
+            nestedGraphs = {
+                subscriptionDialog(navController::navigateUp)
+            },
+        )
+        settingsSection(
             onLicensesClick = navController::navigateToLicenses,
             nestedGraphs = { licensesScreen(navController::navigateUp) },
         )
-        editWalletDialog(navController::navigateUp)
-        transferDialog(navController::navigateUp)
     }
 }

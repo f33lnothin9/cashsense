@@ -10,5 +10,5 @@ fun MacrobenchmarkScope.goToSubscriptionsScreen() {
     waitForObjectOnTopAppBar(By.text("Subscriptions"))
 
     // Wait until content is loaded by checking if subscriptions are loaded
-    device.wait(Until.gone(By.res("loadingCircle")), 2_500)
+    device.wait(Until.gone(By.res("loadingCircle")), 1_000)
 }

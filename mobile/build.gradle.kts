@@ -13,13 +13,10 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 29
-        versionName = "1.1.2"
+        versionCode = 32
+        versionName = "1.2.0-beta02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -64,15 +61,14 @@ dependencies {
     implementation(projects.feature.subscription.dialog)
     implementation(projects.feature.transaction)
     implementation(projects.feature.transfer)
-    implementation(projects.feature.wallet.add)
     implementation(projects.feature.wallet.detail)
-    implementation(projects.feature.wallet.edit)
-    implementation(projects.feature.wallet.menu)
+    implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.wallet.widget)
     implementation(projects.feature.settings)
 
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
     implementation(projects.core.model)
     implementation(projects.core.shortcuts)
     implementation(projects.core.ui)
