@@ -4,7 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -35,6 +38,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
@@ -42,9 +46,12 @@ import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
+import java.math.BigDecimal
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -90,10 +97,10 @@ internal fun HomeScreen(
     onDeleteWallet: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-    shouldDisplayUndoWallet: Boolean,
-    undoWalletRemoval: () -> Unit,
-    clearUndoState: () -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
+    shouldDisplayUndoWallet: Boolean = false,
+    undoWalletRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
     val undoText = stringResource(localesR.string.undo)
@@ -185,9 +192,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
     val visible = wallets.size >= 2 && wallets.all { it.userWallet.currency == firstCurrency }
 
     if (visible) {
-        item(
-            span = StaggeredGridItemSpan.FullLine,
-        ) {
+        item(span = StaggeredGridItemSpan.FullLine) {
             val transactions = wallets.flatMap { wallet ->
                 wallet.transactionsWithCategories.map { it.transaction }
             }
@@ -213,61 +218,146 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                         .sumOf { it.amount }
                 }
             }
+            val totalBalance = wallets
+                .map { it.userWallet }
+                .sumOf { it.currentBalance }
 
-            val showBadIndicator = expenses > income
-            val color = if (showBadIndicator) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.outlineVariant
-            }
-            val borderBrush = Brush.verticalGradient(
-                colors = listOf(Color.Transparent, color),
-                startY = 20.0f,
-                endY = 400.0f,
+            TotalBalanceCard(
+                showBadIndicator = expenses > income,
+                totalBalance = totalBalance,
+                firstCurrency = firstCurrency,
+                modifier = Modifier.animateItem(),
             )
-            val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            OutlinedCard(
+        }
+    }
+}
+
+@Composable
+private fun TotalBalanceCard(
+    showBadIndicator: Boolean,
+    totalBalance: BigDecimal,
+    firstCurrency: Currency,
+    modifier: Modifier = Modifier,
+) {
+    val color = if (showBadIndicator) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
+    }
+    val borderBrush = Brush.verticalGradient(
+        colors = listOf(Color.Transparent, color),
+        startY = 15.0f,
+    )
+    val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+    OutlinedCard(
+        shape = shape,
+        border = BorderStroke(1.dp, borderBrush),
+        modifier = if (showBadIndicator) {
+            modifier.shadow(
+                ambientColor = color,
+                elevation = 12.dp,
+                spotColor = color,
                 shape = shape,
-                border = BorderStroke(1.dp, borderBrush),
-                modifier = if (showBadIndicator) {
-                    Modifier.shadow(
-                        ambientColor = color,
-                        elevation = 12.dp,
-                        spotColor = color,
-                        shape = shape,
-                    )
-                } else {
-                    Modifier
-                },
-            ) {
-                val totalBalance = wallets
-                    .map { it.userWallet }
-                    .sumOf { it.currentBalance }
-                CsListItem(
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
-                            contentDescription = null,
-                        )
-                    },
-                    headlineContent = {
-                        AnimatedAmount(
-                            targetState = totalBalance,
-                            label = "total_balance",
-                        ) {
-                            Text(
-                                text = totalBalance.formatAmount(firstCurrency),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    },
-                    overlineContent = { Text(stringResource(localesR.string.total_balance)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem(),
+            )
+        } else {
+            modifier
+        },
+    ) {
+        CsListItem(
+            leadingContent = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                    contentDescription = null,
                 )
-            }
+            },
+            headlineContent = {
+                AnimatedAmount(
+                    targetState = totalBalance,
+                    label = "total_balance",
+                ) {
+                    Text(
+                        text = totalBalance.formatAmount(firstCurrency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            },
+            overlineContent = { Text(stringResource(localesR.string.total_balance)) },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenLoadingPreview() {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Loading,
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenEmptyPreview() {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Empty,
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPopulatedPreview(
+    @PreviewParameter(ExtendedUserWalletPreviewParameterProvider::class)
+    extendedUserWallets: List<ExtendedUserWallet>,
+) {
+    CsTheme {
+        Surface {
+            HomeScreen(
+                walletsState = Success(
+                    selectedWalletId = null,
+                    extendedUserWallets = extendedUserWallets,
+                ),
+                onWalletClick = {},
+                onTransfer = {},
+                onEditWallet = {},
+                onDeleteWallet = {},
+                onTransactionCreate = {},
+                highlightSelectedWallet = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TotalBalanceCardPreview() {
+    CsTheme {
+        Surface {
+            TotalBalanceCard(
+                showBadIndicator = true,
+                totalBalance = BigDecimal(1549000),
+                firstCurrency = getUsdCurrency(),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            )
         }
     }
 }
