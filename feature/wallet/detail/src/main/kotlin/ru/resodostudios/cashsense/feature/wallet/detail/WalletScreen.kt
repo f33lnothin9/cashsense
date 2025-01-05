@@ -59,7 +59,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -267,15 +266,14 @@ private fun WalletTopBar(
                 AnimatedAmount(
                     targetState = userWallet.currentBalance,
                     label = "wallet_balance",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .zIndex(-1f),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = it.formatAmount(userWallet.currency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
