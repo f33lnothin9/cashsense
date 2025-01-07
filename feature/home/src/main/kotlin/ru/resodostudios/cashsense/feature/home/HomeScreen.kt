@@ -223,7 +223,6 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
             showBadIndicator = expenses > income,
             totalBalance = totalBalance,
             userCurrency = userCurrency,
-            modifier = Modifier.animateItem(),
         )
     }
 }
