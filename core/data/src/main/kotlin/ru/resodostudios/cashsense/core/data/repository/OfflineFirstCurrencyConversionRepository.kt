@@ -42,6 +42,7 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                emit(emptyList())
                 null
             }
             if (!remoteData.isNullOrEmpty()) {
