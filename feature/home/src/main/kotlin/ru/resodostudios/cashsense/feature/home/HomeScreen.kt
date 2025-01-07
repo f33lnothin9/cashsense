@@ -187,85 +187,83 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
     totalBalance: BigDecimal?,
     userCurrency: Currency,
 ) {
-    if (totalBalance != null) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            val transactions = wallets.flatMap { wallet ->
-                wallet.transactionsWithCategories.map { it.transaction }
-            }
-            val currentMonthTransactions by remember(transactions) {
-                derivedStateOf {
-                    transactions.filter {
-                        it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
-                    }
+    item(span = StaggeredGridItemSpan.FullLine) {
+        val transactions = wallets.flatMap { wallet ->
+            wallet.transactionsWithCategories.map { it.transaction }
+        }
+        val currentMonthTransactions by remember(transactions) {
+            derivedStateOf {
+                transactions.filter {
+                    it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
                 }
             }
-            val expenses by remember(currentMonthTransactions) {
-                derivedStateOf {
-                    currentMonthTransactions
-                        .filter { it.amount.signum() == -1 }
-                        .sumOf { it.amount }
-                        .abs()
-                }
+        }
+        val expenses by remember(currentMonthTransactions) {
+            derivedStateOf {
+                currentMonthTransactions
+                    .filter { it.amount.signum() == -1 }
+                    .sumOf { it.amount }
+                    .abs()
             }
-            val income by remember(currentMonthTransactions) {
-                derivedStateOf {
-                    currentMonthTransactions
-                        .filter { it.amount.signum() == 1 }
-                        .sumOf { it.amount }
-                }
+        }
+        val income by remember(currentMonthTransactions) {
+            derivedStateOf {
+                currentMonthTransactions
+                    .filter { it.amount.signum() == 1 }
+                    .sumOf { it.amount }
             }
+        }
 
-            val showBadIndicator = expenses > income
-            val color = if (showBadIndicator) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.outlineVariant
-            }
-            val borderBrush = Brush.verticalGradient(
-                colors = listOf(Color.Transparent, color),
-                startY = 20.0f,
-                endY = 400.0f,
-            )
-            val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            OutlinedCard(
-                shape = shape,
-                border = BorderStroke(1.dp, borderBrush),
-                modifier = if (showBadIndicator) {
-                    Modifier.shadow(
-                        ambientColor = color,
-                        elevation = 12.dp,
-                        spotColor = color,
-                        shape = shape,
-                    )
-                } else {
-                    Modifier
-                },
-            ) {
-                CsListItem(
-                    leadingContent = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
-                            contentDescription = null,
-                        )
-                    },
-                    headlineContent = {
-                        AnimatedAmount(
-                            targetState = totalBalance,
-                            label = "total_balance",
-                        ) {
-                            Text(
-                                text = totalBalance.formatAmount(userCurrency),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    },
-                    overlineContent = { Text(stringResource(localesR.string.total_balance)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem(),
+        val showBadIndicator = expenses > income
+        val color = if (showBadIndicator) {
+            MaterialTheme.colorScheme.error
+        } else {
+            MaterialTheme.colorScheme.outlineVariant
+        }
+        val borderBrush = Brush.verticalGradient(
+            colors = listOf(Color.Transparent, color),
+            startY = 20.0f,
+            endY = 400.0f,
+        )
+        val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        OutlinedCard(
+            shape = shape,
+            border = BorderStroke(1.dp, borderBrush),
+            modifier = if (showBadIndicator) {
+                Modifier.shadow(
+                    ambientColor = color,
+                    elevation = 12.dp,
+                    spotColor = color,
+                    shape = shape,
                 )
-            }
+            } else {
+                Modifier
+            },
+        ) {
+            CsListItem(
+                leadingContent = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                        contentDescription = null,
+                    )
+                },
+                headlineContent = {
+                    AnimatedAmount(
+                        targetState = totalBalance ?: BigDecimal.ZERO,
+                        label = "total_balance",
+                    ) {
+                        Text(
+                            text = totalBalance?.formatAmount(userCurrency) ?: "???",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                },
+                overlineContent = { Text(stringResource(localesR.string.total_balance)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem(),
+            )
         }
     }
 }
