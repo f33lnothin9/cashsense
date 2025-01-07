@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
+import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
+import ru.resodostudios.cashsense.core.data.repository.OfflineFirstCurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -27,6 +29,11 @@ internal abstract class DataModule {
     internal abstract fun bindsCategoriesRepository(
         categoriesRepository: OfflineCategoriesRepository,
     ): CategoriesRepository
+
+    @Binds
+    internal abstract fun bindsCurrencyConversionRepository(
+        currencyConversionRepository: OfflineFirstCurrencyConversionRepository,
+    ): CurrencyConversionRepository
 
     @Binds
     internal abstract fun bindsTransactionsRepository(

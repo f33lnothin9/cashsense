@@ -7,7 +7,7 @@ import java.util.Currency
 interface CurrencyConversionRepository {
 
     fun getConvertedCurrencies(
-        baseCurrencies: List<Currency>,
+        baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
     ): Flow<List<CurrencyExchangeRate>>
 }

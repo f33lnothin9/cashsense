@@ -45,6 +45,8 @@ import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
+import java.math.BigDecimal
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -129,6 +131,8 @@ internal fun HomeScreen(
             ) {
                 financeOverviewSection(
                     wallets = walletsState.extendedUserWallets,
+                    totalBalance = walletsState.totalBalance,
+                    userCurrency = walletsState.userCurrency,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -180,14 +184,11 @@ private fun LazyStaggeredGridScope.wallets(
 
 private fun LazyStaggeredGridScope.financeOverviewSection(
     wallets: List<ExtendedUserWallet>,
+    totalBalance: BigDecimal?,
+    userCurrency: Currency,
 ) {
-    val firstCurrency = wallets.first().userWallet.currency
-    val visible = wallets.size >= 2 && wallets.all { it.userWallet.currency == firstCurrency }
-
-    if (visible) {
-        item(
-            span = StaggeredGridItemSpan.FullLine,
-        ) {
+    if (totalBalance != null) {
+        item(span = StaggeredGridItemSpan.FullLine) {
             val transactions = wallets.flatMap { wallet ->
                 wallet.transactionsWithCategories.map { it.transaction }
             }
@@ -240,9 +241,6 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                     Modifier
                 },
             ) {
-                val totalBalance = wallets
-                    .map { it.userWallet }
-                    .sumOf { it.currentBalance }
                 CsListItem(
                     leadingContent = {
                         Icon(
@@ -256,7 +254,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                             label = "total_balance",
                         ) {
                             Text(
-                                text = totalBalance.formatAmount(firstCurrency),
+                                text = totalBalance.formatAmount(userCurrency),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
