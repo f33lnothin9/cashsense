@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -50,8 +50,8 @@ class HomeViewModel @Inject constructor(
                 val currencyExchangeRates = currencyConversionRepository.getConvertedCurrencies(
                     baseCurrencies = baseCurrencies,
                     targetCurrency = userCurrency,
-                ).firstOrNull()
-                if (currencyExchangeRates != null && currencyExchangeRates.size == baseCurrencies.size) {
+                ).first()
+                if (currencyExchangeRates.isNotEmpty() && currencyExchangeRates.size == baseCurrencies.size) {
                     extendedUserWallets.sumOf {
                         it.userWallet.currentBalance * (currencyExchangeRates.find { rate ->
                             rate.baseCurrency == it.userWallet.currency
