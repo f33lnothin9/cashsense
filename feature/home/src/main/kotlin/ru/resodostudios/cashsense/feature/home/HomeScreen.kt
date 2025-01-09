@@ -69,9 +69,11 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val financeOverviewState by viewModel.financeOverviewState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
+        financeOverviewState = financeOverviewState,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -91,6 +93,7 @@ fun HomeScreen(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
+    financeOverviewState: FinanceOverviewUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -135,9 +138,8 @@ internal fun HomeScreen(
                 ),
             ) {
                 financeOverviewSection(
+                    financeOverviewState = financeOverviewState,
                     wallets = walletsState.extendedUserWallets,
-                    totalBalance = walletsState.totalBalance,
-                    userCurrency = walletsState.userCurrency,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -188,42 +190,55 @@ private fun LazyStaggeredGridScope.wallets(
 }
 
 private fun LazyStaggeredGridScope.financeOverviewSection(
+    financeOverviewState: FinanceOverviewUiState,
     wallets: List<ExtendedUserWallet>,
-    totalBalance: BigDecimal?,
-    userCurrency: Currency,
 ) {
-    item(span = StaggeredGridItemSpan.FullLine) {
-        val transactions = wallets.flatMap { wallet ->
-            wallet.transactionsWithCategories.map { it.transaction }
+    when (financeOverviewState) {
+        FinanceOverviewUiState.Loading -> {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                TotalBalanceCard(
+                    showBadIndicator = true,
+                    totalBalance = BigDecimal(1549000),
+                    userCurrency = getUsdCurrency(),
+                )
+            }
         }
-        val currentMonthTransactions by remember(transactions) {
-            derivedStateOf {
-                transactions.filter {
-                    it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+        FinanceOverviewUiState.NotShown -> Unit
+        is FinanceOverviewUiState.Shown -> {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                val transactions = wallets.flatMap { wallet ->
+                    wallet.transactionsWithCategories.map { it.transaction }
                 }
-            }
-        }
-        val expenses by remember(currentMonthTransactions) {
-            derivedStateOf {
-                currentMonthTransactions
-                    .filter { it.amount.signum() == -1 }
-                    .sumOf { it.amount }
-                    .abs()
-            }
-        }
-        val income by remember(currentMonthTransactions) {
-            derivedStateOf {
-                currentMonthTransactions
-                    .filter { it.amount.signum() == 1 }
-                    .sumOf { it.amount }
-            }
-        }
+                val currentMonthTransactions by remember(transactions) {
+                    derivedStateOf {
+                        transactions.filter {
+                            it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+                        }
+                    }
+                }
+                val expenses by remember(currentMonthTransactions) {
+                    derivedStateOf {
+                        currentMonthTransactions
+                            .filter { it.amount.signum() == -1 }
+                            .sumOf { it.amount }
+                            .abs()
+                    }
+                }
+                val income by remember(currentMonthTransactions) {
+                    derivedStateOf {
+                        currentMonthTransactions
+                            .filter { it.amount.signum() == 1 }
+                            .sumOf { it.amount }
+                    }
+                }
 
-        TotalBalanceCard(
-            showBadIndicator = expenses > income,
-            totalBalance = totalBalance,
-            userCurrency = userCurrency,
-        )
+                TotalBalanceCard(
+                    showBadIndicator = expenses > income,
+                    totalBalance = financeOverviewState.totalBalance,
+                    userCurrency = financeOverviewState.userCurrency,
+                )
+            }
+        }
     }
 }
 
@@ -289,6 +304,7 @@ fun HomeScreenLoadingPreview() {
         Surface {
             HomeScreen(
                 walletsState = Loading,
+                financeOverviewState = FinanceOverviewUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -307,6 +323,7 @@ fun HomeScreenEmptyPreview() {
         Surface {
             HomeScreen(
                 walletsState = Empty,
+                financeOverviewState = FinanceOverviewUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -330,6 +347,8 @@ fun HomeScreenPopulatedPreview(
                 walletsState = Success(
                     selectedWalletId = null,
                     extendedUserWallets = extendedUserWallets,
+                ),
+                financeOverviewState = FinanceOverviewUiState.Shown(
                     totalBalance = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
                 ),

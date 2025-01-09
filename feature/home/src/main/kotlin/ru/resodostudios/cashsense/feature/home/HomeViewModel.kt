@@ -5,11 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
@@ -33,39 +37,64 @@ class HomeViewModel @Inject constructor(
         initialValue = homeDestination.walletId,
     )
 
+    private val baseCurrenciesState = MutableStateFlow<Set<Currency>>(emptySet())
+
+    val financeOverviewState: StateFlow<FinanceOverviewUiState> =
+        combine(
+            baseCurrenciesState,
+            userDataRepository.userData,
+            ::Pair
+        )
+            .flatMapLatest { (baseCurrencies, userData) ->
+                if (baseCurrencies.isEmpty()) {
+                    flowOf(FinanceOverviewUiState.NotShown)
+                } else {
+                    flowOf(FinanceOverviewUiState.Loading)
+                    val userCurrency = Currency.getInstance(userData.currency)
+
+                    combine(
+                        currencyConversionRepository.getConvertedCurrencies(
+                            baseCurrencies = baseCurrencies,
+                            targetCurrency = userCurrency,
+                        ),
+                        getExtendedUserWallets.invoke(),
+                    ) { exchangeRates, wallets ->
+                        val totalBalance = wallets.sumOf {
+                            it.userWallet.currentBalance * (exchangeRates.find { rate ->
+                                rate.baseCurrency == it.userWallet.currency
+                            }?.exchangeRate ?: BigDecimal.ONE)
+                        }
+
+                        FinanceOverviewUiState.Shown(
+                            totalBalance = totalBalance,
+                            userCurrency = userCurrency,
+                        )
+                    }
+                        .catch { FinanceOverviewUiState.NotShown }
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = FinanceOverviewUiState.NotShown,
+            )
+
+
     val walletsUiState: StateFlow<WalletsUiState> = combine(
         selectedWalletId,
         getExtendedUserWallets.invoke(),
-        userDataRepository.userData,
-    ) { selectedWalletId, extendedUserWallets, userData ->
+    ) { selectedWalletId, extendedUserWallets ->
         if (extendedUserWallets.isEmpty()) {
             WalletsUiState.Empty
         } else {
-            val userCurrency = Currency.getInstance(userData.currency)
-            val baseCurrencies = extendedUserWallets
-                .map { it.userWallet.currency }
-                .toSet()
-                .minus(userCurrency)
-            val totalBalance = if (!baseCurrencies.all { it == userCurrency }) {
-                val currencyExchangeRates = currencyConversionRepository.getConvertedCurrencies(
-                    baseCurrencies = baseCurrencies,
-                    targetCurrency = userCurrency,
-                ).first()
-                if (currencyExchangeRates.isNotEmpty() && currencyExchangeRates.size == baseCurrencies.size) {
-                    extendedUserWallets.sumOf {
-                        it.userWallet.currentBalance * (currencyExchangeRates.find { rate ->
-                            rate.baseCurrency == it.userWallet.currency
-                        }?.exchangeRate ?: BigDecimal.ONE)
-                    }
-                } else null
-            } else {
-                extendedUserWallets.sumOf { it.userWallet.currentBalance }
+            baseCurrenciesState.update {
+                extendedUserWallets
+                    .map { it.userWallet.currency }
+                    .toSet()
             }
             WalletsUiState.Success(
                 selectedWalletId = selectedWalletId,
                 extendedUserWallets = extendedUserWallets,
-                totalBalance = totalBalance,
-                userCurrency = userCurrency,
             )
         }
     }
@@ -89,9 +118,19 @@ sealed interface WalletsUiState {
     data class Success(
         val selectedWalletId: String?,
         val extendedUserWallets: List<ExtendedUserWallet>,
-        val totalBalance: BigDecimal?,
-        val userCurrency: Currency,
     ) : WalletsUiState
+}
+
+sealed interface FinanceOverviewUiState {
+
+    data object Loading : FinanceOverviewUiState
+
+    data object NotShown : FinanceOverviewUiState
+
+    data class Shown(
+        val totalBalance: BigDecimal,
+        val userCurrency: Currency,
+    ) : FinanceOverviewUiState
 }
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"
