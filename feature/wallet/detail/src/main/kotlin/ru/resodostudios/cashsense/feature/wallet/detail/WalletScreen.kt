@@ -105,6 +105,7 @@ import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterPro
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
+import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -600,6 +601,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 FinanceGraph(
                     walletFilter = walletFilter,
                     graphValues = graphValues,
+                    currency = currency,
                 )
             }
         }
@@ -619,6 +621,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
 private fun FinanceGraph(
     walletFilter: WalletFilter,
     graphValues: Map<Int, BigDecimal>,
+    currency: Currency,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberVicoScrollState()
@@ -661,6 +664,7 @@ private fun FinanceGraph(
             ),
         ),
         labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
+        valueFormatter = DefaultCartesianMarker.ValueFormatter.default(getDecimalFormat(currency)),
     )
 
     LaunchedEffect(graphValues) {
@@ -674,18 +678,20 @@ private fun FinanceGraph(
         CartesianChartHost(
             chart = rememberCartesianChart(
                 rememberLineCartesianLayer(
-                    lineProvider = LineCartesianLayer.LineProvider.series(vicoTheme.lineCartesianLayerColors.map { color ->
-                        LineCartesianLayer.rememberLine(
-                            pointConnector = LineCartesianLayer.PointConnector.cubic(),
-                            areaFill = LineCartesianLayer.AreaFill.single(
-                                fill(
-                                    ShaderProvider.verticalGradient(
-                                        arrayOf(color.copy(alpha = 0.15f), Color.Transparent),
+                    lineProvider = LineCartesianLayer.LineProvider.series(
+                        vicoTheme.lineCartesianLayerColors.map { color ->
+                            LineCartesianLayer.rememberLine(
+                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
+                                areaFill = LineCartesianLayer.AreaFill.single(
+                                    fill(
+                                        ShaderProvider.verticalGradient(
+                                            arrayOf(color.copy(alpha = 0.15f), Color.Transparent),
+                                        )
                                     )
-                                )
-                            ),
-                        )
-                    }),
+                                ),
+                            )
+                        }
+                    ),
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = xDateFormatter,

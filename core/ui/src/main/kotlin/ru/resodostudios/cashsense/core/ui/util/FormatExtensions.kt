@@ -33,6 +33,17 @@ fun BigDecimal.formatAmount(
     return if (withPlus && this.signum() == 1) "+$formattedAmount" else formattedAmount
 }
 
+fun getDecimalFormat(
+    currency: Currency,
+    locale: Locale = Locale.getDefault(),
+) = currencyFormatCache.getOrPut(currency to locale) {
+    DecimalFormat.getCurrencyInstance(locale).apply {
+        minimumFractionDigits = 0
+        maximumFractionDigits = 2
+        this.currency = currency
+    } as DecimalFormat
+}
+
 @Composable
 fun Instant.formatDate(formatDateType: FormatDateType = DATE): String = when (formatDateType) {
     DATE_TIME -> DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
