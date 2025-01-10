@@ -13,11 +13,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import java.math.BigDecimal
 import java.util.Currency
@@ -58,7 +59,8 @@ class HomeViewModel @Inject constructor(
                         ),
                         getExtendedUserWallets.invoke(),
                     ) { exchangeRates, wallets ->
-                        val exchangeRateMap = exchangeRates.associate { it.baseCurrency to it.exchangeRate }
+                        val exchangeRateMap = exchangeRates
+                            .associate { it.baseCurrency to it.exchangeRate }
 
                         val totalBalance = wallets.sumOf {
                             if (userCurrency == it.userWallet.currency) {
@@ -70,9 +72,23 @@ class HomeViewModel @Inject constructor(
                             it.userWallet.currentBalance * exchangeRate
                         }
 
+                        val allTransactions = wallets.flatMap { wallet ->
+                            wallet.transactionsWithCategories.map { it.transaction }
+                        }
+
+                        val monthlyTransactions = allTransactions.filter {
+                            it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+                        }
+
+                        val (expenses, income) = monthlyTransactions.partition { it.amount.signum() == -1 }
+
+                        val totalExpenses = expenses.sumOf { it.amount }.abs()
+                        val totalIncome = income.sumOf { it.amount }
+
                         FinanceOverviewUiState.Shown(
                             totalBalance = totalBalance,
                             userCurrency = userCurrency,
+                            showBadIndicator = totalIncome < totalExpenses,
                         )
                     }
                         .catch { FinanceOverviewUiState.NotShown }
@@ -84,7 +100,6 @@ class HomeViewModel @Inject constructor(
                 initialValue = FinanceOverviewUiState.Loading,
             )
 
-
     val walletsUiState: StateFlow<WalletsUiState> = combine(
         selectedWalletId,
         getExtendedUserWallets.invoke(),
@@ -92,11 +107,8 @@ class HomeViewModel @Inject constructor(
         if (extendedUserWallets.isEmpty()) {
             WalletsUiState.Empty
         } else {
-            baseCurrenciesState.update {
-                extendedUserWallets
-                    .map { it.userWallet.currency }
-                    .toSet()
-            }
+            baseCurrenciesState.value = extendedUserWallets
+                .mapTo(HashSet()) { it.userWallet.currency }
             WalletsUiState.Success(
                 selectedWalletId = selectedWalletId,
                 extendedUserWallets = extendedUserWallets,
@@ -135,6 +147,7 @@ sealed interface FinanceOverviewUiState {
     data class Shown(
         val totalBalance: BigDecimal,
         val userCurrency: Currency,
+        val showBadIndicator: Boolean,
     ) : FinanceOverviewUiState
 }
 
