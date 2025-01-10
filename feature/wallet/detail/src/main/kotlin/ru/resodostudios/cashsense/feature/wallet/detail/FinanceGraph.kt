@@ -2,11 +2,14 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 
 import android.text.Layout
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
@@ -50,6 +53,7 @@ import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
+import ru.resodostudios.cashsense.core.locales.R
 import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
@@ -89,6 +93,8 @@ internal fun FinanceGraph(
         modelProducer.runTransaction {
             if (graphValues.isNotEmpty() && graphValues.keys.size > 1) {
                 lineSeries { series(graphValues.keys, graphValues.values) }
+            } else {
+                return@runTransaction
             }
         }
     }
@@ -126,6 +132,13 @@ internal fun FinanceGraph(
             scrollState = scrollState,
             zoomState = zoomState,
             modifier = modifier,
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.not_enough_data),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
         )
     }
 }

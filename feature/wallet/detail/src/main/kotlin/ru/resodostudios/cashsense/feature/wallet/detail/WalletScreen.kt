@@ -12,7 +12,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -562,20 +561,12 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             style = MaterialTheme.typography.labelLarge,
         )
         if (graphValues.isNotEmpty() && walletFilter.dateType != ALL) {
-            Box(contentAlignment = Alignment.Center) {
-                if (graphValues.keys.size < 2) {
-                    Text(
-                        text = stringResource(localesR.string.not_enough_data),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                FinanceGraph(
-                    walletFilter = walletFilter,
-                    graphValues = graphValues,
-                    currency = currency,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                )
-            }
+            FinanceGraph(
+                walletFilter = walletFilter,
+                graphValues = graphValues,
+                currency = currency,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            )
         }
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
