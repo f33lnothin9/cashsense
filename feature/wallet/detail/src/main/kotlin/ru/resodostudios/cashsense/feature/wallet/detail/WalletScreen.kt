@@ -369,7 +369,7 @@ private fun FinancePanel(
                         when (walletState.walletFilter.dateType) {
                             YEAR -> zonedDateTime.monthValue
                             MONTH -> zonedDateTime.dayOfMonth
-                            else -> zonedDateTime.dayOfWeek.value
+                            ALL, WEEK -> zonedDateTime.dayOfWeek.value
                         }
                     }
                 when (financeType) {
@@ -632,7 +632,7 @@ private fun FinanceGraph(
             )
 
             MONTH -> x.toInt().toString()
-            else -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
+            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
                 TextStyle.NARROW_STANDALONE,
                 Locale.getDefault(),
             )
@@ -833,7 +833,7 @@ private fun FilterBySelectedDateTypeRow(
                 }
             }
 
-            else -> ""
+            ALL, WEEK -> ""
         }
 
         Text(
