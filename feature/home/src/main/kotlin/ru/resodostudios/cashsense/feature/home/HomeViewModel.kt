@@ -49,7 +49,6 @@ class HomeViewModel @Inject constructor(
                 if (baseCurrencies.isEmpty()) {
                     flowOf(FinanceOverviewUiState.NotShown)
                 } else {
-                    flowOf(FinanceOverviewUiState.Loading)
                     val userCurrency = Currency.getInstance(userData.currency)
 
                     combine(
@@ -59,10 +58,16 @@ class HomeViewModel @Inject constructor(
                         ),
                         getExtendedUserWallets.invoke(),
                     ) { exchangeRates, wallets ->
+                        val exchangeRateMap = exchangeRates.associate { it.baseCurrency to it.exchangeRate }
+
                         val totalBalance = wallets.sumOf {
-                            it.userWallet.currentBalance * (exchangeRates.find { rate ->
-                                rate.baseCurrency == it.userWallet.currency
-                            }?.exchangeRate ?: BigDecimal.ONE)
+                            if (userCurrency == it.userWallet.currency) {
+                                it.userWallet.currentBalance * BigDecimal.ONE
+                            }
+                            val exchangeRate = exchangeRateMap[it.userWallet.currency]
+                                ?: return@combine FinanceOverviewUiState.NotShown
+
+                            it.userWallet.currentBalance * exchangeRate
                         }
 
                         FinanceOverviewUiState.Shown(
@@ -76,7 +81,7 @@ class HomeViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = FinanceOverviewUiState.NotShown,
+                initialValue = FinanceOverviewUiState.Loading,
             )
 
 

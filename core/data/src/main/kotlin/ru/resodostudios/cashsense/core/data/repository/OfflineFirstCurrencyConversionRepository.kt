@@ -1,6 +1,10 @@
 package ru.resodostudios.cashsense.core.data.repository
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.resodostudios.cashsense.core.data.model.asEntity
@@ -24,30 +28,31 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
             targetCurrency = targetCurrency,
             baseCurrencies = baseCurrencies,
         )
-            .map { currencyExchangeRateCached ->
-                currencyExchangeRateCached.map { it.asExternalModel() }
+            .map { cachedRates ->
+                cachedRates.map { it.asExternalModel() }
             }
             .onEach { currencyExchangeRates ->
-                if (currencyExchangeRates.isEmpty() || currencyExchangeRates.size < baseCurrencies.size) {
-                    try {
-                        getCurrencyExchangeRates(baseCurrencies, targetCurrency)
-                    } catch (e: Exception) {
-                        emptyList()
-                    }
+                val cachedBaseCurrencies = currencyExchangeRates.map { it.baseCurrency }.toSet()
+                val missingBaseCurrencies = baseCurrencies - cachedBaseCurrencies
+                if (missingBaseCurrencies.isNotEmpty()) {
+                    getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
                 }
             }
+            .catch { emit(emptyList()) }
 
     private suspend fun getCurrencyExchangeRates(
         baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
-    ) = baseCurrencies
-        .map { baseCurrency ->
-            network.getCurrencyExchangeRate(
-                baseCurrencyCode = baseCurrency.currencyCode,
-                targetCurrencyCode = targetCurrency.currencyCode,
-            )
-        }
-        .also { remoteData ->
-            dao.upsertCurrencyExchangeRates(remoteData.map { it.asEntity() })
-        }
+    ) = coroutineScope {
+        baseCurrencies.map { baseCurrency ->
+            async {
+                network.getCurrencyExchangeRate(
+                    baseCurrencyCode = baseCurrency.currencyCode,
+                    targetCurrencyCode = targetCurrency.currencyCode,
+                )
+            }
+        }.awaitAll()
+    }.also { remoteData ->
+        dao.upsertCurrencyExchangeRates(remoteData.map { it.asEntity() })
+    }
 }
