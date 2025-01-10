@@ -42,16 +42,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -62,35 +58,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
-import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.common.vicoTheme
-import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -105,7 +72,6 @@ import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterPro
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
-import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -614,106 +580,6 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 modifier = Modifier.padding(top = 8.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun FinanceGraph(
-    walletFilter: WalletFilter,
-    graphValues: Map<Int, BigDecimal>,
-    currency: Currency,
-    modifier: Modifier = Modifier,
-) {
-    val scrollState = rememberVicoScrollState()
-    val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
-    val modelProducer = remember { CartesianChartModelProducer() }
-    val xDateFormatter = CartesianValueFormatter { _, x, _ ->
-        when (walletFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
-                TextStyle.NARROW_STANDALONE,
-                Locale.getDefault(),
-            )
-
-            MONTH -> x.toInt().toString()
-            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
-                TextStyle.NARROW_STANDALONE,
-                Locale.getDefault(),
-            )
-        }
-    }
-
-    val marker = rememberDefaultCartesianMarker(
-        label = TextComponent(
-            textSizeSp = 14f,
-            padding = Insets(
-                startDp = 8f,
-                endDp = 8f,
-                topDp = 4f,
-                bottomDp = 20f,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
-            background = ShapeComponent(
-                fill = Fill(MaterialTheme.colorScheme.surfaceVariant.toArgb()),
-                shape = CorneredShape.Pill,
-                margins = Insets(
-                    startDp = 0f,
-                    endDp = 0f,
-                    topDp = 0f,
-                    bottomDp = 16f,
-                )
-            ),
-        ),
-        labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
-        valueFormatter = DefaultCartesianMarker.ValueFormatter.default(getDecimalFormat(currency)),
-    )
-
-    LaunchedEffect(graphValues) {
-        modelProducer.runTransaction {
-            if (graphValues.isNotEmpty() && graphValues.keys.size > 1) {
-                lineSeries { series(graphValues.keys, graphValues.values) }
-            }
-        }
-    }
-    ProvideVicoTheme(rememberM3VicoTheme()) {
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberLineCartesianLayer(
-                    lineProvider = LineCartesianLayer.LineProvider.series(
-                        vicoTheme.lineCartesianLayerColors.map { color ->
-                            LineCartesianLayer.rememberLine(
-                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
-                                areaFill = LineCartesianLayer.AreaFill.single(
-                                    fill(
-                                        ShaderProvider.verticalGradient(
-                                            arrayOf(color.copy(alpha = 0.15f), Color.Transparent),
-                                        )
-                                    )
-                                ),
-                            )
-                        }
-                    ),
-                ),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    valueFormatter = xDateFormatter,
-                    guideline = null,
-                    line = null,
-                    tick = rememberAxisTickComponent(
-                        margins = Insets(
-                            startDp = 0f,
-                            endDp = 0f,
-                            topDp = 2f,
-                            bottomDp = -2f,
-                        ),
-                    )
-                ),
-                marker = marker,
-                fadingEdges = rememberFadingEdges(),
-            ),
-            modelProducer = modelProducer,
-            scrollState = scrollState,
-            zoomState = zoomState,
-            modifier = modifier,
-        )
     }
 }
 
