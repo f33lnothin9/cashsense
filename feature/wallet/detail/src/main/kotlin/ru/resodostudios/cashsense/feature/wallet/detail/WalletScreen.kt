@@ -202,7 +202,7 @@ private fun WalletScreen(
                     FinancePanel(
                         walletState = walletState,
                         onWalletEvent = onWalletEvent,
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     )
                 }
                 transactions(
@@ -344,6 +344,7 @@ private fun FinancePanel(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
                                 targetValue = getFinanceProgress(expenses, filteredTransactions),
@@ -506,8 +507,8 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(bottom = 6.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
         ) {
             FilterDateTypeSelectorRow(
                 walletFilter = walletFilter,
@@ -530,16 +531,18 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
                 walletFilter = walletFilter,
-                modifier = Modifier.padding(bottom = 6.dp),
+                modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
             )
         }
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
-            modifier = Modifier.sharedBounds(
-                sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
-                animatedVisibilityScope = animatedVisibilityScope,
-            ),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
         ) {
             Text(
                 text = title.formatAmount(currency),
@@ -550,10 +553,12 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         }
         Text(
             text = stringResource(supportingTextId),
-            modifier = Modifier.sharedBounds(
-                sharedContentState = rememberSharedContentState(supportingTextId),
-                animatedVisibilityScope = animatedVisibilityScope,
-            ),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(supportingTextId),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
             style = MaterialTheme.typography.labelLarge,
         )
         if (graphValues.isNotEmpty() && walletFilter.dateType != ALL) {
@@ -568,6 +573,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     walletFilter = walletFilter,
                     graphValues = graphValues,
                     currency = currency,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                 )
             }
         }
@@ -577,7 +583,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 selectedCategories = walletFilter.selectedCategories,
                 addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
                 removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
             )
         }
     }
