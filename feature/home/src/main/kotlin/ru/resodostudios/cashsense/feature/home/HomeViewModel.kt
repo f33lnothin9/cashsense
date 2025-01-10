@@ -43,7 +43,7 @@ class HomeViewModel @Inject constructor(
         combine(
             baseCurrenciesState,
             userDataRepository.userData,
-            ::Pair
+            ::Pair,
         )
             .flatMapLatest { (baseCurrencies, userData) ->
                 if (baseCurrencies.isEmpty()) {
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
 
                         val totalBalance = wallets.sumOf {
                             if (userCurrency == it.userWallet.currency) {
-                                it.userWallet.currentBalance * BigDecimal.ONE
+                                return@sumOf it.userWallet.currentBalance * BigDecimal.ONE
                             }
                             val exchangeRate = exchangeRateMap[it.userWallet.currency]
                                 ?: return@combine FinanceOverviewUiState.NotShown

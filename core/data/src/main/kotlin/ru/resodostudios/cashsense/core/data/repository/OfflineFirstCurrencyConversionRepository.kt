@@ -32,8 +32,13 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                 cachedRates.map { it.asExternalModel() }
             }
             .onEach { currencyExchangeRates ->
-                val cachedBaseCurrencies = currencyExchangeRates.map { it.baseCurrency }.toSet()
-                val missingBaseCurrencies = baseCurrencies - cachedBaseCurrencies
+                val cachedBaseCurrencies = currencyExchangeRates
+                    .mapTo(HashSet()) { it.baseCurrency }
+                val missingBaseCurrencies = buildSet {
+                    addAll(baseCurrencies)
+                    remove(targetCurrency)
+                    removeAll(cachedBaseCurrencies)
+                }
                 if (missingBaseCurrencies.isNotEmpty()) {
                     getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
                 }

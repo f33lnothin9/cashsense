@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -196,11 +197,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
     when (financeOverviewState) {
         FinanceOverviewUiState.Loading -> {
             item(span = StaggeredGridItemSpan.FullLine) {
-                TotalBalanceCard(
-                    showBadIndicator = true,
-                    totalBalance = BigDecimal(1549000),
-                    userCurrency = getUsdCurrency(),
-                )
+                LoadingState(modifier = Modifier.fillMaxWidth())
             }
         }
         FinanceOverviewUiState.NotShown -> Unit
