@@ -4,7 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -18,9 +18,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -44,8 +42,6 @@ import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
-import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
@@ -69,9 +65,11 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val financeOverviewState by viewModel.financeOverviewState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
+        financeOverviewState = financeOverviewState,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -91,6 +89,7 @@ fun HomeScreen(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
+    financeOverviewState: FinanceOverviewUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -135,7 +134,7 @@ internal fun HomeScreen(
                 ),
             ) {
                 financeOverviewSection(
-                    wallets = walletsState.extendedUserWallets,
+                    financeOverviewState = financeOverviewState,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -186,48 +185,29 @@ private fun LazyStaggeredGridScope.wallets(
 }
 
 private fun LazyStaggeredGridScope.financeOverviewSection(
-    wallets: List<ExtendedUserWallet>,
+    financeOverviewState: FinanceOverviewUiState,
 ) {
-    val firstCurrency = wallets.first().userWallet.currency
-    val visible = wallets.size >= 2 && wallets.all { it.userWallet.currency == firstCurrency }
+    when (financeOverviewState) {
+        FinanceOverviewUiState.Loading -> {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                LoadingState(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItem(),
+                )
+            }
+        }
 
-    if (visible) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            val transactions = wallets.flatMap { wallet ->
-                wallet.transactionsWithCategories.map { it.transaction }
+        FinanceOverviewUiState.NotShown -> Unit
+        is FinanceOverviewUiState.Shown -> {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                TotalBalanceCard(
+                    showBadIndicator = financeOverviewState.showBadIndicator,
+                    totalBalance = financeOverviewState.totalBalance,
+                    userCurrency = financeOverviewState.userCurrency,
+                    modifier = Modifier.animateItem(),
+                )
             }
-            val currentMonthTransactions by remember(transactions) {
-                derivedStateOf {
-                    transactions.filter {
-                        it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
-                    }
-                }
-            }
-            val expenses by remember(currentMonthTransactions) {
-                derivedStateOf {
-                    currentMonthTransactions
-                        .filter { it.amount.signum() == -1 }
-                        .sumOf { it.amount }
-                        .abs()
-                }
-            }
-            val income by remember(currentMonthTransactions) {
-                derivedStateOf {
-                    currentMonthTransactions
-                        .filter { it.amount.signum() == 1 }
-                        .sumOf { it.amount }
-                }
-            }
-            val totalBalance = wallets
-                .map { it.userWallet }
-                .sumOf { it.currentBalance }
-
-            TotalBalanceCard(
-                showBadIndicator = expenses > income,
-                totalBalance = totalBalance,
-                firstCurrency = firstCurrency,
-                modifier = Modifier.animateItem(),
-            )
         }
     }
 }
@@ -235,8 +215,8 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
 @Composable
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
-    totalBalance: BigDecimal,
-    firstCurrency: Currency,
+    totalBalance: BigDecimal?,
+    userCurrency: Currency,
     modifier: Modifier = Modifier,
 ) {
     val color = if (showBadIndicator) {
@@ -272,11 +252,11 @@ private fun TotalBalanceCard(
             },
             headlineContent = {
                 AnimatedAmount(
-                    targetState = totalBalance,
+                    targetState = totalBalance ?: BigDecimal.ZERO,
                     label = "total_balance",
                 ) {
                     Text(
-                        text = totalBalance.formatAmount(firstCurrency),
+                        text = totalBalance?.formatAmount(userCurrency) ?: "???",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -300,6 +280,7 @@ fun HomeScreenLoadingPreview() {
         Surface {
             HomeScreen(
                 walletsState = Loading,
+                financeOverviewState = FinanceOverviewUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -318,6 +299,7 @@ fun HomeScreenEmptyPreview() {
         Surface {
             HomeScreen(
                 walletsState = Empty,
+                financeOverviewState = FinanceOverviewUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -342,27 +324,17 @@ fun HomeScreenPopulatedPreview(
                     selectedWalletId = null,
                     extendedUserWallets = extendedUserWallets,
                 ),
+                financeOverviewState = FinanceOverviewUiState.Shown(
+                    totalBalance = BigDecimal(5000),
+                    userCurrency = getUsdCurrency(),
+                    showBadIndicator = true,
+                ),
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
                 onDeleteWallet = {},
                 onTransactionCreate = {},
                 highlightSelectedWallet = false,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun TotalBalanceCardPreview() {
-    CsTheme {
-        Surface {
-            TotalBalanceCard(
-                showBadIndicator = true,
-                totalBalance = BigDecimal(1549000),
-                firstCurrency = getUsdCurrency(),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             )
         }
     }
