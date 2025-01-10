@@ -292,7 +292,13 @@ private fun TotalBalanceCard(
                     )
                 }
             },
-            overlineContent = { Text(stringResource(localesR.string.total_balance)) },
+            overlineContent = {
+                Text(
+                    text = stringResource(localesR.string.total_balance),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
         )
     }
 }
