@@ -73,6 +73,8 @@ dependencies {
     implementation(projects.core.shortcuts)
     implementation(projects.core.ui)
 
+    implementation(projects.work)
+
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.navigation)

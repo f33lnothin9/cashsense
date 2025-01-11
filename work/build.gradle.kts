@@ -12,7 +12,6 @@ dependencies {
 
     implementation(projects.core.data)
 
-    implementation(libs.androidx.tracing.ktx)
     implementation(libs.androidx.work.ktx)
     implementation(libs.hilt.ext.work)
 }
