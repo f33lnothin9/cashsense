@@ -719,13 +719,17 @@ private fun FilterBySelectedDateTypeRow(
     }
 }
 
-private fun getFinanceProgress(value: BigDecimal, transactions: List<TransactionWithCategory>) =
-    if (transactions.isNotEmpty()) value
-        .divide(
-            transactions.sumOf { it.transaction.amount.abs() },
-            MathContext.DECIMAL32,
-        )
-        .toFloat() else 0f
+private fun getFinanceProgress(
+    value: BigDecimal,
+    transactions: List<TransactionWithCategory>,
+): Float {
+    if (transactions.isEmpty()) return 0f
+
+    val totalAmount = transactions.sumOf { it.transaction.amount.abs() }
+    if (totalAmount.compareTo(ZERO) == 0) return 0f
+
+    return value.divide(totalAmount, MathContext.DECIMAL32).toFloat()
+}
 
 @Preview
 @Composable
@@ -735,8 +739,7 @@ fun FinancePanelDefaultPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories
-                .mapNotNullTo(HashSet()) { it.category }
+            val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(
@@ -772,9 +775,7 @@ fun FinancePanelOpenedPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories
-                .mapNotNullTo(HashSet()) { it.category }
-
+            val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(
