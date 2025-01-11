@@ -30,11 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -54,6 +52,9 @@ import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.model.data.Subscription
@@ -102,7 +103,7 @@ fun SubscriptionDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.AutoRenew,
+        icon = CsIcons.Outlined.Autorenew,
         onConfirm = {
             val subscriptionId = subscriptionDialogState.id.ifBlank { Uuid.random().toHexString() }
             var reminder: Reminder? = null
@@ -187,7 +188,7 @@ fun SubscriptionDialog(
             DatePickerTextField(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = localesR.string.payment_date,
-                iconId = CsIcons.Calendar,
+                icon = CsIcons.Outlined.Calendar,
                 onDateClick = {
                     onSubscriptionEvent(
                         UpdatePaymentDate(
@@ -208,7 +209,7 @@ fun SubscriptionDialog(
                 supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Notifications),
+                        imageVector = CsIcons.Outlined.Notifications,
                         contentDescription = null,
                     )
                 },

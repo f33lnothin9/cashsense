@@ -16,11 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.locales.R
 
 @Composable
@@ -37,7 +39,7 @@ fun WalletDropdownMenu(
     ) {
         IconButton(onClick = { expanded = true }) {
             Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.MoreVert),
+                imageVector = CsIcons.Outlined.MoreVert,
                 contentDescription = stringResource(R.string.wallet_menu_icon_description),
             )
         }
@@ -50,7 +52,7 @@ fun WalletDropdownMenu(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.SendMoney),
+                        imageVector = CsIcons.Outlined.SendMoney,
                         contentDescription = null,
                     )
                 },
@@ -66,7 +68,7 @@ fun WalletDropdownMenu(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                        imageVector = CsIcons.Outlined.Edit,
                         contentDescription = null,
                     )
                 },
@@ -79,7 +81,7 @@ fun WalletDropdownMenu(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        imageVector = CsIcons.Outlined.Delete,
                         contentDescription = null,
                     )
                 },

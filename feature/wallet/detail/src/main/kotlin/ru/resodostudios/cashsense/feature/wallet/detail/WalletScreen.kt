@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -47,9 +46,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +57,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -170,7 +176,7 @@ private fun WalletScreen(
                     titleRes = localesR.string.permanently_delete,
                     confirmButtonTextRes = localesR.string.delete,
                     dismissButtonTextRes = localesR.string.cancel,
-                    iconRes = CsIcons.Delete,
+                    icon = CsIcons.Outlined.Delete,
                     onConfirm = {
                         onDeleteTransaction()
                         showTransactionDeletionDialog = false
@@ -255,7 +261,7 @@ private fun WalletTopBar(
             if (showNavigationIcon) {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                        imageVector = CsIcons.Outlined.ArrowBack,
                         contentDescription = null,
                     )
                 }
@@ -264,7 +270,7 @@ private fun WalletTopBar(
         actions = {
             IconButton(onClick = onNewTransactionClick) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Add),
+                    imageVector = CsIcons.Outlined.Add,
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
@@ -284,14 +290,14 @@ private fun PrimaryIconButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
-    val (@DrawableRes primaryIconRes, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
-        CsIcons.StarFilled to localesR.string.primary_icon_description
+    val (primaryIcon, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
+        CsIcons.Filled.Star to localesR.string.primary_icon_description
     } else {
-        CsIcons.Star to localesR.string.non_primary_icon_description
+        CsIcons.Outlined.Star to localesR.string.non_primary_icon_description
     }
     IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
         Icon(
-            imageVector = ImageVector.vectorResource(primaryIconRes),
+            imageVector = primaryIcon,
             contentDescription = stringResource(primaryIconContentDescriptionRes),
         )
     }
@@ -521,7 +527,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 modifier = Modifier.padding(start = 12.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Close),
+                    imageVector = CsIcons.Outlined.Close,
                     contentDescription = null,
                 )
             }
@@ -616,14 +622,14 @@ private fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val categoryIconRes = if (selected) CsIcons.Check else StoredIcon.asRes(category.iconId)
+    val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
     FilterChip(
         selected = selected,
         onClick = onClick,
         label = { Text(category.title.toString()) },
         leadingIcon = {
             Icon(
-                imageVector = ImageVector.vectorResource(categoryIconRes),
+                imageVector = icon,
                 contentDescription = null,
                 modifier = modifier.size(FilterChipDefaults.IconSize),
             )
@@ -677,7 +683,7 @@ private fun FilterBySelectedDateTypeRow(
             onClick = { onWalletEvent(DecrementSelectedDate) },
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.ChevronLeft),
+                imageVector = CsIcons.Outlined.ChevronLeft,
                 contentDescription = null,
             )
         }
@@ -712,7 +718,7 @@ private fun FilterBySelectedDateTypeRow(
             onClick = { onWalletEvent(IncrementSelectedDate) },
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
+                imageVector = CsIcons.Outlined.ChevronRight,
                 contentDescription = null,
             )
         }

@@ -19,7 +19,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
@@ -54,7 +53,7 @@ internal class SystemTrayNotifier @Inject constructor(
             val price = subscription.amount.formatAmount(subscription.currency)
             val date = subscription.paymentDate.formatDate()
             val contentText = getString(localesR.string.subscriptions_notification_content_text, price, date)
-            setSmallIcon(CsIcons.Payments)
+            setSmallIcon(R.drawable.ic_outlined_payments)
                 .setContentTitle(subscription.title)
                 .setContentText(contentText)
                 .setContentIntent(subscriptionPendingIntent())
@@ -65,7 +64,7 @@ internal class SystemTrayNotifier @Inject constructor(
             val title = getString(localesR.string.subscriptions_title)
             setContentTitle(title)
                 .setContentText(title)
-                .setSmallIcon(CsIcons.Payments)
+                .setSmallIcon(R.drawable.ic_outlined_payments)
                 .setStyle(subscriptionsNotificationStyle(subscription, title))
                 .setGroup(SUBSCRIPTIONS_NOTIFICATION_GROUP)
                 .setGroupSummary(true)

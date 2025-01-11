@@ -14,15 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
@@ -43,12 +42,12 @@ internal fun TransactionItem(
 ) {
     val transaction = transactionCategory.transaction
     val category = transactionCategory.category
-    val (iconRes, categoryTitle) = if (transaction.transferId != null) {
-        CsIcons.SendMoney to stringResource(localesR.string.transfers)
+    val (icon, categoryTitle) = if (transaction.transferId != null) {
+        CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
     } else {
         val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
         val title = category?.title ?: stringResource(localesR.string.uncategorized)
-        StoredIcon.asRes(iconId) to title
+        StoredIcon.asImageVector(iconId) to title
     }
 
     CsListItem(
@@ -90,7 +89,7 @@ internal fun TransactionItem(
         },
         leadingContent = {
             Icon(
-                imageVector = ImageVector.vectorResource(iconRes),
+                imageVector = icon,
                 contentDescription = null,
             )
         },

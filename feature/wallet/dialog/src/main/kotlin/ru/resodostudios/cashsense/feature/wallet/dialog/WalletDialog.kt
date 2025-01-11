@@ -20,10 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -32,6 +30,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -82,7 +82,7 @@ private fun WalletDialog(
         titleRes = titleRes,
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.Wallet,
+        icon = CsIcons.Outlined.Wallet,
         onConfirm = {
             val wallet = Wallet(
                 id = walletDialogState.id.ifBlank { Uuid.random().toHexString() },
@@ -160,7 +160,7 @@ private fun WalletDialog(
                     headlineContent = { Text(stringResource(localesR.string.primary)) },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Star),
+                            imageVector = CsIcons.Outlined.Star,
                             contentDescription = null,
                         )
                     },

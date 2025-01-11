@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -10,27 +9,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CsFloatingActionButton(
     @StringRes titleRes: Int,
-    @DrawableRes iconRes: Int,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     ExtendedFloatingActionButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(iconRes),
-            contentDescription = null
+            imageVector = icon,
+            contentDescription = null,
         )
         Text(
             text = stringResource(titleRes),
-            modifier = Modifier.padding(start = 16.dp)
+            modifier = Modifier.padding(start = 16.dp),
         )
     }
 }

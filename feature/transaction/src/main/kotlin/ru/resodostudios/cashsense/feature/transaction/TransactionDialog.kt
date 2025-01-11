@@ -34,10 +34,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,6 +46,14 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
@@ -110,7 +116,7 @@ private fun TransactionDialog(
         titleRes = titleRes,
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.ReceiptLong,
+        icon = CsIcons.Outlined.ReceiptLong,
         onConfirm = { onTransactionEvent(Save) },
         isConfirmEnabled = transactionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
@@ -161,7 +167,7 @@ private fun TransactionDialog(
                 DatePickerTextField(
                     value = transactionDialogState.date.formatDate(),
                     labelTextId = localesR.string.date,
-                    iconId = CsIcons.Calendar,
+                    icon = CsIcons.Outlined.Calendar,
                     modifier = Modifier.fillMaxWidth(),
                     initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
                     onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
@@ -185,7 +191,7 @@ private fun TransactionDialog(
                     headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Block),
+                            imageVector = CsIcons.Outlined.Block,
                             contentDescription = null,
                         )
                     },
@@ -212,8 +218,8 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        Pair(stringResource(localesR.string.expense), CsIcons.TrendingDown),
-        Pair(stringResource(localesR.string.income_singular), CsIcons.TrendingUp),
+        Pair(stringResource(localesR.string.expense), CsIcons.Outlined.TrendingDown),
+        Pair(stringResource(localesR.string.income_singular), CsIcons.Outlined.TrendingUp),
     )
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         transactionTypes.forEachIndexed { index, transactionType ->
@@ -227,7 +233,7 @@ private fun TransactionTypeChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(transactionType.second),
+                            imageVector = transactionType.second,
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -253,8 +259,8 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        Pair(stringResource(localesR.string.completed), CsIcons.CheckCircle),
-        Pair(stringResource(localesR.string.pending), CsIcons.Pending),
+        Pair(stringResource(localesR.string.completed), CsIcons.Outlined.CheckCircle),
+        Pair(stringResource(localesR.string.pending), CsIcons.Outlined.Pending),
     )
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         statusTypes.forEachIndexed { index, statusType ->
@@ -268,7 +274,7 @@ private fun TransactionStatusChoiceRow(
                 icon = {
                     SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(statusType.second),
+                            imageVector = statusType.second,
                             contentDescription = null,
                             modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
                         )
@@ -316,7 +322,7 @@ private fun CategoryDropdownMenu(
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     leadingIcon = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(StoredIcon.asRes(iconId)),
+                            imageVector = StoredIcon.asImageVector(iconId),
                             contentDescription = null,
                         )
                     },
@@ -343,7 +349,7 @@ private fun CategoryDropdownMenu(
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         leadingIcon = {
                             Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Category),
+                                imageVector = CsIcons.Outlined.Category,
                                 contentDescription = null,
                             )
                         },
@@ -365,11 +371,7 @@ private fun CategoryDropdownMenu(
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                             leadingIcon = {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(
-                                        StoredIcon.asRes(
-                                            category.iconId
-                                        )
-                                    ),
+                                    imageVector = StoredIcon.asImageVector(category.iconId),
                                     contentDescription = null,
                                 )
                             },

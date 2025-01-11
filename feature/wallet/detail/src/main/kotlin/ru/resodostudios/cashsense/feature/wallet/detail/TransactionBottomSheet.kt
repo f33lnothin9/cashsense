@@ -22,9 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,10 +37,18 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
@@ -62,16 +68,16 @@ internal fun TransactionBottomSheet(
 ) {
     val transaction = transactionCategory.transaction
     CsModalBottomSheet(onDismiss) {
-        val (leadingIconRes, supportingText) = if (transaction.transferId != null) {
-            CsIcons.SendMoney to stringResource(localesR.string.transfers)
+        val (leadingIcon, supportingText) = if (transaction.transferId != null) {
+            CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
         } else {
-            val iconRes = StoredIcon.asRes(
+            val icon = StoredIcon.asImageVector(
                 transactionCategory.category?.iconId
                     ?: StoredIcon.TRANSACTION.storedId
             )
             val categoryTitle = transactionCategory.category?.title
                 ?: stringResource(localesR.string.uncategorized)
-            iconRes to categoryTitle
+            icon to categoryTitle
         }
         Column {
             CsListItem(
@@ -93,7 +99,7 @@ internal fun TransactionBottomSheet(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(leadingIconRes),
+                        imageVector = leadingIcon,
                         contentDescription = null,
                     )
                 }
@@ -105,24 +111,24 @@ internal fun TransactionBottomSheet(
             ) {
                 CsTag(
                     text = transaction.timestamp.formatDate(DATE_TIME),
-                    iconId = CsIcons.Calendar,
+                    icon = CsIcons.Outlined.Calendar,
                 )
                 val transactionStatusTag = if (transaction.status == COMPLETED) {
                     Triple(
                         stringResource(localesR.string.completed),
-                        CsIcons.CheckCircle,
+                        CsIcons.Outlined.CheckCircle,
                         MaterialTheme.colorScheme.secondaryContainer,
                     )
                 } else {
                     Triple(
                         stringResource(localesR.string.pending),
-                        CsIcons.Pending,
+                        CsIcons.Outlined.Pending,
                         MaterialTheme.colorScheme.tertiaryContainer,
                     )
                 }
                 CsTag(
                     text = transactionStatusTag.first,
-                    iconId = transactionStatusTag.second,
+                    icon = transactionStatusTag.second,
                     color = transactionStatusTag.third,
                 )
             }
@@ -150,7 +156,7 @@ internal fun TransactionBottomSheet(
                     headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Block),
+                            imageVector = CsIcons.Outlined.Block,
                             contentDescription = null,
                         )
                     },
@@ -165,7 +171,7 @@ internal fun TransactionBottomSheet(
                     headlineContent = { Text(stringResource(localesR.string.repeat)) },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Redo),
+                            imageVector = CsIcons.Outlined.Redo,
                             contentDescription = null,
                         )
                     },
@@ -178,7 +184,7 @@ internal fun TransactionBottomSheet(
                     headlineContent = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                            imageVector = CsIcons.Outlined.Edit,
                             contentDescription = null,
                         )
                     },
@@ -192,7 +198,7 @@ internal fun TransactionBottomSheet(
                 headlineContent = { Text(stringResource(localesR.string.delete)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        imageVector = CsIcons.Outlined.Delete,
                         contentDescription = null,
                     )
                 },

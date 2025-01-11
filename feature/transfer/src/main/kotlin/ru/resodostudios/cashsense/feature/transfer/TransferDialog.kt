@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
@@ -85,7 +86,7 @@ private fun TransferDialog(
         titleRes = localesR.string.new_transfer,
         confirmButtonTextRes = localesR.string.transfer,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.SendMoney,
+        icon = CsIcons.Outlined.SendMoney,
         onConfirm = {
             val transferId = Uuid.random()
             val timestamp = Clock.System.now()
