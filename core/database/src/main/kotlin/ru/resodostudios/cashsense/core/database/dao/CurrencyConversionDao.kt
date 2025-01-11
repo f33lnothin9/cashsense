@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.database.model.CurrencyExchangeRateEntity
 import java.util.Currency
 
@@ -24,4 +25,7 @@ interface CurrencyConversionDao {
 
     @Upsert
     suspend fun upsertCurrencyExchangeRates(entities: List<CurrencyExchangeRateEntity>)
+
+    @Query("DELETE FROM currency_exchange_rates WHERE timestamp < :cutoff")
+    suspend fun deleteOutdatedCurrencyExchangeRates(cutoff: Instant)
 }
