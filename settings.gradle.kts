@@ -58,3 +58,5 @@ include(":feature:wallet:detail")
 include(":feature:wallet:dialog")
 include(":feature:wallet:widget")
 include(":feature:settings")
+
+include(":work")
