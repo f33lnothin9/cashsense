@@ -72,14 +72,18 @@ class WalletViewModel @Inject constructor(
         walletFilterState,
         selectedTransactionIdState,
     ) { extendedUserWallet, walletFilter, selectedTransactionId ->
-        val financeTypeTransactions = extendedUserWallet.transactionsWithCategories
-            .filter { transactionCategory ->
-                when (walletFilter.financeType) {
-                    NONE -> true
-                    EXPENSES -> transactionCategory.transaction.amount < ZERO
-                    INCOME -> transactionCategory.transaction.amount > ZERO
+        val financeTypeTransactions = when (walletFilter.financeType) {
+            NONE -> extendedUserWallet.transactionsWithCategories
+                .also {
+                    walletFilterState.update { it.copy(selectedCategories = emptySet()) }
                 }
-            }
+
+            EXPENSES -> extendedUserWallet.transactionsWithCategories
+                .filter { it.transaction.amount < ZERO }
+
+            INCOME -> extendedUserWallet.transactionsWithCategories
+                .filter { it.transaction.amount > ZERO }
+        }
 
         val dateTypeTransactions = when (walletFilter.dateType) {
             ALL -> financeTypeTransactions
@@ -107,7 +111,9 @@ class WalletViewModel @Inject constructor(
                 .filter { walletFilter.selectedCategories.contains(it.category) }
                 .also { transactionsCategories ->
                     if (transactionsCategories.isEmpty()) {
-                        walletFilterState.update { it.copy(selectedCategories = emptySet()) }
+                        walletFilterState.update {
+                            it.copy(selectedCategories = emptySet())
+                        }
                     }
                 }
         } else dateTypeTransactions
@@ -244,7 +250,7 @@ class WalletViewModel @Inject constructor(
                 }
             }
 
-            else -> {}
+            ALL, WEEK -> {}
         }
     }
 
@@ -266,7 +272,7 @@ class WalletViewModel @Inject constructor(
                 }
             }
 
-            else -> {}
+            ALL, WEEK -> {}
         }
     }
 }
