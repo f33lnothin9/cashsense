@@ -583,22 +583,19 @@ private fun SharedTransitionScope.DetailedFinanceSection(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CategoryFilterRow(
-    availableCategories: List<Category>,
-    selectedCategories: List<Category>,
+    availableCategories: Set<Category>,
+    selectedCategories: Set<Category>,
     addToSelectedCategories: (Category) -> Unit,
     removeFromSelectedCategories: (Category) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selected by rememberSaveable { mutableStateOf(false) }
-
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         availableCategories.forEach { category ->
-            selected = selectedCategories.contains(category)
             CategoryChip(
-                selected = selected,
+                selected = selectedCategories.contains(category),
                 category = category,
                 onClick = {
                     if (selectedCategories.contains(category)) {
@@ -738,7 +735,8 @@ fun FinancePanelDefaultPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories.mapNotNull { it.category }
+            val categories = transactionsCategories
+                .mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(
@@ -751,7 +749,7 @@ fun FinancePanelDefaultPreview(
                     ),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
-                        selectedCategories = categories.take(3),
+                        selectedCategories = categories,
                         financeType = NONE,
                         dateType = YEAR,
                         selectedYearMonth = YearMonth.of(2025, 1),
@@ -760,7 +758,7 @@ fun FinancePanelDefaultPreview(
                     transactionsCategories = transactionsCategories,
                 ),
                 onWalletEvent = {},
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
             )
         }
     }
@@ -775,9 +773,7 @@ fun FinancePanelOpenedPreview(
     CsTheme {
         Surface {
             val categories = transactionsCategories
-                .mapNotNull { it.category }
-                .toSet()
-                .toList()
+                .mapNotNullTo(HashSet()) { it.category }
 
             FinancePanel(
                 walletState = Success(
@@ -791,7 +787,7 @@ fun FinancePanelOpenedPreview(
                     ),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
-                        selectedCategories = categories.take(2),
+                        selectedCategories = categories.toList().take(3).toSet(),
                         financeType = EXPENSES,
                         dateType = YEAR,
                         selectedYearMonth = YearMonth.of(2025, 1),
@@ -800,7 +796,7 @@ fun FinancePanelOpenedPreview(
                     transactionsCategories = transactionsCategories,
                 ),
                 onWalletEvent = {},
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
             )
         }
     }

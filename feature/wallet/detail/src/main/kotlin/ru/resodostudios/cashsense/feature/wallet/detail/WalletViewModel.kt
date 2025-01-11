@@ -57,8 +57,8 @@ class WalletViewModel @Inject constructor(
 
     private val walletFilterState = MutableStateFlow(
         WalletFilter(
-            selectedCategories = emptyList(),
-            availableCategories = emptyList(),
+            selectedCategories = emptySet(),
+            availableCategories = emptySet(),
             financeType = NONE,
             dateType = ALL,
             selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
@@ -74,9 +74,17 @@ class WalletViewModel @Inject constructor(
     ) { extendedUserWallet, walletFilter, selectedTransactionId ->
         val financeTypeTransactions = when (walletFilter.financeType) {
             NONE -> extendedUserWallet.transactionsWithCategories
-            EXPENSES -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount < ZERO }
-            INCOME -> extendedUserWallet.transactionsWithCategories.filter { it.transaction.amount > ZERO }
+                .also {
+                    walletFilterState.update { it.copy(selectedCategories = emptySet()) }
+                }
+
+            EXPENSES -> extendedUserWallet.transactionsWithCategories
+                .filter { it.transaction.amount < ZERO }
+
+            INCOME -> extendedUserWallet.transactionsWithCategories
+                .filter { it.transaction.amount > ZERO }
         }
+
         val dateTypeTransactions = when (walletFilter.dateType) {
             ALL -> financeTypeTransactions
             WEEK -> financeTypeTransactions.filter {
@@ -86,24 +94,25 @@ class WalletViewModel @Inject constructor(
                 weekOfTransaction == getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
             }
 
-            MONTH -> financeTypeTransactions
-                .filter {
-                    it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYearMonth.year &&
-                            it.transaction.timestamp.getZonedDateTime().monthValue == walletFilter.selectedYearMonth.monthValue
-                }
+            MONTH -> financeTypeTransactions.filter {
+                it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYearMonth.year &&
+                        it.transaction.timestamp.getZonedDateTime().monthValue == walletFilter.selectedYearMonth.monthValue
+            }
 
-            YEAR -> financeTypeTransactions
-                .filter { it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYearMonth.year }
+            YEAR -> financeTypeTransactions.filter {
+                it.transaction.timestamp.getZonedDateTime().year == walletFilter.selectedYearMonth.year
+            }
         }
 
-        getAvailableCategories(dateTypeTransactions)
+        updateAvailableCategories(dateTypeTransactions)
+
         val filteredByCategories = if (walletFilter.selectedCategories.isNotEmpty()) {
             dateTypeTransactions
                 .filter { walletFilter.selectedCategories.contains(it.category) }
-                .apply {
-                    if (this.isEmpty()) {
+                .also { transactionsCategories ->
+                    if (transactionsCategories.isEmpty()) {
                         walletFilterState.update {
-                            it.copy(selectedCategories = emptyList())
+                            it.copy(selectedCategories = emptySet())
                         }
                     }
                 }
@@ -131,13 +140,12 @@ class WalletViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    private fun getAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
-        val availableCategories = transactionsCategories
-            .mapNotNull { it.category }
-            .toSet()
-            .toList()
-        walletFilterState.update {
-            it.copy(availableCategories = availableCategories)
+    private fun updateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
+        walletFilterState.update { state ->
+            state.copy(
+                availableCategories = transactionsCategories
+                    .mapNotNullTo(HashSet()) { it.category },
+            )
         }
     }
 
@@ -189,13 +197,23 @@ class WalletViewModel @Inject constructor(
 
     private fun addToSelectedCategories(category: Category) {
         walletFilterState.update {
-            it.copy(selectedCategories = it.selectedCategories + category)
+            it.copy(
+                selectedCategories = buildSet {
+                    addAll(it.selectedCategories)
+                    add(category)
+                },
+            )
         }
     }
 
     private fun removeFromSelectedCategories(category: Category) {
         walletFilterState.update {
-            it.copy(selectedCategories = it.selectedCategories - category)
+            it.copy(
+                selectedCategories = buildSet {
+                    addAll(it.selectedCategories)
+                    remove(category)
+                },
+            )
         }
     }
 
@@ -232,7 +250,7 @@ class WalletViewModel @Inject constructor(
                 }
             }
 
-            else -> {}
+            ALL, WEEK -> {}
         }
     }
 
@@ -254,7 +272,7 @@ class WalletViewModel @Inject constructor(
                 }
             }
 
-            else -> {}
+            ALL, WEEK -> {}
         }
     }
 }
@@ -273,8 +291,8 @@ enum class DateType {
 }
 
 data class WalletFilter(
-    val selectedCategories: List<Category>,
-    val availableCategories: List<Category>,
+    val selectedCategories: Set<Category>,
+    val availableCategories: Set<Category>,
     val financeType: FinanceType,
     val dateType: DateType,
     val selectedYearMonth: YearMonth,
