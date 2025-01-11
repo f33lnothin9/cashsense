@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
@@ -107,8 +108,9 @@ class HomeViewModel @Inject constructor(
         if (extendedUserWallets.isEmpty()) {
             WalletsUiState.Empty
         } else {
-            baseCurrenciesState.value = extendedUserWallets
-                .mapTo(HashSet()) { it.userWallet.currency }
+            baseCurrenciesState.update {
+                extendedUserWallets.mapTo(HashSet()) { it.userWallet.currency }
+            }
             WalletsUiState.Success(
                 selectedWalletId = selectedWalletId,
                 extendedUserWallets = extendedUserWallets,
