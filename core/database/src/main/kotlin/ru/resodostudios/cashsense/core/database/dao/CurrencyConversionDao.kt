@@ -27,9 +27,6 @@ interface CurrencyConversionDao {
     @Upsert
     suspend fun upsertCurrencyExchangeRates(entities: List<CurrencyExchangeRateEntity>)
 
-    @Delete
-    suspend fun deleteCurrencyExchangeRates(entities: List<CurrencyExchangeRateEntity>)
-
-    @Query("SELECT * FROM currency_exchange_rates WHERE timestamp < :cutoff")
-    fun getOutdatedCurrencyExchangeRateEntities(cutoff: Instant): Flow<List<CurrencyExchangeRateEntity>>
+    @Query("DELETE FROM currency_exchange_rates WHERE timestamp < :cutoff")
+    suspend fun deleteOutdatedCurrencyExchangeRates(cutoff: Instant)
 }

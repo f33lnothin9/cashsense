@@ -7,24 +7,18 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.datetime.Clock
-import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
+import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.days
 
 @HiltWorker
 internal class DeleteOutdatedRatesWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val currencyConversionDao: CurrencyConversionDao,
+    private val currencyConversionRepository: CurrencyConversionRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        val cutoff = Clock.System.now().minus(3.days)
-        val outdatedRates = currencyConversionDao.getOutdatedCurrencyExchangeRateEntities(cutoff)
-            .firstOrNull()
-        outdatedRates?.let { currencyConversionDao.deleteCurrencyExchangeRates(it) }
+        currencyConversionRepository.deleteOutdatedCurrencyExchangeRates()
         return Result.success()
     }
 
@@ -32,7 +26,7 @@ internal class DeleteOutdatedRatesWorker @AssistedInject constructor(
 
         fun periodicDeleteOutdatedRatesWork() =
             PeriodicWorkRequestBuilder<DelegatingWorker>(
-                repeatInterval = 2,
+                repeatInterval = 1,
                 repeatIntervalTimeUnit = TimeUnit.DAYS,
             )
                 .setInputData(DeleteOutdatedRatesWorker::class.delegatedData())

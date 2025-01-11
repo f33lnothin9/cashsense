@@ -10,4 +10,6 @@ interface CurrencyConversionRepository {
         baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
     ): Flow<List<CurrencyExchangeRate>>
+
+    suspend fun deleteOutdatedCurrencyExchangeRates()
 }
