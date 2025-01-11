@@ -589,16 +589,13 @@ private fun CategoryFilterRow(
     removeFromSelectedCategories: (Category) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selected by rememberSaveable { mutableStateOf(false) }
-
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         availableCategories.forEach { category ->
-            selected = selectedCategories.contains(category)
             CategoryChip(
-                selected = selected,
+                selected = selectedCategories.contains(category),
                 category = category,
                 onClick = {
                     if (selectedCategories.contains(category)) {
