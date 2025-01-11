@@ -22,15 +22,19 @@ fun BigDecimal.formatAmount(
     withPlus: Boolean = false,
     locale: Locale = Locale.getDefault(),
 ): String {
-    val currencyFormat = currencyFormatCache.getOrPut(currency to locale) {
-        DecimalFormat.getCurrencyInstance(locale).apply {
-            minimumFractionDigits = 0
-            maximumFractionDigits = 2
-            this.currency = currency
-        } as DecimalFormat
-    }
-    val formattedAmount = currencyFormat.format(this)
+    val formattedAmount = getDecimalFormat(currency, locale).format(this)
     return if (withPlus && this.signum() == 1) "+$formattedAmount" else formattedAmount
+}
+
+fun getDecimalFormat(
+    currency: Currency,
+    locale: Locale = Locale.getDefault(),
+) = currencyFormatCache.getOrPut(currency to locale) {
+    DecimalFormat.getCurrencyInstance(locale).apply {
+        minimumFractionDigits = 0
+        maximumFractionDigits = 2
+        this.currency = currency
+    } as DecimalFormat
 }
 
 @Composable

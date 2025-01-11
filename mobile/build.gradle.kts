@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 32
-        versionName = "1.2.0-beta02"
+        versionCode = 33
+        versionName = "1.2.0-beta03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -72,6 +72,8 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.shortcuts)
     implementation(projects.core.ui)
+
+    implementation(projects.work)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3.adaptive)

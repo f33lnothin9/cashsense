@@ -12,7 +12,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -42,15 +41,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -59,32 +55,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
-import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -229,7 +201,7 @@ private fun WalletScreen(
                     FinancePanel(
                         walletState = walletState,
                         onWalletEvent = onWalletEvent,
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     )
                 }
                 transactions(
@@ -267,15 +239,14 @@ private fun WalletTopBar(
                 AnimatedAmount(
                     targetState = userWallet.currentBalance,
                     label = "wallet_balance",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .zIndex(-1f),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = it.formatAmount(userWallet.currency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -364,7 +335,7 @@ private fun FinancePanel(
                         when (walletState.walletFilter.dateType) {
                             YEAR -> zonedDateTime.monthValue
                             MONTH -> zonedDateTime.dayOfMonth
-                            else -> zonedDateTime.dayOfWeek.value
+                            ALL, WEEK -> zonedDateTime.dayOfWeek.value
                         }
                     }
                 when (financeType) {
@@ -372,6 +343,7 @@ private fun FinancePanel(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
                                 targetValue = getFinanceProgress(expenses, filteredTransactions),
@@ -536,8 +508,8 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(bottom = 6.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
         ) {
             FilterDateTypeSelectorRow(
                 walletFilter = walletFilter,
@@ -560,16 +532,18 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
                 walletFilter = walletFilter,
-                modifier = Modifier.padding(bottom = 6.dp),
+                modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
             )
         }
         AnimatedAmount(
             targetState = title,
             label = "detailed_finance_card",
-            modifier = Modifier.sharedBounds(
-                sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
-                animatedVisibilityScope = animatedVisibilityScope,
-            ),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
         ) {
             Text(
                 text = title.formatAmount(currency),
@@ -580,27 +554,23 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         }
         Text(
             text = stringResource(supportingTextId),
-            modifier = Modifier.sharedBounds(
-                sharedContentState = rememberSharedContentState(supportingTextId),
-                animatedVisibilityScope = animatedVisibilityScope,
-            ),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(supportingTextId),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
             style = MaterialTheme.typography.labelLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         if (graphValues.isNotEmpty() && walletFilter.dateType != ALL) {
-            Box(contentAlignment = Alignment.Center) {
-                if (graphValues.keys.size < 2) {
-                    Text(
-                        text = stringResource(localesR.string.not_enough_data),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                FinanceGraph(
-                    walletFilter = walletFilter,
-                    graphValues = graphValues,
-                )
-            }
+            FinanceGraph(
+                walletFilter = walletFilter,
+                graphValues = graphValues,
+                currency = currency,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            )
         }
         if (walletFilter.dateType != ALL) {
             CategoryFilterRow(
@@ -608,115 +578,28 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 selectedCategories = walletFilter.selectedCategories,
                 addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
                 removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun FinanceGraph(
-    walletFilter: WalletFilter,
-    graphValues: Map<Int, BigDecimal>,
-    modifier: Modifier = Modifier,
-) {
-    val scrollState = rememberVicoScrollState()
-    val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
-    val modelProducer = remember { CartesianChartModelProducer() }
-    val xDateFormatter = CartesianValueFormatter { _, x, _ ->
-        when (walletFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
-                TextStyle.NARROW_STANDALONE,
-                Locale.getDefault(),
-            )
-
-            MONTH -> x.toInt().toString()
-            else -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
-                TextStyle.NARROW_STANDALONE,
-                Locale.getDefault(),
-            )
-        }
-    }
-
-    val marker = rememberDefaultCartesianMarker(
-        label = TextComponent(
-            textSizeSp = 14f,
-            padding = Insets(
-                startDp = 8f,
-                endDp = 8f,
-                topDp = 4f,
-                bottomDp = 20f,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant.toArgb(),
-            background = ShapeComponent(
-                fill = Fill(MaterialTheme.colorScheme.surfaceVariant.toArgb()),
-                shape = CorneredShape.Pill,
-                margins = Insets(
-                    startDp = 0f,
-                    endDp = 0f,
-                    topDp = 0f,
-                    bottomDp = 16f,
-                )
-            ),
-        ),
-        labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
-    )
-
-    LaunchedEffect(graphValues) {
-        modelProducer.runTransaction {
-            if (graphValues.isNotEmpty() && graphValues.keys.size > 1) {
-                columnSeries { series(graphValues.keys, graphValues.values) }
-            }
-        }
-    }
-    ProvideVicoTheme(rememberM3VicoTheme()) {
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberColumnCartesianLayer(),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    valueFormatter = xDateFormatter,
-                    itemPlacer = HorizontalAxis.ItemPlacer.aligned(),
-                    guideline = null,
-                    line = null,
-                    tick = rememberAxisTickComponent(
-                        margins = Insets(
-                            startDp = 0f,
-                            endDp = 0f,
-                            topDp = 2f,
-                            bottomDp = -2f,
-                        ),
-                    )
-                ),
-                marker = marker,
-                fadingEdges = rememberFadingEdges(),
-            ),
-            modelProducer = modelProducer,
-            scrollState = scrollState,
-            zoomState = zoomState,
-            modifier = modifier,
-        )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CategoryFilterRow(
-    availableCategories: List<Category>,
-    selectedCategories: List<Category>,
+    availableCategories: Set<Category>,
+    selectedCategories: Set<Category>,
     addToSelectedCategories: (Category) -> Unit,
     removeFromSelectedCategories: (Category) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selected by rememberSaveable { mutableStateOf(false) }
-
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         availableCategories.forEach { category ->
-            selected = selectedCategories.contains(category)
             CategoryChip(
-                selected = selected,
+                selected = selectedCategories.contains(category),
                 category = category,
                 onClick = {
                     if (selectedCategories.contains(category)) {
@@ -825,7 +708,8 @@ private fun FilterBySelectedDateTypeRow(
                     monthName
                 }
             }
-            else -> ""
+
+            ALL, WEEK -> ""
         }
 
         Text(
@@ -861,7 +745,8 @@ fun FinancePanelDefaultPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories.mapNotNull { it.category }
+            val categories = transactionsCategories
+                .mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(
@@ -874,7 +759,7 @@ fun FinancePanelDefaultPreview(
                     ),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
-                        selectedCategories = categories.take(3),
+                        selectedCategories = categories,
                         financeType = NONE,
                         dateType = YEAR,
                         selectedYearMonth = YearMonth.of(2025, 1),
@@ -883,7 +768,7 @@ fun FinancePanelDefaultPreview(
                     transactionsCategories = transactionsCategories,
                 ),
                 onWalletEvent = {},
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
             )
         }
     }
@@ -898,9 +783,7 @@ fun FinancePanelOpenedPreview(
     CsTheme {
         Surface {
             val categories = transactionsCategories
-                .mapNotNull { it.category }
-                .toSet()
-                .toList()
+                .mapNotNullTo(HashSet()) { it.category }
 
             FinancePanel(
                 walletState = Success(
@@ -914,7 +797,7 @@ fun FinancePanelOpenedPreview(
                     ),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
-                        selectedCategories = categories.take(2),
+                        selectedCategories = categories.toList().take(3).toSet(),
                         financeType = EXPENSES,
                         dateType = YEAR,
                         selectedYearMonth = YearMonth.of(2025, 1),
@@ -923,7 +806,7 @@ fun FinancePanelOpenedPreview(
                     transactionsCategories = transactionsCategories,
                 ),
                 onWalletEvent = {},
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
             )
         }
     }

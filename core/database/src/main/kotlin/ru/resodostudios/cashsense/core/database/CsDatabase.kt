@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
+import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
 import ru.resodostudios.cashsense.core.database.dao.SubscriptionDao
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
+import ru.resodostudios.cashsense.core.database.model.CurrencyExchangeRateEntity
 import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
@@ -21,13 +23,14 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
 
 @Database(
     entities = [
-        TransactionEntity::class,
         CategoryEntity::class,
-        WalletEntity::class,
+        CurrencyExchangeRateEntity::class,
         SubscriptionEntity::class,
+        TransactionEntity::class,
         TransactionCategoryCrossRefEntity::class,
+        WalletEntity::class,
     ],
-    version = 8,
+    version = 9,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
@@ -36,6 +39,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         AutoMigration(from = 5, to = 6),
         AutoMigration(from = 6, to = 7),
         AutoMigration(from = 7, to = 8),
+        AutoMigration(from = 8, to = 9),
     ],
     exportSchema = true,
 )
@@ -48,11 +52,13 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
 )
 internal abstract class CsDatabase : RoomDatabase() {
 
-    abstract fun transactionDao(): TransactionDao
-
     abstract fun categoryDao(): CategoryDao
 
-    abstract fun walletDao(): WalletDao
+    abstract fun currencyConversionDao(): CurrencyConversionDao
 
     abstract fun subscriptionDao(): SubscriptionDao
+
+    abstract fun transactionDao(): TransactionDao
+
+    abstract fun walletDao(): WalletDao
 }
