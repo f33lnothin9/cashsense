@@ -57,8 +57,8 @@ class WalletViewModel @Inject constructor(
 
     private val walletFilterState = MutableStateFlow(
         WalletFilter(
-            selectedCategories = emptyList(),
-            availableCategories = emptyList(),
+            selectedCategories = emptySet(),
+            availableCategories = emptySet(),
             financeType = NONE,
             dateType = ALL,
             selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
@@ -107,7 +107,7 @@ class WalletViewModel @Inject constructor(
                 .filter { walletFilter.selectedCategories.contains(it.category) }
                 .also { transactionsCategories ->
                     if (transactionsCategories.isEmpty()) {
-                        walletFilterState.update { it.copy(selectedCategories = emptyList()) }
+                        walletFilterState.update { it.copy(selectedCategories = emptySet()) }
                     }
                 }
         } else dateTypeTransactions
@@ -138,8 +138,7 @@ class WalletViewModel @Inject constructor(
         walletFilterState.update { state ->
             state.copy(
                 availableCategories = transactionsCategories
-                    .mapNotNull { it.category }
-                    .distinct(),
+                    .mapNotNullTo(HashSet()) { it.category },
             )
         }
     }
@@ -192,13 +191,23 @@ class WalletViewModel @Inject constructor(
 
     private fun addToSelectedCategories(category: Category) {
         walletFilterState.update {
-            it.copy(selectedCategories = it.selectedCategories + category)
+            it.copy(
+                selectedCategories = buildSet {
+                    addAll(it.selectedCategories)
+                    add(category)
+                },
+            )
         }
     }
 
     private fun removeFromSelectedCategories(category: Category) {
         walletFilterState.update {
-            it.copy(selectedCategories = it.selectedCategories - category)
+            it.copy(
+                selectedCategories = buildSet {
+                    addAll(it.selectedCategories)
+                    remove(category)
+                },
+            )
         }
     }
 
@@ -276,8 +285,8 @@ enum class DateType {
 }
 
 data class WalletFilter(
-    val selectedCategories: List<Category>,
-    val availableCategories: List<Category>,
+    val selectedCategories: Set<Category>,
+    val availableCategories: Set<Category>,
     val financeType: FinanceType,
     val dateType: DateType,
     val selectedYearMonth: YearMonth,
