@@ -65,7 +65,7 @@ internal fun WalletDialog(
 private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
     onDismiss: () -> Unit,
-    onWalletSave: (Wallet, Boolean) -> Unit,
+    onWalletSave: () -> Unit,
     onTitleUpdate: (String) -> Unit,
     onInitialBalanceUpdate: (String) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
@@ -84,17 +84,7 @@ private fun WalletDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.Wallet,
         onConfirm = {
-            val wallet = Wallet(
-                id = walletDialogState.id.ifBlank { Uuid.random().toHexString() },
-                title = walletDialogState.title,
-                initialBalance = if (walletDialogState.initialBalance.isBlank()) {
-                    BigDecimal.ZERO
-                } else {
-                    BigDecimal(walletDialogState.initialBalance)
-                },
-                currency = walletDialogState.currency,
-            )
-            onWalletSave(wallet, walletDialogState.isPrimary)
+            onWalletSave()
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),

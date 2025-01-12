@@ -60,7 +60,7 @@ fun DatePickerTextField(
                 )
             }
         },
-        maxLines = 1,
+        singleLine = true,
         modifier = modifier,
     )
     if (openDialog) {

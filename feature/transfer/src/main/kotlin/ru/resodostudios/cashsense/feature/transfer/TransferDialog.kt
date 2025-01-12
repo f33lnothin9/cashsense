@@ -33,20 +33,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
-import ru.resodostudios.cashsense.core.model.data.StatusType
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.OutlinedAmountField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import java.math.BigDecimal
-import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -79,7 +74,7 @@ private fun TransferDialog(
     onAmountUpdate: (String) -> Unit,
     onExchangingRateUpdate: (String) -> Unit,
     onConvertedAmountUpdate: (String) -> Unit,
-    onTransferSave: (Transaction, Transaction) -> Unit,
+    onTransferSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CsAlertDialog(
@@ -88,30 +83,7 @@ private fun TransferDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.SendMoney,
         onConfirm = {
-            val transferId = Uuid.random()
-            val timestamp = Clock.System.now()
-            val withdrawalAmount = BigDecimal(transferState.amount)
-            val withdrawalTransaction = Transaction(
-                id = Uuid.random().toHexString(),
-                walletOwnerId = transferState.sendingWallet.id,
-                description = null,
-                amount = withdrawalAmount.negate(),
-                timestamp = timestamp,
-                status = StatusType.COMPLETED,
-                ignored = true,
-                transferId = transferId,
-            )
-            val depositTransaction = Transaction(
-                id = Uuid.random().toHexString(),
-                walletOwnerId = transferState.receivingWallet.id,
-                description = null,
-                amount = BigDecimal(transferState.convertedAmount),
-                timestamp = timestamp,
-                status = StatusType.COMPLETED,
-                ignored = true,
-                transferId = transferId,
-            )
-            onTransferSave(withdrawalTransaction, depositTransaction)
+            onTransferSave()
             onDismiss()
         },
         isConfirmEnabled = transferState.amount.isAmountValid() &&

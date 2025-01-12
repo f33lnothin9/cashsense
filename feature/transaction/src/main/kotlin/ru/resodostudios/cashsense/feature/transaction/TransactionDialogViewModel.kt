@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
+import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
@@ -53,6 +55,7 @@ class TransactionDialogViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val transactionsRepository: TransactionsRepository,
     categoriesRepository: CategoriesRepository,
+    @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
     private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
@@ -92,32 +95,22 @@ class TransactionDialogViewModel @Inject constructor(
     }
 
     private fun saveTransaction() {
-        val transaction = Transaction(
-            id = _transactionDialogUiState.value.transactionId.ifBlank { Uuid.random().toHexString() },
-            walletOwnerId = transactionDestination.walletId,
-            description = _transactionDialogUiState.value.description.ifBlank { null },
-            amount = _transactionDialogUiState.value.amount
-                .toBigDecimal()
-                .run { if (_transactionDialogUiState.value.transactionType == EXPENSE) negate() else abs() },
-            timestamp = _transactionDialogUiState.value.date,
-            status = _transactionDialogUiState.value.status,
-            ignored = _transactionDialogUiState.value.ignored,
-            transferId = null,
-        )
-        val transactionCategoryCrossRef =
-            _transactionDialogUiState.value.category?.id?.let { categoryId ->
-                TransactionCategoryCrossRef(
-                    transactionId = transaction.id,
-                    categoryId = categoryId,
-                )
-            }
-        viewModelScope.launch {
+        appScope.launch {
+            val transaction = _transactionDialogUiState.value
+                .asTransaction(transactionDestination.walletId)
+            val transactionCategoryCrossRef = _transactionDialogUiState.value.category?.id
+                ?.let {
+                    TransactionCategoryCrossRef(
+                        transactionId = transaction.id,
+                        categoryId = it,
+                    )
+                }
+
             transactionsRepository.upsertTransaction(transaction)
             transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
             if (transactionCategoryCrossRef != null) {
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
-            _transactionDialogUiState.update { it.copy(isTransactionSaved = true) }
         }
     }
 
@@ -236,5 +229,18 @@ data class TransactionDialogUiState(
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
     val isTransfer: Boolean = false,
-    val isTransactionSaved: Boolean = false,
 )
+
+fun TransactionDialogUiState.asTransaction(walletId: String) =
+    Transaction(
+        id = transactionId.ifBlank { Uuid.random().toHexString() },
+        walletOwnerId = walletId,
+        description = description.ifBlank { null },
+        amount = amount
+            .toBigDecimal()
+            .run { if (transactionType == EXPENSE) negate() else abs() },
+        timestamp = date,
+        status = status,
+        ignored = ignored,
+        transferId = null,
+    )

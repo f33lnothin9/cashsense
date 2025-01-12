@@ -106,18 +106,15 @@ private fun TransactionDialog(
         localesR.string.new_transaction to localesR.string.add
     }
 
-    LaunchedEffect(transactionDialogState.isTransactionSaved) {
-        if (transactionDialogState.isTransactionSaved) {
-            onDismiss()
-        }
-    }
-
     CsAlertDialog(
         titleRes = titleRes,
         confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.ReceiptLong,
-        onConfirm = { onTransactionEvent(Save) },
+        onConfirm = {
+            onTransactionEvent(Save)
+            onDismiss()
+        },
         isConfirmEnabled = transactionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
     ) {
