@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -91,11 +90,8 @@ internal fun FinanceGraph(
 
     LaunchedEffect(graphValues) {
         modelProducer.runTransaction {
-            if (graphValues.isNotEmpty() && graphValues.keys.size > 1) {
-                lineSeries { series(graphValues.keys, graphValues.values) }
-            } else {
-                return@runTransaction
-            }
+            if (graphValues.isEmpty() || graphValues.keys.size < 2) return@runTransaction
+            lineSeries { series(graphValues.keys, graphValues.values) }
         }
     }
     ProvideVicoTheme(rememberM3VicoTheme()) {
@@ -121,11 +117,12 @@ internal fun FinanceGraph(
                     valueFormatter = xDateFormatter,
                     guideline = null,
                     line = null,
-                    tick = rememberAxisTickComponent(
-                        margins = insets(top = 2.dp, bottom = (-2).dp),
+                ),
+                marker = rememberMarker(
+                    DefaultCartesianMarker.ValueFormatter.default(
+                        getDecimalFormat(currency)
                     )
                 ),
-                marker = rememberMarker(DefaultCartesianMarker.ValueFormatter.default(getDecimalFormat(currency))),
                 fadingEdges = rememberFadingEdges(),
             ),
             modelProducer = modelProducer,

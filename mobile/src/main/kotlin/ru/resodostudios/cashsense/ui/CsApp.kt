@@ -25,9 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavDestination
@@ -68,7 +66,7 @@ fun CsApp(
                             destination.unselectedIcon
                         }
                         Icon(
-                            imageVector = ImageVector.vectorResource(navItemIcon),
+                            imageVector = navItemIcon,
                             contentDescription = null,
                         )
                     },
@@ -92,7 +90,7 @@ fun CsApp(
                     if (destination.fabTitle != null && destination.fabIcon != null) {
                         CsFloatingActionButton(
                             titleRes = destination.fabTitle,
-                            iconRes = destination.fabIcon,
+                            icon = destination.fabIcon,
                             onClick = {
                                 when (destination) {
                                     HOME -> appState.navController.navigateToWalletDialog()

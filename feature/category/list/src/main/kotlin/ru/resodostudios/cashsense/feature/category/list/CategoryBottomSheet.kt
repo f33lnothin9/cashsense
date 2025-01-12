@@ -7,13 +7,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -31,7 +31,7 @@ internal fun CategoryBottomSheet(
                 headlineContent = { Text(category.title.toString()) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId)),
+                        imageVector = StoredIcon.asImageVector(category.iconId),
                         contentDescription = null,
                     )
                 },
@@ -41,7 +41,7 @@ internal fun CategoryBottomSheet(
                 headlineContent = { Text(stringResource(localesR.string.edit)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                        imageVector = CsIcons.Outlined.Edit,
                         contentDescription = null,
                     )
                 },
@@ -54,7 +54,7 @@ internal fun CategoryBottomSheet(
                 headlineContent = { Text(stringResource(localesR.string.delete)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        imageVector = CsIcons.Outlined.Delete,
                         contentDescription = null,
                     )
                 },

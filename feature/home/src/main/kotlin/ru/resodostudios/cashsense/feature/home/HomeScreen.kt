@@ -19,13 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -36,6 +35,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
@@ -215,7 +215,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
 @Composable
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
-    totalBalance: BigDecimal?,
+    totalBalance: BigDecimal,
     userCurrency: Currency,
     modifier: Modifier = Modifier,
 ) {
@@ -224,10 +224,12 @@ private fun TotalBalanceCard(
     } else {
         MaterialTheme.colorScheme.outlineVariant
     }
-    val borderBrush = Brush.verticalGradient(
-        colors = listOf(Color.Transparent, color),
-        startY = 15.0f,
-    )
+    val borderBrush = remember(color) {
+        Brush.verticalGradient(
+            colors = listOf(Color.Transparent, color),
+            startY = 15.0f,
+        )
+    }
     val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
     OutlinedCard(
         shape = shape,
@@ -246,17 +248,17 @@ private fun TotalBalanceCard(
         CsListItem(
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                    imageVector = CsIcons.Outlined.AccountBalance,
                     contentDescription = null,
                 )
             },
             headlineContent = {
                 AnimatedAmount(
-                    targetState = totalBalance ?: BigDecimal.ZERO,
+                    targetState = totalBalance,
                     label = "total_balance",
                 ) {
                     Text(
-                        text = totalBalance?.formatAmount(userCurrency) ?: "???",
+                        text = totalBalance.formatAmount(userCurrency),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )

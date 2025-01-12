@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.ui
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
@@ -26,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -41,7 +39,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 fun DatePickerTextField(
     value: String,
     @StringRes labelTextId: Int,
-    @DrawableRes iconId: Int,
+    icon: ImageVector,
     onDateClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     initialSelectedDateMillis: Long? = null,
@@ -57,12 +55,12 @@ fun DatePickerTextField(
         trailingIcon = {
             IconButton(onClick = { openDialog = true }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(iconId),
+                    imageVector = icon,
                     contentDescription = null,
                 )
             }
         },
-        maxLines = 1,
+        singleLine = true,
         modifier = modifier,
     )
     if (openDialog) {
