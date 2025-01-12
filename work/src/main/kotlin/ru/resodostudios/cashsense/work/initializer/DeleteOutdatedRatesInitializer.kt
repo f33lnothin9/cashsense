@@ -1,9 +1,9 @@
-package ru.resodostudios.cashsense.work.initializers
+package ru.resodostudios.cashsense.work.initializer
 
 import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
-import ru.resodostudios.cashsense.work.workers.DeleteOutdatedRatesWorker
+import ru.resodostudios.cashsense.work.worker.DeleteOutdatedRatesWorker
 
 object DeleteOutdatedRates {
 

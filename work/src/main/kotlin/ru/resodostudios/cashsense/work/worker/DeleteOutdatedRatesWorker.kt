@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.work.workers
+package ru.resodostudios.cashsense.work.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
