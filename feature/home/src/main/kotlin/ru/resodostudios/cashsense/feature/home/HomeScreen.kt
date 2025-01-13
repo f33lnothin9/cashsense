@@ -189,33 +189,34 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
     financeOverviewState: FinanceOverviewUiState,
 ) {
     when (financeOverviewState) {
-        FinanceOverviewUiState.Loading -> {
-            item(span = StaggeredGridItemSpan.FullLine) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 32.dp, end = 32.dp, top = 16.dp, bottom = 16.dp),
-                )
-            }
-        }
-
         FinanceOverviewUiState.NotShown -> Unit
-        is FinanceOverviewUiState.Shown -> {
-            val totalBalance = financeOverviewState.totalBalance
-            val userCurrency = financeOverviewState.userCurrency
+        FinanceOverviewUiState.Loading, is FinanceOverviewUiState.Shown -> {
             item(span = StaggeredGridItemSpan.FullLine) {
+                val showBadIndicator = if (financeOverviewState is FinanceOverviewUiState.Shown) {
+                    financeOverviewState.showBadIndicator
+                } else false
                 TotalBalanceCard(
-                    showBadIndicator = financeOverviewState.showBadIndicator,
+                    showBadIndicator = showBadIndicator,
                     modifier = Modifier.animateItem(),
                 ) {
-                    AnimatedAmount(
-                        targetState = totalBalance,
-                        label = "total_balance",
-                    ) {
-                        Text(
-                            text = totalBalance.formatAmount(userCurrency),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                    if (financeOverviewState is FinanceOverviewUiState.Shown) {
+                        val totalBalance = financeOverviewState.totalBalance
+                        val userCurrency = financeOverviewState.userCurrency
+                        AnimatedAmount(
+                            targetState = totalBalance,
+                            label = "total_balance",
+                        ) {
+                            Text(
+                                text = totalBalance.formatAmount(userCurrency),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    } else {
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 16.dp),
                         )
                     }
                 }
