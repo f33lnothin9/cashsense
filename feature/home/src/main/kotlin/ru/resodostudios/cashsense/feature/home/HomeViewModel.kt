@@ -63,7 +63,7 @@ class HomeViewModel @Inject constructor(
 
                             val totalBalance = wallets.sumOf {
                                 if (userCurrency == it.userWallet.currency) {
-                                    it.userWallet.currentBalance
+                                    return@sumOf it.userWallet.currentBalance
                                 }
                                 val exchangeRate = exchangeRateMap[it.userWallet.currency]
                                     ?: return@map FinanceOverviewUiState.NotShown
