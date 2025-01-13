@@ -88,7 +88,7 @@ class HomeViewModel @Inject constructor(
                             FinanceOverviewUiState.Shown(
                                 totalBalance = totalBalance,
                                 userCurrency = userCurrency,
-                                showBadIndicator = totalIncome < totalExpenses,
+                                shouldShowBadIndicator = totalIncome < totalExpenses,
                             )
                         }
                         .catch { emit(FinanceOverviewUiState.NotShown) }
@@ -148,7 +148,7 @@ sealed interface FinanceOverviewUiState {
     data class Shown(
         val totalBalance: BigDecimal,
         val userCurrency: Currency,
-        val showBadIndicator: Boolean,
+        val shouldShowBadIndicator: Boolean,
     ) : FinanceOverviewUiState
 }
 

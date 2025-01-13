@@ -192,11 +192,11 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
         FinanceOverviewUiState.NotShown -> Unit
         FinanceOverviewUiState.Loading, is FinanceOverviewUiState.Shown -> {
             item(span = StaggeredGridItemSpan.FullLine) {
-                val showBadIndicator = if (financeOverviewState is FinanceOverviewUiState.Shown) {
-                    financeOverviewState.showBadIndicator
+                val shouldShowBadIndicator = if (financeOverviewState is FinanceOverviewUiState.Shown) {
+                    financeOverviewState.shouldShowBadIndicator
                 } else false
                 TotalBalanceCard(
-                    showBadIndicator = showBadIndicator,
+                    showBadIndicator = shouldShowBadIndicator,
                     modifier = Modifier.animateItem(),
                 ) {
                     if (financeOverviewState is FinanceOverviewUiState.Shown) {
@@ -216,7 +216,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                         LinearProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 10.dp, bottom = 16.dp),
+                                .padding(top = 10.dp, bottom = 14.dp),
                         )
                     }
                 }
@@ -330,7 +330,7 @@ fun HomeScreenPopulatedPreview(
                 financeOverviewState = FinanceOverviewUiState.Shown(
                     totalBalance = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
-                    showBadIndicator = true,
+                    shouldShowBadIndicator = true,
                 ),
                 onWalletClick = {},
                 onTransfer = {},
