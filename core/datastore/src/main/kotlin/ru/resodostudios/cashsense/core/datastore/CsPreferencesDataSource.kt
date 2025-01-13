@@ -10,6 +10,7 @@ import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.DARK
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.LIGHT
 import ru.resodostudios.cashsense.core.model.data.UserData
+import ru.resodostudios.cashsense.core.util.getDefaultCurrency
 import javax.inject.Inject
 
 class CsPreferencesDataSource @Inject constructor(
@@ -18,7 +19,7 @@ class CsPreferencesDataSource @Inject constructor(
     val userData = userPreferences.data
         .catch {
             Log.e(TAG, "Failed to read user preferences.", it)
-            emit(getCustomDefaultValues())
+            emit(getCustomInstance())
         }
         .map {
             UserData(
@@ -34,7 +35,7 @@ class CsPreferencesDataSource @Inject constructor(
                 },
                 useDynamicColor = it.useDynamicColor,
                 primaryWalletId = it.primaryWalletId,
-                currency = it.currency,
+                currency = it.currency.ifBlank { getDefaultCurrency().currencyCode },
             )
         }
 
