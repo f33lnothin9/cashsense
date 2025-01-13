@@ -216,7 +216,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
                         LinearProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 10.dp, bottom = 14.dp),
+                                .padding(top = 8.dp, bottom = 12.dp),
                         )
                     }
                 }
