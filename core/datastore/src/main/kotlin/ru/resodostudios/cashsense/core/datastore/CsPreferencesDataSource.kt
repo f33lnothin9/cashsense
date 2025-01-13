@@ -36,8 +36,11 @@ class CsPreferencesDataSource @Inject constructor(
                 },
                 useDynamicColor = it.useDynamicColor,
                 primaryWalletId = it.primaryWalletId,
-                currency = Currency.getInstance(it.currency).currencyCode
-                    ?: getDefaultCurrency().currencyCode,
+                currency = runCatching {
+                    Currency.getInstance(it.currency).currencyCode
+                }.getOrElse {
+                    getDefaultCurrency().currencyCode
+                },
             )
         }
 
