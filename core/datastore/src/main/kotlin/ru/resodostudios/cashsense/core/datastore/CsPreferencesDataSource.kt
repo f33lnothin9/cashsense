@@ -11,6 +11,7 @@ import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.LIGHT
 import ru.resodostudios.cashsense.core.model.data.UserData
 import ru.resodostudios.cashsense.core.util.getDefaultCurrency
+import java.util.Currency
 import javax.inject.Inject
 
 class CsPreferencesDataSource @Inject constructor(
@@ -28,14 +29,15 @@ class CsPreferencesDataSource @Inject constructor(
                     DarkThemeConfigProto.DARK_THEME_CONFIG_UNSPECIFIED,
                     DarkThemeConfigProto.UNRECOGNIZED,
                     DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM,
-                    -> FOLLOW_SYSTEM
+                        -> FOLLOW_SYSTEM
 
                     DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT -> LIGHT
                     DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DARK
                 },
                 useDynamicColor = it.useDynamicColor,
                 primaryWalletId = it.primaryWalletId,
-                currency = it.currency.ifBlank { getDefaultCurrency().currencyCode },
+                currency = Currency.getInstance(it.currency).currencyCode
+                    ?: getDefaultCurrency().currencyCode,
             )
         }
 
