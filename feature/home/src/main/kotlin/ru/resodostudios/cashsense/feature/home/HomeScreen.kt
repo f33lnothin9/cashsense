@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -47,7 +49,6 @@ import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import java.math.BigDecimal
-import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -190,23 +191,34 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
     when (financeOverviewState) {
         FinanceOverviewUiState.Loading -> {
             item(span = StaggeredGridItemSpan.FullLine) {
-                LoadingState(
+                LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItem(),
+                        .padding(start = 32.dp, end = 32.dp, top = 16.dp, bottom = 16.dp),
                 )
             }
         }
 
         FinanceOverviewUiState.NotShown -> Unit
         is FinanceOverviewUiState.Shown -> {
+            val totalBalance = financeOverviewState.totalBalance
+            val userCurrency = financeOverviewState.userCurrency
             item(span = StaggeredGridItemSpan.FullLine) {
                 TotalBalanceCard(
                     showBadIndicator = financeOverviewState.showBadIndicator,
-                    totalBalance = financeOverviewState.totalBalance,
-                    userCurrency = financeOverviewState.userCurrency,
                     modifier = Modifier.animateItem(),
-                )
+                ) {
+                    AnimatedAmount(
+                        targetState = totalBalance,
+                        label = "total_balance",
+                    ) {
+                        Text(
+                            text = totalBalance.formatAmount(userCurrency),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
             }
         }
     }
@@ -215,9 +227,8 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
 @Composable
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
-    totalBalance: BigDecimal,
-    userCurrency: Currency,
     modifier: Modifier = Modifier,
+    headlineContent: @Composable () -> Unit,
 ) {
     val color = if (showBadIndicator) {
         MaterialTheme.colorScheme.error
@@ -252,18 +263,7 @@ private fun TotalBalanceCard(
                     contentDescription = null,
                 )
             },
-            headlineContent = {
-                AnimatedAmount(
-                    targetState = totalBalance,
-                    label = "total_balance",
-                ) {
-                    Text(
-                        text = totalBalance.formatAmount(userCurrency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            },
+            headlineContent = headlineContent,
             overlineContent = {
                 Text(
                     text = stringResource(localesR.string.total_balance),
