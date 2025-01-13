@@ -48,9 +48,9 @@ class CategoryDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveCategory() {
+    fun saveCategory(category: Category) {
         appScope.launch {
-            categoriesRepository.upsertCategory(_categoryDialogUiState.value.asCategory())
+            categoriesRepository.upsertCategory(category)
         }
     }
 

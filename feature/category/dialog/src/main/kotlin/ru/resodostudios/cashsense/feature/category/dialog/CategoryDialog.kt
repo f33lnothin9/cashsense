@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.IconPickerDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -50,7 +51,7 @@ fun CategoryDialog(
 @Composable
 fun CategoryDialog(
     categoryDialogState: CategoryDialogUiState,
-    onSaveCategory: () -> Unit,
+    onSaveCategory: (Category) -> Unit,
     onUpdateTitle: (String) -> Unit,
     onUpdateIconId: (Int) -> Unit,
     onDismiss: () -> Unit,
@@ -67,7 +68,7 @@ fun CategoryDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.Category,
         onConfirm = {
-            onSaveCategory()
+            onSaveCategory(categoryDialogState.asCategory())
             onDismiss()
         },
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
