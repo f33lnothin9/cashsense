@@ -97,9 +97,9 @@ class TransferDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveTransfer() {
+    fun saveTransfer(state: TransferDialogUiState) {
         appScope.launch {
-            _transferDialogState.value.asTransfer().forEach {
+            state.asTransfer().forEach {
                 transactionsRepository.upsertTransaction(it)
             }
         }
