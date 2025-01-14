@@ -11,7 +11,9 @@ fun getValidCurrencies(): List<Currency> {
 }
 
 fun getDefaultCurrency(): Currency {
-    val currencyByLocale = Currency.getInstance(Locale.getDefault())
+    val currencyByLocale = runCatching {
+        Currency.getInstance(Locale.getDefault())
+    }.getOrDefault(getUsdCurrency())
     return getValidCurrencies().find { it == currencyByLocale } ?: getUsdCurrency()
 }
 

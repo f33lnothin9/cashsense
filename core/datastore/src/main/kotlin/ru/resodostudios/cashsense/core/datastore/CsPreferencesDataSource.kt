@@ -38,9 +38,7 @@ class CsPreferencesDataSource @Inject constructor(
                 primaryWalletId = it.primaryWalletId,
                 currency = runCatching {
                     Currency.getInstance(it.currency).currencyCode
-                }.getOrElse {
-                    getDefaultCurrency().currencyCode
-                },
+                }.getOrDefault(getDefaultCurrency().currencyCode),
             )
         }
 

@@ -74,7 +74,7 @@ private fun TransferDialog(
     onAmountUpdate: (String) -> Unit,
     onExchangingRateUpdate: (String) -> Unit,
     onConvertedAmountUpdate: (String) -> Unit,
-    onTransferSave: () -> Unit,
+    onTransferSave: (TransferDialogUiState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CsAlertDialog(
@@ -83,7 +83,7 @@ private fun TransferDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.SendMoney,
         onConfirm = {
-            onTransferSave()
+            onTransferSave(transferState)
             onDismiss()
         },
         isConfirmEnabled = transferState.amount.isAmountValid() &&

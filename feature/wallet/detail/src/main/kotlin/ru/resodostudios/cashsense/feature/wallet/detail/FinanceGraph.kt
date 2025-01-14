@@ -9,6 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +45,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.LayeredComponent
@@ -87,6 +90,23 @@ internal fun FinanceGraph(
             )
         }
     }
+    val hapticFeedback = LocalHapticFeedback.current
+    val markerVisibilityListener = remember {
+        object : CartesianMarkerVisibilityListener {
+
+            override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+                super.onUpdated(marker, targets)
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+
+            override fun onShown(
+                marker: CartesianMarker,
+                targets: List<CartesianMarker.Target>
+            ) {
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+        }
+    }
 
     LaunchedEffect(graphValues) {
         modelProducer.runTransaction {
@@ -123,6 +143,7 @@ internal fun FinanceGraph(
                         getDecimalFormat(currency)
                     )
                 ),
+                markerVisibilityListener = markerVisibilityListener,
                 fadingEdges = rememberFadingEdges(),
             ),
             modelProducer = modelProducer,
@@ -201,6 +222,7 @@ private fun rememberMarker(
                 indicatorSizeDp = 36f,
                 guideline = guideline,
             ) {
+
             override fun updateLayerMargins(
                 context: CartesianMeasuringContext,
                 layerMargins: CartesianLayerMargins,

@@ -79,8 +79,8 @@ class TransactionDialogViewModel @Inject constructor(
 
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
-            Save -> saveTransaction()
             Repeat -> repeatTransaction()
+            is Save -> saveTransaction(event.state)
             is UpdateTransactionId -> updateTransactionId(event.id)
             is UpdateWalletId -> updateWalletId(event.id)
             is UpdateCurrency -> updateCurrency(event.currency)
@@ -94,11 +94,10 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun saveTransaction() {
+    private fun saveTransaction(state: TransactionDialogUiState) {
         appScope.launch {
-            val transaction = _transactionDialogUiState.value
-                .asTransaction(transactionDestination.walletId)
-            val transactionCategoryCrossRef = _transactionDialogUiState.value.category?.id
+            val transaction = state.asTransaction(transactionDestination.walletId)
+            val transactionCategoryCrossRef = state.category?.id
                 ?.let {
                     TransactionCategoryCrossRef(
                         transactionId = transaction.id,

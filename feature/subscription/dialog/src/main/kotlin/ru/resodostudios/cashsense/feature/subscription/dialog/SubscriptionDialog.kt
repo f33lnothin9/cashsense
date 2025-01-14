@@ -95,7 +95,7 @@ fun SubscriptionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.Autorenew,
         onConfirm = {
-            onSubscriptionEvent(Save)
+            onSubscriptionEvent(Save(subscriptionDialogState.asSubscription()))
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&

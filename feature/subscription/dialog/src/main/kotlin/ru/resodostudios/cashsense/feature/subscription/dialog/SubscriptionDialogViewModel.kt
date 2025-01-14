@@ -59,7 +59,7 @@ class SubscriptionDialogViewModel @Inject constructor(
         when (event) {
             is SubscriptionDialogEvent.Save -> {
                 appScope.launch {
-                    subscriptionsRepository.upsertSubscription(_subscriptionDialogUiState.value.asSubscription())
+                    subscriptionsRepository.upsertSubscription(event.subscription)
                 }
             }
 
