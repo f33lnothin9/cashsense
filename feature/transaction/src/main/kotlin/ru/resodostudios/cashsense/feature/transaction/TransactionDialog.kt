@@ -112,7 +112,7 @@ private fun TransactionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.ReceiptLong,
         onConfirm = {
-            onTransactionEvent(Save)
+            onTransactionEvent(Save(transactionDialogState))
             onDismiss()
         },
         isConfirmEnabled = transactionDialogState.amount.isAmountValid(),

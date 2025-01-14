@@ -27,7 +27,7 @@ sealed interface TransactionDialogEvent {
 
     data class UpdateTransactionIgnoring(val ignored: Boolean) : TransactionDialogEvent
 
-    data object Repeat : TransactionDialogEvent
+    data class Save(val state: TransactionDialogUiState) : TransactionDialogEvent
 
-    data object Save : TransactionDialogEvent
+    data object Repeat : TransactionDialogEvent
 }
