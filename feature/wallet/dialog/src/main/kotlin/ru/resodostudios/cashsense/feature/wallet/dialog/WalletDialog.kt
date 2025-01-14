@@ -32,13 +32,10 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
-import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import java.math.BigDecimal
 import java.util.Currency
-import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -65,7 +62,7 @@ internal fun WalletDialog(
 private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
     onDismiss: () -> Unit,
-    onWalletSave: () -> Unit,
+    onWalletSave: (WalletDialogUiState) -> Unit,
     onTitleUpdate: (String) -> Unit,
     onInitialBalanceUpdate: (String) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
@@ -84,7 +81,7 @@ private fun WalletDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.Wallet,
         onConfirm = {
-            onWalletSave()
+            onWalletSave(walletDialogState)
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),

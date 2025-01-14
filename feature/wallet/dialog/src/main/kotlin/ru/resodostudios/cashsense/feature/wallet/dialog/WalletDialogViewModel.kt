@@ -84,11 +84,11 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveWallet() {
+    fun saveWallet(state: WalletDialogUiState) {
         appScope.launch {
-            val wallet = _walletDialogState.value.asWallet()
+            val wallet = state.asWallet()
             walletsRepository.upsertWallet(wallet)
-            userDataRepository.setPrimaryWallet(wallet.id, _walletDialogState.value.isPrimary)
+            userDataRepository.setPrimaryWallet(wallet.id, state.isPrimary)
         }
     }
 
