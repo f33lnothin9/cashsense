@@ -61,7 +61,7 @@ internal fun CategorySelectionRow(
         overflow = ContextualFlowRowOverflow.expandOrCollapseIndicator(
             minRowsToShowCollapse = defaultMaxLines + 1,
             expandIndicator = moreOrCollapseIndicator,
-            collapseIndicator = moreOrCollapseIndicator
+            collapseIndicator = moreOrCollapseIndicator,
         ),
     ) { index ->
         val category = availableCategories.elementAt(index)
