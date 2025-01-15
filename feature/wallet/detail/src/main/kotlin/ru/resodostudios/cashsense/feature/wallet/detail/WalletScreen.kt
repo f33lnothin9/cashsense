@@ -12,8 +12,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,13 +19,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -60,19 +55,16 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -575,7 +567,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             )
         }
         if (walletFilter.dateType != ALL) {
-            CategoryFilterRow(
+            CategorySelectionRow(
                 availableCategories = walletFilter.availableCategories,
                 selectedCategories = walletFilter.selectedCategories,
                 addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
@@ -584,57 +576,6 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             )
         }
     }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun CategoryFilterRow(
-    availableCategories: Set<Category>,
-    selectedCategories: Set<Category>,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    FlowRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        availableCategories.forEach { category ->
-            CategoryChip(
-                selected = selectedCategories.contains(category),
-                category = category,
-                onClick = {
-                    if (selectedCategories.contains(category)) {
-                        removeFromSelectedCategories(category)
-                    } else {
-                        addToSelectedCategories(category)
-                    }
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    selected: Boolean,
-    category: Category,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(category.title.toString()) },
-        leadingIcon = {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = modifier.size(FilterChipDefaults.IconSize),
-            )
-        }
-    )
 }
 
 @Composable
