@@ -64,7 +64,7 @@ internal fun CategorySelectionRow(
             collapseIndicator = moreOrCollapseIndicator,
         ),
     ) { index ->
-        val category = availableCategories[index]
+        val category = runCatching { availableCategories[index] }.getOrDefault(Category())
 
         CategoryChip(
             selected = selectedCategories.contains(category),
