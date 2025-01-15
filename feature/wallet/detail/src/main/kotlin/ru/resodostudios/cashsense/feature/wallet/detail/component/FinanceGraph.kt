@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail
+package ru.resodostudios.cashsense.feature.wallet.detail.component
 
 import android.text.Layout
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +65,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletFilter
 import java.math.BigDecimal
 import java.time.format.TextStyle
 import java.util.Currency

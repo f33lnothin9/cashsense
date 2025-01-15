@@ -14,6 +14,7 @@ import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionItem
 import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.locales.R as localesR
 

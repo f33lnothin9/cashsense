@@ -87,6 +87,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateTy
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
+import ru.resodostudios.cashsense.feature.wallet.detail.component.CategorySelectionRow
+import ru.resodostudios.cashsense.feature.wallet.detail.component.FinanceGraph
+import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionBottomSheet
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
