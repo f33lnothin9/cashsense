@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail
+package ru.resodostudios.cashsense.feature.wallet.detail.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

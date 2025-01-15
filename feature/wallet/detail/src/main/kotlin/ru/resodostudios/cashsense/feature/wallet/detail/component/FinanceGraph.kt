@@ -1,11 +1,14 @@
-package ru.resodostudios.cashsense.feature.wallet.detail
+package ru.resodostudios.cashsense.feature.wallet.detail.component
 
 import android.text.Layout
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +50,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Shadow
@@ -61,6 +65,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletFilter
 import java.math.BigDecimal
 import java.time.format.TextStyle
 import java.util.Currency
@@ -76,6 +81,7 @@ internal fun FinanceGraph(
     val scrollState = rememberVicoScrollState()
     val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
     val modelProducer = remember { CartesianChartModelProducer() }
+
     val xDateFormatter = CartesianValueFormatter { _, x, _ ->
         when (walletFilter.dateType) {
             YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
@@ -90,19 +96,26 @@ internal fun FinanceGraph(
             )
         }
     }
+
+    var xTarget by remember { mutableIntStateOf(0) }
     val hapticFeedback = LocalHapticFeedback.current
     val markerVisibilityListener = remember {
         object : CartesianMarkerVisibilityListener {
 
             override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
                 super.onUpdated(marker, targets)
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                val target = targets.first() as LineCartesianLayerMarkerTarget
+                val markerIndex = target.points.last().entry.x.toInt()
+
+                if (markerIndex != xTarget) {
+                    xTarget = 0
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
             }
 
-            override fun onShown(
-                marker: CartesianMarker,
-                targets: List<CartesianMarker.Target>
-            ) {
+            override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+                val target = targets.first() as LineCartesianLayerMarkerTarget
+                xTarget = target.points.last().entry.x.toInt()
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
             }
         }
