@@ -220,13 +220,13 @@ internal fun HomeListDetailScreen(
                                     nestedNavController.navigate(WalletPlaceholderRoute)
                                 }
                                 coroutineScope.launch {
-                                    scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                    scaffoldNavigator.navigateBack()
                                 }
                             },
                             onTransfer = onTransfer,
                             onBackClick = {
                                 coroutineScope.launch {
-                                    scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                    scaffoldNavigator.navigateBack()
                                 }
                             },
                             navigateToTransactionDialog = navigateToTransactionDialog,
