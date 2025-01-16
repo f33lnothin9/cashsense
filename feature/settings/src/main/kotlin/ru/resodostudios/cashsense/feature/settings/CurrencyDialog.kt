@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -25,7 +26,7 @@ internal fun CurrencyDialog(
         titleRes = localesR.string.currency,
         confirmButtonTextRes = localesR.string.ok,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.UniversalCurrencyAlt,
+        icon = CsIcons.Outlined.UniversalCurrencyAlt,
         onConfirm = {
             onCurrencyClick(currencyState)
             onDismiss()

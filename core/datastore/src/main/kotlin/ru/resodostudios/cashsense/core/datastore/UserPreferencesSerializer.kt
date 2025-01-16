@@ -13,7 +13,7 @@ import javax.inject.Inject
  */
 class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
 
-    override val defaultValue: UserPreferences = getCustomDefaultValues()
+    override val defaultValue: UserPreferences = getCustomInstance()
 
     override suspend fun readFrom(input: InputStream): UserPreferences =
         try {
@@ -27,8 +27,7 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
     }
 }
 
-internal fun getCustomDefaultValues(): UserPreferences =
-    UserPreferences.newBuilder()
-        .setCurrency(getDefaultCurrency().currencyCode)
-        .setUseDynamicColor(true)
-        .build()
+internal fun getCustomInstance() = userPreferences {
+    currency = getDefaultCurrency().currencyCode
+    useDynamicColor = true
+}

@@ -11,15 +11,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.NotificationsActive
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.DAILY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.WEEKLY
@@ -51,7 +54,7 @@ internal fun SubscriptionBottomSheet(
                 },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.AutoRenew),
+                        imageVector = CsIcons.Outlined.Autorenew,
                         contentDescription = null,
                     )
                 },
@@ -69,7 +72,7 @@ internal fun SubscriptionBottomSheet(
             ) {
                 CsTag(
                     text = subscription.paymentDate.formatDate(DATE),
-                    iconId = CsIcons.Calendar,
+                    icon = CsIcons.Outlined.Calendar,
                 )
                 AnimatedVisibility(subscription.reminder != null) {
                     val repeatingIntervalType = getRepeatingIntervalType(subscription.reminder?.repeatingInterval)
@@ -82,7 +85,7 @@ internal fun SubscriptionBottomSheet(
                     }
                     CsTag(
                         text = reminderTitle,
-                        iconId = CsIcons.NotificationsActive,
+                        icon = CsIcons.Outlined.NotificationsActive,
                     )
                 }
             }
@@ -91,7 +94,7 @@ internal fun SubscriptionBottomSheet(
                 headlineContent = { Text(stringResource(localesR.string.edit)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Edit),
+                        imageVector = CsIcons.Outlined.Edit,
                         contentDescription = null,
                     )
                 },
@@ -104,7 +107,7 @@ internal fun SubscriptionBottomSheet(
                 headlineContent = { Text(stringResource(localesR.string.delete)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Delete),
+                        imageVector = CsIcons.Outlined.Delete,
                         contentDescription = null,
                     )
                 },

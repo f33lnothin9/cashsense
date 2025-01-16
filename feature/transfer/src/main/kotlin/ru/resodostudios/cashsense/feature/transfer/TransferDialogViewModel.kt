@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
@@ -20,6 +22,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class TransferDialogViewModel @Inject constructor(
@@ -94,10 +97,11 @@ class TransferDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveTransfer(withdrawalTransaction: Transaction, depositTransaction: Transaction) {
+    fun saveTransfer(state: TransferDialogUiState) {
         appScope.launch {
-            transactionsRepository.upsertTransaction(withdrawalTransaction)
-            transactionsRepository.upsertTransaction(depositTransaction)
+            state.asTransfer().forEach {
+                transactionsRepository.upsertTransaction(it)
+            }
         }
     }
 
@@ -169,3 +173,32 @@ data class TransferWallet(
     val currentBalance: BigDecimal = BigDecimal.ZERO,
     val currency: Currency? = null,
 )
+
+fun TransferDialogUiState.asTransfer(): List<Transaction> {
+    val transferId = Uuid.random()
+    val timestamp = Clock.System.now()
+    val withdrawalAmount = BigDecimal(amount)
+
+    val withdrawalTransaction = Transaction(
+        id = Uuid.random().toHexString(),
+        walletOwnerId = sendingWallet.id,
+        description = null,
+        amount = withdrawalAmount.negate(),
+        timestamp = timestamp,
+        status = StatusType.COMPLETED,
+        ignored = true,
+        transferId = transferId,
+    )
+    val depositTransaction = Transaction(
+        id = Uuid.random().toHexString(),
+        walletOwnerId = receivingWallet.id,
+        description = null,
+        amount = BigDecimal(convertedAmount),
+        timestamp = timestamp,
+        status = StatusType.COMPLETED,
+        ignored = true,
+        transferId = transferId,
+    )
+
+    return buildList { add(withdrawalTransaction); add(depositTransaction) }
+}

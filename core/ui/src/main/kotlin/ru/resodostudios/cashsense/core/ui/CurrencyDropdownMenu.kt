@@ -17,13 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.util.getValidCurrencies
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -99,7 +98,7 @@ fun CurrencyDropdownMenu(
                     leadingIcon = if (currency == selectionOption) {
                         {
                             Icon(
-                                imageVector = ImageVector.vectorResource(CsIcons.Check),
+                                imageVector = CsIcons.Outlined.Check,
                                 contentDescription = null,
                             )
                         }

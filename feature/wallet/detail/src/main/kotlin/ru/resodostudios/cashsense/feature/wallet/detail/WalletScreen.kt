@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -13,8 +12,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,13 +19,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -47,9 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,13 +52,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -89,6 +87,9 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateTy
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
+import ru.resodostudios.cashsense.feature.wallet.detail.component.CategorySelectionRow
+import ru.resodostudios.cashsense.feature.wallet.detail.component.FinanceGraph
+import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionBottomSheet
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
@@ -170,7 +171,7 @@ private fun WalletScreen(
                     titleRes = localesR.string.permanently_delete,
                     confirmButtonTextRes = localesR.string.delete,
                     dismissButtonTextRes = localesR.string.cancel,
-                    iconRes = CsIcons.Delete,
+                    icon = CsIcons.Outlined.Delete,
                     onConfirm = {
                         onDeleteTransaction()
                         showTransactionDeletionDialog = false
@@ -255,7 +256,7 @@ private fun WalletTopBar(
             if (showNavigationIcon) {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                        imageVector = CsIcons.Outlined.ArrowBack,
                         contentDescription = null,
                     )
                 }
@@ -264,7 +265,7 @@ private fun WalletTopBar(
         actions = {
             IconButton(onClick = onNewTransactionClick) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Add),
+                    imageVector = CsIcons.Outlined.Add,
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
@@ -284,14 +285,14 @@ private fun PrimaryIconButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
-    val (@DrawableRes primaryIconRes, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
-        CsIcons.StarFilled to localesR.string.primary_icon_description
+    val (primaryIcon, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
+        CsIcons.Filled.Star to localesR.string.primary_icon_description
     } else {
-        CsIcons.Star to localesR.string.non_primary_icon_description
+        CsIcons.Outlined.Star to localesR.string.non_primary_icon_description
     }
     IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
         Icon(
-            imageVector = ImageVector.vectorResource(primaryIconRes),
+            imageVector = primaryIcon,
             contentDescription = stringResource(primaryIconContentDescriptionRes),
         )
     }
@@ -523,7 +524,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 modifier = Modifier.padding(start = 12.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Close),
+                    imageVector = CsIcons.Outlined.Close,
                     contentDescription = null,
                 )
             }
@@ -573,7 +574,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             )
         }
         if (walletFilter.dateType != ALL) {
-            CategoryFilterRow(
+            CategorySelectionRow(
                 availableCategories = walletFilter.availableCategories,
                 selectedCategories = walletFilter.selectedCategories,
                 addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
@@ -582,63 +583,6 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             )
         }
     }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun CategoryFilterRow(
-    availableCategories: Set<Category>,
-    selectedCategories: Set<Category>,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    FlowRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        availableCategories.forEach { category ->
-            CategoryChip(
-                selected = selectedCategories.contains(category),
-                category = category,
-                onClick = {
-                    if (selectedCategories.contains(category)) {
-                        removeFromSelectedCategories(category)
-                    } else {
-                        addToSelectedCategories(category)
-                    }
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    selected: Boolean,
-    category: Category,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val categoryIconRes = if (selected) CsIcons.Check else StoredIcon.asRes(category.iconId)
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = {
-            Text(
-                text = category.title.toString(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = ImageVector.vectorResource(categoryIconRes),
-                contentDescription = null,
-                modifier = modifier.size(FilterChipDefaults.IconSize),
-            )
-        }
-    )
 }
 
 @Composable
@@ -687,7 +631,7 @@ private fun FilterBySelectedDateTypeRow(
             onClick = { onWalletEvent(DecrementSelectedDate) },
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.ChevronLeft),
+                imageVector = CsIcons.Outlined.ChevronLeft,
                 contentDescription = null,
             )
         }
@@ -722,20 +666,24 @@ private fun FilterBySelectedDateTypeRow(
             onClick = { onWalletEvent(IncrementSelectedDate) },
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(CsIcons.ChevronRight),
+                imageVector = CsIcons.Outlined.ChevronRight,
                 contentDescription = null,
             )
         }
     }
 }
 
-private fun getFinanceProgress(value: BigDecimal, transactions: List<TransactionWithCategory>) =
-    if (transactions.isNotEmpty()) value
-        .divide(
-            transactions.sumOf { it.transaction.amount.abs() },
-            MathContext.DECIMAL32,
-        )
-        .toFloat() else 0f
+private fun getFinanceProgress(
+    value: BigDecimal,
+    transactions: List<TransactionWithCategory>,
+): Float {
+    if (transactions.isEmpty()) return 0f
+
+    val totalAmount = transactions.sumOf { it.transaction.amount.abs() }
+    if (totalAmount.compareTo(ZERO) == 0) return 0f
+
+    return value.divide(totalAmount, MathContext.DECIMAL32).toFloat()
+}
 
 @Preview
 @Composable
@@ -745,8 +693,7 @@ fun FinancePanelDefaultPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories
-                .mapNotNullTo(HashSet()) { it.category }
+            val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(
@@ -782,9 +729,7 @@ fun FinancePanelOpenedPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories
-                .mapNotNullTo(HashSet()) { it.category }
-
+            val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(

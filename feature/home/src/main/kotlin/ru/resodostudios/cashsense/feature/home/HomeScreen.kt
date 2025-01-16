@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -19,13 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -36,6 +37,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.AnimatedAmount
@@ -47,7 +49,6 @@ import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import java.math.BigDecimal
-import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -188,25 +189,37 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
     financeOverviewState: FinanceOverviewUiState,
 ) {
     when (financeOverviewState) {
-        FinanceOverviewUiState.Loading -> {
-            item(span = StaggeredGridItemSpan.FullLine) {
-                LoadingState(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem(),
-                )
-            }
-        }
-
         FinanceOverviewUiState.NotShown -> Unit
-        is FinanceOverviewUiState.Shown -> {
+        FinanceOverviewUiState.Loading, is FinanceOverviewUiState.Shown -> {
             item(span = StaggeredGridItemSpan.FullLine) {
+                val shouldShowBadIndicator = if (financeOverviewState is FinanceOverviewUiState.Shown) {
+                    financeOverviewState.shouldShowBadIndicator
+                } else false
                 TotalBalanceCard(
-                    showBadIndicator = financeOverviewState.showBadIndicator,
-                    totalBalance = financeOverviewState.totalBalance,
-                    userCurrency = financeOverviewState.userCurrency,
+                    showBadIndicator = shouldShowBadIndicator,
                     modifier = Modifier.animateItem(),
-                )
+                ) {
+                    if (financeOverviewState is FinanceOverviewUiState.Shown) {
+                        val totalBalance = financeOverviewState.totalBalance
+                        val userCurrency = financeOverviewState.userCurrency
+                        AnimatedAmount(
+                            targetState = totalBalance,
+                            label = "total_balance",
+                        ) {
+                            Text(
+                                text = totalBalance.formatAmount(userCurrency),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    } else {
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 12.dp),
+                        )
+                    }
+                }
             }
         }
     }
@@ -215,19 +228,20 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
 @Composable
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
-    totalBalance: BigDecimal?,
-    userCurrency: Currency,
     modifier: Modifier = Modifier,
+    headlineContent: @Composable () -> Unit,
 ) {
     val color = if (showBadIndicator) {
         MaterialTheme.colorScheme.error
     } else {
         MaterialTheme.colorScheme.outlineVariant
     }
-    val borderBrush = Brush.verticalGradient(
-        colors = listOf(Color.Transparent, color),
-        startY = 15.0f,
-    )
+    val borderBrush = remember(color) {
+        Brush.verticalGradient(
+            colors = listOf(Color.Transparent, color),
+            startY = 15.0f,
+        )
+    }
     val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
     OutlinedCard(
         shape = shape,
@@ -246,22 +260,11 @@ private fun TotalBalanceCard(
         CsListItem(
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                    imageVector = CsIcons.Outlined.AccountBalance,
                     contentDescription = null,
                 )
             },
-            headlineContent = {
-                AnimatedAmount(
-                    targetState = totalBalance ?: BigDecimal.ZERO,
-                    label = "total_balance",
-                ) {
-                    Text(
-                        text = totalBalance?.formatAmount(userCurrency) ?: "???",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            },
+            headlineContent = headlineContent,
             overlineContent = {
                 Text(
                     text = stringResource(localesR.string.total_balance),
@@ -327,7 +330,7 @@ fun HomeScreenPopulatedPreview(
                 financeOverviewState = FinanceOverviewUiState.Shown(
                     totalBalance = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
-                    showBadIndicator = true,
+                    shouldShowBadIndicator = true,
                 ),
                 onWalletClick = {},
                 onTransfer = {},

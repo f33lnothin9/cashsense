@@ -25,10 +25,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.IconPickerDropdownMenu
 import ru.resodostudios.cashsense.core.ui.LoadingState
-import kotlin.uuid.Uuid
+import ru.resodostudios.cashsense.core.ui.StoredIcon
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -65,14 +66,9 @@ fun CategoryDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.Category,
+        icon = CsIcons.Outlined.Category,
         onConfirm = {
-            val category = Category(
-                id = categoryDialogState.id.ifBlank { Uuid.random().toHexString() },
-                title = categoryDialogState.title,
-                iconId = categoryDialogState.iconId,
-            )
-            onSaveCategory(category)
+            onSaveCategory(categoryDialogState.asCategory())
             onDismiss()
         },
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
@@ -105,7 +101,7 @@ fun CategoryDialog(
                     maxLines = 1,
                     leadingIcon = {
                         IconPickerDropdownMenu(
-                            currentIconId = categoryDialogState.iconId,
+                            currentIcon = StoredIcon.asImageVector(categoryDialogState.iconId),
                             onSelectedIconClick = onUpdateIconId,
                             onClick = { focusManager.clearFocus() },
                         )

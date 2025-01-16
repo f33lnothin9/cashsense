@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 33
-        versionName = "1.2.0-beta03"
+        versionCode = 35
+        versionName = "1.2.0-beta04"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

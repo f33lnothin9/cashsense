@@ -4,8 +4,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.StoredIcon
@@ -20,7 +18,7 @@ internal fun CategoryItem(
         headlineContent = { Text(category.title.toString()) },
         leadingContent = {
             Icon(
-                imageVector = ImageVector.vectorResource(StoredIcon.asRes(category.iconId)),
+                imageVector = StoredIcon.asImageVector(category.iconId),
                 contentDescription = null,
             )
         },

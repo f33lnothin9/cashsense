@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.home
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,12 +32,14 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.UserWallet
@@ -178,7 +179,7 @@ private fun TagsSection(
         ) {
             CsTag(
                 text = stringResource(localesR.string.primary),
-                iconId = CsIcons.StarFilled,
+                icon = CsIcons.Filled.Star,
             )
         }
         AnimatedVisibility(
@@ -190,7 +191,7 @@ private fun TagsSection(
                 amount = expenses,
                 currency = currency,
                 color = MaterialTheme.colorScheme.errorContainer,
-                iconId = CsIcons.TrendingDown,
+                icon = CsIcons.Outlined.TrendingDown,
             )
         }
         AnimatedVisibility(
@@ -202,7 +203,7 @@ private fun TagsSection(
                 amount = income,
                 currency = currency,
                 color = MaterialTheme.colorScheme.tertiaryContainer,
-                iconId = CsIcons.TrendingUp,
+                icon = CsIcons.Outlined.TrendingUp,
             )
         }
     }
@@ -215,8 +216,7 @@ private fun CsAnimatedTag(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
     shape: Shape = RoundedCornerShape(16.dp),
-    @DrawableRes
-    iconId: Int? = null,
+    icon: ImageVector? = null,
 ) {
     Surface(
         color = color,
@@ -233,9 +233,9 @@ private fun CsAnimatedTag(
                 bottom = 4.dp,
             )
         ) {
-            if (iconId != null) {
+            if (icon != null) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(iconId),
+                    imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )

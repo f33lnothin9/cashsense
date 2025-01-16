@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.NotificationsActive
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.DAILY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
@@ -77,7 +79,7 @@ fun SubscriptionCard(
             ) {
                 CsTag(
                     text = subscription.paymentDate.formatDate(DATE),
-                    iconId = CsIcons.Calendar,
+                    icon = CsIcons.Outlined.Calendar,
                 )
                 AnimatedVisibility(
                     visible = subscription.reminder != null,
@@ -96,7 +98,7 @@ fun SubscriptionCard(
                     }
                     CsTag(
                         text = reminderTitle,
-                        iconId = CsIcons.NotificationsActive,
+                        icon = CsIcons.Outlined.NotificationsActive,
                     )
                 }
             }

@@ -27,6 +27,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
+import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.EmptyState
 import ru.resodostudios.cashsense.core.ui.LoadingState
 import ru.resodostudios.cashsense.core.locales.R as localesR
