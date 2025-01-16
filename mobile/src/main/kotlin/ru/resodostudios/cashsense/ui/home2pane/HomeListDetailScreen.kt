@@ -134,7 +134,7 @@ internal fun HomeListDetailScreen(
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
-    val listDetailNavigator = rememberListDetailPaneScaffoldNavigator(
+    val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
         initialDestinationHistory = listOfNotNull(
             ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List),
@@ -169,7 +169,7 @@ internal fun HomeListDetailScreen(
     fun onWalletClickShowDetailPane(walletId: String?) {
         if (walletId != null) {
             onWalletClick(walletId)
-            if (listDetailNavigator.isDetailPaneVisible()) {
+            if (scaffoldNavigator.isDetailPaneVisible()) {
                 nestedNavController.navigateToWallet(walletId) {
                     popUpTo<DetailPaneNavHostRoute>()
                 }
@@ -179,15 +179,15 @@ internal fun HomeListDetailScreen(
                 clearUndoState()
             }
             coroutineScope.launch {
-                listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
             }
-        } else if (listDetailNavigator.isDetailPaneVisible()) {
+        } else if (scaffoldNavigator.isDetailPaneVisible()) {
             nestedNavController.navigate(WalletPlaceholderRoute)
         }
     }
 
     NavigableListDetailPaneScaffold(
-        navigator = listDetailNavigator,
+        navigator = scaffoldNavigator,
         listPane = {
             AnimatedPane {
                 HomeScreen(
@@ -198,7 +198,7 @@ internal fun HomeListDetailScreen(
                     onTransactionCreate = {
                         navigateToTransactionDialog(it, null, false)
                     },
-                    highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
+                    highlightSelectedWallet = scaffoldNavigator.isDetailPaneVisible(),
                     onShowSnackbar = onShowSnackbar,
                     shouldDisplayUndoWallet = shouldDisplayUndoWallet,
                     undoWalletRemoval = undoWalletRemoval,
@@ -217,21 +217,21 @@ internal fun HomeListDetailScreen(
                         exitTransition = { fadeOut(snap()) },
                     ) {
                         walletScreen(
-                            showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
+                            showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
                             onEditWallet = onEditWallet,
                             onDeleteWallet = {
                                 onDeleteWallet(it)
-                                if (listDetailNavigator.isDetailPaneVisible()) {
+                                if (scaffoldNavigator.isDetailPaneVisible()) {
                                     nestedNavController.navigate(WalletPlaceholderRoute)
                                 }
                                 coroutineScope.launch {
-                                    listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                    scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
                                 }
                             },
                             onTransfer = onTransfer,
                             onBackClick = {
                                 coroutineScope.launch {
-                                    listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                                    scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
                                 }
                             },
                             navigateToTransactionDialog = navigateToTransactionDialog,
