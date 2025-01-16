@@ -34,7 +34,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun CategorySelectionRow(
-    availableCategories: Set<Category>,
+    availableCategories: List<Category>,
     selectedCategories: Set<Category>,
     addToSelectedCategories: (Category) -> Unit,
     removeFromSelectedCategories: (Category) -> Unit,
@@ -64,7 +64,7 @@ internal fun CategorySelectionRow(
             collapseIndicator = moreOrCollapseIndicator,
         ),
     ) { index ->
-        val category = availableCategories.elementAt(index)
+        val category = runCatching { availableCategories[index] }.getOrDefault(Category())
 
         CategoryChip(
             selected = selectedCategories.contains(category),
@@ -112,7 +112,7 @@ private fun CategorySelectorRowPreview(
     CsTheme {
         Surface {
             CategorySelectionRow(
-                availableCategories = categories.toSet(),
+                availableCategories = categories,
                 selectedCategories = setOf(categories.first()),
                 addToSelectedCategories = {},
                 removeFromSelectedCategories = {},

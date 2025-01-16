@@ -58,7 +58,7 @@ class WalletViewModel @Inject constructor(
     private val walletFilterState = MutableStateFlow(
         WalletFilter(
             selectedCategories = emptySet(),
-            availableCategories = emptySet(),
+            availableCategories = emptyList(),
             financeType = NONE,
             dateType = ALL,
             selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
@@ -144,7 +144,8 @@ class WalletViewModel @Inject constructor(
         walletFilterState.update { state ->
             state.copy(
                 availableCategories = transactionsCategories
-                    .mapNotNullTo(HashSet()) { it.category },
+                    .mapNotNull { it.category }
+                    .distinct(),
             )
         }
     }
@@ -292,7 +293,7 @@ enum class DateType {
 
 data class WalletFilter(
     val selectedCategories: Set<Category>,
-    val availableCategories: Set<Category>,
+    val availableCategories: List<Category>,
     val financeType: FinanceType,
     val dateType: DateType,
     val selectedYearMonth: YearMonth,
