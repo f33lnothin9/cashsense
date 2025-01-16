@@ -705,7 +705,7 @@ fun FinancePanelDefaultPreview(
                         isPrimary = false,
                     ),
                     walletFilter = WalletFilter(
-                        availableCategories = categories,
+                        availableCategories = categories.toList(),
                         selectedCategories = categories,
                         financeType = NONE,
                         dateType = YEAR,
@@ -729,7 +729,7 @@ fun FinancePanelOpenedPreview(
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
+            val categories = transactionsCategories.mapNotNull { it.category }
             FinancePanel(
                 walletState = Success(
                     userWallet = UserWallet(
@@ -742,7 +742,7 @@ fun FinancePanelOpenedPreview(
                     ),
                     walletFilter = WalletFilter(
                         availableCategories = categories,
-                        selectedCategories = categories.toList().take(3).toSet(),
+                        selectedCategories = categories.take(3).toSet(),
                         financeType = EXPENSES,
                         dateType = YEAR,
                         selectedYearMonth = YearMonth.of(2025, 1),
