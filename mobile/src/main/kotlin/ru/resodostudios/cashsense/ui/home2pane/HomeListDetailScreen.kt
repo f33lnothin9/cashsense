@@ -144,13 +144,7 @@ internal fun HomeListDetailScreen(
         ),
     )
     val paneExpansionState = rememberPaneExpansionState(
-        anchors = listOf(
-            PaneExpansionAnchor.Proportion(0f),
-            PaneExpansionAnchor.Proportion(0.35f),
-            PaneExpansionAnchor.Proportion(0.5f),
-            PaneExpansionAnchor.Proportion(0.65f),
-            PaneExpansionAnchor.Proportion(1f),
-        ),
+        anchors = PaneExpansionAnchors,
     )
     var nestedNavHostStartRoute by remember {
         val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
@@ -267,3 +261,13 @@ private fun <T> ThreePaneScaffoldNavigator<T>.isListPaneVisible(): Boolean =
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private fun <T> ThreePaneScaffoldNavigator<T>.isDetailPaneVisible(): Boolean =
     scaffoldValue[ListDetailPaneScaffoldRole.Detail] == PaneAdaptedValue.Expanded
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+private val PaneExpansionAnchors =
+    listOf(
+        PaneExpansionAnchor.Proportion(0f),
+        PaneExpansionAnchor.Proportion(0.35f),
+        PaneExpansionAnchor.Proportion(0.5f),
+        PaneExpansionAnchor.Proportion(0.65f),
+        PaneExpansionAnchor.Proportion(1f),
+    )
