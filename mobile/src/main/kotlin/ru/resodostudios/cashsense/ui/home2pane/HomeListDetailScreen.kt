@@ -144,6 +144,7 @@ internal fun HomeListDetailScreen(
         ),
     )
     val paneExpansionState = rememberPaneExpansionState(
+        keyProvider = scaffoldNavigator.scaffoldValue,
         anchors = PaneExpansionAnchors,
     )
     var nestedNavHostStartRoute by remember {
@@ -248,7 +249,8 @@ internal fun HomeListDetailScreen(
                     state = it,
                     minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
                     interactionSource = interactionSource,
-                )
+                ),
+                interactionSource = interactionSource,
             )
         },
     )
