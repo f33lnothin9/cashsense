@@ -66,11 +66,11 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
-    val financeOverviewState by viewModel.financeOverviewState.collectAsStateWithLifecycle()
+    val totalBalanceState by viewModel.totalBalanceUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        financeOverviewState = financeOverviewState,
+        totalBalanceState = totalBalanceState,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -90,7 +90,7 @@ fun HomeScreen(
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    financeOverviewState: FinanceOverviewUiState,
+    totalBalanceState: TotalBalanceUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -134,8 +134,8 @@ internal fun HomeScreen(
                     bottom = 88.dp,
                 ),
             ) {
-                financeOverviewSection(
-                    financeOverviewState = financeOverviewState,
+                totalBalanceSection(
+                    totalBalanceState = totalBalanceState,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -185,23 +185,23 @@ private fun LazyStaggeredGridScope.wallets(
     }
 }
 
-private fun LazyStaggeredGridScope.financeOverviewSection(
-    financeOverviewState: FinanceOverviewUiState,
+private fun LazyStaggeredGridScope.totalBalanceSection(
+    totalBalanceState: TotalBalanceUiState,
 ) {
-    when (financeOverviewState) {
-        FinanceOverviewUiState.NotShown -> Unit
-        FinanceOverviewUiState.Loading, is FinanceOverviewUiState.Shown -> {
+    when (totalBalanceState) {
+        TotalBalanceUiState.NotShown -> Unit
+        TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
             item(span = StaggeredGridItemSpan.FullLine) {
-                val shouldShowBadIndicator = if (financeOverviewState is FinanceOverviewUiState.Shown) {
-                    financeOverviewState.shouldShowBadIndicator
+                val shouldShowBadIndicator = if (totalBalanceState is TotalBalanceUiState.Shown) {
+                    totalBalanceState.shouldShowBadIndicator
                 } else false
                 TotalBalanceCard(
                     showBadIndicator = shouldShowBadIndicator,
                     modifier = Modifier.animateItem(),
                 ) {
-                    if (financeOverviewState is FinanceOverviewUiState.Shown) {
-                        val totalBalance = financeOverviewState.totalBalance
-                        val userCurrency = financeOverviewState.userCurrency
+                    if (totalBalanceState is TotalBalanceUiState.Shown) {
+                        val totalBalance = totalBalanceState.amount
+                        val userCurrency = totalBalanceState.userCurrency
                         AnimatedAmount(
                             targetState = totalBalance,
                             label = "total_balance",
@@ -283,7 +283,7 @@ fun HomeScreenLoadingPreview() {
         Surface {
             HomeScreen(
                 walletsState = Loading,
-                financeOverviewState = FinanceOverviewUiState.Loading,
+                totalBalanceState = TotalBalanceUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -302,7 +302,7 @@ fun HomeScreenEmptyPreview() {
         Surface {
             HomeScreen(
                 walletsState = Empty,
-                financeOverviewState = FinanceOverviewUiState.NotShown,
+                totalBalanceState = TotalBalanceUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -327,8 +327,8 @@ fun HomeScreenPopulatedPreview(
                     selectedWalletId = null,
                     extendedUserWallets = extendedUserWallets,
                 ),
-                financeOverviewState = FinanceOverviewUiState.Shown(
-                    totalBalance = BigDecimal(5000),
+                totalBalanceState = TotalBalanceUiState.Shown(
+                    amount = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
                     shouldShowBadIndicator = true,
                 ),
