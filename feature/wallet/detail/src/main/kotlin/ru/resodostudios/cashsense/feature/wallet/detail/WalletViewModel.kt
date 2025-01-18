@@ -38,8 +38,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSel
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
@@ -161,7 +159,7 @@ class WalletViewModel @Inject constructor(
             }
             .associate { it.first to it.second }
 
-        Success(
+        WalletUiState.Success(
             transactionFilter = TransactionFilter(
                 selectedCategories = transactionFilter.selectedCategories,
                 financeType = transactionFilter.financeType,
@@ -183,11 +181,11 @@ class WalletViewModel @Inject constructor(
             availableCategories = availableCategories,
         )
     }
-        .catch { Loading }
+        .catch { WalletUiState.Loading }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = Loading,
+            initialValue = WalletUiState.Loading,
         )
 
     fun onWalletEvent(event: WalletEvent) {
