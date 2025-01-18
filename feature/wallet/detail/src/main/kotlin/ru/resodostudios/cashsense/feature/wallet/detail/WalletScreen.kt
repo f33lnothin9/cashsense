@@ -314,12 +314,12 @@ private fun FinancePanel(
                     .isInCurrentMonthAndYear()
             } else true
         }
-    val expenses = filteredTransactions
-        .filter { it.transaction.amount < ZERO }
-        .sumOf { it.transaction.amount.abs() }
-    val income = filteredTransactions
-        .filter { it.transaction.amount > ZERO }
-        .sumOf { it.transaction.amount }
+    val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
+        .let { (expensesList, incomeList) ->
+            val expensesSum = expensesList.sumOf { it.transaction.amount.abs() }
+            val incomeSum = incomeList.sumOf { it.transaction.amount }
+            Pair(expensesSum, incomeSum)
+        }
 
     Column(
         modifier = modifier.animateContentSize(),

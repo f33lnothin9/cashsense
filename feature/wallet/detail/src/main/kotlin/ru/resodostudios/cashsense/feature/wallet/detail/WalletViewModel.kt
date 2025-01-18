@@ -104,7 +104,9 @@ class WalletViewModel @Inject constructor(
             }
         }
 
-        updateAvailableCategories(dateTypeTransactions)
+        val availableCategories = dateTypeTransactions
+            .mapNotNull { it.category }
+            .distinct()
 
         val filteredByCategories = if (walletFilter.selectedCategories.isNotEmpty()) {
             dateTypeTransactions
@@ -120,7 +122,7 @@ class WalletViewModel @Inject constructor(
 
         Success(
             walletFilter = WalletFilter(
-                availableCategories = walletFilter.availableCategories,
+                availableCategories = availableCategories,
                 selectedCategories = walletFilter.selectedCategories,
                 financeType = walletFilter.financeType,
                 dateType = walletFilter.dateType,
@@ -139,16 +141,6 @@ class WalletViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = Loading,
         )
-
-    private fun updateAvailableCategories(transactionsCategories: List<TransactionWithCategory>) {
-        walletFilterState.update { state ->
-            state.copy(
-                availableCategories = transactionsCategories
-                    .mapNotNull { it.category }
-                    .distinct(),
-            )
-        }
-    }
 
     fun onWalletEvent(event: WalletEvent) {
         when (event) {
