@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 
 @Composable
 internal fun CategoryItem(

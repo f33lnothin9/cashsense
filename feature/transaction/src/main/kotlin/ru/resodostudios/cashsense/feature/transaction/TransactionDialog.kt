@@ -59,9 +59,9 @@ import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
-import ru.resodostudios.cashsense.core.ui.DatePickerTextField
-import ru.resodostudios.cashsense.core.ui.LoadingState
-import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid

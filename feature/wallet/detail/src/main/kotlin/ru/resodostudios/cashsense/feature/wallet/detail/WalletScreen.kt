@@ -63,10 +63,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
-import ru.resodostudios.cashsense.core.ui.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
-import ru.resodostudios.cashsense.core.ui.WalletDropdownMenu
+import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime

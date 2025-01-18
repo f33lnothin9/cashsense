@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.ui
+package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope

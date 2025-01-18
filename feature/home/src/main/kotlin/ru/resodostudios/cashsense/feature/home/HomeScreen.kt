@@ -40,9 +40,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.ui.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.EmptyState
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.component.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty

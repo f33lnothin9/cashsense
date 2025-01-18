@@ -28,7 +28,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
-import ru.resodostudios.cashsense.core.ui.StoredIcon
+import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -35,7 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
-import ru.resodostudios.cashsense.core.ui.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY

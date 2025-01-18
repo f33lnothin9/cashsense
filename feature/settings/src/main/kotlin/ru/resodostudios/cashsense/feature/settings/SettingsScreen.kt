@@ -42,7 +42,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurre
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
