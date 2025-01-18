@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.component
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ContextualFlowRow
 import androidx.compose.foundation.layout.ContextualFlowRowOverflow
@@ -54,7 +53,7 @@ internal fun CategorySelectionRow(
     }
 
     ContextualFlowRow(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         itemCount = availableCategories.size,
         maxLines = maxLines,
