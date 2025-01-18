@@ -55,10 +55,9 @@ class WalletViewModel @Inject constructor(
 
     private val walletRoute: WalletRoute = savedStateHandle.toRoute()
 
-    private val walletFilterState = MutableStateFlow(
-        WalletFilter(
+    private val transactionFilterState = MutableStateFlow(
+        TransactionFilter(
             selectedCategories = emptySet(),
-            availableCategories = emptyList(),
             financeType = NONE,
             dateType = ALL,
             selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
@@ -69,13 +68,13 @@ class WalletViewModel @Inject constructor(
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         getExtendedUserWallet.invoke(walletRoute.walletId),
-        walletFilterState,
+        transactionFilterState,
         selectedTransactionIdState,
     ) { extendedUserWallet, walletFilter, selectedTransactionId ->
         val financeTypeTransactions = when (walletFilter.financeType) {
             NONE -> extendedUserWallet.transactionsWithCategories
                 .also {
-                    walletFilterState.update { it.copy(selectedCategories = emptySet()) }
+                    transactionFilterState.update { it.copy(selectedCategories = emptySet()) }
                 }
 
             EXPENSES -> extendedUserWallet.transactionsWithCategories
@@ -113,7 +112,7 @@ class WalletViewModel @Inject constructor(
                 .filter { walletFilter.selectedCategories.contains(it.category) }
                 .also { transactionsCategories ->
                     if (transactionsCategories.isEmpty()) {
-                        walletFilterState.update {
+                        transactionFilterState.update {
                             it.copy(selectedCategories = emptySet())
                         }
                     }
@@ -121,8 +120,7 @@ class WalletViewModel @Inject constructor(
         } else dateTypeTransactions
 
         Success(
-            walletFilter = WalletFilter(
-                availableCategories = availableCategories,
+            transactionFilter = TransactionFilter(
                 selectedCategories = walletFilter.selectedCategories,
                 financeType = walletFilter.financeType,
                 dateType = walletFilter.dateType,
@@ -133,6 +131,7 @@ class WalletViewModel @Inject constructor(
                 filteredByCategories.find { it.transaction.id == id }
             },
             transactionsCategories = filteredByCategories,
+            availableCategories = availableCategories,
         )
     }
         .catch { Loading }
@@ -189,7 +188,7 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun addToSelectedCategories(category: Category) {
-        walletFilterState.update {
+        transactionFilterState.update {
             it.copy(
                 selectedCategories = buildSet {
                     addAll(it.selectedCategories)
@@ -200,7 +199,7 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun removeFromSelectedCategories(category: Category) {
-        walletFilterState.update {
+        transactionFilterState.update {
             it.copy(
                 selectedCategories = buildSet {
                     addAll(it.selectedCategories)
@@ -211,13 +210,13 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateFinanceType(financeType: FinanceType) {
-        walletFilterState.update {
+        transactionFilterState.update {
             it.copy(financeType = financeType)
         }
     }
 
     private fun updateDateType(dateType: DateType) {
-        walletFilterState.update {
+        transactionFilterState.update {
             it.copy(
                 dateType = dateType,
                 selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
@@ -226,9 +225,9 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun incrementSelectedDate() {
-        when (walletFilterState.value.dateType) {
+        when (transactionFilterState.value.dateType) {
             MONTH -> {
-                walletFilterState.update {
+                transactionFilterState.update {
                     it.copy(
                         selectedYearMonth = it.selectedYearMonth.plusMonths(1),
                     )
@@ -236,7 +235,7 @@ class WalletViewModel @Inject constructor(
             }
 
             YEAR -> {
-                walletFilterState.update {
+                transactionFilterState.update {
                     it.copy(
                         selectedYearMonth = it.selectedYearMonth.plusYears(1),
                     )
@@ -248,9 +247,9 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun decrementSelectedDate() {
-        when (walletFilterState.value.dateType) {
+        when (transactionFilterState.value.dateType) {
             MONTH -> {
-                walletFilterState.update {
+                transactionFilterState.update {
                     it.copy(
                         selectedYearMonth = it.selectedYearMonth.minusMonths(1),
                     )
@@ -258,7 +257,7 @@ class WalletViewModel @Inject constructor(
             }
 
             YEAR -> {
-                walletFilterState.update {
+                transactionFilterState.update {
                     it.copy(
                         selectedYearMonth = it.selectedYearMonth.minusYears(1),
                     )
@@ -283,9 +282,8 @@ enum class DateType {
     ALL,
 }
 
-data class WalletFilter(
+data class TransactionFilter(
     val selectedCategories: Set<Category>,
-    val availableCategories: List<Category>,
     val financeType: FinanceType,
     val dateType: DateType,
     val selectedYearMonth: YearMonth,
@@ -296,9 +294,10 @@ sealed interface WalletUiState {
     data object Loading : WalletUiState
 
     data class Success(
-        val walletFilter: WalletFilter,
+        val transactionFilter: TransactionFilter,
         val userWallet: UserWallet,
         val selectedTransactionCategory: TransactionWithCategory?,
         val transactionsCategories: List<TransactionWithCategory>,
+        val availableCategories: List<Category>,
     ) : WalletUiState
 }

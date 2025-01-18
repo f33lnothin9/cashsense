@@ -65,7 +65,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletFilter
+import ru.resodostudios.cashsense.feature.wallet.detail.TransactionFilter
 import java.math.BigDecimal
 import java.time.format.TextStyle
 import java.util.Currency
@@ -73,7 +73,7 @@ import java.util.Locale
 
 @Composable
 internal fun FinanceGraph(
-    walletFilter: WalletFilter,
+    transactionFilter: TransactionFilter,
     graphValues: Map<Int, BigDecimal>,
     currency: Currency,
     modifier: Modifier = Modifier,
@@ -83,7 +83,7 @@ internal fun FinanceGraph(
     val modelProducer = remember { CartesianChartModelProducer() }
 
     val xDateFormatter = CartesianValueFormatter { _, x, _ ->
-        when (walletFilter.dateType) {
+        when (transactionFilter.dateType) {
             YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
                 TextStyle.NARROW_STANDALONE,
                 Locale.getDefault(),

@@ -61,6 +61,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
@@ -308,7 +309,7 @@ private fun FinancePanel(
     val filteredTransactions = walletState.transactionsCategories
         .filterNot { it.transaction.ignored }
         .filter {
-            if (walletState.walletFilter.dateType == ALL) {
+            if (walletState.transactionFilter.dateType == ALL) {
                 it.transaction.timestamp
                     .getZonedDateTime()
                     .isInCurrentMonthAndYear()
@@ -327,13 +328,13 @@ private fun FinancePanel(
     ) {
         SharedTransitionLayout {
             AnimatedContent(
-                targetState = walletState.walletFilter.financeType,
+                targetState = walletState.transactionFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
                 val groupedTransactions = filteredTransactions
                     .groupBy {
                         val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
-                        when (walletState.walletFilter.dateType) {
+                        when (walletState.transactionFilter.dateType) {
                             YEAR -> zonedDateTime.monthValue
                             MONTH -> zonedDateTime.dayOfMonth
                             ALL, WEEK -> zonedDateTime.dayOfWeek.value
@@ -394,7 +395,7 @@ private fun FinancePanel(
                         DetailedFinanceSection(
                             title = expenses,
                             graphValues = graphValues,
-                            walletFilter = walletState.walletFilter,
+                            transactionFilter = walletState.transactionFilter,
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.expenses,
                             onBackClick = {
@@ -404,6 +405,7 @@ private fun FinancePanel(
                             onWalletEvent = onWalletEvent,
                             modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
+                            availableCategories = walletState.availableCategories,
                         )
                     }
 
@@ -418,7 +420,7 @@ private fun FinancePanel(
                         DetailedFinanceSection(
                             title = income,
                             graphValues = graphValues,
-                            walletFilter = walletState.walletFilter,
+                            transactionFilter = walletState.transactionFilter,
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.income_plural,
                             onBackClick = {
@@ -428,6 +430,7 @@ private fun FinancePanel(
                             onWalletEvent = onWalletEvent,
                             modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
+                            availableCategories = walletState.availableCategories,
                         )
                     }
                 }
@@ -493,8 +496,9 @@ private fun SharedTransitionScope.FinanceCard(
 @Composable
 private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
+    availableCategories: List<Category>,
     graphValues: Map<Int, BigDecimal>,
-    walletFilter: WalletFilter,
+    transactionFilter: TransactionFilter,
     currency: Currency,
     @StringRes supportingTextId: Int,
     onBackClick: () -> Unit,
@@ -511,7 +515,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
         ) {
             FilterDateTypeSelectorRow(
-                walletFilter = walletFilter,
+                transactionFilter = transactionFilter,
                 onWalletEvent = onWalletEvent,
                 modifier = Modifier
                     .defaultMinSize(minWidth = 400.dp)
@@ -527,10 +531,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        AnimatedVisibility(walletFilter.dateType != WEEK) {
+        AnimatedVisibility(transactionFilter.dateType != WEEK) {
             FilterBySelectedDateTypeRow(
                 onWalletEvent = onWalletEvent,
-                walletFilter = walletFilter,
+                transactionFilter = transactionFilter,
                 modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
             )
         }
@@ -561,18 +565,18 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
-        AnimatedVisibility(graphValues.isNotEmpty() && walletFilter.dateType != ALL) {
+        AnimatedVisibility(graphValues.isNotEmpty() && transactionFilter.dateType != ALL) {
             FinanceGraph(
-                walletFilter = walletFilter,
+                transactionFilter = transactionFilter,
                 graphValues = graphValues,
                 currency = currency,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             )
         }
-        AnimatedVisibility(walletFilter.dateType != ALL) {
+        AnimatedVisibility(transactionFilter.dateType != ALL) {
             CategorySelectionRow(
-                availableCategories = walletFilter.availableCategories,
-                selectedCategories = walletFilter.selectedCategories,
+                availableCategories = availableCategories,
+                selectedCategories = transactionFilter.selectedCategories,
                 addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
                 removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
                 modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
@@ -583,7 +587,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
 
 @Composable
 private fun FilterDateTypeSelectorRow(
-    walletFilter: WalletFilter,
+    transactionFilter: TransactionFilter,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -600,7 +604,7 @@ private fun FilterDateTypeSelectorRow(
                     count = dateTypes.size,
                 ),
                 onClick = { onWalletEvent(UpdateDateType(DateType.entries[index])) },
-                selected = walletFilter.dateType == DateType.entries[index],
+                selected = transactionFilter.dateType == DateType.entries[index],
             ) {
                 Text(
                     text = label,
@@ -615,7 +619,7 @@ private fun FilterDateTypeSelectorRow(
 @Composable
 private fun FilterBySelectedDateTypeRow(
     onWalletEvent: (WalletEvent) -> Unit,
-    walletFilter: WalletFilter,
+    transactionFilter: TransactionFilter,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -632,18 +636,18 @@ private fun FilterBySelectedDateTypeRow(
             )
         }
 
-        val selectedDate = when (walletFilter.dateType) {
-            YEAR -> walletFilter.selectedYearMonth.year.toString()
+        val selectedDate = when (transactionFilter.dateType) {
+            YEAR -> transactionFilter.selectedYearMonth.year.toString()
             MONTH -> {
-                val monthName = Month(walletFilter.selectedYearMonth.monthValue)
+                val monthName = Month(transactionFilter.selectedYearMonth.monthValue)
                     .getDisplayName(
                         TextStyle.FULL_STANDALONE,
                         Locale.getDefault()
                     )
                     .replaceFirstChar { it.uppercaseChar() }
 
-                if (walletFilter.selectedYearMonth.year != getCurrentYear()) {
-                    "$monthName ${walletFilter.selectedYearMonth.year}"
+                if (transactionFilter.selectedYearMonth.year != getCurrentYear()) {
+                    "$monthName ${transactionFilter.selectedYearMonth.year}"
                 } else {
                     monthName
                 }
@@ -700,8 +704,7 @@ fun FinancePanelDefaultPreview(
                         currentBalance = BigDecimal(100),
                         isPrimary = false,
                     ),
-                    walletFilter = WalletFilter(
-                        availableCategories = categories.toList(),
+                    transactionFilter = TransactionFilter(
                         selectedCategories = categories,
                         financeType = NONE,
                         dateType = YEAR,
@@ -709,6 +712,7 @@ fun FinancePanelDefaultPreview(
                     ),
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
+                    availableCategories = categories.toList(),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
@@ -736,8 +740,7 @@ fun FinancePanelOpenedPreview(
                         currentBalance = BigDecimal(100),
                         isPrimary = false,
                     ),
-                    walletFilter = WalletFilter(
-                        availableCategories = categories,
+                    transactionFilter = TransactionFilter(
                         selectedCategories = categories.take(3).toSet(),
                         financeType = EXPENSES,
                         dateType = YEAR,
@@ -745,6 +748,7 @@ fun FinancePanelOpenedPreview(
                     ),
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
+                    availableCategories = categories.toList(),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
