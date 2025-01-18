@@ -54,17 +54,18 @@ baselineProfile {
 }
 
 dependencies {
-    implementation(projects.feature.home)
-    implementation(projects.feature.category.list)
     implementation(projects.feature.category.dialog)
-    implementation(projects.feature.subscription.list)
+    implementation(projects.feature.category.list)
+    implementation(projects.feature.home)
+    implementation(projects.feature.settings)
     implementation(projects.feature.subscription.dialog)
-    implementation(projects.feature.transaction)
+    implementation(projects.feature.subscription.list)
+    implementation(projects.feature.transaction.dialog)
+    implementation(projects.feature.transaction.overview)
     implementation(projects.feature.transfer)
     implementation(projects.feature.wallet.detail)
     implementation(projects.feature.wallet.dialog)
     implementation(projects.feature.wallet.widget)
-    implementation(projects.feature.settings)
 
     implementation(projects.core.data)
     implementation(projects.core.designsystem)

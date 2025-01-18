@@ -16,8 +16,8 @@ import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.subscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsSection
-import ru.resodostudios.cashsense.feature.transaction.navigation.navigateToTransactionDialog
-import ru.resodostudios.cashsense.feature.transaction.navigation.transactionDialog
+import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.navigateToTransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.transactionDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog

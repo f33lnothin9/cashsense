@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction
+package ru.resodostudios.cashsense.feature.transaction.dialog
 
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Category

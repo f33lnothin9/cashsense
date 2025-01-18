@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction
+package ru.resodostudios.cashsense.feature.transaction.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,14 +65,14 @@ import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.Save
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateAmount
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateCategory
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDate
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateStatus
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionIgnoring
-import ru.resodostudios.cashsense.feature.transaction.TransactionDialogEvent.UpdateTransactionType
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateAmount
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCategory
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateDate
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateDescription
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateStatus
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionIgnoring
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
