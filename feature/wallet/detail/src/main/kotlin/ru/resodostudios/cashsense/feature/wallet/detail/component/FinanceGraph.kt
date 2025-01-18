@@ -74,7 +74,7 @@ import java.util.Locale
 @Composable
 internal fun FinanceGraph(
     transactionFilter: TransactionFilter,
-    graphValues: Map<Int, BigDecimal>,
+    graphData: Map<Int, BigDecimal>,
     currency: Currency,
     modifier: Modifier = Modifier,
 ) {
@@ -121,10 +121,10 @@ internal fun FinanceGraph(
         }
     }
 
-    LaunchedEffect(graphValues) {
+    LaunchedEffect(graphData) {
         modelProducer.runTransaction {
-            if (graphValues.isEmpty() || graphValues.keys.size < 2) return@runTransaction
-            lineSeries { series(graphValues.keys, graphValues.values) }
+            if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
+            lineSeries { series(graphData.keys, graphData.values) }
         }
     }
     ProvideVicoTheme(rememberM3VicoTheme()) {

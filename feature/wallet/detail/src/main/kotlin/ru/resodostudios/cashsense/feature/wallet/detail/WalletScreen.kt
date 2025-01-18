@@ -70,8 +70,6 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
-import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
 import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
@@ -86,14 +84,12 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSel
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import ru.resodostudios.cashsense.feature.wallet.detail.component.CategorySelectionRow
 import ru.resodostudios.cashsense.feature.wallet.detail.component.FinanceGraph
 import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionBottomSheet
 import java.math.BigDecimal
+import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
-import java.math.MathContext
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Currency
@@ -147,8 +143,8 @@ private fun WalletScreen(
     onDeleteTransaction: () -> Unit = {},
 ) {
     when (walletState) {
-        Loading -> LoadingState(modifier.fillMaxSize())
-        is Success -> {
+        WalletUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        is WalletUiState.Success -> {
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -302,26 +298,10 @@ private fun PrimaryIconButton(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun FinancePanel(
-    walletState: Success,
+    walletState: WalletUiState.Success,
     onWalletEvent: (WalletEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val filteredTransactions = walletState.transactionsCategories
-        .filterNot { it.transaction.ignored }
-        .filter {
-            if (walletState.transactionFilter.dateType == ALL) {
-                it.transaction.timestamp
-                    .getZonedDateTime()
-                    .isInCurrentMonthAndYear()
-            } else true
-        }
-    val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
-        .let { (expensesList, incomeList) ->
-            val expensesSum = expensesList.sumOf { it.transaction.amount.abs() }
-            val incomeSum = incomeList.sumOf { it.transaction.amount }
-            Pair(expensesSum, incomeSum)
-        }
-
     Column(
         modifier = modifier.animateContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -331,15 +311,6 @@ private fun FinancePanel(
                 targetState = walletState.transactionFilter.financeType,
                 label = "finance_panel",
             ) { financeType ->
-                val groupedTransactions = filteredTransactions
-                    .groupBy {
-                        val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
-                        when (walletState.transactionFilter.dateType) {
-                            YEAR -> zonedDateTime.monthValue
-                            MONTH -> zonedDateTime.dayOfMonth
-                            ALL, WEEK -> zonedDateTime.dayOfWeek.value
-                        }
-                    }
                 when (financeType) {
                     NONE -> {
                         Row(
@@ -348,17 +319,17 @@ private fun FinancePanel(
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(expenses, filteredTransactions),
+                                targetValue = walletState.financePanelState.expensesProgress,
                                 label = "expenses_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             val incomeProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(income, filteredTransactions),
+                                targetValue = walletState.financePanelState.incomeProgress,
                                 label = "income_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             FinanceCard(
-                                title = expenses,
+                                title = walletState.financePanelState.expenses,
                                 currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.expenses,
                                 indicatorProgress = expensesProgress,
@@ -370,7 +341,7 @@ private fun FinancePanel(
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
                             FinanceCard(
-                                title = income,
+                                title = walletState.financePanelState.income,
                                 currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = incomeProgress,
@@ -385,16 +356,9 @@ private fun FinancePanel(
                     }
 
                     EXPENSES -> {
-                        val graphValues = groupedTransactions
-                            .map { transactionsCategories ->
-                                transactionsCategories.key to transactionsCategories.value
-                                    .map { transactionCategory -> transactionCategory.transaction.amount }
-                                    .sumOf { it.abs() }
-                            }
-                            .associate { it.first to it.second }
                         DetailedFinanceSection(
-                            title = expenses,
-                            graphValues = graphValues,
+                            title = walletState.financePanelState.expenses,
+                            graphData = walletState.financePanelState.graphData,
                             transactionFilter = walletState.transactionFilter,
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.expenses,
@@ -410,16 +374,9 @@ private fun FinancePanel(
                     }
 
                     INCOME -> {
-                        val graphValues = groupedTransactions
-                            .map { transactionsCategories ->
-                                transactionsCategories.key to transactionsCategories.value
-                                    .map { transactionCategory -> transactionCategory.transaction.amount }
-                                    .sumOf { it }
-                            }
-                            .associate { it.first to it.second }
                         DetailedFinanceSection(
-                            title = income,
-                            graphValues = graphValues,
+                            title = walletState.financePanelState.income,
+                            graphData = walletState.financePanelState.graphData,
                             transactionFilter = walletState.transactionFilter,
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.income_plural,
@@ -497,7 +454,7 @@ private fun SharedTransitionScope.FinanceCard(
 private fun SharedTransitionScope.DetailedFinanceSection(
     title: BigDecimal,
     availableCategories: List<Category>,
-    graphValues: Map<Int, BigDecimal>,
+    graphData: Map<Int, BigDecimal>,
     transactionFilter: TransactionFilter,
     currency: Currency,
     @StringRes supportingTextId: Int,
@@ -565,10 +522,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
-        AnimatedVisibility(graphValues.isNotEmpty() && transactionFilter.dateType != ALL) {
+        AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.dateType != ALL) {
             FinanceGraph(
                 transactionFilter = transactionFilter,
-                graphValues = graphValues,
+                graphData = graphData,
                 currency = currency,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             )
@@ -673,18 +630,6 @@ private fun FilterBySelectedDateTypeRow(
     }
 }
 
-private fun getFinanceProgress(
-    value: BigDecimal,
-    transactions: List<TransactionWithCategory>,
-): Float {
-    if (transactions.isEmpty()) return 0f
-
-    val totalAmount = transactions.sumOf { it.transaction.amount.abs() }
-    if (totalAmount.compareTo(ZERO) == 0) return 0f
-
-    return value.divide(totalAmount, MathContext.DECIMAL32).toFloat()
-}
-
 @Preview
 @Composable
 fun FinancePanelDefaultPreview(
@@ -695,7 +640,7 @@ fun FinancePanelDefaultPreview(
         Surface {
             val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
-                walletState = Success(
+                walletState = WalletUiState.Success(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
@@ -713,6 +658,13 @@ fun FinancePanelDefaultPreview(
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
                     availableCategories = categories.toList(),
+                    financePanelState = FinancePanelState(
+                        income = BigDecimal(200),
+                        incomeProgress = 0.2f,
+                        expenses = BigDecimal(800),
+                        expensesProgress = 0.8f,
+                        graphData = emptyMap(),
+                    ),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
@@ -731,7 +683,7 @@ fun FinancePanelOpenedPreview(
         Surface {
             val categories = transactionsCategories.mapNotNull { it.category }
             FinancePanel(
-                walletState = Success(
+                walletState = WalletUiState.Success(
                     userWallet = UserWallet(
                         id = "1",
                         title = "Debit",
@@ -749,6 +701,13 @@ fun FinancePanelOpenedPreview(
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
                     availableCategories = categories.toList(),
+                    financePanelState = FinancePanelState(
+                        income = ZERO,
+                        incomeProgress = 0f,
+                        expenses = ZERO,
+                        expensesProgress = 0f,
+                        graphData = mapOf(1 to ONE, 2 to ONE, 3 to ONE),
+                    ),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
