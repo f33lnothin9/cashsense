@@ -67,9 +67,7 @@ class WalletDialogViewModel @Inject constructor(
             val walletTransactions = walletsRepository.getWalletWithTransactionsAndCategories(id)
                 .first()
             val wallet = walletTransactions.wallet
-            val isCurrencyEditable = walletTransactions.transactionsWithCategories
-                .map { it.transaction }
-                .all { it.transferId == null }
+            val isCurrencyEditable = walletTransactions.transactionsWithCategories.isEmpty()
             _walletDialogState.update {
                 it.copy(
                     title = wallet.title,
