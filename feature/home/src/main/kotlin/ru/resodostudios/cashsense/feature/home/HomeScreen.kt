@@ -63,6 +63,7 @@ fun HomeScreen(
     shouldDisplayUndoWallet: Boolean,
     undoWalletRemoval: () -> Unit,
     clearUndoState: () -> Unit,
+    onTotalBalanceClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
@@ -84,6 +85,7 @@ fun HomeScreen(
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
         undoWalletRemoval = undoWalletRemoval,
         clearUndoState = clearUndoState,
+        onTotalBalanceClick = onTotalBalanceClick,
     )
 }
 
@@ -101,6 +103,7 @@ internal fun HomeScreen(
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
+    onTotalBalanceClick: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
     val undoText = stringResource(localesR.string.undo)
@@ -136,6 +139,7 @@ internal fun HomeScreen(
             ) {
                 totalBalanceSection(
                     totalBalanceState = totalBalanceState,
+                    onTotalBalanceClick = onTotalBalanceClick,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -187,6 +191,7 @@ private fun LazyStaggeredGridScope.wallets(
 
 private fun LazyStaggeredGridScope.totalBalanceSection(
     totalBalanceState: TotalBalanceUiState,
+    onTotalBalanceClick: () -> Unit = {},
 ) {
     when (totalBalanceState) {
         TotalBalanceUiState.NotShown -> Unit
@@ -198,6 +203,7 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
                 TotalBalanceCard(
                     showBadIndicator = shouldShowBadIndicator,
                     modifier = Modifier.animateItem(),
+                    onClick = onTotalBalanceClick,
                 ) {
                     if (totalBalanceState is TotalBalanceUiState.Shown) {
                         val totalBalance = totalBalanceState.amount
@@ -229,6 +235,7 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     headlineContent: @Composable () -> Unit,
 ) {
     val color = if (showBadIndicator) {
@@ -256,6 +263,7 @@ private fun TotalBalanceCard(
         } else {
             modifier
         },
+        onClick = onClick,
     ) {
         CsListItem(
             leadingContent = {
