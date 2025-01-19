@@ -90,6 +90,7 @@ import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionBot
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
+import java.math.MathContext
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Currency
@@ -319,17 +320,23 @@ private fun FinancePanel(
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
                             val expensesProgress by animateFloatAsState(
-                                targetValue = walletState.financePanelState.expensesProgress,
+                                targetValue = getFinanceProgress(
+                                    walletState.expenses,
+                                    walletState.transactionsCategories,
+                                ),
                                 label = "expenses_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             val incomeProgress by animateFloatAsState(
-                                targetValue = walletState.financePanelState.incomeProgress,
+                                targetValue = getFinanceProgress(
+                                    walletState.income,
+                                    walletState.transactionsCategories,
+                                ),
                                 label = "income_progress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             FinanceCard(
-                                title = walletState.financePanelState.expenses,
+                                title = walletState.expenses,
                                 currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.expenses,
                                 indicatorProgress = expensesProgress,
@@ -341,7 +348,7 @@ private fun FinancePanel(
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
                             FinanceCard(
-                                title = walletState.financePanelState.income,
+                                title = walletState.income,
                                 currency = walletState.userWallet.currency,
                                 supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = incomeProgress,
@@ -357,8 +364,8 @@ private fun FinancePanel(
 
                     EXPENSES -> {
                         DetailedFinanceSection(
-                            title = walletState.financePanelState.expenses,
-                            graphData = walletState.financePanelState.graphData,
+                            title = walletState.expenses,
+                            graphData = walletState.graphData,
                             transactionFilter = walletState.transactionFilter,
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.expenses,
@@ -375,8 +382,8 @@ private fun FinancePanel(
 
                     INCOME -> {
                         DetailedFinanceSection(
-                            title = walletState.financePanelState.income,
-                            graphData = walletState.financePanelState.graphData,
+                            title = walletState.income,
+                            graphData = walletState.graphData,
                             transactionFilter = walletState.transactionFilter,
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.income_plural,
@@ -630,6 +637,18 @@ private fun FilterBySelectedDateTypeRow(
     }
 }
 
+private fun getFinanceProgress(
+    value: BigDecimal,
+    transactions: List<TransactionWithCategory>,
+): Float {
+    if (transactions.isEmpty()) return 0f
+
+    val totalAmount = transactions.sumOf { it.transaction.amount.abs() }
+    if (totalAmount.compareTo(ZERO) == 0) return 0f
+
+    return value.divide(totalAmount, MathContext.DECIMAL32).toFloat()
+}
+
 @Preview
 @Composable
 fun FinancePanelDefaultPreview(
@@ -658,13 +677,9 @@ fun FinancePanelDefaultPreview(
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
                     availableCategories = categories.toList(),
-                    financePanelState = FinancePanelState(
-                        income = BigDecimal(200),
-                        incomeProgress = 0.2f,
-                        expenses = BigDecimal(800),
-                        expensesProgress = 0.8f,
-                        graphData = emptyMap(),
-                    ),
+                    income = BigDecimal(200),
+                    expenses = BigDecimal(800),
+                    graphData = emptyMap(),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
@@ -701,13 +716,9 @@ fun FinancePanelOpenedPreview(
                     selectedTransactionCategory = null,
                     transactionsCategories = transactionsCategories,
                     availableCategories = categories.toList(),
-                    financePanelState = FinancePanelState(
-                        income = ZERO,
-                        incomeProgress = 0f,
-                        expenses = ZERO,
-                        expensesProgress = 0f,
-                        graphData = mapOf(1 to ONE, 2 to ONE, 3 to ONE),
-                    ),
+                    income = ZERO,
+                    expenses = ZERO,
+                    graphData = mapOf(1 to ONE, 2 to ONE, 3 to ONE),
                 ),
                 onWalletEvent = {},
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),

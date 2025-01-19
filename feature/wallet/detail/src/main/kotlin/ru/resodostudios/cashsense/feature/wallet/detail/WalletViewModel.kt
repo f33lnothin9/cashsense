@@ -41,7 +41,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanc
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
-import java.math.MathContext
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 import javax.inject.Inject
@@ -74,9 +73,7 @@ class WalletViewModel @Inject constructor(
     ) { extendedUserWallet, transactionFilter, selectedTransactionId ->
         val financeTypeTransactions = when (transactionFilter.financeType) {
             NONE -> extendedUserWallet.transactionsWithCategories
-                .also {
-                    transactionFilterState.update { it.copy(selectedCategories = emptySet()) }
-                }
+                .also { transactionFilterState.update { it.copy(selectedCategories = emptySet()) } }
 
             EXPENSES -> extendedUserWallet.transactionsWithCategories
                 .filter { it.transaction.amount < ZERO }
@@ -166,13 +163,9 @@ class WalletViewModel @Inject constructor(
                 dateType = transactionFilter.dateType,
                 selectedYearMonth = transactionFilter.selectedYearMonth,
             ),
-            financePanelState = FinancePanelState(
-                income = income,
-                incomeProgress = getFinanceProgress(income, filteredTransactions),
-                expenses = expenses,
-                expensesProgress = getFinanceProgress(expenses, filteredTransactions),
-                graphData = graphData,
-            ),
+            income = income,
+            expenses = expenses,
+            graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
                 filteredByCategories.find { it.transaction.id == id }
@@ -314,18 +307,6 @@ class WalletViewModel @Inject constructor(
             ALL, WEEK -> {}
         }
     }
-
-    private fun getFinanceProgress(
-        value: BigDecimal,
-        transactions: List<TransactionWithCategory>,
-    ): Float {
-        if (transactions.isEmpty()) return 0f
-
-        val totalAmount = transactions.sumOf { it.transaction.amount.abs() }
-        if (totalAmount.compareTo(ZERO) == 0) return 0f
-
-        return value.divide(totalAmount, MathContext.DECIMAL32).toFloat()
-    }
 }
 
 enum class FinanceType {
@@ -348,24 +329,18 @@ data class TransactionFilter(
     val selectedYearMonth: YearMonth,
 )
 
-data class FinancePanelState(
-    val expenses: BigDecimal,
-    val expensesProgress: Float,
-    val income: BigDecimal,
-    val incomeProgress: Float,
-    val graphData: Map<Int, BigDecimal>,
-)
-
 sealed interface WalletUiState {
 
     data object Loading : WalletUiState
 
     data class Success(
         val transactionFilter: TransactionFilter,
-        val financePanelState: FinancePanelState,
         val userWallet: UserWallet,
         val selectedTransactionCategory: TransactionWithCategory?,
         val transactionsCategories: List<TransactionWithCategory>,
         val availableCategories: List<Category>,
+        val expenses: BigDecimal,
+        val income: BigDecimal,
+        val graphData: Map<Int, BigDecimal>,
     ) : WalletUiState
 }
