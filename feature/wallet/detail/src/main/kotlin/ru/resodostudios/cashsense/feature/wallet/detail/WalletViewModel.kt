@@ -18,6 +18,16 @@ import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.DateType
+import ru.resodostudios.cashsense.core.model.data.DateType.ALL
+import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
+import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
+import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.data.FinanceType
+import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
+import ru.resodostudios.cashsense.core.model.data.FinanceType.INCOME
+import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
@@ -25,13 +35,6 @@ import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
@@ -58,7 +61,7 @@ class WalletViewModel @Inject constructor(
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
             selectedCategories = emptySet(),
-            financeType = NONE,
+            financeType = NOT_SET,
             dateType = ALL,
             selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
         )
@@ -72,7 +75,7 @@ class WalletViewModel @Inject constructor(
         selectedTransactionIdState,
     ) { extendedUserWallet, transactionFilter, selectedTransactionId ->
         val financeTypeTransactions = when (transactionFilter.financeType) {
-            NONE -> extendedUserWallet.transactionsWithCategories
+            NOT_SET -> extendedUserWallet.transactionsWithCategories
                 .also { transactionFilterState.update { it.copy(selectedCategories = emptySet()) } }
 
             EXPENSES -> extendedUserWallet.transactionsWithCategories
@@ -308,26 +311,6 @@ class WalletViewModel @Inject constructor(
         }
     }
 }
-
-enum class FinanceType {
-    NONE,
-    EXPENSES,
-    INCOME,
-}
-
-enum class DateType {
-    WEEK,
-    MONTH,
-    YEAR,
-    ALL,
-}
-
-data class TransactionFilter(
-    val selectedCategories: Set<Category>,
-    val financeType: FinanceType,
-    val dateType: DateType,
-    val selectedYearMonth: YearMonth,
-)
 
 sealed interface WalletUiState {
 

@@ -62,6 +62,15 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.DateType
+import ru.resodostudios.cashsense.core.model.data.DateType.ALL
+import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
+import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
+import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
+import ru.resodostudios.cashsense.core.model.data.FinanceType.INCOME
+import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
@@ -71,13 +80,6 @@ import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.EXPENSES
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.INCOME
-import ru.resodostudios.cashsense.feature.wallet.detail.FinanceType.NONE
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
@@ -313,7 +315,7 @@ private fun FinancePanel(
                 label = "finance_panel",
             ) { financeType ->
                 when (financeType) {
-                    NONE -> {
+                    NOT_SET -> {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -370,7 +372,7 @@ private fun FinancePanel(
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.expenses,
                             onBackClick = {
-                                onWalletEvent(UpdateFinanceType(NONE))
+                                onWalletEvent(UpdateFinanceType(NOT_SET))
                                 onWalletEvent(UpdateDateType(ALL))
                             },
                             onWalletEvent = onWalletEvent,
@@ -388,7 +390,7 @@ private fun FinancePanel(
                             currency = walletState.userWallet.currency,
                             supportingTextId = localesR.string.income_plural,
                             onBackClick = {
-                                onWalletEvent(UpdateFinanceType(NONE))
+                                onWalletEvent(UpdateFinanceType(NOT_SET))
                                 onWalletEvent(UpdateDateType(ALL))
                             },
                             onWalletEvent = onWalletEvent,
@@ -670,7 +672,7 @@ fun FinancePanelDefaultPreview(
                     ),
                     transactionFilter = TransactionFilter(
                         selectedCategories = categories,
-                        financeType = NONE,
+                        financeType = NOT_SET,
                         dateType = YEAR,
                         selectedYearMonth = YearMonth.of(2025, 1),
                     ),

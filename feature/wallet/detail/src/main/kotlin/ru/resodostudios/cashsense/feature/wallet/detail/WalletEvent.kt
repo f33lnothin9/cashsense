@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.DateType
+import ru.resodostudios.cashsense.core.model.data.FinanceType
 
 sealed interface WalletEvent {
 

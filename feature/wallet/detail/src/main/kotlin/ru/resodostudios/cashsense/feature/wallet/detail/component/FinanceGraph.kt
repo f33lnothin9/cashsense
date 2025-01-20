@@ -60,12 +60,12 @@ import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.locales.R
+import ru.resodostudios.cashsense.core.model.data.DateType.ALL
+import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
+import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
+import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.ALL
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.MONTH
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.WEEK
-import ru.resodostudios.cashsense.feature.wallet.detail.DateType.YEAR
-import ru.resodostudios.cashsense.feature.wallet.detail.TransactionFilter
 import java.math.BigDecimal
 import java.time.format.TextStyle
 import java.util.Currency
