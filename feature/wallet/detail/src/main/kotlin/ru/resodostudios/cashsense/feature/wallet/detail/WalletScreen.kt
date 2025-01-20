@@ -206,7 +206,7 @@ private fun WalletScreen(
                     )
                 }
                 transactions(
-                    walletState = walletState,
+                    transactionsCategories = walletState.transactionsCategories,
                     onTransactionClick = {
                         updateTransactionId(it)
                         showTransactionBottomSheet = true
