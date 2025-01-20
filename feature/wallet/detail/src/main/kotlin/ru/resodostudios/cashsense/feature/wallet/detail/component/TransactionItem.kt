@@ -114,6 +114,7 @@ fun TransactionItemPreview() {
                         status = PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -144,6 +145,7 @@ fun TransactionItemIgnoredPreview() {
                         status = PENDING,
                         ignored = true,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",

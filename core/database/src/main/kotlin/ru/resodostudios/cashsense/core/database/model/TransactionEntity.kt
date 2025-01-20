@@ -8,6 +8,7 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
+import java.util.Currency
 import kotlin.uuid.Uuid
 
 @Entity(
@@ -46,4 +47,5 @@ fun TransactionEntity.asExternalModel() = Transaction(
     status = status,
     ignored = ignored,
     transferId = transferId,
+    currency = Currency.getInstance("USD"),
 )

@@ -7,6 +7,7 @@ import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 
 /**
  * This [PreviewParameterProvider](https://developer.android.com/reference/kotlin/androidx/compose/ui/tooling/preview/PreviewParameterProvider)
@@ -27,6 +28,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -44,6 +46,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "2",
@@ -61,6 +64,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "10",
@@ -78,6 +82,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "10",
@@ -95,6 +100,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -112,6 +118,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "8",
@@ -129,6 +136,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "8",
@@ -146,6 +154,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -163,6 +172,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "11",
@@ -180,6 +190,7 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         status = StatusType.PENDING,
                         ignored = false,
                         transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "11",

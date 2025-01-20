@@ -242,4 +242,5 @@ fun TransactionDialogUiState.asTransaction(walletId: String) =
         status = status,
         ignored = ignored,
         transferId = null,
+        currency = getUsdCurrency(),
     )
