@@ -233,10 +233,7 @@ class WalletViewModel @Inject constructor(
     private fun addToSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = buildSet {
-                    addAll(it.selectedCategories)
-                    add(category)
-                },
+                selectedCategories = it.selectedCategories.plus(category),
             )
         }
     }
@@ -244,10 +241,7 @@ class WalletViewModel @Inject constructor(
     private fun removeFromSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = buildSet {
-                    addAll(it.selectedCategories)
-                    remove(category)
-                },
+                selectedCategories = it.selectedCategories.minus(category),
             )
         }
     }
