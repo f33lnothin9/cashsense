@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.Keep
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -52,12 +51,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
 
-// TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
-@Keep
 @Serializable
 internal object WalletPlaceholderRoute
 
-@Keep
 @Serializable
 internal object DetailPaneNavHostRoute
 
