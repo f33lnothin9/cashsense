@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
+import ru.resodostudios.cashsense.feature.transaction.overview.TransactionOverviewScreen
 
 @Serializable
 object TransactionOverviewRoute
@@ -22,6 +23,9 @@ fun NavGraphBuilder.transactionOverviewScreen(
     onBackClick: () -> Unit,
 ) {
     composable<TransactionOverviewRoute> {
-
+        TransactionOverviewScreen(
+            showNavigationIcon = showNavigationIcon,
+            onBackClick = onBackClick,
+        )
     }
 }
