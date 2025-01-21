@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail.component
+package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -27,7 +27,6 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.util.Currency

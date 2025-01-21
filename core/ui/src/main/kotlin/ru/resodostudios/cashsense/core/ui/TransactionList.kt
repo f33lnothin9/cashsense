@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail
+package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +14,13 @@ import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.util.formatDate
-import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionItem
 import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalFoundationApi::class)
-internal fun LazyListScope.transactions(
+fun LazyListScope.transactions(
     transactionsCategories: List<TransactionWithCategory>,
     onTransactionClick: (String) -> Unit,
 ) {
