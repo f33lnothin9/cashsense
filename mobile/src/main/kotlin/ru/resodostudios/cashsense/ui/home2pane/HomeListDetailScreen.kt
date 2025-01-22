@@ -212,7 +212,7 @@ internal fun HomeListDetailScreen(
                         navController = nestedNavController,
                         startDestination = nestedNavHostStartRoute,
                         route = DetailPaneNavHostRoute::class,
-                        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
+                        enterTransition = { slideInVertically { it / 24 } + fadeIn() },
                         exitTransition = { fadeOut(snap()) },
                     ) {
                         transactionOverviewScreen(
