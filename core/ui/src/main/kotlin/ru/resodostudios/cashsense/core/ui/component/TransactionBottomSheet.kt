@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail.component
+package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -47,7 +47,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -57,7 +56,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun TransactionBottomSheet(
+fun TransactionBottomSheet(
     transactionCategory: TransactionWithCategory,
     currency: Currency,
     onDismiss: () -> Unit,

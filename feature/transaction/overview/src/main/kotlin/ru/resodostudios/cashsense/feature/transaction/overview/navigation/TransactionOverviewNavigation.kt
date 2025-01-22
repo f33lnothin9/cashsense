@@ -21,11 +21,13 @@ fun NavController.navigateToTransactionOverview(
 fun NavGraphBuilder.transactionOverviewScreen(
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
+    onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
 ) {
     composable<TransactionOverviewRoute> {
         TransactionOverviewScreen(
             showNavigationIcon = showNavigationIcon,
             onBackClick = onBackClick,
+            onTransactionClick = onTransactionClick,
         )
     }
 }

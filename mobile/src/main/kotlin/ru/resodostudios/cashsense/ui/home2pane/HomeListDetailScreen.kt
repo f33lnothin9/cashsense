@@ -218,6 +218,7 @@ internal fun HomeListDetailScreen(
                         transactionOverviewScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onBackClick = listDetailNavigator::navigateBack,
+                            onTransactionClick = navigateToTransactionDialog,
                         )
                         walletScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),

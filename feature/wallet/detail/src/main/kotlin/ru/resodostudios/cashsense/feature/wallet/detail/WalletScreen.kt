@@ -76,6 +76,7 @@ import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -89,7 +90,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateTy
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.component.CategorySelectionRow
 import ru.resodostudios.cashsense.feature.wallet.detail.component.FinanceGraph
-import ru.resodostudios.cashsense.feature.wallet.detail.component.TransactionBottomSheet
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
