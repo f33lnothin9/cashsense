@@ -9,7 +9,12 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -314,6 +319,12 @@ private fun FinancePanel(
             AnimatedContent(
                 targetState = walletState.transactionFilter.financeType,
                 label = "finance_panel",
+                transitionSpec = {
+                    (fadeIn(animationSpec = tween(220, delayMillis = 90)) + scaleIn(
+                        initialScale = 0.92f,
+                        animationSpec = tween(220, delayMillis = 90),
+                    )) togetherWith fadeOut(snap())
+                },
             ) { financeType ->
                 when (financeType) {
                     NOT_SET -> {
@@ -532,7 +543,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 ),
             style = MaterialTheme.typography.labelLarge,
         )
-        AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.dateType != ALL) {
+        AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
             FinanceGraph(
                 transactionFilter = transactionFilter,
                 graphData = graphData,
@@ -540,7 +551,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             )
         }
-        AnimatedVisibility(transactionFilter.dateType != ALL) {
+        AnimatedVisibility(transactionFilter.financeType != NOT_SET) {
             CategorySelectionRow(
                 availableCategories = availableCategories,
                 selectedCategories = transactionFilter.selectedCategories,
