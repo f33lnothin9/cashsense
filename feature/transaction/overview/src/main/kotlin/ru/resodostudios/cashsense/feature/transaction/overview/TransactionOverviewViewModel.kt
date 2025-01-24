@@ -9,9 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
@@ -21,6 +25,7 @@ import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
 import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.data.FilterableTransactions
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.core.model.data.FinanceType.INCOME
@@ -36,12 +41,14 @@ import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
 import java.time.YearMonth
 import java.time.temporal.WeekFields
+import java.util.Currency
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionOverviewViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
-    private val userDataRepository: UserDataRepository,
+    private val currencyConversionRepository: CurrencyConversionRepository,
+    userDataRepository: UserDataRepository,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
 ) : ViewModel() {
 
@@ -61,109 +68,17 @@ class TransactionOverviewViewModel @Inject constructor(
         transactionFilterState,
         selectedTransactionIdState,
     ) { extendedUserWallets, transactionFilter, selectedTransactionId ->
-        val allTransactions = extendedUserWallets
+        val transactions = extendedUserWallets
             .flatMap { it.transactionsWithCategories }
             .sortedByDescending { it.transaction.timestamp }
-        val financeTypeTransactions = when (transactionFilter.financeType) {
-            NOT_SET -> allTransactions
-                .also { transactionFilterState.update { it.copy(selectedCategories = emptySet()) } }
-
-            EXPENSES -> allTransactions
-                .filter { it.transaction.amount < ZERO }
-
-            INCOME -> allTransactions
-                .filter { it.transaction.amount > ZERO }
-        }
-
-        val dateTypeTransactions = when (transactionFilter.dateType) {
-            ALL -> financeTypeTransactions
-            WEEK -> financeTypeTransactions.filter {
-                val weekOfTransaction = it.transaction.timestamp
-                    .getZonedDateTime()
-                    .get(WeekFields.ISO.weekOfWeekBasedYear())
-                weekOfTransaction == getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
-            }
-
-            MONTH -> financeTypeTransactions.filter {
-                it.transaction.timestamp.getZonedDateTime().year == transactionFilter.selectedYearMonth.year &&
-                        it.transaction.timestamp.getZonedDateTime().monthValue == transactionFilter.selectedYearMonth.monthValue
-            }
-
-            YEAR -> financeTypeTransactions.filter {
-                it.transaction.timestamp.getZonedDateTime().year == transactionFilter.selectedYearMonth.year
-            }
-        }
-
-        val availableCategories = dateTypeTransactions
-            .mapNotNull { it.category }
-            .distinct()
-
-        val filteredByCategories = if (transactionFilter.selectedCategories.isNotEmpty()) {
-            dateTypeTransactions
-                .filter { transactionFilter.selectedCategories.contains(it.category) }
-                .also { transactionsCategories ->
-                    if (transactionsCategories.isEmpty()) {
-                        transactionFilterState.update {
-                            it.copy(selectedCategories = emptySet())
-                        }
-                    }
-                }
-        } else dateTypeTransactions
-
-        val filteredTransactions = filteredByCategories
-            .filterNot { it.transaction.ignored }
-            .filter {
-                if (transactionFilter.dateType == ALL) {
-                    it.transaction.timestamp
-                        .getZonedDateTime()
-                        .isInCurrentMonthAndYear()
-                } else true
-            }
-        val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
-            .let { (expensesList, incomeList) ->
-                val expensesSum = expensesList.sumOf { it.transaction.amount.abs() }
-                val incomeSum = incomeList.sumOf { it.transaction.amount }
-                Pair(expensesSum, incomeSum)
-            }
-        val groupedTransactions = filteredTransactions
-            .groupBy {
-                val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
-                when (transactionFilter.dateType) {
-                    YEAR -> zonedDateTime.monthValue
-                    MONTH -> zonedDateTime.dayOfMonth
-                    ALL, WEEK -> zonedDateTime.dayOfWeek.value
-                }
-            }
-        val graphData = groupedTransactions
-            .map { transactionsCategories ->
-                transactionsCategories.key to transactionsCategories.value
-                    .map { transactionCategory -> transactionCategory.transaction.amount }
-                    .run {
-                        sumOf {
-                            when (transactionFilter.financeType) {
-                                EXPENSES -> it.abs()
-                                else -> it
-                            }
-                        }
-                    }
-            }
-            .associate { it.first to it.second }
+            .applyTransactionFilter(transactionFilter)
+            .transactions
 
         TransactionOverviewUiState.Success(
-            transactionFilter = TransactionFilter(
-                selectedCategories = transactionFilter.selectedCategories,
-                financeType = transactionFilter.financeType,
-                dateType = transactionFilter.dateType,
-                selectedYearMonth = transactionFilter.selectedYearMonth,
-            ),
-            income = income,
-            expenses = expenses,
-            graphData = graphData,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
-                filteredByCategories.find { it.transaction.id == id }
+                transactions.find { it.transaction.id == id }
             },
-            transactionsCategories = filteredByCategories,
-            availableCategories = availableCategories,
+            transactionsCategories = transactions,
         )
     }
         .catch { TransactionOverviewUiState.Loading }
@@ -222,6 +137,9 @@ class TransactionOverviewViewModel @Inject constructor(
         transactionFilterState.update {
             it.copy(financeType = financeType)
         }
+        if (financeType == NOT_SET) {
+            transactionFilterState.update { it.copy(selectedCategories = emptySet()) }
+        }
     }
 
     fun updateDateType(dateType: DateType) {
@@ -261,12 +179,68 @@ sealed interface TransactionOverviewUiState {
     data object Loading : TransactionOverviewUiState
 
     data class Success(
-        val transactionFilter: TransactionFilter,
         val selectedTransactionCategory: TransactionWithCategory?,
         val transactionsCategories: List<TransactionWithCategory>,
+    ) : TransactionOverviewUiState
+}
+
+sealed interface FinancePanelUiState {
+
+    data object Loading : FinancePanelUiState
+
+    data object NotShown : FinancePanelUiState
+
+    data class Shown(
+        val transactionFilter: TransactionFilter,
         val availableCategories: List<Category>,
+        val userCurrency: Currency,
         val expenses: BigDecimal,
         val income: BigDecimal,
         val graphData: Map<Int, BigDecimal>,
-    ) : TransactionOverviewUiState
+    ) : FinancePanelUiState
+}
+
+private fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: TransactionFilter): FilterableTransactions {
+    val filteredTransactions = filter { transactionCategory ->
+        val transaction = transactionCategory.transaction
+
+        val financeTypeMatch = when (transactionFilter.financeType) {
+            NOT_SET -> true
+            EXPENSES -> transaction.amount < ZERO
+            INCOME -> transaction.amount > ZERO
+        }
+
+        val dateTypeMatch = when (transactionFilter.dateType) {
+            ALL -> true
+            WEEK -> {
+                val weekOfTransaction = transaction.timestamp.getZonedDateTime()
+                    .get(WeekFields.ISO.weekOfWeekBasedYear())
+                weekOfTransaction == getCurrentZonedDateTime().get(WeekFields.ISO.weekOfWeekBasedYear())
+            }
+
+            MONTH -> {
+                val transactionZonedDateTime = transaction.timestamp.getZonedDateTime()
+                transactionZonedDateTime.year == transactionFilter.selectedYearMonth.year &&
+                        transactionZonedDateTime.monthValue == transactionFilter.selectedYearMonth.monthValue
+            }
+
+            YEAR -> transaction.timestamp.getZonedDateTime().year == transactionFilter.selectedYearMonth.year
+        }
+
+        financeTypeMatch && dateTypeMatch
+    }
+
+    val availableCategories = filteredTransactions
+        .mapNotNull { it.category }
+        .distinct()
+
+    val filteredByCategories = if (transactionFilter.selectedCategories.isNotEmpty()) {
+        filteredTransactions
+            .filter { transactionFilter.selectedCategories.contains(it.category) }
+    } else filteredTransactions
+
+    return FilterableTransactions(
+        transactions = filteredByCategories,
+        availableCategories = availableCategories,
+    )
 }
