@@ -202,7 +202,14 @@ private fun LazyListScope.header(
     onBackClick: () -> Unit,
 ) {
     when (financePanelUiState) {
-        FinancePanelUiState.Loading -> item { LoadingState(Modifier.fillMaxWidth()) }
+        FinancePanelUiState.Loading -> item {
+            LoadingState(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+            )
+        }
+
         FinancePanelUiState.NotShown -> Unit
         is FinancePanelUiState.Shown -> {
             if (shouldShowTopBar) {
