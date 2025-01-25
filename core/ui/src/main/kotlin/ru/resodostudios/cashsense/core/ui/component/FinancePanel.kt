@@ -49,7 +49,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.locales.R
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
@@ -73,6 +72,7 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Currency
 import java.util.Locale
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -127,7 +127,7 @@ fun FinancePanel(
                             FinanceCard(
                                 title = expenses,
                                 currency = currency,
-                                supportingTextId = R.string.expenses,
+                                supportingTextId = localesR.string.expenses,
                                 indicatorProgress = animatedExpensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -139,7 +139,7 @@ fun FinancePanel(
                             FinanceCard(
                                 title = income,
                                 currency = currency,
-                                supportingTextId = R.string.income_plural,
+                                supportingTextId = localesR.string.income_plural,
                                 indicatorProgress = animatedIncomeProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -157,7 +157,7 @@ fun FinancePanel(
                             graphData = graphData,
                             transactionFilter = transactionFilter,
                             currency = currency,
-                            supportingTextId = R.string.expenses,
+                            supportingTextId = localesR.string.expenses,
                             onBackClick = {
                                 onFinanceTypeUpdate(NOT_SET)
                                 onDateTypeUpdate(ALL)
@@ -178,7 +178,7 @@ fun FinancePanel(
                             graphData = graphData,
                             transactionFilter = transactionFilter,
                             currency = currency,
-                            supportingTextId = R.string.income_plural,
+                            supportingTextId = localesR.string.income_plural,
                             onBackClick = {
                                 onFinanceTypeUpdate(NOT_SET)
                                 onDateTypeUpdate(ALL)
@@ -354,9 +354,9 @@ private fun FilterDateTypeSelectorRow(
     modifier: Modifier = Modifier,
 ) {
     val dateTypes = listOf(
-        stringResource(R.string.week),
-        stringResource(R.string.month),
-        stringResource(R.string.year),
+        stringResource(localesR.string.week),
+        stringResource(localesR.string.month),
+        stringResource(localesR.string.year),
     )
     SingleChoiceSegmentedButtonRow(modifier) {
         dateTypes.forEachIndexed { index, label ->

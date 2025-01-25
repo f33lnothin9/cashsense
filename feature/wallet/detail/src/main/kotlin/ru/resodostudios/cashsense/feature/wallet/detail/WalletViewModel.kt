@@ -30,17 +30,12 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.ui.component.getFinanceProgress
 import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.AddToSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.DecrementSelectedDate
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSelectedDate
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
@@ -167,7 +162,9 @@ class WalletViewModel @Inject constructor(
                 selectedYearMonth = transactionFilter.selectedYearMonth,
             ),
             income = income,
+            incomeProgress = getFinanceProgress(income, filteredTransactions),
             expenses = expenses,
+            expensesProgress = getFinanceProgress(expenses, filteredTransactions),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
@@ -183,17 +180,6 @@ class WalletViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = WalletUiState.Loading,
         )
-
-    fun onWalletEvent(event: WalletEvent) {
-        when (event) {
-            is AddToSelectedCategories -> addToSelectedCategories(event.category)
-            is RemoveFromSelectedCategories -> removeFromSelectedCategories(event.category)
-            is UpdateFinanceType -> updateFinanceType(event.financeType)
-            is UpdateDateType -> updateDateType(event.dateType)
-            DecrementSelectedDate -> decrementSelectedDate()
-            IncrementSelectedDate -> incrementSelectedDate()
-        }
-    }
 
     fun updateTransactionId(id: String) {
         selectedTransactionIdState.value = id
@@ -230,7 +216,7 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun addToSelectedCategories(category: Category) {
+    fun addToSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
                 selectedCategories = it.selectedCategories.plus(category),
@@ -238,7 +224,7 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun removeFromSelectedCategories(category: Category) {
+    fun removeFromSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
                 selectedCategories = it.selectedCategories.minus(category),
@@ -246,13 +232,16 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun updateFinanceType(financeType: FinanceType) {
+    fun updateFinanceType(financeType: FinanceType) {
         transactionFilterState.update {
             it.copy(financeType = financeType)
         }
+        if (financeType == NOT_SET) {
+            transactionFilterState.update { it.copy(selectedCategories = emptySet()) }
+        }
     }
 
-    private fun updateDateType(dateType: DateType) {
+    fun updateDateType(dateType: DateType) {
         transactionFilterState.update {
             it.copy(
                 dateType = dateType,
@@ -261,12 +250,12 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun incrementSelectedDate() {
+    fun updateSelectedDate(increment: Short) {
         when (transactionFilterState.value.dateType) {
             MONTH -> {
                 transactionFilterState.update {
                     it.copy(
-                        selectedYearMonth = it.selectedYearMonth.plusMonths(1),
+                        selectedYearMonth = it.selectedYearMonth.plusMonths(increment.toLong()),
                     )
                 }
             }
@@ -274,29 +263,7 @@ class WalletViewModel @Inject constructor(
             YEAR -> {
                 transactionFilterState.update {
                     it.copy(
-                        selectedYearMonth = it.selectedYearMonth.plusYears(1),
-                    )
-                }
-            }
-
-            ALL, WEEK -> {}
-        }
-    }
-
-    private fun decrementSelectedDate() {
-        when (transactionFilterState.value.dateType) {
-            MONTH -> {
-                transactionFilterState.update {
-                    it.copy(
-                        selectedYearMonth = it.selectedYearMonth.minusMonths(1),
-                    )
-                }
-            }
-
-            YEAR -> {
-                transactionFilterState.update {
-                    it.copy(
-                        selectedYearMonth = it.selectedYearMonth.minusYears(1),
+                        selectedYearMonth = it.selectedYearMonth.plusYears(increment.toLong()),
                     )
                 }
             }
@@ -318,6 +285,8 @@ sealed interface WalletUiState {
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
         val income: BigDecimal,
+        val incomeProgress: Float,
+        val expensesProgress: Float,
         val graphData: Map<Int, BigDecimal>,
     ) : WalletUiState
 }
