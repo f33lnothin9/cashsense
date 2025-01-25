@@ -66,7 +66,6 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -437,14 +436,10 @@ private fun FilterBySelectedDateTypeRow(
 
 fun getFinanceProgress(
     value: BigDecimal,
-    transactions: List<TransactionWithCategory>,
+    totalBalance: BigDecimal,
 ): Float {
-    if (transactions.isEmpty()) return 0f
-
-    val totalAmount = transactions.sumOf { it.transaction.amount.abs() }
-    if (totalAmount.compareTo(ZERO) == 0) return 0f
-
-    return value.divide(totalAmount, MathContext.DECIMAL32).toFloat()
+    if (totalBalance.signum() == 0) return 0f
+    return value.divide(totalBalance, MathContext.DECIMAL32).toFloat()
 }
 
 @Preview

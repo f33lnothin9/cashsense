@@ -96,6 +96,16 @@ class TransactionOverviewViewModel @Inject constructor(
                             } else true
                         }
 
+                    val totalBalance = wallets.sumOf {
+                        if (userCurrency == it.userWallet.currency) {
+                            return@sumOf it.userWallet.currentBalance
+                        }
+                        val exchangeRate = exchangeRateMap[it.userWallet.currency]
+                            ?: return@combine FinancePanelUiState.NotShown
+
+                        it.userWallet.currentBalance * exchangeRate
+                    }
+
                     val (expenses, income) = filteredTransactions
                         .map { it.transaction }
                         .partition { it.amount.signum() < 0 }
@@ -147,12 +157,13 @@ class TransactionOverviewViewModel @Inject constructor(
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         income = income,
-                        incomeProgress = getFinanceProgress(income, filteredTransactions),
+                        incomeProgress = getFinanceProgress(income, totalBalance),
                         expenses = expenses,
-                        expensesProgress = getFinanceProgress(expenses, filteredTransactions),
+                        expensesProgress = getFinanceProgress(expenses, totalBalance),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
+                        totalBalance = totalBalance,
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
@@ -290,6 +301,7 @@ sealed interface FinancePanelUiState {
         val income: BigDecimal,
         val incomeProgress: Float,
         val graphData: Map<Int, BigDecimal>,
+        val totalBalance: BigDecimal,
     ) : FinancePanelUiState
 }
 

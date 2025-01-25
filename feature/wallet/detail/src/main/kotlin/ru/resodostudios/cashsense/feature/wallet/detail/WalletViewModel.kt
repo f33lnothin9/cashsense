@@ -82,7 +82,7 @@ class WalletViewModel @Inject constructor(
             .let { (expensesList, incomeList) ->
                 val expensesSum = expensesList.sumOf { it.transaction.amount.abs() }
                 val incomeSum = incomeList.sumOf { it.transaction.amount }
-                Pair(expensesSum, incomeSum)
+                expensesSum to incomeSum
             }
         val groupedTransactions = filteredTransactions
             .groupBy {
@@ -116,9 +116,9 @@ class WalletViewModel @Inject constructor(
                 selectedYearMonth = transactionFilter.selectedYearMonth,
             ),
             income = income,
-            incomeProgress = getFinanceProgress(income, filteredTransactions),
+            incomeProgress = getFinanceProgress(income, extendedUserWallet.userWallet.currentBalance),
             expenses = expenses,
-            expensesProgress = getFinanceProgress(expenses, filteredTransactions),
+            expensesProgress = getFinanceProgress(expenses, extendedUserWallet.userWallet.currentBalance),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->

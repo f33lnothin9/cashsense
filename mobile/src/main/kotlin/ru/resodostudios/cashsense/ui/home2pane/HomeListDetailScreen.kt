@@ -216,7 +216,7 @@ internal fun HomeListDetailScreen(
                         exitTransition = { fadeOut(snap()) },
                     ) {
                         transactionOverviewScreen(
-                            showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
+                            shouldShowTopBar = !listDetailNavigator.isListPaneVisible(),
                             onBackClick = listDetailNavigator::navigateBack,
                             onTransactionClick = navigateToTransactionDialog,
                         )

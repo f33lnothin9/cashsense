@@ -1,34 +1,50 @@
 package ru.resodostudios.cashsense.feature.transaction.overview
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
-import ru.resodostudios.cashsense.core.locales.R
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
+import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.transactions
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import java.math.BigDecimal
+import java.util.Currency
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun TransactionOverviewScreen(
-    showNavigationIcon: Boolean,
+    shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
@@ -37,7 +53,7 @@ internal fun TransactionOverviewScreen(
     val transactionOverviewState by viewModel.transactionOverviewUiState.collectAsStateWithLifecycle()
 
     TransactionOverviewScreen(
-        showNavigationIcon = showNavigationIcon,
+        shouldShowTopBar = shouldShowTopBar,
         onBackClick = onBackClick,
         onTransactionClick = onTransactionClick,
         financePanelUiState = financePanelUiState,
@@ -57,7 +73,7 @@ internal fun TransactionOverviewScreen(
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
     transactionOverviewState: TransactionOverviewUiState,
-    showNavigationIcon: Boolean,
+    shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
@@ -93,9 +109,9 @@ private fun TransactionOverviewScreen(
             }
             if (showTransactionDeletionDialog) {
                 CsAlertDialog(
-                    titleRes = R.string.permanently_delete,
-                    confirmButtonTextRes = R.string.delete,
-                    dismissButtonTextRes = R.string.cancel,
+                    titleRes = localesR.string.permanently_delete,
+                    confirmButtonTextRes = localesR.string.delete,
+                    dismissButtonTextRes = localesR.string.cancel,
                     icon = CsIcons.Outlined.Delete,
                     onConfirm = {
                         onDeleteTransaction()
@@ -109,13 +125,15 @@ private fun TransactionOverviewScreen(
                 contentPadding = PaddingValues(bottom = 88.dp),
                 modifier = Modifier.fillMaxSize(),
             ) {
-                financePanel(
+                header(
                     financePanelUiState = financePanelUiState,
                     onDateTypeUpdate = onDateTypeUpdate,
                     onFinanceTypeUpdate = onFinanceTypeUpdate,
                     onSelectedDateUpdate = onSelectedDateUpdate,
                     onCategorySelect = onCategorySelect,
                     onCategoryDeselect = onCategoryDeselect,
+                    shouldShowTopBar = shouldShowTopBar,
+                    onBackClick = onBackClick,
                 )
                 transactions(
                     transactionsCategories = transactionOverviewState.transactionsCategories,
@@ -129,18 +147,74 @@ private fun TransactionOverviewScreen(
     }
 }
 
-private fun LazyListScope.financePanel(
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(
+    onBackClick: () -> Unit,
+    totalBalance: BigDecimal,
+    currency: Currency,
+    modifier: Modifier = Modifier,
+) {
+    CenterAlignedTopAppBar(
+        title = {
+            Column {
+                Text(
+                    text = stringResource(localesR.string.total_balance),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                AnimatedAmount(
+                    targetState = totalBalance,
+                    label = "TotalBalance",
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = it.formatAmount(currency),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = CsIcons.Outlined.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+        windowInsets = WindowInsets(0, 0, 0, 0),
+        modifier = modifier,
+    )
+}
+
+private fun LazyListScope.header(
     financePanelUiState: FinancePanelUiState,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Short) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
+    shouldShowTopBar: Boolean,
+    onBackClick: () -> Unit,
 ) {
     when (financePanelUiState) {
         FinancePanelUiState.Loading -> item { LoadingState(Modifier.fillMaxWidth()) }
         FinancePanelUiState.NotShown -> Unit
         is FinancePanelUiState.Shown -> {
+            if (shouldShowTopBar) {
+                item {
+                    TopBar(
+                        currency = financePanelUiState.userCurrency,
+                        totalBalance = financePanelUiState.totalBalance,
+                        onBackClick = onBackClick,
+                        modifier = Modifier.padding(bottom = 16.dp),
+                    )
+                }
+            }
             item {
                 FinancePanel(
                     availableCategories = financePanelUiState.availableCategories,
