@@ -80,6 +80,8 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.component.CategorySelectionRow
+import ru.resodostudios.cashsense.core.ui.component.FinanceGraph
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
@@ -93,8 +95,6 @@ import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.IncrementSel
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.RemoveFromSelectedCategories
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateDateType
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletEvent.UpdateFinanceType
-import ru.resodostudios.cashsense.feature.wallet.detail.component.CategorySelectionRow
-import ru.resodostudios.cashsense.feature.wallet.detail.component.FinanceGraph
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
@@ -555,8 +555,8 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             CategorySelectionRow(
                 availableCategories = availableCategories,
                 selectedCategories = transactionFilter.selectedCategories,
-                addToSelectedCategories = { onWalletEvent(AddToSelectedCategories(it)) },
-                removeFromSelectedCategories = { onWalletEvent(RemoveFromSelectedCategories(it)) },
+                onCategorySelect = { onWalletEvent(AddToSelectedCategories(it)) },
+                onCategoryDeselect = { onWalletEvent(RemoveFromSelectedCategories(it)) },
                 modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
             )
         }

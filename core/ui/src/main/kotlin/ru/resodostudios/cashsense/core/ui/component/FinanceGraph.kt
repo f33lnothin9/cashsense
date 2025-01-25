@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail.component
+package ru.resodostudios.cashsense.core.ui.component
 
 import android.text.Layout
 import androidx.compose.material3.MaterialTheme
@@ -72,7 +72,7 @@ import java.util.Currency
 import java.util.Locale
 
 @Composable
-internal fun FinanceGraph(
+fun FinanceGraph(
     transactionFilter: TransactionFilter,
     graphData: Map<Int, BigDecimal>,
     currency: Currency,

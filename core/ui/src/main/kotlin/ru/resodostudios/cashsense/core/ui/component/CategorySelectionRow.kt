@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.wallet.detail.component
+package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ContextualFlowRow
@@ -27,16 +27,15 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
-import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun CategorySelectionRow(
+fun CategorySelectionRow(
     availableCategories: List<Category>,
     selectedCategories: Set<Category>,
-    addToSelectedCategories: (Category) -> Unit,
-    removeFromSelectedCategories: (Category) -> Unit,
+    onCategorySelect: (Category) -> Unit,
+    onCategoryDeselect: (Category) -> Unit,
     modifier: Modifier = Modifier,
     defaultMaxLines: Int = 3,
 ) {
@@ -70,9 +69,9 @@ internal fun CategorySelectionRow(
             category = category,
             onClick = {
                 if (selectedCategories.contains(category)) {
-                    removeFromSelectedCategories(category)
+                    onCategoryDeselect(category)
                 } else {
-                    addToSelectedCategories(category)
+                    onCategorySelect(category)
                 }
             },
         )
@@ -113,8 +112,8 @@ private fun CategorySelectorRowPreview(
             CategorySelectionRow(
                 availableCategories = categories,
                 selectedCategories = setOf(categories.first()),
-                addToSelectedCategories = {},
-                removeFromSelectedCategories = {},
+                onCategorySelect = {},
+                onCategoryDeselect = {},
                 modifier = Modifier.padding(16.dp),
             )
         }

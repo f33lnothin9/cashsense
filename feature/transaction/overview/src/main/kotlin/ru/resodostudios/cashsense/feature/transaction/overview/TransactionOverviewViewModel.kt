@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,6 +31,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.INCOME
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.ui.component.getFinanceProgress
 import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
@@ -62,6 +62,111 @@ class TransactionOverviewViewModel @Inject constructor(
     )
 
     private val selectedTransactionIdState = MutableStateFlow<String?>(null)
+
+    val financePanelUiState: StateFlow<FinancePanelUiState> = combine(
+        getExtendedUserWallets.invoke(),
+        userDataRepository.userData,
+    ) { wallets, userData ->
+        val baseCurrencies = wallets.mapTo(HashSet()) { it.userWallet.currency }
+        val userCurrency = Currency.getInstance(userData.currency)
+        Triple(baseCurrencies, userCurrency, wallets)
+    }
+        .flatMapLatest { (baseCurrencies, userCurrency, wallets) ->
+            if (baseCurrencies.isEmpty()) {
+                flowOf(FinancePanelUiState.NotShown)
+            } else {
+                combine(
+                    currencyConversionRepository.getConvertedCurrencies(
+                        baseCurrencies = baseCurrencies,
+                        targetCurrency = userCurrency,
+                    ),
+                    transactionFilterState,
+                ) { exchangeRates, transactionFilter ->
+                    val exchangeRateMap = exchangeRates
+                        .associate { it.baseCurrency to it.exchangeRate }
+
+                    val filterableTransactions = wallets
+                        .flatMap { wallet -> wallet.transactionsWithCategories }
+                        .applyTransactionFilter(transactionFilter)
+
+                    val filteredTransactions = filterableTransactions
+                        .transactions
+                        .filterNot { it.transaction.ignored }
+                        .filter {
+                            if (transactionFilter.dateType == ALL) {
+                                it.transaction.timestamp
+                                    .getZonedDateTime()
+                                    .isInCurrentMonthAndYear()
+                            } else true
+                        }
+
+                    val (expenses, income) = filteredTransactions
+                        .map { it.transaction }
+                        .partition { it.amount.signum() < 0 }
+                        .let { (expensesList, incomeList) ->
+                            val expensesSum = expensesList.sumOf {
+                                if (userCurrency == it.currency) {
+                                    return@sumOf it.amount
+                                }
+                                val exchangeRate = exchangeRateMap[it.currency]
+                                    ?: return@combine FinancePanelUiState.NotShown
+
+                                it.amount * exchangeRate
+                            }.abs()
+                            val incomeSum = incomeList.sumOf {
+                                if (userCurrency == it.currency) {
+                                    return@sumOf it.amount
+                                }
+                                val exchangeRate = exchangeRateMap[it.currency]
+                                    ?: return@combine FinancePanelUiState.NotShown
+
+                                it.amount * exchangeRate
+                            }
+                            expensesSum to incomeSum
+                        }
+                    val groupedTransactions = filteredTransactions
+                        .groupBy {
+                            val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
+                            when (transactionFilter.dateType) {
+                                YEAR -> zonedDateTime.monthValue
+                                MONTH -> zonedDateTime.dayOfMonth
+                                ALL, WEEK -> zonedDateTime.dayOfWeek.value
+                            }
+                        }
+                    val graphData = groupedTransactions
+                        .map { transactionsCategories ->
+                            transactionsCategories.key to transactionsCategories.value
+                                .map { transactionCategory -> transactionCategory.transaction.amount }
+                                .run {
+                                    sumOf {
+                                        when (transactionFilter.financeType) {
+                                            EXPENSES -> it.abs()
+                                            else -> it
+                                        }
+                                    }
+                                }
+                        }
+                        .associate { it.first to it.second }
+
+                    FinancePanelUiState.Shown(
+                        transactionFilter = transactionFilter,
+                        income = income,
+                        incomeProgress = getFinanceProgress(income, filteredTransactions),
+                        expenses = expenses,
+                        expensesProgress = getFinanceProgress(expenses, filteredTransactions),
+                        graphData = graphData,
+                        userCurrency = userCurrency,
+                        availableCategories = filterableTransactions.availableCategories,
+                    )
+                }
+                    .catch { FinancePanelUiState.NotShown }
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = FinancePanelUiState.Loading,
+        )
 
     val transactionOverviewUiState: StateFlow<TransactionOverviewUiState> = combine(
         getExtendedUserWallets.invoke(),
@@ -151,7 +256,7 @@ class TransactionOverviewViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedDate(increment: Int) {
+    fun updateSelectedDate(increment: Short) {
         when (transactionFilterState.value.dateType) {
             MONTH -> {
                 transactionFilterState.update {
@@ -174,16 +279,6 @@ class TransactionOverviewViewModel @Inject constructor(
     }
 }
 
-sealed interface TransactionOverviewUiState {
-
-    data object Loading : TransactionOverviewUiState
-
-    data class Success(
-        val selectedTransactionCategory: TransactionWithCategory?,
-        val transactionsCategories: List<TransactionWithCategory>,
-    ) : TransactionOverviewUiState
-}
-
 sealed interface FinancePanelUiState {
 
     data object Loading : FinancePanelUiState
@@ -195,9 +290,21 @@ sealed interface FinancePanelUiState {
         val availableCategories: List<Category>,
         val userCurrency: Currency,
         val expenses: BigDecimal,
+        val expensesProgress: Float,
         val income: BigDecimal,
+        val incomeProgress: Float,
         val graphData: Map<Int, BigDecimal>,
     ) : FinancePanelUiState
+}
+
+sealed interface TransactionOverviewUiState {
+
+    data object Loading : TransactionOverviewUiState
+
+    data class Success(
+        val selectedTransactionCategory: TransactionWithCategory?,
+        val transactionsCategories: List<TransactionWithCategory>,
+    ) : TransactionOverviewUiState
 }
 
 private fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: TransactionFilter): FilterableTransactions {
