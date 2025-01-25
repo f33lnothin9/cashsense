@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(
         initialValue = homeDestination.walletId,
     )
 
-    val financeOverviewState: StateFlow<FinanceOverviewUiState> = combine(
+    val totalBalanceUiState: StateFlow<TotalBalanceUiState> = combine(
         getExtendedUserWallets.invoke(),
         userDataRepository.userData,
     ) { wallets, userData ->
@@ -48,10 +48,10 @@ class HomeViewModel @Inject constructor(
     }
         .flatMapLatest { (baseCurrencies, userCurrency, wallets) ->
             flow {
-                emit(FinanceOverviewUiState.Loading)
+                emit(TotalBalanceUiState.Loading)
 
                 if (baseCurrencies.isEmpty()) {
-                    emit(FinanceOverviewUiState.NotShown)
+                    emit(TotalBalanceUiState.NotShown)
                 } else {
                     currencyConversionRepository.getConvertedCurrencies(
                         baseCurrencies = baseCurrencies,
@@ -66,7 +66,7 @@ class HomeViewModel @Inject constructor(
                                     return@sumOf it.userWallet.currentBalance
                                 }
                                 val exchangeRate = exchangeRateMap[it.userWallet.currency]
-                                    ?: return@map FinanceOverviewUiState.NotShown
+                                    ?: return@map TotalBalanceUiState.NotShown
 
                                 it.userWallet.currentBalance * exchangeRate
                             }
@@ -85,13 +85,13 @@ class HomeViewModel @Inject constructor(
                             val totalExpenses = expenses.sumOf { it.amount }.abs()
                             val totalIncome = income.sumOf { it.amount }
 
-                            FinanceOverviewUiState.Shown(
-                                totalBalance = totalBalance,
+                            TotalBalanceUiState.Shown(
+                                amount = totalBalance,
                                 userCurrency = userCurrency,
                                 shouldShowBadIndicator = totalIncome < totalExpenses,
                             )
                         }
-                        .catch { emit(FinanceOverviewUiState.NotShown) }
+                        .catch { emit(TotalBalanceUiState.NotShown) }
                         .collect { emit(it) }
                 }
             }
@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = FinanceOverviewUiState.Loading,
+            initialValue = TotalBalanceUiState.Loading,
         )
 
 
@@ -139,17 +139,17 @@ sealed interface WalletsUiState {
     ) : WalletsUiState
 }
 
-sealed interface FinanceOverviewUiState {
+sealed interface TotalBalanceUiState {
 
-    data object Loading : FinanceOverviewUiState
+    data object Loading : TotalBalanceUiState
 
-    data object NotShown : FinanceOverviewUiState
+    data object NotShown : TotalBalanceUiState
 
     data class Shown(
-        val totalBalance: BigDecimal,
+        val amount: BigDecimal,
         val userCurrency: Currency,
         val shouldShowBadIndicator: Boolean,
-    ) : FinanceOverviewUiState
+    ) : TotalBalanceUiState
 }
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

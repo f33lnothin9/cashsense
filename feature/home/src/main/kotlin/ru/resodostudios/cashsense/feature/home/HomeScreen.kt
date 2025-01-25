@@ -40,9 +40,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.ui.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.EmptyState
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.component.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
@@ -63,14 +63,15 @@ fun HomeScreen(
     shouldDisplayUndoWallet: Boolean,
     undoWalletRemoval: () -> Unit,
     clearUndoState: () -> Unit,
+    onTotalBalanceClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
-    val financeOverviewState by viewModel.financeOverviewState.collectAsStateWithLifecycle()
+    val totalBalanceState by viewModel.totalBalanceUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        financeOverviewState = financeOverviewState,
+        totalBalanceState = totalBalanceState,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -84,13 +85,14 @@ fun HomeScreen(
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
         undoWalletRemoval = undoWalletRemoval,
         clearUndoState = clearUndoState,
+        onTotalBalanceClick = onTotalBalanceClick,
     )
 }
 
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
-    financeOverviewState: FinanceOverviewUiState,
+    totalBalanceState: TotalBalanceUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -101,6 +103,7 @@ internal fun HomeScreen(
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
+    onTotalBalanceClick: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
     val undoText = stringResource(localesR.string.undo)
@@ -134,8 +137,9 @@ internal fun HomeScreen(
                     bottom = 88.dp,
                 ),
             ) {
-                financeOverviewSection(
-                    financeOverviewState = financeOverviewState,
+                totalBalanceSection(
+                    totalBalanceState = totalBalanceState,
+                    onTotalBalanceClick = onTotalBalanceClick,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -185,23 +189,25 @@ private fun LazyStaggeredGridScope.wallets(
     }
 }
 
-private fun LazyStaggeredGridScope.financeOverviewSection(
-    financeOverviewState: FinanceOverviewUiState,
+private fun LazyStaggeredGridScope.totalBalanceSection(
+    totalBalanceState: TotalBalanceUiState,
+    onTotalBalanceClick: () -> Unit = {},
 ) {
-    when (financeOverviewState) {
-        FinanceOverviewUiState.NotShown -> Unit
-        FinanceOverviewUiState.Loading, is FinanceOverviewUiState.Shown -> {
+    when (totalBalanceState) {
+        TotalBalanceUiState.NotShown -> Unit
+        TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
             item(span = StaggeredGridItemSpan.FullLine) {
-                val shouldShowBadIndicator = if (financeOverviewState is FinanceOverviewUiState.Shown) {
-                    financeOverviewState.shouldShowBadIndicator
+                val shouldShowBadIndicator = if (totalBalanceState is TotalBalanceUiState.Shown) {
+                    totalBalanceState.shouldShowBadIndicator
                 } else false
                 TotalBalanceCard(
                     showBadIndicator = shouldShowBadIndicator,
                     modifier = Modifier.animateItem(),
+                    onClick = onTotalBalanceClick,
                 ) {
-                    if (financeOverviewState is FinanceOverviewUiState.Shown) {
-                        val totalBalance = financeOverviewState.totalBalance
-                        val userCurrency = financeOverviewState.userCurrency
+                    if (totalBalanceState is TotalBalanceUiState.Shown) {
+                        val totalBalance = totalBalanceState.amount
+                        val userCurrency = totalBalanceState.userCurrency
                         AnimatedAmount(
                             targetState = totalBalance,
                             label = "total_balance",
@@ -229,6 +235,7 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     headlineContent: @Composable () -> Unit,
 ) {
     val color = if (showBadIndicator) {
@@ -256,6 +263,7 @@ private fun TotalBalanceCard(
         } else {
             modifier
         },
+        onClick = onClick,
     ) {
         CsListItem(
             leadingContent = {
@@ -283,7 +291,7 @@ fun HomeScreenLoadingPreview() {
         Surface {
             HomeScreen(
                 walletsState = Loading,
-                financeOverviewState = FinanceOverviewUiState.Loading,
+                totalBalanceState = TotalBalanceUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -302,7 +310,7 @@ fun HomeScreenEmptyPreview() {
         Surface {
             HomeScreen(
                 walletsState = Empty,
-                financeOverviewState = FinanceOverviewUiState.NotShown,
+                totalBalanceState = TotalBalanceUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -327,8 +335,8 @@ fun HomeScreenPopulatedPreview(
                     selectedWalletId = null,
                     extendedUserWallets = extendedUserWallets,
                 ),
-                financeOverviewState = FinanceOverviewUiState.Shown(
-                    totalBalance = BigDecimal(5000),
+                totalBalanceState = TotalBalanceUiState.Shown(
+                    amount = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
                     shouldShowBadIndicator = true,
                 ),

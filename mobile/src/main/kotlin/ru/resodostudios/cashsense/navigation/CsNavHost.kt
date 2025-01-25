@@ -16,8 +16,8 @@ import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.subscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsSection
-import ru.resodostudios.cashsense.feature.transaction.navigation.navigateToTransactionDialog
-import ru.resodostudios.cashsense.feature.transaction.navigation.transactionDialog
+import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.navigateToTransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.transactionDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.transferDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
@@ -38,9 +38,9 @@ fun CsNavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
         modifier = modifier,
-        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
+        enterTransition = { slideInVertically { it / 24 } + fadeIn() },
         exitTransition = { fadeOut(snap()) },
-        popEnterTransition = { slideInVertically { it / 16 } + fadeIn() },
+        popEnterTransition = { slideInVertically { it / 24 } + fadeIn() },
         popExitTransition = { fadeOut(snap()) },
     ) {
         homeListDetailScreen(

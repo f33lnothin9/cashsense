@@ -154,11 +154,9 @@ fun SubscriptionDialogUiState.asSubscription(): Subscription {
 
     if (isReminderEnabled) {
         val timeZone = TimeZone.currentSystemDefault()
-        val currentInstant = paymentDate
-        val currentDateTime = currentInstant.toLocalDateTime(timeZone)
+        val currentDateTime = paymentDate.toLocalDateTime(timeZone)
         val previousDate = currentDateTime.date.minus(1, DateTimeUnit.DAY)
-        val notificationDate = LocalDateTime(previousDate, LocalTime(9, 0))
-            .toInstant(timeZone)
+        val notificationDate = LocalDateTime(previousDate, LocalTime(9, 0)).toInstant(timeZone)
         reminder = Reminder(
             id = subscriptionId.hashCode(),
             notificationDate = notificationDate,
