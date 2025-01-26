@@ -17,6 +17,7 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -188,6 +189,7 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         status = StatusType.COMPLETED,
         ignored = true,
         transferId = transferId,
+        currency = getUsdCurrency(),
     )
     val depositTransaction = Transaction(
         id = Uuid.random().toHexString(),
@@ -198,6 +200,7 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         status = StatusType.COMPLETED,
         ignored = true,
         transferId = transferId,
+        currency = getUsdCurrency(),
     )
 
     return buildList { add(withdrawalTransaction); add(depositTransaction) }

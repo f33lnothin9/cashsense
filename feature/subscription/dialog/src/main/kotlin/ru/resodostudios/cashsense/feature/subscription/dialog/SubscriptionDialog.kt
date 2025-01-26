@@ -49,8 +49,8 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
-import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
-import ru.resodostudios.cashsense.core.ui.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
+import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
