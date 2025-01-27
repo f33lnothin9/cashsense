@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -182,7 +181,7 @@ internal fun HomeListDetailScreen(
     }
 
     fun onTotalBalanceClickShowDetailPane() {
-        if (listDetailNavigator.isDetailPaneVisible()) {
+        if (scaffoldNavigator.isDetailPaneVisible()) {
             nestedNavController.navigateToTransactionOverview {
                 popUpTo<DetailPaneNavHostRoute>()
             }
@@ -191,12 +190,13 @@ internal fun HomeListDetailScreen(
             nestedNavKey = Uuid.random()
             clearUndoState()
         }
-        listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+        coroutineScope.launch {
+            scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+        }
     }
 
     NavigableListDetailPaneScaffold(
         navigator = scaffoldNavigator,
-        directive = listDetailNavigator.scaffoldDirective,
         listPane = {
             AnimatedPane {
                 HomeScreen(
@@ -227,8 +227,12 @@ internal fun HomeListDetailScreen(
                         exitTransition = { fadeOut(snap()) },
                     ) {
                         transactionOverviewScreen(
-                            shouldShowTopBar = !listDetailNavigator.isListPaneVisible(),
-                            onBackClick = listDetailNavigator::navigateBack,
+                            shouldShowTopBar = !scaffoldNavigator.isListPaneVisible(),
+                            onBackClick = {
+                                coroutineScope.launch {
+                                    scaffoldNavigator.navigateBack()
+                                }
+                            },
                             onTransactionClick = navigateToTransactionDialog,
                         )
                         walletScreen(
