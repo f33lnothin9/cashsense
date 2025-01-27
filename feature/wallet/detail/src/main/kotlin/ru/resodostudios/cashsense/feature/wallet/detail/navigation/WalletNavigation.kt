@@ -20,19 +20,21 @@ fun NavController.navigateToWallet(
 }
 
 fun NavGraphBuilder.walletScreen(
-    showDetailActions: Boolean,
+    showNavigationIcon: Boolean,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onBackClick: () -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-    openTransactionDialog: Boolean,
-    onTransactionDialogDismiss: () -> Unit = {},
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
 ) {
     composable<WalletRoute> {
         WalletScreen(
-            showDetailActions = showDetailActions,
+            showNavigationIcon = showNavigationIcon,
+            onEditWallet = onEditWallet,
+            onDeleteClick = onDeleteWallet,
+            onTransfer = onTransfer,
             onBackClick = onBackClick,
-            onShowSnackbar = onShowSnackbar,
-            openTransactionDialog = openTransactionDialog,
-            onTransactionDialogDismiss = onTransactionDialogDismiss,
+            navigateToTransactionDialog = navigateToTransactionDialog,
         )
     }
 }

@@ -1,13 +1,19 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.Keep
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -23,62 +29,85 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
-import ru.resodostudios.cashsense.core.ui.EmptyState
+import ru.resodostudios.cashsense.R
+import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
-import ru.resodostudios.cashsense.core.util.Constants.OPEN_TRANSACTION_DIALOG_KEY
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.wallet.detail.R
+import ru.resodostudios.cashsense.feature.transaction.overview.navigation.TransactionOverviewRoute
+import ru.resodostudios.cashsense.feature.transaction.overview.navigation.navigateToTransactionOverview
+import ru.resodostudios.cashsense.feature.transaction.overview.navigation.transactionOverviewScreen
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
 import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}/{$OPEN_TRANSACTION_DIALOG_KEY}"
+private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
 
-// TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
-@Keep
 @Serializable
 internal object WalletPlaceholderRoute
 
-@Keep
 @Serializable
 internal object DetailPaneNavHostRoute
 
+@Serializable
+internal object HomeListDetailRoute
+
 fun NavGraphBuilder.homeListDetailScreen(
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    nestedDestinations: NavGraphBuilder.() -> Unit,
 ) {
-    composable<HomeRoute>(
-        deepLinks = listOf(
-            navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
-        ),
-    ) {
-        HomeListDetailScreen(
-            onShowSnackbar = onShowSnackbar,
-        )
+    navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
+        composable<HomeRoute>(
+            deepLinks = listOf(
+                navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
+            ),
+        ) {
+            HomeListDetailScreen(
+                onEditWallet = onEditWallet,
+                onTransfer = onTransfer,
+                onShowSnackbar = onShowSnackbar,
+                navigateToTransactionDialog = navigateToTransactionDialog,
+            )
+        }
+        nestedDestinations()
     }
 }
 
 @Composable
 internal fun HomeListDetailScreen(
+    onEditWallet: (String) -> Unit,
+    onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: Home2PaneViewModel = hiltViewModel(),
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val selectedWalletId by viewModel.selectedWalletId.collectAsStateWithLifecycle()
-    val openTransactionDialog by viewModel.openTransactionDialog.collectAsStateWithLifecycle()
+    val shouldDisplayUndoWallet by viewModel.shouldDisplayUndoWalletState.collectAsStateWithLifecycle()
 
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
-        openTransactionDialog = openTransactionDialog,
+        navigateToTransactionDialog = navigateToTransactionDialog,
         onWalletClick = viewModel::onWalletClick,
-        onTransactionDialogDismiss = viewModel::onTransactionDialogDismiss,
+        onTransfer = onTransfer,
+        onEditWallet = onEditWallet,
+        onDeleteWallet = viewModel::deleteWallet,
         onShowSnackbar = onShowSnackbar,
+        windowAdaptiveInfo = windowAdaptiveInfo,
+        shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+        undoWalletRemoval = viewModel::undoWalletRemoval,
+        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -86,12 +115,19 @@ internal fun HomeListDetailScreen(
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
-    openTransactionDialog: Boolean,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onWalletClick: (String) -> Unit,
-    onTransactionDialogDismiss: () -> Unit,
+    onTransfer: (String) -> Unit,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    windowAdaptiveInfo: WindowAdaptiveInfo,
+    shouldDisplayUndoWallet: Boolean = false,
+    undoWalletRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator(
+        scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
         initialDestinationHistory = listOfNotNull(
             ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List),
             ThreePaneScaffoldDestinationItem<Nothing>(ListDetailPaneScaffoldRole.Detail).takeIf {
@@ -104,7 +140,7 @@ internal fun HomeListDetailScreen(
     }
 
     var nestedNavHostStartRoute by remember {
-        val route = selectedWalletId?.let { WalletRoute(walletId = it) } ?: WalletPlaceholderRoute
+        val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
     }
     var nestedNavKey by rememberSaveable(
@@ -124,13 +160,27 @@ internal fun HomeListDetailScreen(
                     popUpTo<DetailPaneNavHostRoute>()
                 }
             } else {
-                nestedNavHostStartRoute = WalletRoute(walletId = walletId)
+                nestedNavHostStartRoute = WalletRoute(walletId)
                 nestedNavKey = Uuid.random()
+                clearUndoState()
             }
             listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         } else if (listDetailNavigator.isDetailPaneVisible()) {
             nestedNavController.navigate(WalletPlaceholderRoute)
         }
+    }
+
+    fun onTotalBalanceClickShowDetailPane() {
+        if (listDetailNavigator.isDetailPaneVisible()) {
+            nestedNavController.navigateToTransactionOverview {
+                popUpTo<DetailPaneNavHostRoute>()
+            }
+        } else {
+            nestedNavHostStartRoute = TransactionOverviewRoute
+            nestedNavKey = Uuid.random()
+            clearUndoState()
+        }
+        listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
     }
 
     ListDetailPaneScaffold(
@@ -140,8 +190,18 @@ internal fun HomeListDetailScreen(
             AnimatedPane {
                 HomeScreen(
                     onWalletClick = ::onWalletClickShowDetailPane,
-                    onShowSnackbar = onShowSnackbar,
+                    onTransfer = onTransfer,
+                    onEditWallet = onEditWallet,
+                    onDeleteWallet = onDeleteWallet,
+                    onTransactionCreate = {
+                        navigateToTransactionDialog(it, null, false)
+                    },
                     highlightSelectedWallet = listDetailNavigator.isDetailPaneVisible(),
+                    onShowSnackbar = onShowSnackbar,
+                    shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+                    undoWalletRemoval = undoWalletRemoval,
+                    clearUndoState = clearUndoState,
+                    onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
                 )
             }
         },
@@ -152,13 +212,27 @@ internal fun HomeListDetailScreen(
                         navController = nestedNavController,
                         startDestination = nestedNavHostStartRoute,
                         route = DetailPaneNavHostRoute::class,
+                        enterTransition = { slideInVertically { it / 24 } + fadeIn() },
+                        exitTransition = { fadeOut(snap()) },
                     ) {
-                        walletScreen(
-                            showDetailActions = !listDetailNavigator.isListPaneVisible(),
+                        transactionOverviewScreen(
+                            shouldShowTopBar = !listDetailNavigator.isListPaneVisible(),
                             onBackClick = listDetailNavigator::navigateBack,
-                            onShowSnackbar = onShowSnackbar,
-                            openTransactionDialog = openTransactionDialog,
-                            onTransactionDialogDismiss = onTransactionDialogDismiss,
+                            onTransactionClick = navigateToTransactionDialog,
+                        )
+                        walletScreen(
+                            showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
+                            onEditWallet = onEditWallet,
+                            onDeleteWallet = {
+                                onDeleteWallet(it)
+                                if (listDetailNavigator.isDetailPaneVisible()) {
+                                    nestedNavController.navigate(WalletPlaceholderRoute)
+                                }
+                                listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.List)
+                            },
+                            onTransfer = onTransfer,
+                            onBackClick = listDetailNavigator::navigateBack,
+                            navigateToTransactionDialog = navigateToTransactionDialog,
                         )
                         composable<WalletPlaceholderRoute> {
                             EmptyState(

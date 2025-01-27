@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
-    api(projects.core.data)
+    api(projects.core.common)
     api(projects.core.model)
+
+    implementation(projects.core.locales)
 }

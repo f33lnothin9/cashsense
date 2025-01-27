@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import java.util.Currency
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +25,7 @@ class SettingsViewModel @Inject constructor(
                     settings = UserEditableSettings(
                         useDynamicColor = userData.useDynamicColor,
                         darkThemeConfig = userData.darkThemeConfig,
-                        currency = userData.currency,
+                        currency = Currency.getInstance(userData.currency),
                     )
                 )
             }
@@ -46,9 +47,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrency(currency: String) {
+    fun updateCurrency(currency: Currency) {
         viewModelScope.launch {
-            userDataRepository.setCurrency(currency)
+            userDataRepository.setCurrency(currency.currencyCode)
         }
     }
 }
@@ -56,7 +57,7 @@ class SettingsViewModel @Inject constructor(
 data class UserEditableSettings(
     val useDynamicColor: Boolean,
     val darkThemeConfig: DarkThemeConfig,
-    val currency: String,
+    val currency: Currency,
 )
 
 sealed interface SettingsUiState {

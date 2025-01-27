@@ -1,73 +1,45 @@
 {
   "project_info": {
-    "project_number": "911923570963",
-    "project_id": "cash-sense-eca97",
-    "storage_bucket": "cash-sense-eca97.appspot.com"
+    "project_number": "project_number",
+    "project_id": "project_id",
+    "storage_bucket": "storage_bucket"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:911923570963:android:15c67bf0d1b8bd6d48d2e6",
+        "mobilesdk_app_id": "Your:App:Id",
         "android_client_info": {
           "package_name": "ru.resodostudios.cashsense"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "911923570963-0tspl9lv71edb3e5m4jnpm5nov18gia3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "ru.resodostudios.cashsense",
-            "certificate_hash": "e11ad5e303149fc1de1097876c5f37d841ced548"
-          }
-        },
-        {
-          "client_id": "911923570963-2s5ddgebjurvotal8jnahc2qnkp97q43.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB1ezE24uTAS-LZKe5Oj_uLkduMeXjumhA"
+          "current_key": "APlaceholderAPIKeyWith-ThirtyNineCharsX"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "911923570963-2s5ddgebjurvotal8jnahc2qnkp97q43.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:911923570963:android:561bd27aca3be7f248d2e6",
+        "mobilesdk_app_id": "Your:App:Id",
         "android_client_info": {
           "package_name": "ru.resodostudios.cashsense.debug"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "911923570963-2s5ddgebjurvotal8jnahc2qnkp97q43.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB1ezE24uTAS-LZKe5Oj_uLkduMeXjumhA"
+          "current_key": "APlaceholderAPIKeyWith-ThirtyNineCharsX"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "911923570963-2s5ddgebjurvotal8jnahc2qnkp97q43.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

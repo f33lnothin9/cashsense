@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.settings.LicensesScreen
 
 @Serializable
-data object LicensesRoute
+object LicensesRoute
 
 fun NavController.navigateToLicenses() = navigate(LicensesRoute) {
     launchSingleTop = true
 }
 
-fun NavGraphBuilder.licensesRoute(
+fun NavGraphBuilder.licensesScreen(
     onBackClick: () -> Unit,
 ) {
     composable<LicensesRoute> {

@@ -41,7 +41,6 @@
   <string name="licenses">Licenze</string>
   <string name="version">Versione</string>
   <string name="feedback">Feedback</string>
-  <string name="choose_currency">Scegli la tua valuta predefinita</string>
   <string name="new_subscription">Nuovo abbonamento</string>
   <string name="edit_subscription">Modifica abbonamento</string>
   <string name="payment_date">Data di pagamento</string>
@@ -66,7 +65,6 @@
   <string name="expenses">Spese</string>
   <string name="income_singular">Entrata</string>
   <string name="income_plural">Entrate</string>
-  <string name="transaction_deleted">Transazione eliminata</string>
   <string name="transaction_shortcut_long_label">Aggiungi una nuova transazione</string>
   <string name="completed">Completato</string>
   <string name="pending">In sospeso</string>
@@ -84,4 +82,20 @@
   <string name="wallet_widget_empty">Non hai portafogli</string>
   <string name="not_enough_data">Dati insufficienti</string>
   <string name="repeat">Ripeti</string>
+  <string name="currency_not_found">Valuta non trovata</string>
+  <string name="transfer">Trasferimento</string>
+  <string name="transfers">Trasferimenti</string>
+  <string name="new_transfer">Nuovo trasferimento</string>
+  <string name="exchange_rate">Tasso di cambio</string>
+  <string name="choose_wallet">Scegli un portafoglio</string>
+  <string name="uncategorized">Non categorizzato</string>
+  <string name="show_more">mostra di più</string>
+  <string name="show_less">mostra di meno</string>
+  <string name="permanently_delete">Eliminare definitivamente?</string>
+  <string name="from_wallet">Dal portafoglio</string>
+  <string name="to_wallet">Al portafoglio</string>
+  <string name="converted_amount">Importo convertito</string>
+  <string name="primary_icon_description">Imposta come principale</string>
+  <string name="non_primary_icon_description">Imposta come non principale</string>
+  <string name="total_balance">Saldo totale</string>
 </resources>

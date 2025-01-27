@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.datastore
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
+import ru.resodostudios.cashsense.core.util.getDefaultCurrency
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
@@ -12,7 +13,7 @@ import javax.inject.Inject
  */
 class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
 
-    override val defaultValue: UserPreferences = UserPreferences.getDefaultInstance()
+    override val defaultValue: UserPreferences = getCustomInstance()
 
     override suspend fun readFrom(input: InputStream): UserPreferences =
         try {
@@ -24,4 +25,9 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
     override suspend fun writeTo(t: UserPreferences, output: OutputStream) {
         t.writeTo(output)
     }
+}
+
+internal fun getCustomInstance() = userPreferences {
+    currency = getDefaultCurrency().currencyCode
+    useDynamicColor = true
 }

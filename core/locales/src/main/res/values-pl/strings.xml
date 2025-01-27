@@ -41,7 +41,6 @@
   <string name="licenses">Licencje</string>
   <string name="version">Wersja</string>
   <string name="feedback">Opinie</string>
-  <string name="choose_currency">Wybierz domyślną walutę</string>
   <string name="new_subscription">Nowa subskrypcja</string>
   <string name="edit_subscription">Edytuj subskrypcję</string>
   <string name="payment_date">Data płatności</string>
@@ -66,7 +65,6 @@
   <string name="expenses">Wydatki</string>
   <string name="income_singular">Przychód</string>
   <string name="income_plural">Przychody</string>
-  <string name="transaction_deleted">Transakcja usunięta</string>
   <string name="transaction_shortcut_long_label">Dodaj nową transakcję</string>
   <string name="completed">Zakończono</string>
   <string name="pending">Oczekujące</string>
@@ -84,4 +82,20 @@
   <string name="wallet_widget_empty">Nie masz żadnych portfeli</string>
   <string name="not_enough_data">Niewystarczające dane</string>
   <string name="repeat">Powtórz</string>
+  <string name="currency_not_found">Waluta nieznaleziona</string>
+  <string name="transfer">Przelew</string>
+  <string name="transfers">Przelewy</string>
+  <string name="new_transfer">Nowy przelew</string>
+  <string name="exchange_rate">Kurs wymiany</string>
+  <string name="choose_wallet">Wybierz portfel</string>
+  <string name="uncategorized">Bez kategorii</string>
+  <string name="show_more">pokaż więcej</string>
+  <string name="show_less">pokaż mniej</string>
+  <string name="permanently_delete">Usunąć na stałe?</string>
+  <string name="from_wallet">Z portfela</string>
+  <string name="to_wallet">Do portfela</string>
+  <string name="converted_amount">Przeliczona kwota</string>
+  <string name="primary_icon_description">Ustaw jako główny</string>
+  <string name="non_primary_icon_description">Ustaw jako niegłówny</string>
+  <string name="total_balance">Saldo całkowite</string>
 </resources>

@@ -30,11 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -47,10 +45,15 @@ import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
-import ru.resodostudios.cashsense.core.ui.DatePickerTextField
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
-import ru.resodostudios.cashsense.core.ui.formatDate
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
+import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
@@ -80,20 +83,23 @@ fun SubscriptionDialog(
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val dialogTitle = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.edit_subscription else localesR.string.new_subscription
-    val dialogConfirmText = if (subscriptionDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (dialogTitle, dialogConfirmText) = if (subscriptionDialogState.id.isNotEmpty()) {
+        localesR.string.edit_subscription to localesR.string.save
+    } else {
+        localesR.string.new_subscription to localesR.string.add
+    }
 
     CsAlertDialog(
         titleRes = dialogTitle,
         confirmButtonTextRes = dialogConfirmText,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.AutoRenew,
+        icon = CsIcons.Outlined.Autorenew,
         onConfirm = {
-            onSubscriptionEvent(Save)
+            onSubscriptionEvent(Save(subscriptionDialogState.asSubscription()))
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
-                subscriptionDialogState.amount.cleanAndValidateAmount().second,
+                subscriptionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
     ) {
         val focusManager = LocalFocusManager.current
@@ -121,7 +127,7 @@ fun SubscriptionDialog(
             )
             OutlinedTextField(
                 value = subscriptionDialogState.amount,
-                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAndValidateAmount().first)) },
+                onValueChange = { onSubscriptionEvent(UpdateAmount(it.cleanAmount())) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
@@ -138,8 +144,8 @@ fun SubscriptionDialog(
                     .padding(bottom = 16.dp),
             )
             CurrencyDropdownMenu(
-                currencyCode = subscriptionDialogState.currency,
-                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it.currencyCode)) },
+                currency = subscriptionDialogState.currency,
+                onCurrencyClick = { onSubscriptionEvent(UpdateCurrency(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -147,8 +153,10 @@ fun SubscriptionDialog(
             DatePickerTextField(
                 value = subscriptionDialogState.paymentDate.formatDate(),
                 labelTextId = localesR.string.payment_date,
-                iconId = CsIcons.Calendar,
-                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it))) },
+                icon = CsIcons.Outlined.Calendar,
+                onDateClick = {
+                    onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it)))
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -160,7 +168,7 @@ fun SubscriptionDialog(
                 supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Notifications),
+                        imageVector = CsIcons.Outlined.Notifications,
                         contentDescription = null,
                     )
                 },

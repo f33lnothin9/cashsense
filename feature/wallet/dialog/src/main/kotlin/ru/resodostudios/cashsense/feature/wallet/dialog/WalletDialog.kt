@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.wallet.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,10 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -31,116 +30,139 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.ui.CurrencyDropdownMenu
-import ru.resodostudios.cashsense.core.ui.cleanAndValidateAmount
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.Save
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateInitialBalance
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdatePrimary
-import ru.resodostudios.cashsense.feature.wallet.dialog.WalletDialogEvent.UpdateTitle
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
+import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun WalletDialog(
+internal fun WalletDialog(
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: WalletDialogViewModel = hiltViewModel(),
 ) {
-    val walletDialogState by viewModel.walletDialogUiState.collectAsStateWithLifecycle()
+    val walletDialogState by viewModel.walletDialogState.collectAsStateWithLifecycle()
 
     WalletDialog(
         walletDialogState = walletDialogState,
-        onWalletDialogEvent = viewModel::onWalletDialogEvent,
         onDismiss = onDismiss,
+        onWalletSave = viewModel::saveWallet,
+        onTitleUpdate = viewModel::updateTitle,
+        onInitialBalanceUpdate = viewModel::updateInitialBalance,
+        onCurrencyUpdate = viewModel::updateCurrency,
+        onPrimaryUpdate = viewModel::updatePrimary,
+        modifier = modifier,
     )
 }
 
 @Composable
-fun WalletDialog(
+private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
-    onWalletDialogEvent: (WalletDialogEvent) -> Unit,
     onDismiss: () -> Unit,
+    onWalletSave: (WalletDialogUiState) -> Unit,
+    onTitleUpdate: (String) -> Unit,
+    onInitialBalanceUpdate: (String) -> Unit,
+    onCurrencyUpdate: (Currency) -> Unit,
+    onPrimaryUpdate: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val dialogTitle = if (walletDialogState.id.isNotEmpty()) localesR.string.edit_wallet else localesR.string.new_wallet
-    val dialogConfirmText = if (walletDialogState.id.isNotEmpty()) localesR.string.save else localesR.string.add
+    val (titleRes, confirmButtonTextRes) = if (walletDialogState.id.isNotBlank()) {
+        localesR.string.edit_wallet to localesR.string.save
+    } else {
+        localesR.string.new_wallet to localesR.string.add
+    }
 
     CsAlertDialog(
-        titleRes = dialogTitle,
-        confirmButtonTextRes = dialogConfirmText,
+        titleRes = titleRes,
+        confirmButtonTextRes = confirmButtonTextRes,
         dismissButtonTextRes = localesR.string.cancel,
-        iconRes = CsIcons.Wallet,
+        icon = CsIcons.Outlined.Wallet,
         onConfirm = {
-            onWalletDialogEvent(Save)
+            onWalletSave(walletDialogState)
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
         onDismiss = onDismiss,
+        modifier = modifier,
     ) {
-        val focusManager = LocalFocusManager.current
-        val focusRequester = remember { FocusRequester() }
+        if (walletDialogState.isLoading) {
+            LoadingState(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp),
+            )
+        } else {
+            val focusManager = LocalFocusManager.current
+            val focusRequester = remember { FocusRequester() }
 
-        Column(Modifier.verticalScroll(rememberScrollState())) {
-            OutlinedTextField(
-                value = walletDialogState.title,
-                onValueChange = { onWalletDialogEvent(UpdateTitle(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-                    .focusRequester(focusRequester),
-                label = { Text(stringResource(localesR.string.title)) },
-                placeholder = { Text(stringResource(localesR.string.title) + "*") },
-                supportingText = { Text(stringResource(localesR.string.required)) },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                ),
-                singleLine = true,
-            )
-            OutlinedTextField(
-                value = walletDialogState.initialBalance,
-                onValueChange = { onWalletDialogEvent(UpdateInitialBalance(it.cleanAndValidateAmount().first)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                label = { Text(stringResource(localesR.string.initial_balance)) },
-                placeholder = { Text("0") },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                ),
-                singleLine = true,
-            )
-            CurrencyDropdownMenu(
-                currencyCode = walletDialogState.currency,
-                onCurrencyClick = { onWalletDialogEvent(UpdateCurrency(it.currencyCode)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-            )
-            CsListItem(
-                headlineContent = { Text(stringResource(localesR.string.primary)) },
-                leadingContent = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.Star),
-                        contentDescription = null,
-                    )
-                },
-                trailingContent = {
-                    Switch(
-                        checked = walletDialogState.isPrimary,
-                        onCheckedChange = { onWalletDialogEvent(UpdatePrimary(it)) },
-                    )
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                OutlinedTextField(
+                    value = walletDialogState.title,
+                    onValueChange = onTitleUpdate,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .focusRequester(focusRequester),
+                    label = { Text(stringResource(localesR.string.title)) },
+                    placeholder = { Text(stringResource(localesR.string.title) + "*") },
+                    supportingText = { Text(stringResource(localesR.string.required)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                    ),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = walletDialogState.initialBalance,
+                    onValueChange = { onInitialBalanceUpdate(it.cleanAmount()) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    label = { Text(stringResource(localesR.string.initial_balance)) },
+                    placeholder = { Text("0") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() },
+                    ),
+                    singleLine = true,
+                )
+                CurrencyDropdownMenu(
+                    currency = walletDialogState.currency,
+                    onCurrencyClick = onCurrencyUpdate,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    enabled = walletDialogState.isCurrencyEditable,
+                )
+                CsListItem(
+                    headlineContent = { Text(stringResource(localesR.string.primary)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Star,
+                            contentDescription = null,
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = walletDialogState.isPrimary,
+                            onCheckedChange = onPrimaryUpdate,
+                        )
+                    }
+                )
+            }
+            LaunchedEffect(walletDialogState.id) {
+                if (walletDialogState.id.isBlank()) {
+                    focusRequester.requestFocus()
                 }
-            )
-        }
-        LaunchedEffect(Unit) {
-            if (walletDialogState.id.isEmpty()) {
-                focusRequester.requestFocus()
             }
         }
     }

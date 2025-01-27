@@ -6,6 +6,8 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.ui.component.StoredIcon
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 
 /**
  * This [PreviewParameterProvider](https://developer.android.com/reference/kotlin/androidx/compose/ui/tooling/preview/PreviewParameterProvider)
@@ -25,6 +27,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.parse("2024-09-13T14:20:00Z"),
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -41,6 +45,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.parse("2024-08-13T14:20:00Z"),
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "2",
@@ -57,6 +63,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "10",
@@ -73,6 +81,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "10",
@@ -89,6 +99,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -105,6 +117,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "8",
@@ -121,6 +135,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "8",
@@ -137,6 +153,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "1",
@@ -153,6 +171,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "11",
@@ -169,6 +189,8 @@ class TransactionCategoryPreviewParameterProvider : PreviewParameterProvider<Lis
                         timestamp = Instant.DISTANT_PAST,
                         status = StatusType.PENDING,
                         ignored = false,
+                        transferId = null,
+                        currency = getUsdCurrency(),
                     ),
                     category = Category(
                         id = "11",

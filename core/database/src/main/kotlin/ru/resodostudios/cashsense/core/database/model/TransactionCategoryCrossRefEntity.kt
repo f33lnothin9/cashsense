@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 
 @Entity(
     tableName = "transactions_categories",
@@ -32,4 +33,9 @@ data class TransactionCategoryCrossRefEntity(
     val transactionId: String,
     @ColumnInfo(name = "category_id")
     val categoryId: String,
+)
+
+fun TransactionCategoryCrossRefEntity.asExternalModel() = TransactionCategoryCrossRef(
+    transactionId = transactionId,
+    categoryId = categoryId,
 )

@@ -1,69 +1,8 @@
 package ru.resodostudios.cashsense.core.designsystem.icon
 
-import ru.resodostudios.cashsense.core.designsystem.R
-
 object CsIcons {
-    val Home = R.drawable.ic_outlined_home
-    val HomeFilled = R.drawable.ic_filled_home
-    val Category = R.drawable.ic_outlined_category
-    val CategoryFilled = R.drawable.ic_filled_category
-    val Close = R.drawable.ic_outlined_close
-    val CreditCard = R.drawable.ic_outlined_credit_card
-    val Calendar = R.drawable.ic_outlined_calendar
-    val Delete = R.drawable.ic_outlined_delete
-    val AccountBalance = R.drawable.ic_outlined_account_balance
-    val Add = R.drawable.ic_outlined_add
-    val ArrowBack = R.drawable.ic_outlined_arrow_back
-    val Attractions = R.drawable.ic_outlined_attractions
-    val AutoRenew = R.drawable.ic_outlined_autorenew
-    val Block = R.drawable.ic_outlined_block
-    val Apparel = R.drawable.ic_outlined_apparel
-    val Chair = R.drawable.ic_outlined_chair
-    val Check = R.drawable.ic_outlined_check
-    val CheckCircle = R.drawable.ic_outlined_check_circle
-    val ChevronLeft = R.drawable.ic_outlined_chevron_left
-    val ChevronRight = R.drawable.ic_outlined_chevron_right
-    val DirectionsBus = R.drawable.ic_outlined_directions_bus
-    val Edit = R.drawable.ic_outlined_edit
-    val Exercise = R.drawable.ic_outlined_exercise
-    val Fastfood = R.drawable.ic_outlined_fastfood
-    val Feedback = R.drawable.ic_outlined_feedback
-    val FormatPaint = R.drawable.ic_outlined_format_paint
-    val Handyman = R.drawable.ic_outlined_handyman
-    val HistoryEdu = R.drawable.ic_outlined_history_edu
-    val Info = R.drawable.ic_outlined_info
-    val Language = R.drawable.ic_outlined_language
-    val LocalBar = R.drawable.ic_outlined_local_bar
-    val LocalGasStation = R.drawable.ic_outlined_local_gas_station
-    val Memory = R.drawable.ic_outlined_memory
-    val Monitoring = R.drawable.ic_outlined_monitoring
-    val MoreVert = R.drawable.ic_outlined_more_vert
-    val MusicNote = R.drawable.ic_outlined_music_note
-    val Notifications = R.drawable.ic_outlined_notifications
-    val NotificationsActive = R.drawable.ic_outlined_notifications_active
-    val Palette = R.drawable.ic_outlined_palette
-    val Payments = R.drawable.ic_outlined_payments
-    val Pending = R.drawable.ic_outlined_pending
-    val Pets = R.drawable.ic_outlined_pets
-    val Phishing = R.drawable.ic_outlined_phishing
-    val Pill = R.drawable.ic_outlined_pill
-    val Policy = R.drawable.ic_outlined_policy
-    val ReceiptLong = R.drawable.ic_outlined_receipt_long
-    val Redo = R.drawable.ic_outlined_redo
-    val Restaurant = R.drawable.ic_outlined_restaurant
-    val School = R.drawable.ic_outlined_school
-    val SelfCare = R.drawable.ic_outlined_self_care
-    val Settings = R.drawable.ic_outlined_settings
-    val SettingsFilled = R.drawable.ic_filled_settings
-    val ShoppingCart = R.drawable.ic_outlined_shopping_cart
-    val SimCard = R.drawable.ic_outlined_sim_card
-    val SmokingRooms = R.drawable.ic_outlined_smoking_rooms
-    val SportsEsports = R.drawable.ic_outlined_sports_esports
-    val Star = R.drawable.ic_outlined_star
-    val Travel = R.drawable.ic_outlined_travel
-    val TrendingDown = R.drawable.ic_outlined_trending_down
-    val TrendingUp = R.drawable.ic_outlined_trending_up
-    val UniversalCurrencyAlt = R.drawable.ic_outlined_universal_currency_alt
-    val Wallet = R.drawable.ic_outlined_wallet
-    val Work = R.drawable.ic_outlined_work
+
+    object Outlined
+
+    object Filled
 }

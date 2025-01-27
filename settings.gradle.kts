@@ -1,7 +1,13 @@
 pluginManagement {
     includeBuild("build-logic")
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -9,7 +15,13 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
     }
 }
@@ -28,19 +40,25 @@ include(":core:datastore")
 include(":core:datastore-proto")
 include(":core:data")
 include(":core:designsystem")
+include(":core:domain")
 include(":core:locales")
 include(":core:model")
+include(":core:network")
 include(":core:notifications")
 include(":core:shortcuts")
 include(":core:ui")
 
-include(":feature:home")
-include(":feature:category:list")
 include(":feature:category:dialog")
-include(":feature:subscription:list")
+include(":feature:category:list")
+include(":feature:home")
+include(":feature:settings")
 include(":feature:subscription:dialog")
-include(":feature:transaction")
+include(":feature:subscription:list")
+include(":feature:transaction:dialog")
+include(":feature:transaction:overview")
+include(":feature:transfer")
 include(":feature:wallet:detail")
 include(":feature:wallet:dialog")
 include(":feature:wallet:widget")
-include(":feature:settings")
+
+include(":work")

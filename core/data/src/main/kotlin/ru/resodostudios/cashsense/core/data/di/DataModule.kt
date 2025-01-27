@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
+import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
+import ru.resodostudios.cashsense.core.data.repository.OfflineFirstCurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -14,8 +16,8 @@ import ru.resodostudios.cashsense.core.data.repository.offline.OfflineSubscripti
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineTransactionRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
-import ru.resodostudios.cashsense.core.data.util.AlarmScheduler
-import ru.resodostudios.cashsense.core.data.util.NotificationAlarmScheduler
+import ru.resodostudios.cashsense.core.data.util.ReminderScheduler
+import ru.resodostudios.cashsense.core.data.util.ReminderSchedulerImpl
 import ru.resodostudios.cashsense.core.data.util.TimeZoneBroadcastMonitor
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 
@@ -27,6 +29,11 @@ internal abstract class DataModule {
     internal abstract fun bindsCategoriesRepository(
         categoriesRepository: OfflineCategoriesRepository,
     ): CategoriesRepository
+
+    @Binds
+    internal abstract fun bindsCurrencyConversionRepository(
+        currencyConversionRepository: OfflineFirstCurrencyConversionRepository,
+    ): CurrencyConversionRepository
 
     @Binds
     internal abstract fun bindsTransactionsRepository(
@@ -55,6 +62,6 @@ internal abstract class DataModule {
 
     @Binds
     internal abstract fun bindsNotificationAlarmScheduler(
-        notificationAlarmScheduler: NotificationAlarmScheduler,
-    ): AlarmScheduler
+        reminderSchedulerImpl: ReminderSchedulerImpl,
+    ): ReminderScheduler
 }
