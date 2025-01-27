@@ -109,14 +109,14 @@ fun FinanceGraph(
 
                 if (markerIndex != xTarget) {
                     xTarget = 0
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
                 }
             }
 
             override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
                 val target = targets.first() as LineCartesianLayerMarkerTarget
                 xTarget = target.points.last().entry.x.toInt()
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
             }
         }
     }
