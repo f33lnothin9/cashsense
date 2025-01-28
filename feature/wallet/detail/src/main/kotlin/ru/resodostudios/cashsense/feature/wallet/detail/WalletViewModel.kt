@@ -29,7 +29,6 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
-import ru.resodostudios.cashsense.core.ui.component.getFinanceProgress
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
@@ -116,9 +115,7 @@ class WalletViewModel @Inject constructor(
                 selectedYearMonth = transactionFilter.selectedYearMonth,
             ),
             income = income,
-            incomeProgress = getFinanceProgress(income, extendedUserWallet.userWallet.currentBalance),
             expenses = expenses,
-            expensesProgress = getFinanceProgress(expenses, extendedUserWallet.userWallet.currentBalance),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
@@ -239,8 +236,6 @@ sealed interface WalletUiState {
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
         val income: BigDecimal,
-        val incomeProgress: Float,
-        val expensesProgress: Float,
         val graphData: Map<Int, BigDecimal>,
     ) : WalletUiState
 }
