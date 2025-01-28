@@ -232,7 +232,7 @@ private fun WalletTopBar(
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            PrimaryIconButton(userWallet, onPrimaryClick)
+            PrimaryToggleButton(userWallet, onPrimaryClick)
             WalletDropdownMenu(
                 onTransferClick = { onTransferClick(userWallet.id) },
                 onEditClick = { onEditClick(userWallet.id) },
@@ -244,7 +244,7 @@ private fun WalletTopBar(
 }
 
 @Composable
-private fun PrimaryIconButton(
+private fun PrimaryToggleButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
