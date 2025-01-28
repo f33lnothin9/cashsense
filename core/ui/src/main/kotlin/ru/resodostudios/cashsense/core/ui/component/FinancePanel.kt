@@ -436,10 +436,10 @@ private fun FilterBySelectedDateTypeRow(
 
 fun getFinanceProgress(
     value: BigDecimal,
-    totalBalance: BigDecimal,
+    sumOfIncomeAndExpenses: BigDecimal,
 ): Float {
-    if (totalBalance.signum() == 0) return 0f
-    return value.divide(totalBalance, MathContext.DECIMAL32).toFloat()
+    if (sumOfIncomeAndExpenses.signum() == 0) return 0f
+    return value.divide(sumOfIncomeAndExpenses, MathContext.DECIMAL32).toFloat()
 }
 
 @Preview

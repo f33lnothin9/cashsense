@@ -157,9 +157,9 @@ class TransactionOverviewViewModel @Inject constructor(
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         income = income,
-                        incomeProgress = getFinanceProgress(income, totalBalance),
+                        incomeProgress = getFinanceProgress(income, income + expenses),
                         expenses = expenses,
-                        expensesProgress = getFinanceProgress(expenses, totalBalance),
+                        expensesProgress = getFinanceProgress(expenses, income + expenses),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,

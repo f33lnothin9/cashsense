@@ -116,9 +116,9 @@ class WalletViewModel @Inject constructor(
                 selectedYearMonth = transactionFilter.selectedYearMonth,
             ),
             income = income,
-            incomeProgress = getFinanceProgress(income, extendedUserWallet.userWallet.currentBalance),
+            incomeProgress = getFinanceProgress(income, income + expenses),
             expenses = expenses,
-            expensesProgress = getFinanceProgress(expenses, extendedUserWallet.userWallet.currentBalance),
+            expensesProgress = getFinanceProgress(expenses, income + expenses),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
