@@ -79,9 +79,7 @@ fun FinancePanel(
     availableCategories: List<Category>,
     currency: Currency,
     expenses: BigDecimal,
-    expensesProgress: Float,
     income: BigDecimal,
-    incomeProgress: Float,
     graphData: Map<Int, BigDecimal>,
     transactionFilter: TransactionFilter,
     onDateTypeUpdate: (DateType) -> Unit,
@@ -113,13 +111,13 @@ fun FinancePanel(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
-                            val animatedExpensesProgress by animateFloatAsState(
-                                targetValue = expensesProgress,
+                            val expensesProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(expenses, income + expenses),
                                 label = "ExpensesProgress",
                                 animationSpec = tween(durationMillis = 400),
                             )
-                            val animatedIncomeProgress by animateFloatAsState(
-                                targetValue = incomeProgress,
+                            val incomeProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(income, income + expenses),
                                 label = "IncomeProgress",
                                 animationSpec = tween(durationMillis = 400),
                             )
@@ -127,7 +125,7 @@ fun FinancePanel(
                                 title = expenses,
                                 currency = currency,
                                 supportingTextId = localesR.string.expenses,
-                                indicatorProgress = animatedExpensesProgress,
+                                indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onFinanceTypeUpdate(EXPENSES)
@@ -139,7 +137,7 @@ fun FinancePanel(
                                 title = income,
                                 currency = currency,
                                 supportingTextId = localesR.string.income_plural,
-                                indicatorProgress = animatedIncomeProgress,
+                                indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onFinanceTypeUpdate(INCOME)
@@ -436,10 +434,10 @@ private fun FilterBySelectedDateTypeRow(
 
 fun getFinanceProgress(
     value: BigDecimal,
-    totalBalance: BigDecimal,
+    sumOfIncomeAndExpenses: BigDecimal,
 ): Float {
-    if (totalBalance.signum() == 0) return 0f
-    return value.divide(totalBalance, MathContext.DECIMAL32).toFloat()
+    if (sumOfIncomeAndExpenses.signum() == 0) return 0f
+    return value.divide(sumOfIncomeAndExpenses, MathContext.DECIMAL32).toFloat()
 }
 
 @Preview
@@ -461,9 +459,7 @@ fun FinancePanelDefaultPreview(
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
                 expenses = BigDecimal(200),
-                expensesProgress = 0.2f,
                 income = BigDecimal(800),
-                incomeProgress = 0.8f,
                 graphData = emptyMap(),
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                 onDateTypeUpdate = {},
@@ -495,9 +491,7 @@ fun FinancePanelOpenedPreview(
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
                 expenses = BigDecimal(200),
-                expensesProgress = 0f,
                 income = BigDecimal(800),
-                incomeProgress = 0f,
                 graphData = mapOf(
                     1 to BigDecimal(100),
                     2 to BigDecimal(200),
