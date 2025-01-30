@@ -173,7 +173,7 @@ private fun LazyStaggeredGridScope.wallets(
     items(
         items = extendedUserWallets,
         key = { it.userWallet.id },
-        contentType = { "walletCard" },
+        contentType = { "WalletCard" },
     ) { walletData ->
         val selected = highlightSelectedWallet && walletData.userWallet.id == selectedWalletId
         WalletCard(
@@ -212,7 +212,7 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
                         val userCurrency = totalBalanceState.userCurrency
                         AnimatedAmount(
                             targetState = totalBalance,
-                            label = "total_balance",
+                            label = "TotalBalance",
                         ) {
                             Text(
                                 text = totalBalance.formatAmount(userCurrency),
