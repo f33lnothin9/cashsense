@@ -23,7 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -202,6 +204,7 @@ private fun LazyListScope.appearance(
     }
     item {
         AnimatedVisibility(supportDynamicColor) {
+            val hapticFeedback = LocalHapticFeedback.current
             CsListItem(
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
@@ -213,7 +216,12 @@ private fun LazyListScope.appearance(
                 trailingContent = {
                     Switch(
                         checked = settings.useDynamicColor,
-                        onCheckedChange = onDynamicColorPreferenceUpdate,
+                        onCheckedChange = { isChecked ->
+                            hapticFeedback.performHapticFeedback(
+                                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                            )
+                            onDynamicColorPreferenceUpdate(isChecked)
+                        },
                     )
                 },
             )
