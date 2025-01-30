@@ -25,6 +25,7 @@ composeBom = "2025.01.01"
 firebaseBom = "33.8.0"
 firebaseCrashlyticsPlugin = "3.0.2"
 gmsPlugin = "4.4.2"
+haze = "1.3.0"
 hilt = "2.55"
 hiltExt = "1.2.0"
 kotlin = "2.1.10"
@@ -80,6 +81,7 @@ androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", versio
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
