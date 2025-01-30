@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -140,8 +139,7 @@ private fun WalletScreen(
                 )
             }
 
-            val decayAnimationSpec = rememberSplineBasedDecay<Float>()
-            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(flingAnimationSpec = decayAnimationSpec)
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
             Scaffold(
                 modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -260,6 +258,9 @@ private fun WalletTopBar(
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
         scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+        ),
     )
 }
 
