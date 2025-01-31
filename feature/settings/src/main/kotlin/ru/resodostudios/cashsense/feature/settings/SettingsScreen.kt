@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,9 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
@@ -33,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
@@ -204,7 +202,6 @@ private fun LazyListScope.appearance(
     }
     item {
         AnimatedVisibility(supportDynamicColor) {
-            val hapticFeedback = LocalHapticFeedback.current
             CsListItem(
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
@@ -214,14 +211,9 @@ private fun LazyListScope.appearance(
                     )
                 },
                 trailingContent = {
-                    Switch(
+                    CsSwitch(
                         checked = settings.useDynamicColor,
-                        onCheckedChange = { isChecked ->
-                            hapticFeedback.performHapticFeedback(
-                                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                            )
-                            onDynamicColorPreferenceUpdate(isChecked)
-                        },
+                        onCheckedChange = onDynamicColorPreferenceUpdate,
                     )
                 },
             )
