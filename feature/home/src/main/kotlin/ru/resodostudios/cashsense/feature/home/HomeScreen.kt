@@ -207,13 +207,20 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
                 ) {
                     if (totalBalanceState is TotalBalanceUiState.Shown) {
                         val totalBalance = totalBalanceState.amount
-                        val userCurrency = totalBalanceState.userCurrency
+                            .formatAmount(totalBalanceState.userCurrency)
+                        val totalBalanceWithApproximately =
+                            if (totalBalanceState.shouldShowApproximately) {
+                                "≈$totalBalance"
+                            } else {
+                                totalBalance
+                            }
+
                         AnimatedAmount(
-                            targetState = totalBalance,
-                            label = "total_balance",
+                            targetState = totalBalanceState.amount,
+                            label = "TotalBalance",
                         ) {
                             Text(
-                                text = totalBalance.formatAmount(userCurrency),
+                                text = totalBalanceWithApproximately,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -339,6 +346,7 @@ fun HomeScreenPopulatedPreview(
                     amount = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
                     shouldShowBadIndicator = true,
+                    shouldShowApproximately = true,
                 ),
                 onWalletClick = {},
                 onTransfer = {},
