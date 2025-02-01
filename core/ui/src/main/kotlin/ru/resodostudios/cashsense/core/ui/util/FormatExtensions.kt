@@ -23,7 +23,7 @@ fun BigDecimal.formatAmount(
     locale: Locale = Locale.getDefault(),
 ): String {
     val formattedAmount = getDecimalFormat(currency, locale).format(this)
-    return if (withPlus && this.signum() == 1) "+$formattedAmount" else formattedAmount
+    return if (withPlus && this.signum() > 0) "+$formattedAmount" else formattedAmount
 }
 
 fun getDecimalFormat(
@@ -35,6 +35,10 @@ fun getDecimalFormat(
         maximumFractionDigits = 2
         this.currency = currency
     } as DecimalFormat
+}
+
+fun String.withApproximately(shouldShowApproximately: Boolean): String {
+    return if (shouldShowApproximately) "≈$this" else this
 }
 
 @Composable

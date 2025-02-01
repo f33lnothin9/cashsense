@@ -38,6 +38,7 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.withApproximately
 import java.math.BigDecimal
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -164,19 +165,15 @@ private fun TopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                val totalBalanceWithApproximately =
-                    if (shouldShowApproximately) {
-                        "≈${totalBalance.formatAmount(currency)}"
-                    } else {
-                        totalBalance.formatAmount(currency)
-                    }
                 AnimatedAmount(
                     targetState = totalBalance,
                     label = "TotalBalance",
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = totalBalanceWithApproximately,
+                        text = totalBalance
+                            .formatAmount(currency)
+                            .withApproximately(shouldShowApproximately),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelMedium,
@@ -244,6 +241,7 @@ private fun LazyListScope.header(
                     onCategorySelect = onCategorySelect,
                     onCategoryDeselect = onCategoryDeselect,
                     modifier = Modifier.fillMaxWidth(),
+                    shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )
             }
         }
