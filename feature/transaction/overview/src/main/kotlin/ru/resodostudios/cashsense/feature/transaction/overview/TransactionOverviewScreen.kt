@@ -38,7 +38,6 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.withApproximately
 import java.math.BigDecimal
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -171,9 +170,10 @@ private fun TopBar(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = totalBalance
-                            .formatAmount(currency)
-                            .withApproximately(shouldShowApproximately),
+                        text = totalBalance.formatAmount(
+                            currency = currency,
+                            withApproximately = shouldShowApproximately,
+                        ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelMedium,

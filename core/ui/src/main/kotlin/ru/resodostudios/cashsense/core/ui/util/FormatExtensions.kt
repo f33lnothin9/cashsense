@@ -20,10 +20,15 @@ private val currencyFormatCache = mutableMapOf<Pair<Currency, Locale>, DecimalFo
 fun BigDecimal.formatAmount(
     currency: Currency,
     withPlus: Boolean = false,
+    withApproximately: Boolean = false,
     locale: Locale = Locale.getDefault(),
 ): String {
     val formattedAmount = getDecimalFormat(currency, locale).format(this)
-    return if (withPlus && this.signum() > 0) "+$formattedAmount" else formattedAmount
+    return buildString {
+        if (withApproximately && this@formatAmount.signum() > 0) append("≈")
+        if (withPlus && this@formatAmount.signum() > 0) append("+")
+        append(formattedAmount)
+    }
 }
 
 fun getDecimalFormat(
@@ -35,10 +40,6 @@ fun getDecimalFormat(
         maximumFractionDigits = 2
         this.currency = currency
     } as DecimalFormat
-}
-
-fun String.withApproximately(shouldShowApproximately: Boolean): String {
-    return if (shouldShowApproximately) "≈$this" else this
 }
 
 @Composable

@@ -44,7 +44,6 @@ import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.withApproximately
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
@@ -207,9 +206,10 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
                     onClick = onTotalBalanceClick,
                 ) {
                     if (totalBalanceState is TotalBalanceUiState.Shown) {
-                        val totalBalance = totalBalanceState.amount
-                            .formatAmount(totalBalanceState.userCurrency)
-                            .withApproximately(totalBalanceState.shouldShowApproximately)
+                        val totalBalance = totalBalanceState.amount.formatAmount(
+                            currency = totalBalanceState.userCurrency,
+                            withApproximately = totalBalanceState.shouldShowApproximately,
+                        )
                         AnimatedAmount(
                             targetState = totalBalanceState.amount,
                             label = "TotalBalance",

@@ -64,7 +64,6 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
-import ru.resodostudios.cashsense.core.ui.util.withApproximately
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.math.MathContext
@@ -233,7 +232,10 @@ private fun SharedTransitionScope.FinanceCard(
                 ),
             ) {
                 Text(
-                    text = it.formatAmount(currency).withApproximately(shouldShowApproximately),
+                    text = it.formatAmount(
+                        currency = currency,
+                        withApproximately = shouldShowApproximately,
+                    ),
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -316,7 +318,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 ),
         ) {
             Text(
-                text = amount.formatAmount(currency).withApproximately(shouldShowApproximately),
+                text = amount.formatAmount(
+                    currency = currency,
+                    withApproximately = shouldShowApproximately,
+                ),
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
