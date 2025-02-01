@@ -153,6 +153,8 @@ class TransactionOverviewViewModel @Inject constructor(
                         }
                         .associate { it.first to it.second }
 
+                    val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
+
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         income = income,
@@ -161,6 +163,7 @@ class TransactionOverviewViewModel @Inject constructor(
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
                         totalBalance = totalBalance,
+                        shouldShowApproximately = shouldShowApproximately,
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
@@ -297,6 +300,7 @@ sealed interface FinancePanelUiState {
         val income: BigDecimal,
         val graphData: Map<Int, BigDecimal>,
         val totalBalance: BigDecimal,
+        val shouldShowApproximately: Boolean,
     ) : FinancePanelUiState
 }
 
