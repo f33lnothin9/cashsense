@@ -38,12 +38,12 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -110,7 +110,7 @@ fun TransactionBottomSheet(
             ) {
                 CsTag(
                     text = transaction.timestamp.formatDate(DATE_TIME),
-                    icon = CsIcons.Outlined.Calendar,
+                    icon = CsIcons.Outlined.Schedule,
                 )
                 val transactionStatusTag = if (transaction.status == COMPLETED) {
                     Triple(
