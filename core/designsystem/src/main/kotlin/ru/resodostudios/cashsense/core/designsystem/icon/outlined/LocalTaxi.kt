@@ -7,13 +7,13 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 
-val CsIcons.Outlined.DirectionsCar: ImageVector
+val CsIcons.Outlined.LocalTaxi: ImageVector
     get() {
-        if (_DirectionsCar != null) {
-            return _DirectionsCar!!
+        if (_LocalTaxi != null) {
+            return _LocalTaxi!!
         }
-        _DirectionsCar = ImageVector.Builder(
-            name = "Outlined.DirectionsCar",
+        _LocalTaxi = ImageVector.Builder(
+            name = "LocalTaxi",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
@@ -31,6 +31,10 @@ val CsIcons.Outlined.DirectionsCar: ImageVector
                 lineTo(204f, 240f)
                 quadTo(210f, 222f, 225.5f, 211f)
                 quadTo(241f, 200f, 260f, 200f)
+                lineTo(360f, 200f)
+                lineTo(360f, 120f)
+                lineTo(600f, 120f)
+                lineTo(600f, 200f)
                 lineTo(700f, 200f)
                 quadTo(719f, 200f, 734.5f, 211f)
                 quadTo(750f, 222f, 756f, 240f)
@@ -85,8 +89,8 @@ val CsIcons.Outlined.DirectionsCar: ImageVector
             }
         }.build()
 
-        return _DirectionsCar!!
+        return _LocalTaxi!!
     }
 
 @Suppress("ObjectPropertyName")
-private var _DirectionsCar: ImageVector? = null
+private var _LocalTaxi: ImageVector? = null

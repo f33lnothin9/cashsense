@@ -29,13 +29,13 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CreditCard
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Dentistry
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Diamond
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DirectionsBus
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DirectionsCar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Exercise
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Fastfood
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Handyman
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LocalBar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LocalGasStation
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LocalTaxi
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Memory
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Monitoring
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Movie
@@ -114,7 +114,7 @@ enum class StoredIcon(
     RESTAURANT(CsIcons.Outlined.Restaurant, 17),
     BAKERY_DINING(CsIcons.Outlined.BakeryDining, 37),
     DIRECTIONS_BUS(CsIcons.Outlined.DirectionsBus, 6),
-    DIRECTIONS_CAR(CsIcons.Outlined.DirectionsCar, 35),
+    LOCAL_TAXI(CsIcons.Outlined.LocalTaxi, 35),
     SCOOTER(CsIcons.Outlined.Scooter, 36),
     HANDYMAN(CsIcons.Outlined.Handyman, 7),
     LANGUAGE(CsIcons.Outlined.Language, 8),
