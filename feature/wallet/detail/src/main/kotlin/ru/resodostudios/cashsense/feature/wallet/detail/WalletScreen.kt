@@ -157,9 +157,7 @@ private fun WalletScreen(
                         availableCategories = walletState.availableCategories,
                         currency = walletState.userWallet.currency,
                         expenses = walletState.expenses,
-                        expensesProgress = walletState.expensesProgress,
                         income = walletState.income,
-                        incomeProgress = walletState.incomeProgress,
                         graphData = walletState.graphData,
                         transactionFilter = walletState.transactionFilter,
                         onDateTypeUpdate = onDateTypeUpdate,
@@ -234,7 +232,7 @@ private fun WalletTopBar(
                     contentDescription = stringResource(localesR.string.add_transaction_icon_description),
                 )
             }
-            PrimaryIconButton(userWallet, onPrimaryClick)
+            PrimaryToggleButton(userWallet, onPrimaryClick)
             WalletDropdownMenu(
                 onTransferClick = { onTransferClick(userWallet.id) },
                 onEditClick = { onEditClick(userWallet.id) },
@@ -246,7 +244,7 @@ private fun WalletTopBar(
 }
 
 @Composable
-private fun PrimaryIconButton(
+private fun PrimaryToggleButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {

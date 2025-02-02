@@ -29,7 +29,6 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.component.getFinanceProgress
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
@@ -154,16 +153,17 @@ class TransactionOverviewViewModel @Inject constructor(
                         }
                         .associate { it.first to it.second }
 
+                    val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
+
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         income = income,
-                        incomeProgress = getFinanceProgress(income, totalBalance),
                         expenses = expenses,
-                        expensesProgress = getFinanceProgress(expenses, totalBalance),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
                         totalBalance = totalBalance,
+                        shouldShowApproximately = shouldShowApproximately,
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
@@ -297,11 +297,10 @@ sealed interface FinancePanelUiState {
         val availableCategories: List<Category>,
         val userCurrency: Currency,
         val expenses: BigDecimal,
-        val expensesProgress: Float,
         val income: BigDecimal,
-        val incomeProgress: Float,
         val graphData: Map<Int, BigDecimal>,
         val totalBalance: BigDecimal,
+        val shouldShowApproximately: Boolean,
     ) : FinancePanelUiState
 }
 

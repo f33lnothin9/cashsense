@@ -79,9 +79,7 @@ fun FinancePanel(
     availableCategories: List<Category>,
     currency: Currency,
     expenses: BigDecimal,
-    expensesProgress: Float,
     income: BigDecimal,
-    incomeProgress: Float,
     graphData: Map<Int, BigDecimal>,
     transactionFilter: TransactionFilter,
     onDateTypeUpdate: (DateType) -> Unit,
@@ -90,6 +88,7 @@ fun FinancePanel(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     modifier: Modifier = Modifier,
+    shouldShowApproximately: Boolean = false,
 ) {
     Column(
         modifier = modifier.animateContentSize(),
@@ -113,50 +112,52 @@ fun FinancePanel(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
-                            val animatedExpensesProgress by animateFloatAsState(
-                                targetValue = expensesProgress,
+                            val expensesProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(expenses, income + expenses),
                                 label = "ExpensesProgress",
                                 animationSpec = tween(durationMillis = 400),
                             )
-                            val animatedIncomeProgress by animateFloatAsState(
-                                targetValue = incomeProgress,
+                            val incomeProgress by animateFloatAsState(
+                                targetValue = getFinanceProgress(income, income + expenses),
                                 label = "IncomeProgress",
                                 animationSpec = tween(durationMillis = 400),
                             )
                             FinanceCard(
-                                title = expenses,
+                                amount = expenses,
                                 currency = currency,
-                                supportingTextId = localesR.string.expenses,
-                                indicatorProgress = animatedExpensesProgress,
+                                subtitleRes = localesR.string.expenses,
+                                indicatorProgress = expensesProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onFinanceTypeUpdate(EXPENSES)
                                     onDateTypeUpdate(MONTH)
                                 },
                                 animatedVisibilityScope = this@AnimatedContent,
+                                shouldShowApproximately = shouldShowApproximately,
                             )
                             FinanceCard(
-                                title = income,
+                                amount = income,
                                 currency = currency,
-                                supportingTextId = localesR.string.income_plural,
-                                indicatorProgress = animatedIncomeProgress,
+                                subtitleRes = localesR.string.income_plural,
+                                indicatorProgress = incomeProgress,
                                 modifier = Modifier.weight(1f),
                                 onClick = {
                                     onFinanceTypeUpdate(INCOME)
                                     onDateTypeUpdate(MONTH)
                                 },
                                 animatedVisibilityScope = this@AnimatedContent,
+                                shouldShowApproximately = shouldShowApproximately,
                             )
                         }
                     }
 
                     EXPENSES -> {
                         DetailedFinanceSection(
-                            title = expenses,
+                            amount = expenses,
                             graphData = graphData,
                             transactionFilter = transactionFilter,
                             currency = currency,
-                            supportingTextId = localesR.string.expenses,
+                            subtitleRes = localesR.string.expenses,
                             onBackClick = {
                                 onFinanceTypeUpdate(NOT_SET)
                                 onDateTypeUpdate(ALL)
@@ -168,16 +169,17 @@ fun FinancePanel(
                             modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
                             availableCategories = availableCategories,
+                            shouldShowApproximately = shouldShowApproximately,
                         )
                     }
 
                     INCOME -> {
                         DetailedFinanceSection(
-                            title = income,
+                            amount = income,
                             graphData = graphData,
                             transactionFilter = transactionFilter,
                             currency = currency,
-                            supportingTextId = localesR.string.income_plural,
+                            subtitleRes = localesR.string.income_plural,
                             onBackClick = {
                                 onFinanceTypeUpdate(NOT_SET)
                                 onDateTypeUpdate(ALL)
@@ -189,6 +191,7 @@ fun FinancePanel(
                             modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
                             availableCategories = availableCategories,
+                            shouldShowApproximately = shouldShowApproximately,
                         )
                     }
                 }
@@ -200,14 +203,15 @@ fun FinancePanel(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.FinanceCard(
-    title: BigDecimal,
+    amount: BigDecimal,
     currency: Currency,
-    @StringRes supportingTextId: Int,
+    @StringRes subtitleRes: Int,
     indicatorProgress: Float,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
+    shouldShowApproximately: Boolean = false,
 ) {
     OutlinedCard(
         modifier = modifier,
@@ -220,25 +224,28 @@ private fun SharedTransitionScope.FinanceCard(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             AnimatedAmount(
-                targetState = title,
+                targetState = amount,
                 label = "FinanceCardTitle",
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
+                    sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             ) {
                 Text(
-                    text = it.formatAmount(currency),
+                    text = it.formatAmount(
+                        currency = currency,
+                        withApproximately = shouldShowApproximately,
+                    ),
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
             Text(
-                text = stringResource(supportingTextId),
+                text = stringResource(subtitleRes),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(supportingTextId),
+                    sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             )
@@ -253,12 +260,12 @@ private fun SharedTransitionScope.FinanceCard(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.DetailedFinanceSection(
-    title: BigDecimal,
+    amount: BigDecimal,
     availableCategories: List<Category>,
     graphData: Map<Int, BigDecimal>,
     transactionFilter: TransactionFilter,
     currency: Currency,
-    @StringRes supportingTextId: Int,
+    @StringRes subtitleRes: Int,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onSelectedDateUpdate: (Short) -> Unit,
@@ -266,6 +273,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     onCategoryDeselect: (Category) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    shouldShowApproximately: Boolean = false,
 ) {
     Column(modifier) {
         Row(
@@ -300,28 +308,31 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             )
         }
         AnimatedAmount(
-            targetState = title,
+            targetState = amount,
             label = "DetailedFinanceCard",
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .sharedBounds(
-                    sharedContentState = rememberSharedContentState("$title/$supportingTextId"),
+                    sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
         ) {
             Text(
-                text = title.formatAmount(currency),
+                text = amount.formatAmount(
+                    currency = currency,
+                    withApproximately = shouldShowApproximately,
+                ),
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
         Text(
-            text = stringResource(supportingTextId),
+            text = stringResource(subtitleRes),
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .sharedBounds(
-                    sharedContentState = rememberSharedContentState(supportingTextId),
+                    sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             style = MaterialTheme.typography.labelLarge,
@@ -436,10 +447,10 @@ private fun FilterBySelectedDateTypeRow(
 
 fun getFinanceProgress(
     value: BigDecimal,
-    totalBalance: BigDecimal,
+    sumOfIncomeAndExpenses: BigDecimal,
 ): Float {
-    if (totalBalance.signum() == 0) return 0f
-    return value.divide(totalBalance, MathContext.DECIMAL32).toFloat()
+    if (sumOfIncomeAndExpenses.signum() == 0) return 0f
+    return value.divide(sumOfIncomeAndExpenses, MathContext.DECIMAL32).toFloat()
 }
 
 @Preview
@@ -461,9 +472,7 @@ fun FinancePanelDefaultPreview(
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
                 expenses = BigDecimal(200),
-                expensesProgress = 0.2f,
                 income = BigDecimal(800),
-                incomeProgress = 0.8f,
                 graphData = emptyMap(),
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                 onDateTypeUpdate = {},
@@ -495,9 +504,7 @@ fun FinancePanelOpenedPreview(
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
                 expenses = BigDecimal(200),
-                expensesProgress = 0f,
                 income = BigDecimal(800),
-                incomeProgress = 0f,
                 graphData = mapOf(
                     1 to BigDecimal(100),
                     2 to BigDecimal(200),
