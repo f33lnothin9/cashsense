@@ -50,6 +50,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import kotlin.reflect.KClass
+import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -64,12 +65,16 @@ fun CsApp(
     val appUpdateResult by appState.appUpdateResult.collectAsStateWithLifecycle()
     val activity = LocalContext.current.getActivityOrNull()
 
+    val updateAvailableMessage = stringResource(localesR.string.app_update_available)
+    val updateDownloadedMessage = stringResource(localesR.string.app_update_available)
+    val updateText = stringResource(localesR.string.app_update_available)
+    val installText = stringResource(localesR.string.app_update_available)
     LaunchedEffect(appUpdateResult) {
         when (appUpdateResult) {
             is AppUpdateResult.Available -> {
                 val snackBarResult = snackbarHostState.showSnackbar(
-                    message = "New version is available",
-                    actionLabel = "Update",
+                    message = updateAvailableMessage,
+                    actionLabel = updateText,
                     duration = Indefinite,
                     withDismissAction = true,
                 ) == ActionPerformed
@@ -82,8 +87,8 @@ fun CsApp(
 
             is AppUpdateResult.Downloaded -> {
                 val snackBarResult = snackbarHostState.showSnackbar(
-                    message = "Update is downloaded",
-                    actionLabel = "Install",
+                    message = updateDownloadedMessage,
+                    actionLabel = installText,
                     duration = Indefinite,
                 ) == ActionPerformed
                 if (snackBarResult) (appUpdateResult as AppUpdateResult.Downloaded).completeUpdate()
