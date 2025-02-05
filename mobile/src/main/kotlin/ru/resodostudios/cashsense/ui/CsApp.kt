@@ -72,13 +72,13 @@ fun CsApp(
     LaunchedEffect(appUpdateResult) {
         when (appUpdateResult) {
             is AppUpdateResult.Available -> {
-                val snackBarResult = snackbarHostState.showSnackbar(
+                val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateAvailableMessage,
                     actionLabel = updateText,
                     duration = Indefinite,
                     withDismissAction = true,
                 ) == ActionPerformed
-                if (snackBarResult) {
+                if (snackbarResult) {
                     activity?.let {
                         (appUpdateResult as AppUpdateResult.Available).startFlexibleUpdate(it, 120)
                     }
@@ -86,12 +86,12 @@ fun CsApp(
             }
 
             is AppUpdateResult.Downloaded -> {
-                val snackBarResult = snackbarHostState.showSnackbar(
+                val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateDownloadedMessage,
                     actionLabel = installText,
                     duration = Indefinite,
                 ) == ActionPerformed
-                if (snackBarResult) (appUpdateResult as AppUpdateResult.Downloaded).completeUpdate()
+                if (snackbarResult) (appUpdateResult as AppUpdateResult.Downloaded).completeUpdate()
             }
 
             else -> {}
@@ -130,7 +130,12 @@ fun CsApp(
         val destination = appState.currentTopLevelDestination
 
         Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+                )
+            },
             floatingActionButton = {
                 if (destination != null) {
                     if (destination.fabTitle != null && destination.fabIcon != null) {
