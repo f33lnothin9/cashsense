@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration.Indefinite
 import androidx.compose.material3.SnackbarDuration.Short
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -22,15 +26,19 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.google.android.play.core.ktx.AppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
@@ -51,6 +59,46 @@ fun CsApp(
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
+
+    val appUpdateResult = appState.appUpdateResult.collectAsStateWithLifecycle().value
+    val activity = LocalContext.current.getActivityOrNull()
+
+    when (appUpdateResult) {
+        is AppUpdateResult.Available -> {
+            LaunchedEffect(Unit) {
+                val snackBarResult = snackbarHostState.showSnackbar(
+                    message = "Update is available",
+                    actionLabel = "Download",
+                    duration = Indefinite,
+                    withDismissAction = true,
+                ) == ActionPerformed
+                if (snackBarResult) {
+                    activity?.let { appUpdateResult.startFlexibleUpdate(it, 120) }
+                }
+            }
+        }
+
+        is AppUpdateResult.Downloaded -> {
+            LaunchedEffect(Unit) {
+                val snackBarResult = snackbarHostState.showSnackbar(
+                    message = "Update is downloaded",
+                    actionLabel = "Install",
+                    duration = Indefinite,
+                ) == ActionPerformed
+                if (snackBarResult) appUpdateResult.completeUpdate()
+            }
+        }
+
+        is AppUpdateResult.InProgress -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    message = "Update is downloading",
+                    duration = Indefinite,
+                )
+            }
+        }
+        AppUpdateResult.NotAvailable -> {}
+    }
 
     NavigationSuiteScaffold(
         layoutType = layoutType,
@@ -152,3 +200,13 @@ private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any {
         it.hasRoute(route)
     } ?: false
+
+private fun Context.getActivityOrNull(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+
+    return null
+}

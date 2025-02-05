@@ -6,6 +6,4 @@ import kotlinx.coroutines.flow.Flow
 interface InAppUpdateManager {
 
     val appUpdateResult: Flow<AppUpdateResult>
-
-    fun installUpdate()
 }

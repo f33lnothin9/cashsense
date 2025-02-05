@@ -18,8 +18,4 @@ class InAppUpdateManagerImpl @Inject constructor(
 
     override val appUpdateResult: Flow<AppUpdateResult> = appUpdateManager.requestUpdateFlow()
         .catch { AppUpdateResult.NotAvailable }
-
-    override fun installUpdate() {
-        appUpdateManager.completeUpdate()
-    }
 }

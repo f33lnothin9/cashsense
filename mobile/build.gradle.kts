@@ -76,6 +76,8 @@ dependencies {
 
     implementation(projects.work)
 
+    implementation(libs.android.app.update)
+    implementation(libs.android.app.update.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
