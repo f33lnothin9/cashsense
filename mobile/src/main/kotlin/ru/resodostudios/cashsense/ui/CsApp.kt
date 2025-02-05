@@ -27,6 +27,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -60,44 +61,36 @@ fun CsApp(
     val currentDestination = appState.currentDestination
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
-    val appUpdateResult = appState.appUpdateResult.collectAsStateWithLifecycle().value
+    val appUpdateResult by appState.appUpdateResult.collectAsStateWithLifecycle()
     val activity = LocalContext.current.getActivityOrNull()
 
-    when (appUpdateResult) {
-        is AppUpdateResult.Available -> {
-            LaunchedEffect(Unit) {
+    LaunchedEffect(appUpdateResult) {
+        when (appUpdateResult) {
+            is AppUpdateResult.Available -> {
                 val snackBarResult = snackbarHostState.showSnackbar(
-                    message = "Update is available",
-                    actionLabel = "Download",
+                    message = "New version is available",
+                    actionLabel = "Update",
                     duration = Indefinite,
                     withDismissAction = true,
                 ) == ActionPerformed
                 if (snackBarResult) {
-                    activity?.let { appUpdateResult.startFlexibleUpdate(it, 120) }
+                    activity?.let {
+                        (appUpdateResult as AppUpdateResult.Available).startFlexibleUpdate(it, 120)
+                    }
                 }
             }
-        }
 
-        is AppUpdateResult.Downloaded -> {
-            LaunchedEffect(Unit) {
+            is AppUpdateResult.Downloaded -> {
                 val snackBarResult = snackbarHostState.showSnackbar(
                     message = "Update is downloaded",
                     actionLabel = "Install",
                     duration = Indefinite,
                 ) == ActionPerformed
-                if (snackBarResult) appUpdateResult.completeUpdate()
+                if (snackBarResult) (appUpdateResult as AppUpdateResult.Downloaded).completeUpdate()
             }
-        }
 
-        is AppUpdateResult.InProgress -> {
-            LaunchedEffect(Unit) {
-                snackbarHostState.showSnackbar(
-                    message = "Update is downloading",
-                    duration = Indefinite,
-                )
-            }
+            else -> {}
         }
-        AppUpdateResult.NotAvailable -> {}
     }
 
     NavigationSuiteScaffold(
