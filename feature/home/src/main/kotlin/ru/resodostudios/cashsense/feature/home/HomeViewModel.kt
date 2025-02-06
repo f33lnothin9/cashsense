@@ -85,10 +85,13 @@ class HomeViewModel @Inject constructor(
                             val totalExpenses = expenses.sumOf { it.amount }.abs()
                             val totalIncome = income.sumOf { it.amount }
 
+                            val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
+
                             TotalBalanceUiState.Shown(
                                 amount = totalBalance,
                                 userCurrency = userCurrency,
                                 shouldShowBadIndicator = totalIncome < totalExpenses,
+                                shouldShowApproximately = shouldShowApproximately,
                             )
                         }
                         .catch { emit(TotalBalanceUiState.NotShown) }
@@ -149,6 +152,7 @@ sealed interface TotalBalanceUiState {
         val amount: BigDecimal,
         val userCurrency: Currency,
         val shouldShowBadIndicator: Boolean,
+        val shouldShowApproximately: Boolean,
     ) : TotalBalanceUiState
 }
 
