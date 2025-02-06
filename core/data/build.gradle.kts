@@ -23,5 +23,7 @@ dependencies {
     implementation(projects.core.notifications)
     implementation(projects.core.shortcuts)
 
+    implementation(libs.android.app.update)
+    implementation(libs.android.app.update.ktx)
     implementation(libs.kotlinx.serialization.json)
 }
