@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
@@ -37,6 +38,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var timeZoneMonitor: TimeZoneMonitor
+
+    @Inject
+    lateinit var inAppUpdateManager: InAppUpdateManager
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -87,6 +91,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appState = rememberCsAppState(
                 timeZoneMonitor = timeZoneMonitor,
+                inAppUpdateManager = inAppUpdateManager,
             )
 
             val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
