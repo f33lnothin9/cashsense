@@ -12,14 +12,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import androidx.tracing.trace
-import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.ktx.AppUpdateResult
-import com.google.android.play.core.ktx.requestUpdateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -43,7 +41,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 @Composable
 fun rememberCsAppState(
     timeZoneMonitor: TimeZoneMonitor,
-    appUpdateManager: AppUpdateManager,
+    inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
 ): CsAppState {
@@ -55,7 +53,7 @@ fun rememberCsAppState(
     ) {
         CsAppState(
             timeZoneMonitor = timeZoneMonitor,
-            appUpdateManager = appUpdateManager,
+            inAppUpdateManager = inAppUpdateManager,
             coroutineScope = coroutineScope,
             navController = navController,
         )
@@ -65,7 +63,7 @@ fun rememberCsAppState(
 @Stable
 class CsAppState(
     timeZoneMonitor: TimeZoneMonitor,
-    appUpdateManager: AppUpdateManager,
+    inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope,
     val navController: NavHostController,
 ) {
@@ -100,8 +98,7 @@ class CsAppState(
             initialValue = TimeZone.currentSystemDefault(),
         )
 
-    val appUpdateResult = appUpdateManager.requestUpdateFlow()
-        .catch { AppUpdateResult.NotAvailable }
+    val appUpdateResult = inAppUpdateManager.appUpdateResult
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5_000),

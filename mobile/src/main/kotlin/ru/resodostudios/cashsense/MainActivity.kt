@@ -17,7 +17,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.tracing.trace
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -25,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
@@ -39,11 +39,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var timeZoneMonitor: TimeZoneMonitor
 
+    @Inject
+    lateinit var inAppUpdateManager: InAppUpdateManager
+
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-        val appUpdateManager = AppUpdateManagerFactory.create(this)
         super.onCreate(savedInstanceState)
 
         var themeSettings by mutableStateOf(
@@ -89,7 +91,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appState = rememberCsAppState(
                 timeZoneMonitor = timeZoneMonitor,
-                appUpdateManager = appUpdateManager,
+                inAppUpdateManager = inAppUpdateManager,
             )
 
             val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
