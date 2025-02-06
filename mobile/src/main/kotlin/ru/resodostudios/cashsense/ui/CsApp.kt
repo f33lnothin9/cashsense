@@ -27,7 +27,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -39,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.google.android.play.core.ktx.AppUpdateResult
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
@@ -62,36 +61,32 @@ fun CsApp(
     val currentDestination = appState.currentDestination
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
-    val appUpdateResult by appState.appUpdateResult.collectAsStateWithLifecycle()
+    val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
     val activity = LocalContext.current.getActivityOrNull()
 
     val updateAvailableMessage = stringResource(localesR.string.app_update_available)
     val updateDownloadedMessage = stringResource(localesR.string.app_update_available)
     val updateText = stringResource(localesR.string.app_update_available)
     val installText = stringResource(localesR.string.app_update_available)
-    LaunchedEffect(appUpdateResult) {
-        when (appUpdateResult) {
-            is AppUpdateResult.Available -> {
+    LaunchedEffect(inAppUpdateResult) {
+        when (inAppUpdateResult) {
+            is InAppUpdateResult.Available -> {
                 val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateAvailableMessage,
                     actionLabel = updateText,
                     duration = Indefinite,
                     withDismissAction = true,
                 ) == ActionPerformed
-                if (snackbarResult) {
-                    activity?.let {
-                        (appUpdateResult as AppUpdateResult.Available).startFlexibleUpdate(it, 120)
-                    }
-                }
+                if (snackbarResult) activity?.let { inAppUpdateResult.startFlexibleUpdate(it, 120) }
             }
 
-            is AppUpdateResult.Downloaded -> {
+            is InAppUpdateResult.Downloaded -> {
                 val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateDownloadedMessage,
                     actionLabel = installText,
                     duration = Indefinite,
                 ) == ActionPerformed
-                if (snackbarResult) (appUpdateResult as AppUpdateResult.Downloaded).completeUpdate()
+                if (snackbarResult) inAppUpdateResult.completeUpdate()
             }
 
             else -> {}

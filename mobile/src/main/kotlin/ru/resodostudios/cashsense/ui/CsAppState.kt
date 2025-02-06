@@ -12,12 +12,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import androidx.tracing.trace
-import com.google.android.play.core.ktx.AppUpdateResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -98,11 +98,11 @@ class CsAppState(
             initialValue = TimeZone.currentSystemDefault(),
         )
 
-    val appUpdateResult = inAppUpdateManager.appUpdateResult
+    val inAppUpdateResult = inAppUpdateManager.inAppUpdateResult
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AppUpdateResult.NotAvailable,
+            initialValue = InAppUpdateResult.NotAvailable,
         )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
