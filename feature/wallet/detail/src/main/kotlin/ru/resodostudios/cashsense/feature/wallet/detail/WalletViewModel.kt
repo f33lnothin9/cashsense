@@ -69,9 +69,8 @@ class WalletViewModel @Inject constructor(
             .applyTransactionFilter(transactionFilter)
 
         val filteredTransactions = filterableTransactions.transactionsCategories
-            .filterNot { it.transaction.ignored }
             .filter {
-                if (transactionFilter.dateType == ALL) {
+                !it.transaction.ignored && if (transactionFilter.dateType == ALL) {
                     it.transaction.timestamp
                         .getZonedDateTime()
                         .isInCurrentMonthAndYear()
@@ -79,7 +78,7 @@ class WalletViewModel @Inject constructor(
             }
         val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
             .let { (expensesList, incomeList) ->
-                val expensesSum = expensesList.sumOf { it.transaction.amount.abs() }
+                val expensesSum = expensesList.sumOf { it.transaction.amount }.abs()
                 val incomeSum = incomeList.sumOf { it.transaction.amount }
                 expensesSum to incomeSum
             }
@@ -96,14 +95,7 @@ class WalletViewModel @Inject constructor(
             .map { transactionsCategories ->
                 transactionsCategories.key to transactionsCategories.value
                     .map { transactionCategory -> transactionCategory.transaction.amount }
-                    .run {
-                        sumOf {
-                            when (transactionFilter.financeType) {
-                                EXPENSES -> it.abs()
-                                else -> it
-                            }
-                        }
-                    }
+                    .sumOf { if (transactionFilter.financeType == EXPENSES) it.abs() else it }
             }
             .associate { it.first to it.second }
 
