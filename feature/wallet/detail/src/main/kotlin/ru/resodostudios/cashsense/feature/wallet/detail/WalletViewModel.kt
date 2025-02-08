@@ -24,7 +24,6 @@ import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
 import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
-import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -77,12 +76,8 @@ class WalletViewModel @Inject constructor(
                 } else true
             }
         val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
-            .let { (expensesList, incomeList) ->
-                val expensesSum = expensesList.sumOf { it.transaction.amount }.abs()
-                val incomeSum = incomeList.sumOf { it.transaction.amount }
-                expensesSum to incomeSum
-            }
-        val groupedTransactions = filteredTransactions
+
+        val graphData = filteredTransactions
             .groupBy {
                 val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
                 when (transactionFilter.dateType) {
@@ -91,23 +86,14 @@ class WalletViewModel @Inject constructor(
                     ALL, WEEK -> zonedDateTime.dayOfWeek.value
                 }
             }
-        val graphData = groupedTransactions
-            .map { transactionsCategories ->
-                transactionsCategories.key to transactionsCategories.value
-                    .map { transactionCategory -> transactionCategory.transaction.amount }
-                    .sumOf { if (transactionFilter.financeType == EXPENSES) it.abs() else it }
+            .mapValues { (_, transactions) ->
+                transactions.sumOf { it.transaction.amount }.abs()
             }
-            .associate { it.first to it.second }
 
         WalletUiState.Success(
-            transactionFilter = TransactionFilter(
-                selectedCategories = transactionFilter.selectedCategories,
-                financeType = transactionFilter.financeType,
-                dateType = transactionFilter.dateType,
-                selectedYearMonth = transactionFilter.selectedYearMonth,
-            ),
-            income = income,
-            expenses = expenses,
+            transactionFilter = transactionFilter,
+            income = income.sumOf { it.transaction.amount },
+            expenses = expenses.sumOf { it.transaction.amount }.abs(),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransactionCategory = selectedTransactionId?.let { id ->
@@ -162,7 +148,7 @@ class WalletViewModel @Inject constructor(
     fun addToSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = it.selectedCategories.plus(category),
+                selectedCategories = it.selectedCategories + category,
             )
         }
     }
@@ -170,7 +156,7 @@ class WalletViewModel @Inject constructor(
     fun removeFromSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = it.selectedCategories.minus(category),
+                selectedCategories = it.selectedCategories - category,
             )
         }
     }
