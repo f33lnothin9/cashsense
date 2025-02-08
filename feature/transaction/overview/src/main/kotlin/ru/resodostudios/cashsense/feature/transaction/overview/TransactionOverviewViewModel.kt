@@ -25,7 +25,6 @@ import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
 import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
-import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -84,11 +83,9 @@ class TransactionOverviewViewModel @Inject constructor(
                         .flatMap { wallet -> wallet.transactionsWithCategories }
                         .applyTransactionFilter(transactionFilter)
 
-                    val filteredTransactions = filterableTransactions
-                        .transactionsCategories
-                        .filterNot { it.transaction.ignored }
+                    val filteredTransactions = filterableTransactions.transactionsCategories
                         .filter {
-                            if (transactionFilter.dateType == ALL) {
+                            !it.transaction.ignored && if (transactionFilter.dateType == ALL) {
                                 it.transaction.timestamp
                                     .getZonedDateTime()
                                     .isInCurrentMonthAndYear()
@@ -96,9 +93,7 @@ class TransactionOverviewViewModel @Inject constructor(
                         }
 
                     val totalBalance = wallets.sumOf {
-                        if (userCurrency == it.userWallet.currency) {
-                            return@sumOf it.userWallet.currentBalance
-                        }
+                        if (userCurrency == it.userWallet.currency) return@sumOf it.userWallet.currentBalance
                         val exchangeRate = exchangeRateMap[it.userWallet.currency]
                             ?: return@combine FinancePanelUiState.NotShown
 
@@ -110,18 +105,14 @@ class TransactionOverviewViewModel @Inject constructor(
                         .partition { it.amount.signum() < 0 }
                         .let { (expensesList, incomeList) ->
                             val expensesSum = expensesList.sumOf {
-                                if (userCurrency == it.currency) {
-                                    return@sumOf it.amount
-                                }
+                                if (userCurrency == it.currency) return@sumOf it.amount
                                 val exchangeRate = exchangeRateMap[it.currency]
                                     ?: return@combine FinancePanelUiState.NotShown
 
                                 it.amount * exchangeRate
                             }.abs()
                             val incomeSum = incomeList.sumOf {
-                                if (userCurrency == it.currency) {
-                                    return@sumOf it.amount
-                                }
+                                if (userCurrency == it.currency) return@sumOf it.amount
                                 val exchangeRate = exchangeRateMap[it.currency]
                                     ?: return@combine FinancePanelUiState.NotShown
 
@@ -129,7 +120,7 @@ class TransactionOverviewViewModel @Inject constructor(
                             }
                             expensesSum to incomeSum
                         }
-                    val groupedTransactions = filteredTransactions
+                    val graphData = filteredTransactions
                         .groupBy {
                             val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
                             when (transactionFilter.dateType) {
@@ -138,20 +129,9 @@ class TransactionOverviewViewModel @Inject constructor(
                                 ALL, WEEK -> zonedDateTime.dayOfWeek.value
                             }
                         }
-                    val graphData = groupedTransactions
-                        .map { transactionsCategories ->
-                            transactionsCategories.key to transactionsCategories.value
-                                .map { transactionCategory -> transactionCategory.transaction.amount }
-                                .run {
-                                    sumOf {
-                                        when (transactionFilter.financeType) {
-                                            EXPENSES -> it.abs()
-                                            else -> it
-                                        }
-                                    }
-                                }
+                        .mapValues { (_, transactions) ->
+                            transactions.sumOf { it.transaction.amount }.abs()
                         }
-                        .associate { it.first to it.second }
 
                     val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
 
@@ -232,7 +212,7 @@ class TransactionOverviewViewModel @Inject constructor(
     fun addToSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = it.selectedCategories.plus(category),
+                selectedCategories = it.selectedCategories + category,
             )
         }
     }
@@ -240,7 +220,7 @@ class TransactionOverviewViewModel @Inject constructor(
     fun removeFromSelectedCategories(category: Category) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = it.selectedCategories.minus(category),
+                selectedCategories = it.selectedCategories - category,
             )
         }
     }
