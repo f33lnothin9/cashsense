@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
@@ -30,6 +30,7 @@ class HomeViewModel @Inject constructor(
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
     private val currencyConversionRepository: CurrencyConversionRepository,
     userDataRepository: UserDataRepository,
+    walletRepository: WalletsRepository,
 ) : ViewModel() {
 
     private val homeDestination: HomeRoute = savedStateHandle.toRoute()
@@ -39,61 +40,62 @@ class HomeViewModel @Inject constructor(
     )
 
     val totalBalanceUiState: StateFlow<TotalBalanceUiState> = combine(
-        getExtendedUserWallets.invoke(),
+        walletRepository.getDistinctCurrencies(),
         userDataRepository.userData,
-    ) { wallets, userData ->
-        val baseCurrencies = wallets.mapTo(HashSet()) { it.userWallet.currency }
+    ) { currencies, userData ->
         val userCurrency = Currency.getInstance(userData.currency)
-        Triple(baseCurrencies, userCurrency, wallets)
+        currencies to userCurrency
     }
-        .flatMapLatest { (baseCurrencies, userCurrency, wallets) ->
+        .flatMapLatest { (baseCurrencies, userCurrency) ->
             flow {
                 emit(TotalBalanceUiState.Loading)
 
                 if (baseCurrencies.isEmpty()) {
                     emit(TotalBalanceUiState.NotShown)
                 } else {
-                    currencyConversionRepository.getConvertedCurrencies(
-                        baseCurrencies = baseCurrencies,
-                        targetCurrency = userCurrency,
-                    )
-                        .map { exchangeRates ->
-                            val exchangeRateMap = exchangeRates
-                                .associate { it.baseCurrency to it.exchangeRate }
+                    val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
 
-                            val totalBalance = wallets.sumOf {
-                                if (userCurrency == it.userWallet.currency) {
-                                    return@sumOf it.userWallet.currentBalance
-                                }
-                                val exchangeRate = exchangeRateMap[it.userWallet.currency]
-                                    ?: return@map TotalBalanceUiState.NotShown
+                    combine(
+                        getExtendedUserWallets.invoke(),
+                        currencyConversionRepository.getConvertedCurrencies(
+                            baseCurrencies = baseCurrencies.toSet(),
+                            targetCurrency = userCurrency,
+                        ),
+                    ) { wallets, exchangeRates ->
+                        val exchangeRateMap = exchangeRates
+                            .associate { it.baseCurrency to it.exchangeRate }
 
-                                it.userWallet.currentBalance * exchangeRate
+                        val totalBalance = wallets.sumOf {
+                            if (userCurrency == it.userWallet.currency) {
+                                return@sumOf it.userWallet.currentBalance
                             }
+                            val exchangeRate = exchangeRateMap[it.userWallet.currency]
+                                ?: return@combine TotalBalanceUiState.NotShown
 
-                            val allTransactions = wallets.flatMap { wallet ->
-                                wallet.transactionsWithCategories.map { it.transaction }
-                            }
-
-                            val monthlyTransactions = allTransactions.filter {
-                                it.timestamp.getZonedDateTime()
-                                    .isInCurrentMonthAndYear() && !it.ignored
-                            }
-
-                            val (expenses, income) = monthlyTransactions.partition { it.amount.signum() == -1 }
-
-                            val totalExpenses = expenses.sumOf { it.amount }.abs()
-                            val totalIncome = income.sumOf { it.amount }
-
-                            val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
-
-                            TotalBalanceUiState.Shown(
-                                amount = totalBalance,
-                                userCurrency = userCurrency,
-                                shouldShowBadIndicator = totalIncome < totalExpenses,
-                                shouldShowApproximately = shouldShowApproximately,
-                            )
+                            it.userWallet.currentBalance * exchangeRate
                         }
+
+                        val allTransactions = wallets.flatMap { wallet ->
+                            wallet.transactionsWithCategories.map { it.transaction }
+                        }
+
+                        val monthlyTransactions = allTransactions.filter {
+                            it.timestamp.getZonedDateTime()
+                                .isInCurrentMonthAndYear() && !it.ignored
+                        }
+
+                        val (expenses, income) = monthlyTransactions.partition { it.amount.signum() < 0 }
+
+                        val totalExpenses = expenses.sumOf { it.amount }.abs()
+                        val totalIncome = income.sumOf { it.amount }
+
+                        TotalBalanceUiState.Shown(
+                            amount = totalBalance,
+                            userCurrency = userCurrency,
+                            shouldShowBadIndicator = totalIncome < totalExpenses,
+                            shouldShowApproximately = shouldShowApproximately,
+                        )
+                    }
                         .catch { emit(TotalBalanceUiState.NotShown) }
                         .collect { emit(it) }
                 }
@@ -104,7 +106,6 @@ class HomeViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TotalBalanceUiState.Loading,
         )
-
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
         selectedWalletId,

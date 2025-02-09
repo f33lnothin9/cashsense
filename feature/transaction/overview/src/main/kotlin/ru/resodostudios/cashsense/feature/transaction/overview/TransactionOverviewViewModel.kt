@@ -70,6 +70,8 @@ class TransactionOverviewViewModel @Inject constructor(
             if (baseCurrencies.isEmpty()) {
                 flowOf(FinancePanelUiState.NotShown)
             } else {
+                val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
+
                 combine(
                     currencyConversionRepository.getConvertedCurrencies(
                         baseCurrencies = baseCurrencies.toSet(),
@@ -134,8 +136,6 @@ class TransactionOverviewViewModel @Inject constructor(
                         .mapValues { (_, transactions) ->
                             transactions.sumOf { it.transaction.amount }.abs()
                         }
-
-                    val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
 
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
