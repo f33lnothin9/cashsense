@@ -70,9 +70,7 @@ class WalletViewModel @Inject constructor(
         val filteredTransactions = filterableTransactions.transactionsCategories
             .filter {
                 !it.transaction.ignored && if (transactionFilter.dateType == ALL) {
-                    it.transaction.timestamp
-                        .getZonedDateTime()
-                        .isInCurrentMonthAndYear()
+                    it.transaction.timestamp.isInCurrentMonthAndYear()
                 } else true
             }
         val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }

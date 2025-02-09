@@ -90,9 +90,7 @@ class TransactionOverviewViewModel @Inject constructor(
                     val filteredTransactions = filterableTransactions.transactionsCategories
                         .filter {
                             !it.transaction.ignored && if (transactionFilter.dateType == ALL) {
-                                it.transaction.timestamp
-                                    .getZonedDateTime()
-                                    .isInCurrentMonthAndYear()
+                                it.transaction.timestamp.isInCurrentMonthAndYear()
                             } else true
                         }
 
@@ -105,25 +103,25 @@ class TransactionOverviewViewModel @Inject constructor(
                     }
 
                     val (expenses, income) = filteredTransactions
-                        .map { it.transaction }
-                        .partition { it.amount.signum() < 0 }
-                        .let { (expensesList, incomeList) ->
-                            val expensesSum = expensesList.sumOf {
-                                if (userCurrency == it.currency) return@sumOf it.amount
-                                val exchangeRate = exchangeRateMap[it.currency]
-                                    ?: return@combine FinancePanelUiState.NotShown
+                        .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transactionCategory ->
+                            val transaction = transactionCategory.transaction
+                            val amount = transaction.amount
+                            val currency = transaction.currency
 
-                                it.amount * exchangeRate
-                            }.abs()
-                            val incomeSum = incomeList.sumOf {
-                                if (userCurrency == it.currency) return@sumOf it.amount
-                                val exchangeRate = exchangeRateMap[it.currency]
+                            val convertedAmount = if (userCurrency == currency) {
+                                amount
+                            } else {
+                                exchangeRateMap[currency]?.let { rate -> amount * rate }
                                     ?: return@combine FinancePanelUiState.NotShown
-
-                                it.amount * exchangeRate
                             }
-                            expensesSum to incomeSum
+
+                            if (amount.signum() < 0) {
+                                expenses + convertedAmount to income
+                            } else {
+                                expenses to income + convertedAmount
+                            }
                         }
+
                     val graphData = filteredTransactions
                         .groupBy {
                             val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
@@ -140,7 +138,7 @@ class TransactionOverviewViewModel @Inject constructor(
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         income = income,
-                        expenses = expenses,
+                        expenses = expenses.abs(),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,

@@ -5,7 +5,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
-import java.time.LocalDateTime
 import java.time.temporal.WeekFields
 
 fun Instant.getZonedDateTime() =
@@ -20,9 +19,10 @@ fun Instant.getZonedWeek() = this.getZonedDateTime().get(WeekFields.ISO.weekOfWe
 fun getCurrentZonedDateTime() =
     Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime()
 
-fun LocalDateTime.isInCurrentMonthAndYear(): Boolean {
+fun Instant.isInCurrentMonthAndYear(): Boolean {
+    val localDateTime = this.getZonedDateTime()
     val currentDate = getCurrentZonedDateTime()
-    return this.year == currentDate.year && this.month == currentDate.month
+    return localDateTime.year == currentDate.year && localDateTime.month == currentDate.month
 }
 
 fun getCurrentYear(): Int = getCurrentZonedDateTime().year

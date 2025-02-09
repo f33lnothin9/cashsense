@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import java.math.BigDecimal
@@ -65,34 +65,38 @@ class HomeViewModel @Inject constructor(
                         val exchangeRateMap = exchangeRates
                             .associate { it.baseCurrency to it.exchangeRate }
 
-                        val totalBalance = wallets.sumOf {
-                            if (userCurrency == it.userWallet.currency) {
-                                return@sumOf it.userWallet.currentBalance
+                        var totalBalance = BigDecimal.ZERO
+                        val allTransactions = mutableListOf<Transaction>()
+
+                        wallets.forEach { wallet ->
+                            val balance = wallet.userWallet.currentBalance
+                            val currency = wallet.userWallet.currency
+
+                            val convertedBalance = if (userCurrency == currency) {
+                                balance
+                            } else {
+                                exchangeRateMap[currency]?.let { rate -> balance * rate }
+                                    ?: return@combine TotalBalanceUiState.NotShown
                             }
-                            val exchangeRate = exchangeRateMap[it.userWallet.currency]
-                                ?: return@combine TotalBalanceUiState.NotShown
-
-                            it.userWallet.currentBalance * exchangeRate
+                            totalBalance += convertedBalance
+                            allTransactions.addAll(wallet.transactionsWithCategories.map { it.transaction })
                         }
 
-                        val allTransactions = wallets.flatMap { wallet ->
-                            wallet.transactionsWithCategories.map { it.transaction }
-                        }
-
-                        val monthlyTransactions = allTransactions.filter {
-                            it.timestamp.getZonedDateTime()
-                                .isInCurrentMonthAndYear() && !it.ignored
-                        }
-
-                        val (expenses, income) = monthlyTransactions.partition { it.amount.signum() < 0 }
-
-                        val totalExpenses = expenses.sumOf { it.amount }.abs()
-                        val totalIncome = income.sumOf { it.amount }
+                        val (totalExpenses, totalIncome) = allTransactions
+                            .asSequence()
+                            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+                            .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
+                                if (transaction.amount.signum() < 0) {
+                                    expenses + transaction.amount to income
+                                } else {
+                                    expenses to income + transaction.amount
+                                }
+                            }
 
                         TotalBalanceUiState.Shown(
                             amount = totalBalance,
                             userCurrency = userCurrency,
-                            shouldShowBadIndicator = totalIncome < totalExpenses,
+                            shouldShowBadIndicator = totalIncome < totalExpenses.abs(),
                             shouldShowApproximately = shouldShowApproximately,
                         )
                     }
