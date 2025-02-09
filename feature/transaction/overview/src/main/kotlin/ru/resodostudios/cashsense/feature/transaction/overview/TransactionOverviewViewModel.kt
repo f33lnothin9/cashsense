@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -40,8 +41,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionOverviewViewModel @Inject constructor(
-    private val transactionsRepository: TransactionsRepository,
     private val currencyConversionRepository: CurrencyConversionRepository,
+    private val transactionsRepository: TransactionsRepository,
+    walletRepository: WalletsRepository,
     userDataRepository: UserDataRepository,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
 ) : ViewModel() {
@@ -58,24 +60,24 @@ class TransactionOverviewViewModel @Inject constructor(
     private val selectedTransactionIdState = MutableStateFlow<String?>(null)
 
     val financePanelUiState: StateFlow<FinancePanelUiState> = combine(
-        getExtendedUserWallets.invoke(),
+        walletRepository.getDistinctCurrencies(),
         userDataRepository.userData,
-    ) { wallets, userData ->
-        val baseCurrencies = wallets.mapTo(HashSet()) { it.userWallet.currency }
+    ) { currencies, userData ->
         val userCurrency = Currency.getInstance(userData.currency)
-        Triple(baseCurrencies, userCurrency, wallets)
+        currencies to userCurrency
     }
-        .flatMapLatest { (baseCurrencies, userCurrency, wallets) ->
+        .flatMapLatest { (baseCurrencies, userCurrency) ->
             if (baseCurrencies.isEmpty()) {
                 flowOf(FinancePanelUiState.NotShown)
             } else {
                 combine(
                     currencyConversionRepository.getConvertedCurrencies(
-                        baseCurrencies = baseCurrencies,
+                        baseCurrencies = baseCurrencies.toSet(),
                         targetCurrency = userCurrency,
                     ),
+                    getExtendedUserWallets.invoke(),
                     transactionFilterState,
-                ) { exchangeRates, transactionFilter ->
+                ) { exchangeRates, wallets, transactionFilter ->
                     val exchangeRateMap = exchangeRates
                         .associate { it.baseCurrency to it.exchangeRate }
 
