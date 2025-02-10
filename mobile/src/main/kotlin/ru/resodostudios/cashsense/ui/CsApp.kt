@@ -47,6 +47,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWal
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -128,7 +129,11 @@ fun CsApp(
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHostState,
-                    modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+                    modifier = if (destination == SETTINGS) {
+                        Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
+                    } else {
+                        Modifier
+                    },
                 )
             },
             floatingActionButton = {
