@@ -46,7 +46,6 @@ import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
@@ -146,15 +145,14 @@ private fun TagsSection(
 ) {
     val currentMonthTransactions by remember(transactions) {
         derivedStateOf {
-            transactions.filter {
-                it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
-            }
+            transactions
+                .filter { it.timestamp.isInCurrentMonthAndYear() && !it.ignored }
         }
     }
     val expenses by remember(currentMonthTransactions) {
         derivedStateOf {
             currentMonthTransactions
-                .filter { it.amount.signum() == -1 }
+                .filter { it.amount.signum() < 0 }
                 .sumOf { it.amount }
                 .abs()
         }
@@ -162,7 +160,7 @@ private fun TagsSection(
     val income by remember(currentMonthTransactions) {
         derivedStateOf {
             currentMonthTransactions
-                .filter { it.amount.signum() == 1 }
+                .filter { it.amount.signum() > 0 }
                 .sumOf { it.amount }
         }
     }
@@ -183,7 +181,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = expenses.signum() == 1,
+            visible = expenses.signum() > 0,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {
@@ -195,7 +193,7 @@ private fun TagsSection(
             )
         }
         AnimatedVisibility(
-            visible = income.signum() == 1,
+            visible = income.signum() > 0,
             enter = fadeIn() + scaleIn(),
             exit = fadeOut() + scaleOut(),
         ) {

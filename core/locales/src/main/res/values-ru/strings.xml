@@ -98,4 +98,8 @@
   <string name="primary_icon_description">Сделать основным</string>
   <string name="non_primary_icon_description">Сделать не основным</string>
   <string name="total_balance">Общий баланс</string>
+  <string name="app_update_available">Доступна новая версия</string>
+  <string name="app_update_downloaded">Обновление загружено</string>
+  <string name="update">Обновить</string>
+  <string name="install">Установить</string>
 </resources>

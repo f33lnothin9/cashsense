@@ -219,6 +219,42 @@ private fun TopBar(
                         scrolledContainerColor = MaterialTheme.colorScheme.surface,
                     ),
                     modifier = modifier,
+    totalBalance: BigDecimal,
+    currency: Currency,
+    shouldShowApproximately: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        title = {
+            Column {
+                Text(
+                    text = stringResource(localesR.string.total_balance),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                AnimatedAmount(
+                    targetState = totalBalance,
+                    label = "TotalBalance",
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = totalBalance.formatAmount(
+                            currency = currency,
+                            withApproximately = shouldShowApproximately,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = CsIcons.Outlined.ArrowBack,
+                    contentDescription = null,
                 )
             }
         }
@@ -258,6 +294,7 @@ private fun LazyListScope.header(
                     onCategorySelect = onCategorySelect,
                     onCategoryDeselect = onCategoryDeselect,
                     modifier = Modifier.fillMaxWidth(),
+                    shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )
             }
         }
