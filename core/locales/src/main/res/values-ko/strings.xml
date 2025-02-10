@@ -98,4 +98,8 @@
   <string name="primary_icon_description">주요로 설정</string>
   <string name="non_primary_icon_description">비주요로 설정</string>
   <string name="total_balance">총 잔액</string>
+  <string name="app_update_available">새 버전 이용 가능</string>
+  <string name="app_update_downloaded">업데이트가 다운로드되었습니다</string>
+  <string name="update">업데이트</string>
+  <string name="install">설치</string>
 </resources>

@@ -21,7 +21,7 @@ track subscription payment dates, Cash Sense has you covered.
 
 ## Screenshots
 
-![Screenshots](docs/images/screenshots.jpg "Screenshots")
+![Screenshots](docs/images/screenshots.png "Screenshots")
 
 # UI
 

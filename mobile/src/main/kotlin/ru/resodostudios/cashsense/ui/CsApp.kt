@@ -1,8 +1,6 @@
 package ru.resodostudios.cashsense.ui
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -29,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -46,6 +43,7 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWal
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
+import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -60,7 +58,8 @@ fun CsApp(
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
-    val activity = LocalContext.current.getActivityOrNull()
+
+    val activity = LocalActivity.current
 
     val updateAvailableMessage = stringResource(localesR.string.app_update_available)
     val updateDownloadedMessage = stringResource(localesR.string.app_update_available)
@@ -126,7 +125,11 @@ fun CsApp(
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHostState,
-                    modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+                    modifier = if (destination == SETTINGS) {
+                        Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
+                    } else {
+                        Modifier
+                    },
                 )
             },
             floatingActionButton = {
@@ -196,13 +199,3 @@ private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any {
         it.hasRoute(route)
     } ?: false
-
-private fun Context.getActivityOrNull(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-
-    return null
-}
