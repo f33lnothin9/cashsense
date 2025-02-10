@@ -98,4 +98,8 @@
   <string name="primary_icon_description">جعله رئيسياً</string>
   <string name="non_primary_icon_description">جعله غير رئيس</string>
   <string name="total_balance">إجمالي الرصيد</string>
+  <string name="app_update_available">الإصدار الجديد متاح</string>
+  <string name="app_update_downloaded">تم تحميل التحديث</string>
+  <string name="update">تحديث</string>
+  <string name="install">تثبيت</string>
 </resources>

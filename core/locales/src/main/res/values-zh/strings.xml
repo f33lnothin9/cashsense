@@ -98,4 +98,8 @@
   <string name="primary_icon_description">设为主要</string>
   <string name="non_primary_icon_description">设为非主要</string>
   <string name="total_balance">总余额</string>
+  <string name="app_update_available">新版本可用</string>
+  <string name="app_update_downloaded">更新已下载</string>
+  <string name="update">更新</string>
+  <string name="install">安装</string>
 </resources>
