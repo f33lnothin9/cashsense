@@ -213,7 +213,7 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
                             withApproximately = totalBalanceState.shouldShowApproximately,
                         )
                         AnimatedAmount(
-                            targetState = totalBalance,
+                            targetState = totalBalanceState.amount,
                             label = "TotalBalance",
                         ) {
                             Text(
