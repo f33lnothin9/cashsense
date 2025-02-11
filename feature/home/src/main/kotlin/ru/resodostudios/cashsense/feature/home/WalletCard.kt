@@ -1,13 +1,15 @@
 package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateBounds
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -135,7 +138,7 @@ fun WalletCard(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun TagsSection(
     transactions: List<Transaction>,
@@ -165,44 +168,49 @@ private fun TagsSection(
         }
     }
 
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = modifier,
-    ) {
-        AnimatedVisibility(
-            visible = isPrimary,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
+    LookaheadScope {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = modifier.animateContentSize(),
         ) {
-            CsTag(
-                text = stringResource(localesR.string.primary),
-                icon = CsIcons.Filled.Star,
-            )
-        }
-        AnimatedVisibility(
-            visible = expenses.signum() > 0,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-        ) {
-            CsAnimatedTag(
-                amount = expenses,
-                currency = currency,
-                color = MaterialTheme.colorScheme.errorContainer,
-                icon = CsIcons.Outlined.TrendingDown,
-            )
-        }
-        AnimatedVisibility(
-            visible = income.signum() > 0,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-        ) {
-            CsAnimatedTag(
-                amount = income,
-                currency = currency,
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                icon = CsIcons.Outlined.TrendingUp,
-            )
+            AnimatedVisibility(
+                visible = isPrimary,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsTag(
+                    text = stringResource(localesR.string.primary),
+                    icon = CsIcons.Filled.Star,
+                )
+            }
+            AnimatedVisibility(
+                visible = expenses.signum() > 0,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsAnimatedTag(
+                    amount = expenses,
+                    currency = currency,
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    icon = CsIcons.Outlined.TrendingDown,
+                )
+            }
+            AnimatedVisibility(
+                visible = income.signum() > 0,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsAnimatedTag(
+                    amount = income,
+                    currency = currency,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    icon = CsIcons.Outlined.TrendingUp,
+                )
+            }
         }
     }
 }
