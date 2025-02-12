@@ -59,6 +59,10 @@ gradlePlugin {
             id = libs.plugins.cashsense.android.application.firebase.get().pluginId
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"
         }
+        register("androidFlavors") {
+            id = libs.plugins.cashsense.android.application.flavors.get().pluginId
+            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
         register("hilt") {
             id = libs.plugins.cashsense.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
