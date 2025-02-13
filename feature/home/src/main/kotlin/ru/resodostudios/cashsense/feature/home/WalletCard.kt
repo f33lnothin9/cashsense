@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -22,9 +23,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,12 +39,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.util.Currency
@@ -55,7 +51,8 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun WalletCard(
     userWallet: UserWallet,
-    transactions: List<Transaction>,
+    expenses: BigDecimal,
+    income: BigDecimal,
     onWalletClick: (String) -> Unit,
     onNewTransactionClick: (String) -> Unit,
     onTransferClick: (String) -> Unit,
@@ -65,7 +62,7 @@ fun WalletCard(
     selected: Boolean = false,
 ) {
     val border = if (selected) {
-        CardDefaults.outlinedCardBorder().copy(
+        BorderStroke(
             width = 2.dp,
             brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
         )
@@ -94,7 +91,7 @@ fun WalletCard(
             )
             AnimatedAmount(
                 targetState = userWallet.currentBalance,
-                label = "wallet_balance",
+                label = "WalletBalance",
             ) {
                 Text(
                     text = it.formatAmount(userWallet.currency),
@@ -104,7 +101,8 @@ fun WalletCard(
                 )
             }
             TagsSection(
-                transactions = transactions,
+                expenses = expenses,
+                income = income,
                 currency = userWallet.currency,
                 isPrimary = userWallet.isPrimary,
                 modifier = Modifier.padding(top = 8.dp),
@@ -134,33 +132,12 @@ fun WalletCard(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun TagsSection(
-    transactions: List<Transaction>,
+    expenses: BigDecimal,
+    income: BigDecimal,
     currency: Currency,
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
-    val currentMonthTransactions by remember(transactions) {
-        derivedStateOf {
-            transactions
-                .filter { it.timestamp.isInCurrentMonthAndYear() && !it.ignored }
-        }
-    }
-    val expenses by remember(currentMonthTransactions) {
-        derivedStateOf {
-            currentMonthTransactions
-                .filter { it.amount.signum() < 0 }
-                .sumOf { it.amount }
-                .abs()
-        }
-    }
-    val income by remember(currentMonthTransactions) {
-        derivedStateOf {
-            currentMonthTransactions
-                .filter { it.amount.signum() > 0 }
-                .sumOf { it.amount }
-        }
-    }
-
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -227,16 +204,16 @@ private fun CsAnimatedTag(
                 bottom = 4.dp,
             )
         ) {
-            if (icon != null) {
+            icon?.let {
                 Icon(
-                    imageVector = icon,
+                    imageVector = it,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )
             }
             AnimatedAmount(
                 targetState = amount,
-                label = "animated_tag",
+                label = "Tag",
             ) {
                 Text(
                     text = it.formatAmount(currency),
@@ -263,7 +240,8 @@ fun WalletCardPreview() {
                     currentBalance = BigDecimal(2499.99),
                     isPrimary = true,
                 ),
-                transactions = emptyList(),
+                expenses = BigDecimal(200),
+                income = BigDecimal(800),
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },
