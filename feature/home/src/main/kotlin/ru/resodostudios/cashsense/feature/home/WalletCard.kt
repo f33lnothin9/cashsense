@@ -145,28 +145,6 @@ private fun TagsSection(
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
-    val currentMonthTransactions by remember(transactions) {
-        derivedStateOf {
-            transactions
-                .filter { it.timestamp.isInCurrentMonthAndYear() && !it.ignored }
-        }
-    }
-    val expenses by remember(currentMonthTransactions) {
-        derivedStateOf {
-            currentMonthTransactions
-                .filter { it.amount.signum() < 0 }
-                .sumOf { it.amount }
-                .abs()
-        }
-    }
-    val income by remember(currentMonthTransactions) {
-        derivedStateOf {
-            currentMonthTransactions
-                .filter { it.amount.signum() > 0 }
-                .sumOf { it.amount }
-        }
-    }
-
     LookaheadScope {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
