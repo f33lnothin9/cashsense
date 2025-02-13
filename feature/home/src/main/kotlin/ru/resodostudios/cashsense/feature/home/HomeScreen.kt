@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
@@ -176,9 +178,27 @@ private fun LazyStaggeredGridScope.wallets(
         contentType = { "WalletCard" },
     ) { walletData ->
         val selected = highlightSelectedWallet && walletData.userWallet.id == selectedWalletId
+        val (expenses, income) = walletData.transactionsWithCategories
+            .asSequence()
+            .map { it.transaction }
+            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+            .partition { it.amount.signum() < 0 }
+
+        val totalExpenses by remember(expenses) {
+            derivedStateOf {
+                expenses.sumOf { it.amount }.abs()
+            }
+        }
+        val totalIncome by remember(income) {
+            derivedStateOf {
+                income.sumOf { it.amount }
+            }
+        }
+
         WalletCard(
             userWallet = walletData.userWallet,
-            transactions = walletData.transactionsWithCategories.map { it.transaction },
+            expenses = totalExpenses,
+            income = totalIncome,
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,

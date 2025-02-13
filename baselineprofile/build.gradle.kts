@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
+import ru.resodostudios.cashsense.configureFlavors
 
 plugins {
     alias(libs.plugins.baselineprofile)
@@ -11,6 +12,20 @@ android {
     defaultConfig {
         minSdk = 28
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "APP_BUILD_TYPE_SUFFIX", "\"\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    configureFlavors(this) { flavor ->
+        buildConfigField(
+            "String",
+            "APP_FLAVOR_SUFFIX",
+            "\"${flavor.applicationIdSuffix ?: ""}\""
+        )
     }
 
     testOptions.managedDevices.devices {
