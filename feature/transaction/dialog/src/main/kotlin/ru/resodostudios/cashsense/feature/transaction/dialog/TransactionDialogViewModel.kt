@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -216,6 +217,7 @@ enum class TransactionType {
     INCOME,
 }
 
+@Immutable
 data class TransactionDialogUiState(
     val transactionId: String = "",
     val description: String = "",

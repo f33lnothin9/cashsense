@@ -1,10 +1,12 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
+import androidx.compose.runtime.Immutable
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import java.util.Currency
 
+@Immutable
 sealed interface TransactionDialogEvent {
 
     data class UpdateTransactionId(val id: String) : TransactionDialogEvent
