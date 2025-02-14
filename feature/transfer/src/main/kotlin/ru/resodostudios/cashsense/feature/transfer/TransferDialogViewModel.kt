@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transfer
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -158,6 +159,7 @@ class TransferDialogViewModel @Inject constructor(
     }
 }
 
+@Immutable
 data class TransferDialogUiState(
     val sendingWallet: TransferWallet = TransferWallet(),
     val receivingWallet: TransferWallet = TransferWallet(),
