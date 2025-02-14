@@ -16,6 +16,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class CategoryDialogViewModel @Inject constructor(
@@ -72,3 +73,10 @@ data class CategoryDialogUiState(
     val iconId: Int = 0,
     val isLoading: Boolean = false,
 )
+
+fun CategoryDialogUiState.asCategory() =
+    Category(
+        id = id.ifBlank { Uuid.random().toHexString() },
+        title = title,
+        iconId = iconId,
+    )

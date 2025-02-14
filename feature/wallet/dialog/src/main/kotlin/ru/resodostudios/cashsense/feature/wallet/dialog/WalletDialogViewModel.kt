@@ -17,8 +17,10 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
+import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class WalletDialogViewModel @Inject constructor(
@@ -65,9 +67,7 @@ class WalletDialogViewModel @Inject constructor(
             val walletTransactions = walletsRepository.getWalletWithTransactionsAndCategories(id)
                 .first()
             val wallet = walletTransactions.wallet
-            val isCurrencyEditable = walletTransactions.transactionsWithCategories
-                .map { it.transaction }
-                .all { it.transferId == null }
+            val isCurrencyEditable = walletTransactions.transactionsWithCategories.isEmpty()
             _walletDialogState.update {
                 it.copy(
                     title = wallet.title,
@@ -82,10 +82,11 @@ class WalletDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveWallet(wallet: Wallet, isPrimary: Boolean) {
+    fun saveWallet(state: WalletDialogUiState) {
         appScope.launch {
+            val wallet = state.asWallet()
             walletsRepository.upsertWallet(wallet)
-            userDataRepository.setPrimaryWallet(wallet.id, isPrimary)
+            userDataRepository.setPrimaryWallet(wallet.id, state.isPrimary)
         }
     }
 
@@ -124,3 +125,15 @@ data class WalletDialogUiState(
     val isLoading: Boolean = false,
     val isCurrencyEditable: Boolean = true,
 )
+
+fun WalletDialogUiState.asWallet() =
+    Wallet(
+        id = id.ifBlank { Uuid.random().toHexString() },
+        title = title,
+        initialBalance = if (initialBalance.isBlank()) {
+            BigDecimal.ZERO
+        } else {
+            BigDecimal(initialBalance)
+        },
+        currency = currency,
+    )

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -25,9 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -38,20 +38,19 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.ui.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.EmptyState
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.component.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
 import java.math.BigDecimal
-import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -66,12 +65,15 @@ fun HomeScreen(
     shouldDisplayUndoWallet: Boolean,
     undoWalletRemoval: () -> Unit,
     clearUndoState: () -> Unit,
+    onTotalBalanceClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val totalBalanceState by viewModel.totalBalanceUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
+        totalBalanceState = totalBalanceState,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -85,12 +87,14 @@ fun HomeScreen(
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
         undoWalletRemoval = undoWalletRemoval,
         clearUndoState = clearUndoState,
+        onTotalBalanceClick = onTotalBalanceClick,
     )
 }
 
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
+    totalBalanceState: TotalBalanceUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -101,6 +105,7 @@ internal fun HomeScreen(
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
+    onTotalBalanceClick: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
     val undoText = stringResource(localesR.string.undo)
@@ -134,8 +139,9 @@ internal fun HomeScreen(
                     bottom = 88.dp,
                 ),
             ) {
-                financeOverviewSection(
-                    wallets = walletsState.extendedUserWallets,
+                totalBalanceSection(
+                    totalBalanceState = totalBalanceState,
+                    onTotalBalanceClick = onTotalBalanceClick,
                 )
                 wallets(
                     extendedUserWallets = walletsState.extendedUserWallets,
@@ -168,12 +174,30 @@ private fun LazyStaggeredGridScope.wallets(
     items(
         items = extendedUserWallets,
         key = { it.userWallet.id },
-        contentType = { "walletCard" },
+        contentType = { "WalletCard" },
     ) { walletData ->
         val selected = highlightSelectedWallet && walletData.userWallet.id == selectedWalletId
+        val (expenses, income) = walletData.transactionsWithCategories
+            .asSequence()
+            .map { it.transaction }
+            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+            .partition { it.amount.signum() < 0 }
+
+        val totalExpenses by remember(expenses) {
+            derivedStateOf {
+                expenses.sumOf { it.amount }.abs()
+            }
+        }
+        val totalIncome by remember(income) {
+            derivedStateOf {
+                income.sumOf { it.amount }
+            }
+        }
+
         WalletCard(
             userWallet = walletData.userWallet,
-            transactions = walletData.transactionsWithCategories.map { it.transaction },
+            expenses = totalExpenses,
+            income = totalIncome,
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
@@ -185,49 +209,46 @@ private fun LazyStaggeredGridScope.wallets(
     }
 }
 
-private fun LazyStaggeredGridScope.financeOverviewSection(
-    wallets: List<ExtendedUserWallet>,
+private fun LazyStaggeredGridScope.totalBalanceSection(
+    totalBalanceState: TotalBalanceUiState,
+    onTotalBalanceClick: () -> Unit = {},
 ) {
-    val firstCurrency = wallets.first().userWallet.currency
-    val visible = wallets.size >= 2 && wallets.all { it.userWallet.currency == firstCurrency }
-
-    if (visible) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            val transactions = wallets.flatMap { wallet ->
-                wallet.transactionsWithCategories.map { it.transaction }
-            }
-            val currentMonthTransactions by remember(transactions) {
-                derivedStateOf {
-                    transactions.filter {
-                        it.timestamp.getZonedDateTime().isInCurrentMonthAndYear() && !it.ignored
+    when (totalBalanceState) {
+        TotalBalanceUiState.NotShown -> Unit
+        TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                val shouldShowBadIndicator = if (totalBalanceState is TotalBalanceUiState.Shown) {
+                    totalBalanceState.shouldShowBadIndicator
+                } else false
+                TotalBalanceCard(
+                    showBadIndicator = shouldShowBadIndicator,
+                    modifier = Modifier.animateItem(),
+                    onClick = onTotalBalanceClick,
+                ) {
+                    if (totalBalanceState is TotalBalanceUiState.Shown) {
+                        val totalBalance = totalBalanceState.amount.formatAmount(
+                            currency = totalBalanceState.userCurrency,
+                            withApproximately = totalBalanceState.shouldShowApproximately,
+                        )
+                        AnimatedAmount(
+                            targetState = totalBalanceState.amount,
+                            label = "TotalBalance",
+                        ) {
+                            Text(
+                                text = totalBalance,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    } else {
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 12.dp),
+                        )
                     }
                 }
             }
-            val expenses by remember(currentMonthTransactions) {
-                derivedStateOf {
-                    currentMonthTransactions
-                        .filter { it.amount.signum() == -1 }
-                        .sumOf { it.amount }
-                        .abs()
-                }
-            }
-            val income by remember(currentMonthTransactions) {
-                derivedStateOf {
-                    currentMonthTransactions
-                        .filter { it.amount.signum() == 1 }
-                        .sumOf { it.amount }
-                }
-            }
-            val totalBalance = wallets
-                .map { it.userWallet }
-                .sumOf { it.currentBalance }
-
-            TotalBalanceCard(
-                showBadIndicator = expenses > income,
-                totalBalance = totalBalance,
-                firstCurrency = firstCurrency,
-                modifier = Modifier.animateItem(),
-            )
         }
     }
 }
@@ -235,19 +256,21 @@ private fun LazyStaggeredGridScope.financeOverviewSection(
 @Composable
 private fun TotalBalanceCard(
     showBadIndicator: Boolean,
-    totalBalance: BigDecimal,
-    firstCurrency: Currency,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    headlineContent: @Composable () -> Unit,
 ) {
     val color = if (showBadIndicator) {
         MaterialTheme.colorScheme.error
     } else {
         MaterialTheme.colorScheme.outlineVariant
     }
-    val borderBrush = Brush.verticalGradient(
-        colors = listOf(Color.Transparent, color),
-        startY = 15.0f,
-    )
+    val borderBrush = remember(color) {
+        Brush.verticalGradient(
+            colors = listOf(Color.Transparent, color),
+            startY = 15.0f,
+        )
+    }
     val shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
     OutlinedCard(
         shape = shape,
@@ -262,27 +285,23 @@ private fun TotalBalanceCard(
         } else {
             modifier
         },
+        onClick = onClick,
     ) {
         CsListItem(
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.AccountBalance),
+                    imageVector = CsIcons.Outlined.AccountBalance,
                     contentDescription = null,
                 )
             },
-            headlineContent = {
-                AnimatedAmount(
-                    targetState = totalBalance,
-                    label = "total_balance",
-                ) {
-                    Text(
-                        text = totalBalance.formatAmount(firstCurrency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+            headlineContent = headlineContent,
+            overlineContent = {
+                Text(
+                    text = stringResource(localesR.string.total_balance),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             },
-            overlineContent = { Text(stringResource(localesR.string.total_balance)) },
         )
     }
 }
@@ -294,6 +313,7 @@ fun HomeScreenLoadingPreview() {
         Surface {
             HomeScreen(
                 walletsState = Loading,
+                totalBalanceState = TotalBalanceUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -312,6 +332,7 @@ fun HomeScreenEmptyPreview() {
         Surface {
             HomeScreen(
                 walletsState = Empty,
+                totalBalanceState = TotalBalanceUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
@@ -336,27 +357,18 @@ fun HomeScreenPopulatedPreview(
                     selectedWalletId = null,
                     extendedUserWallets = extendedUserWallets,
                 ),
+                totalBalanceState = TotalBalanceUiState.Shown(
+                    amount = BigDecimal(5000),
+                    userCurrency = getUsdCurrency(),
+                    shouldShowBadIndicator = true,
+                    shouldShowApproximately = true,
+                ),
                 onWalletClick = {},
                 onTransfer = {},
                 onEditWallet = {},
                 onDeleteWallet = {},
                 onTransactionCreate = {},
                 highlightSelectedWallet = false,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun TotalBalanceCardPreview() {
-    CsTheme {
-        Surface {
-            TotalBalanceCard(
-                showBadIndicator = true,
-                totalBalance = BigDecimal(1549000),
-                firstCurrency = getUsdCurrency(),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             )
         }
     }

@@ -43,13 +43,13 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
+import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -84,7 +84,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
     Scaffold(
         titleBar = {
             TitleBar(
-                startIcon = ImageProvider(CsIcons.Wallet),
+                startIcon = ImageProvider(R.drawable.ic_outlined_wallet),
                 title = LocalContext.current.getString(localesR.string.wallet_widget_title),
                 modifier = GlanceModifier.clickable(openHomeScreen()),
             )
@@ -165,7 +165,7 @@ fun WalletItem(
             )
         }
         CircleIconButton(
-            imageProvider = ImageProvider(CsIcons.Add),
+            imageProvider = ImageProvider(R.drawable.ic_outlined_add),
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW

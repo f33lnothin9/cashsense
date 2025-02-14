@@ -12,17 +12,27 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
+import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionDialogRoute
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class SubscriptionDialogViewModel @Inject constructor(
@@ -137,3 +147,29 @@ data class SubscriptionDialogUiState(
     val repeatingInterval: RepeatingIntervalType = NONE,
     val isLoading: Boolean = false,
 )
+
+fun SubscriptionDialogUiState.asSubscription(): Subscription {
+    val subscriptionId = id.ifBlank { Uuid.random().toHexString() }
+    var reminder: Reminder? = null
+
+    if (isReminderEnabled) {
+        val timeZone = TimeZone.currentSystemDefault()
+        val currentDateTime = paymentDate.toLocalDateTime(timeZone)
+        val previousDate = currentDateTime.date.minus(1, DateTimeUnit.DAY)
+        val notificationDate = LocalDateTime(previousDate, LocalTime(9, 0)).toInstant(timeZone)
+        reminder = Reminder(
+            id = subscriptionId.hashCode(),
+            notificationDate = notificationDate,
+            repeatingInterval = repeatingInterval.period,
+        )
+    }
+
+    return Subscription(
+        id = subscriptionId,
+        title = title,
+        amount = amount.toBigDecimal(),
+        paymentDate = paymentDate,
+        currency = currency,
+        reminder = reminder,
+    )
+}

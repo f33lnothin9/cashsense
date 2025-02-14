@@ -23,10 +23,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -34,10 +32,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.ui.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
@@ -141,7 +146,7 @@ private fun LazyListScope.general(
             headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.UniversalCurrencyAlt),
+                    imageVector = CsIcons.Outlined.UniversalCurrencyAlt,
                     contentDescription = null,
                 )
             },
@@ -178,7 +183,7 @@ private fun LazyListScope.appearance(
             headlineContent = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Palette),
+                    imageVector = CsIcons.Outlined.Palette,
                     contentDescription = null,
                 )
             },
@@ -201,7 +206,7 @@ private fun LazyListScope.appearance(
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(CsIcons.FormatPaint),
+                        imageVector = CsIcons.Outlined.FormatPaint,
                         contentDescription = null,
                     )
                 },
@@ -228,7 +233,7 @@ private fun LazyListScope.about(
             headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Feedback),
+                    imageVector = CsIcons.Outlined.Feedback,
                     contentDescription = null,
                 )
             },
@@ -248,7 +253,7 @@ private fun LazyListScope.about(
             headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Policy),
+                    imageVector = CsIcons.Outlined.Policy,
                     contentDescription = null,
                 )
             },
@@ -266,7 +271,7 @@ private fun LazyListScope.about(
             headlineContent = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.HistoryEdu),
+                    imageVector = CsIcons.Outlined.HistoryEdu,
                     contentDescription = null,
                 )
             },
@@ -283,7 +288,7 @@ private fun LazyListScope.about(
             supportingContent = { Text(versionName) },
             leadingContent = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(CsIcons.Info),
+                    imageVector = CsIcons.Outlined.Info,
                     contentDescription = null,
                 )
             },

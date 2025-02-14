@@ -9,11 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +30,7 @@ internal fun LicensesScreen(
                         onClick = onBackClick,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(CsIcons.ArrowBack),
+                            imageVector = CsIcons.Outlined.ArrowBack,
                             contentDescription = stringResource(localesR.string.navigation_back_icon_description),
                         )
                     }
@@ -43,6 +42,7 @@ internal fun LicensesScreen(
         LibrariesContainer(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxSize(),
+            showDescription = true,
         )
     }
 }

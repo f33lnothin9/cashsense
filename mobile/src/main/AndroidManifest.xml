@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
@@ -38,12 +36,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Disable Firebase analytics by default. This setting is overwritten for the `prod` flavor -->
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
-
-        <property
-            android:name="android.adservices.AD_SERVICES_CONFIG"
-            tools:node="remove" />
     </application>
 </manifest>

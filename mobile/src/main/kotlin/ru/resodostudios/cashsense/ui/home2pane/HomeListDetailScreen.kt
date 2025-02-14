@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.Keep
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -35,12 +34,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
-import ru.resodostudios.cashsense.core.ui.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.transaction.overview.navigation.TransactionOverviewRoute
+import ru.resodostudios.cashsense.feature.transaction.overview.navigation.navigateToTransactionOverview
+import ru.resodostudios.cashsense.feature.transaction.overview.navigation.transactionOverviewScreen
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
@@ -49,12 +51,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
 
-// TODO: Remove @Keep when https://issuetracker.google.com/353898971 is fixed
-@Keep
 @Serializable
 internal object WalletPlaceholderRoute
 
-@Keep
 @Serializable
 internal object DetailPaneNavHostRoute
 
@@ -171,6 +170,19 @@ internal fun HomeListDetailScreen(
         }
     }
 
+    fun onTotalBalanceClickShowDetailPane() {
+        if (listDetailNavigator.isDetailPaneVisible()) {
+            nestedNavController.navigateToTransactionOverview {
+                popUpTo<DetailPaneNavHostRoute>()
+            }
+        } else {
+            nestedNavHostStartRoute = TransactionOverviewRoute
+            nestedNavKey = Uuid.random()
+            clearUndoState()
+        }
+        listDetailNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+    }
+
     ListDetailPaneScaffold(
         value = listDetailNavigator.scaffoldValue,
         directive = listDetailNavigator.scaffoldDirective,
@@ -189,6 +201,7 @@ internal fun HomeListDetailScreen(
                     shouldDisplayUndoWallet = shouldDisplayUndoWallet,
                     undoWalletRemoval = undoWalletRemoval,
                     clearUndoState = clearUndoState,
+                    onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
                 )
             }
         },
@@ -199,9 +212,14 @@ internal fun HomeListDetailScreen(
                         navController = nestedNavController,
                         startDestination = nestedNavHostStartRoute,
                         route = DetailPaneNavHostRoute::class,
-                        enterTransition = { slideInVertically { it / 16 } + fadeIn() },
+                        enterTransition = { slideInVertically { it / 24 } + fadeIn() },
                         exitTransition = { fadeOut(snap()) },
                     ) {
+                        transactionOverviewScreen(
+                            shouldShowTopBar = !listDetailNavigator.isListPaneVisible(),
+                            onBackClick = listDetailNavigator::navigateBack,
+                            onTransactionClick = navigateToTransactionDialog,
+                        )
                         walletScreen(
                             showNavigationIcon = !listDetailNavigator.isListPaneVisible(),
                             onEditWallet = onEditWallet,

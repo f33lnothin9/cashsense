@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -28,8 +26,7 @@ fun CsTag(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
     shape: Shape = RoundedCornerShape(16.dp),
-    @DrawableRes
-    iconId: Int? = null,
+    icon: ImageVector? = null,
 ) {
     Surface(
         color = color,
@@ -46,9 +43,9 @@ fun CsTag(
                 bottom = 4.dp,
             )
         ) {
-            if (iconId != null) {
+            if (icon != null) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(iconId),
+                    imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )
