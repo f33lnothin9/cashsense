@@ -64,9 +64,10 @@ fun CsApp(
     val activity = LocalActivity.current
 
     val updateAvailableMessage = stringResource(localesR.string.app_update_available)
-    val updateDownloadedMessage = stringResource(localesR.string.app_update_available)
-    val updateText = stringResource(localesR.string.app_update_available)
-    val installText = stringResource(localesR.string.app_update_available)
+    val updateDownloadedMessage = stringResource(localesR.string.app_update_downloaded)
+    val updateText = stringResource(localesR.string.update)
+    val installText = stringResource(localesR.string.install)
+
     LaunchedEffect(inAppUpdateResult) {
         when (inAppUpdateResult) {
             is InAppUpdateResult.Available -> {
