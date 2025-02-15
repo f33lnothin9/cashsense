@@ -102,7 +102,13 @@ private fun CategoryChip(
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = { Text(category.title.toString()) },
+        label = {
+            Text(
+                text = category.title.toString(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
         leadingIcon = {
             Icon(
                 imageVector = icon,
