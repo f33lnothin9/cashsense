@@ -98,4 +98,8 @@
   <string name="primary_icon_description">मुख्य बनाएं</string>
   <string name="non_primary_icon_description">गैर-मुख्य बनाएं</string>
   <string name="total_balance">कुल शेष</string>
+  <string name="app_update_available">नया संस्करण उपलब्ध है</string>
+  <string name="app_update_downloaded">अपडेट डाउनलोड किया गया</string>
+  <string name="update">अपडेट करें</string>
+  <string name="install">इंस्टॉल करें</string>
 </resources>

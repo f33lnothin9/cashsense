@@ -5,12 +5,6 @@ plugins {
 
 android {
     namespace = "ru.resodostudios.cashsense.core.data"
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
-    }
 }
 
 dependencies {
@@ -24,4 +18,6 @@ dependencies {
     implementation(projects.core.shortcuts)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.play.app.update)
+    implementation(libs.play.app.update.ktx)
 }

@@ -98,4 +98,8 @@
   <string name="primary_icon_description">Establecer como principal</string>
   <string name="non_primary_icon_description">Establecer como no principal</string>
   <string name="total_balance">Saldo total</string>
+  <string name="app_update_available">Nueva versión disponible</string>
+  <string name="app_update_downloaded">Actualización descargada</string>
+  <string name="update">Actualizar</string>
+  <string name="install">Instalar</string>
 </resources>
