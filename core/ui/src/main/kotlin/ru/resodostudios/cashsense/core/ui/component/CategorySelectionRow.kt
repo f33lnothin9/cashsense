@@ -34,15 +34,12 @@ fun CategorySelectionRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         availableCategories.forEach { category ->
+            val selected = category in selectedCategories
             CategoryChip(
-                selected = selectedCategories.contains(category),
+                selected = selected,
                 category = category,
                 onClick = {
-                    if (selectedCategories.contains(category)) {
-                        onCategoryDeselect(category)
-                    } else {
-                        onCategorySelect(category)
-                    }
+                    if (selected) onCategoryDeselect(category) else onCategorySelect(category)
                 },
             )
         }

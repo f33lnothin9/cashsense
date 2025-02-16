@@ -244,6 +244,8 @@ private fun SharedTransitionScope.FinanceCard(
             Text(
                 text = stringResource(subtitleRes),
                 style = MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
