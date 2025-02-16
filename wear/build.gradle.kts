@@ -3,6 +3,7 @@ import ru.resodostudios.cashsense.CsBuildType
 plugins {
     alias(libs.plugins.cashsense.android.application)
     alias(libs.plugins.cashsense.android.application.compose)
+    alias(libs.plugins.cashsense.android.application.flavors)
     alias(libs.plugins.cashsense.hilt)
 }
 
