@@ -47,9 +47,9 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
-import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
-import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
+import ru.resodostudios.cashsense.feature.home.HomeUiState.Empty
+import ru.resodostudios.cashsense.feature.home.HomeUiState.Loading
+import ru.resodostudios.cashsense.feature.home.HomeUiState.Success
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -68,11 +68,11 @@ fun HomeScreen(
     onTotalBalanceClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val homeState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val totalBalanceState by viewModel.totalBalanceUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
-        walletsState = walletsState,
+        homeState = homeState,
         totalBalanceState = totalBalanceState,
         onWalletClick = {
             viewModel.onWalletClick(it)
@@ -93,7 +93,7 @@ fun HomeScreen(
 
 @Composable
 internal fun HomeScreen(
-    walletsState: WalletsUiState,
+    homeState: HomeUiState,
     totalBalanceState: TotalBalanceUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
@@ -124,7 +124,7 @@ internal fun HomeScreen(
         clearUndoState()
     }
 
-    when (walletsState) {
+    when (homeState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
         Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
         is Success -> {
@@ -144,8 +144,8 @@ internal fun HomeScreen(
                     onTotalBalanceClick = onTotalBalanceClick,
                 )
                 wallets(
-                    extendedUserWallets = walletsState.extendedUserWallets,
-                    selectedWalletId = walletsState.selectedWalletId,
+                    extendedUserWallets = homeState.extendedUserWallets,
+                    selectedWalletId = homeState.selectedWalletId,
                     onWalletClick = onWalletClick,
                     onTransactionCreate = onTransactionCreate,
                     onTransferClick = onTransfer,
@@ -312,7 +312,7 @@ fun HomeScreenLoadingPreview() {
     CsTheme {
         Surface {
             HomeScreen(
-                walletsState = Loading,
+                homeState = Loading,
                 totalBalanceState = TotalBalanceUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
@@ -331,7 +331,7 @@ fun HomeScreenEmptyPreview() {
     CsTheme {
         Surface {
             HomeScreen(
-                walletsState = Empty,
+                homeState = Empty,
                 totalBalanceState = TotalBalanceUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
@@ -353,7 +353,7 @@ fun HomeScreenPopulatedPreview(
     CsTheme {
         Surface {
             HomeScreen(
-                walletsState = Success(
+                homeState = Success(
                     selectedWalletId = null,
                     extendedUserWallets = extendedUserWallets,
                 ),
