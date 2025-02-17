@@ -8,6 +8,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHostState
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavHostState
+import ru.resodostudios.cashsense.feature.wallets.WalletsScreen
 
 @Composable
 fun CsWearNavHost(
@@ -24,7 +25,7 @@ fun CsWearNavHost(
         composable(
             route = "home",
         ) {
-
+            WalletsScreen()
         }
     }
 }

@@ -14,9 +14,6 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
     buildTypes {
         debug {
@@ -44,11 +41,14 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.data)
     implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
+    implementation(projects.core.ui)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
-
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.androidx.wear.compose.material3)
     implementation(libs.androidx.wear.compose.navigation)
