@@ -1,5 +1,5 @@
 [versions]
-aboutLibraries = "11.6.0"
+aboutLibraries = "12.0.0-a03"
 accompanist = "0.37.0"
 androidGradlePlugin = "8.8.1"
 androidxActivityCompose = "1.10.0"
@@ -40,7 +40,7 @@ protobuf = "4.29.3"
 protobufPlugin = "0.9.4"
 retrofit = "2.11.0"
 room = "2.7.0-beta01"
-vico = "2.0.1"
+vico = "2.1.0-alpha.4"
 
 [libraries]
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
